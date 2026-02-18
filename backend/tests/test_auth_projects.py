@@ -241,7 +241,7 @@ class TestProjectCRUD:
             json={
                 "name": project_name,
                 "description": "Test project for API testing",
-                "type": "mobile"
+                "type": "app"
             }
         )
         assert response.status_code == 200, f"Create failed: {response.text}"
@@ -249,7 +249,7 @@ class TestProjectCRUD:
         
         assert data["name"] == project_name
         assert data["description"] == "Test project for API testing"
-        assert data["type"] == "mobile"
+        assert data["type"] == "app"
         assert "id" in data
         assert data["status"] == "draft"
         
@@ -298,7 +298,7 @@ class TestProjectCRUD:
             json={
                 "name": project_name,
                 "description": "To be deleted",
-                "type": "mobile"
+                "type": "app"
             }
         )
         assert create_response.status_code == 200
