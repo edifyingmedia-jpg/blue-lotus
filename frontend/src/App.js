@@ -4,6 +4,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "./context/AuthContext";
 import { PlanEnforcementProvider } from "./context/PlanEnforcementContext";
 import { RolesProvider } from "./context/RolesContext";
+import { VoiceProvider } from "./context/VoiceContext";
 import UpgradePaywall from "./components/UpgradePaywall";
 import MadeWithBlueLotus from "./components/MadeWithBlueLotus";
 
