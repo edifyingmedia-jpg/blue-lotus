@@ -1,7 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { mockProjects } from '../data/mock';
 import Logo from '../components/Logo';
 import { Button } from '../components/ui/button';
 import { Input } from '../components/ui/input';
@@ -44,6 +43,8 @@ import {
   Calendar,
   CheckCircle,
 } from 'lucide-react';
+
+const API_URL = process.env.REACT_APP_BACKEND_URL;
 
 const Dashboard = () => {
   const { user, logout } = useAuth();
