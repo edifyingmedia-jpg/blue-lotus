@@ -230,6 +230,82 @@ const Pricing = () => {
         </div>
       </section>
 
+      {/* Comparison Table Section */}
+      <section className="py-16 px-4">
+        <div className="max-w-6xl mx-auto">
+          <h2 className="text-2xl font-bold text-white text-center mb-10">
+            Compare Plans
+          </h2>
+          
+          <div className="overflow-x-auto">
+            <table className="w-full" data-testid="pricing-comparison-table">
+              {/* Header */}
+              <thead>
+                <tr className="border-b border-gray-800">
+                  {comparisonTable.columns.map((col, index) => (
+                    <th 
+                      key={index}
+                      className={`py-4 px-4 text-left ${
+                        index === 0 
+                          ? 'text-gray-400 font-medium' 
+                          : index === 2 
+                            ? 'text-blue-400 font-semibold bg-blue-600/5' 
+                            : 'text-white font-semibold'
+                      }`}
+                    >
+                      {col}
+                      {index === 2 && (
+                        <span className="ml-2 px-2 py-0.5 bg-blue-600/20 text-blue-400 text-xs rounded-full">
+                          Popular
+                        </span>
+                      )}
+                    </th>
+                  ))}
+                </tr>
+              </thead>
+              
+              {/* Body */}
+              <tbody>
+                {comparisonTable.rows.map((row, rowIndex) => (
+                  <tr 
+                    key={rowIndex} 
+                    className="border-b border-gray-800/50 hover:bg-gray-900/30 transition-colors"
+                  >
+                    <td className="py-4 px-4 text-gray-400 text-sm">
+                      {row.feature}
+                    </td>
+                    {row.values.map((value, colIndex) => (
+                      <td 
+                        key={colIndex}
+                        className={`py-4 px-4 text-sm ${
+                          colIndex === 1 ? 'bg-blue-600/5' : ''
+                        }`}
+                      >
+                        {value === 'Yes' ? (
+                          <div className="w-6 h-6 rounded-full bg-green-500/20 flex items-center justify-center">
+                            <Check className="w-3.5 h-3.5 text-green-400" />
+                          </div>
+                        ) : value === 'No' ? (
+                          <div className="w-6 h-6 rounded-full bg-gray-700/50 flex items-center justify-center">
+                            <X className="w-3.5 h-3.5 text-gray-500" />
+                          </div>
+                        ) : (
+                          <span className={`${
+                            colIndex === 1 ? 'text-blue-400 font-medium' : 'text-white'
+                          }`}>
+                            {value}
+                          </span>
+                        )}
+                      </td>
+                    ))}
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
       {/* Credit Add-ons Section */}
       <section className="py-16 px-4 bg-gray-900/30">
         <div className="max-w-4xl mx-auto">
