@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import { usePlanEnforcement } from '../context/PlanEnforcementContext';
+import ProjectLimitsCard from '../components/ProjectLimitsCard';
 import { Button } from '../components/ui/button';
 import { 
   Download, 
@@ -16,7 +17,10 @@ import {
   Star,
   Sparkles,
   Lock,
-  ArrowRight
+  ArrowRight,
+  FolderPlus,
+  Minus,
+  Plus
 } from 'lucide-react';
 
 const PlanDemo = () => {
@@ -25,12 +29,18 @@ const PlanDemo = () => {
     setCurrentPlan, 
     credits,
     totalCredits,
+    projectCount,
+    setProjectCount,
+    publishedCount,
+    setPublishedCount,
     attemptAction,
     getPlanRestrictions,
+    getProjectLimits,
     PLAN_CONFIG
   } = usePlanEnforcement();
 
   const restrictions = getPlanRestrictions();
+  const projectLimits = getProjectLimits();
 
   const planOptions = [
     { id: 'free', name: 'Free', icon: Sparkles },
@@ -46,6 +56,13 @@ const PlanDemo = () => {
       description: 'Download your app code',
       icon: Download,
       requiredPlan: 'creator'
+    },
+    { 
+      id: 'createProject', 
+      name: 'Create Project', 
+      description: 'Add a new project',
+      icon: FolderPlus,
+      requiredPlan: 'varies'
     },
     { 
       id: 'publish', 
