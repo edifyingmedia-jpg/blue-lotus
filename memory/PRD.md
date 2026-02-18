@@ -71,35 +71,40 @@ Build a clone of the Emergent website rebranded as "Blue Lotus" - an AI-powered 
 ### ✅ Phase 9: Backend Core Engines (Completed - February 2025)
 **Built complete FastAPI backend with MongoDB:**
 
-#### Credit Engine (`/app/backend/engines/credit_engine.py`)
-- 4 credit sources: Monthly, Bonus, Purchased, Starter
-- Deduction priority: Bonus → Monthly → Purchased → Starter
-- Daily bonus refresh (24h cycle, no rollover)
-- Purchased credits never expire
+#### Core Operational Engines (5):
+1. **Credit Engine** (`/app/backend/engines/credit_engine.py`)
+   - 4 credit sources with deduction priority
+   - Daily bonus refresh, purchased never expire
 
-#### Plan Enforcement Engine (`/app/backend/engines/plan_enforcement.py`)
-- Free: 3 projects, no export/publish
-- Creator: 10 projects, staging only, $9.99/mo
-- Pro: 25 projects, production, $19.99/mo
-- Elite: 100 projects, unlimited publish, team seats, $29.99/mo
+2. **Plan Enforcement Engine** (`/app/backend/engines/plan_enforcement.py`)
+   - 4 tiers: Free, Creator, Pro, Elite
+   - Export/publish/project limits
 
-#### Generation Engine (`/app/backend/engines/generation_engine.py`)
-- Screen generation: 3 credits
-- Page generation: 5 credits
-- Flow generation: 8 credits
-- Refinement: 1 credit
-- (Currently mocked - ready for LLM integration)
+3. **Project Engine** (`/app/backend/engines/project_engine.py`)
+   - Project CRUD, duplication, status management
+   - Structure generation, statistics
 
-#### Publishing Engine (`/app/backend/engines/publishing_engine.py`)
-- Staging deployment (Creator+)
-- Production deployment (Pro+)
-- URL generation for deployments
+4. **Data Model Engine** (`/app/backend/engines/data_model_engine.py`)
+   - 8 field types: text, number, boolean, date, image, file, reference, list
+   - 3 relationship types: one_to_one, one_to_many, many_to_many
+   - Circular reference detection, validation
 
-#### Export Engine (`/app/backend/engines/export_engine.py`)
-- Full app/website export
-- Code package export
-- Static assets export
-- (Blocked for Free users)
+5. **Navigation Engine** (`/app/backend/engines/navigation_engine.py`)
+   - 5 navigation types: stack, tabs, drawer, modal, custom_flow
+   - Orphan screen detection, depth validation
+   - Tab bar and drawer management
+
+#### AI Engines (1):
+6. **AI Instruction Engine** (`/app/backend/engines/ai_instruction_engine.py`)
+   - Natural language parsing into structured tasks
+   - 10 instruction types: create_screen, create_page, generate_flow, etc.
+   - Confidence scoring, validation, suggestions
+   - Never delete without confirmation
+
+#### Output Engines (3 - Mocked):
+7. **Generation Engine** - Mock structures (ready for LLM)
+8. **Publishing Engine** - Mock URLs (ready for deployment infra)
+9. **Export Engine** - Mock downloads (ready for file packaging)
 
 #### API Endpoints
 - `POST /api/auth/signup` - User registration with 20 starter credits
