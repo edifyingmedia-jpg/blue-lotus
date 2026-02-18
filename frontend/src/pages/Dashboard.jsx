@@ -38,33 +38,12 @@ const Dashboard = () => {
   const navigate = useNavigate();
   const [projects, setProjects] = useState(mockProjects);
   const [searchQuery, setSearchQuery] = useState('');
-  const [newProjectName, setNewProjectName] = useState('');
 
   const filteredProjects = projects.filter(
     (project) =>
       project.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
       project.description.toLowerCase().includes(searchQuery.toLowerCase())
   );
-
-  const handleCreateProject = () => {
-    if (!newProjectName.trim()) return;
-    
-    const newProject = {
-      id: Date.now().toString(),
-      name: newProjectName,
-      description: selectedTemplate?.description || 'New project',
-      status: 'building',
-      lastEdited: 'Just now',
-      thumbnail: 'https://images.unsplash.com/photo-1618477388954-7852f32655ec?w=300&h=200&fit=crop',
-      url: null,
-    };
-    
-    setProjects([newProject, ...projects]);
-    setShowNewProjectDialog(false);
-    setNewProjectName('');
-    setSelectedTemplate(null);
-    navigate(`/project/${newProject.id}`);
-  };
 
   const handleDeleteProject = (projectId) => {
     setProjects(projects.filter((p) => p.id !== projectId));
@@ -92,6 +71,12 @@ const Dashboard = () => {
         {status.charAt(0).toUpperCase() + status.slice(1)}
       </span>
     );
+  };
+
+  const getProjectTypeIcon = (project) => {
+    if (project.type === 'website') return <Globe className="w-4 h-4 text-blue-400" />;
+    if (project.type === 'both') return <Layers className="w-4 h-4 text-purple-400" />;
+    return <Smartphone className="w-4 h-4 text-green-400" />;
   };
 
   return (
