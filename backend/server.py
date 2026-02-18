@@ -52,6 +52,9 @@ from routes.builder import create_builder_routes
 from routes.intelligence import create_intelligence_routes
 from routes.canvas import create_canvas_routes
 from routes.components import router as components_router
+from routes.blueprints import create_blueprint_routes
+from routes.diagnostics import create_diagnostics_routes
+from routes.settings import create_settings_routes
 
 # Create API router with /api prefix
 api_router = APIRouter(prefix="/api")
