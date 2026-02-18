@@ -195,9 +195,11 @@ export const footerLinks = {
     { label: 'Community', href: '#' },
   ],
   legal: [
-    { label: 'Privacy Policy', href: '#' },
-    { label: 'Terms of Service', href: '#' },
-    { label: 'Cookie Policy', href: '#' },
+    { label: 'Terms of Service', href: '/legal/terms' },
+    { label: 'Privacy Policy', href: '/legal/privacy' },
+    { label: 'Cookie Policy', href: '/legal/cookies' },
+    { label: 'Acceptable Use', href: '/legal/acceptableUse' },
+    { label: 'Security', href: '/legal/security' },
   ],
 };
 
