@@ -80,6 +80,8 @@ api_router.include_router(create_settings_routes(db))
 api_router.include_router(create_voice_routes(db))
 api_router.include_router(create_ai_generation_routes(db))
 api_router.include_router(create_backend_integration_routes(db))
+api_router.include_router(create_billing_routes(db))
+api_router.include_router(create_webhook_routes(db))
 
 # Include the API router
 app.include_router(api_router)
