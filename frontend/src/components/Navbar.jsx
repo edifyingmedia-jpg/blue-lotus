@@ -123,10 +123,11 @@ const Navbar = () => {
                     </Button>
                     <Button
                       onClick={() => {
-                        navigate('/signup');
+                        navigate('/onboarding');
                         setMobileMenuOpen(false);
                       }}
                       className="w-full bg-blue-600 hover:bg-blue-700 text-white"
+                      data-testid="navbar-mobile-get-started-btn"
                     >
                       Get Started
                     </Button>
