@@ -13,6 +13,7 @@ import Builder from "./pages/Builder";
 import Settings from "./pages/Settings";
 import Pricing from "./pages/Pricing";
 import Legal from "./pages/Legal";
+import LegalNav from "./pages/LegalNav";
 import ProtectedRoute from "./components/ProtectedRoute";
 
 function App() {
