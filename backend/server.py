@@ -182,11 +182,14 @@ async def startup_db_client():
         
         print("✅ Blue Lotus Backend Started")
         print(f"📦 Database: {DB_NAME}")
-        print("🔧 Core Engines: Credit, Generation, Publishing, Export, Plan Enforcement")
-        print("🔧 Build Engines: Project, Data Model, Navigation, AI Instruction")
-        print("🔧 Advanced Engines: Orchestration, Runtime Intelligence, Canvas, Component Library")
-        print("🔧 Control Engines: AI Orchestration, Blueprint Generation, System Diagnostics, Platform Settings")
-        print("🎤 Voice Engines: Voice Input, Speech-to-Intent, Voice Orchestration, Voice Feedback (TTS), Voice Safety, Voice Settings")
+        print("🔧 Core Engines (5): Credit, Generation, Publishing, Export, Plan Enforcement")
+        print("🔧 Build Engines (4): Project, Data Model, Navigation, AI Instruction")
+        print("🔧 Advanced Engines (4): Orchestration, Runtime Intelligence, Canvas, Component Library")
+        print("🔧 Control Engines (4): AI Orchestration, Blueprint Generation, System Diagnostics, Platform Settings")
+        print("🎤 Voice Core (6): Voice Input, STT→Intent, Voice Orchestration, TTS Feedback, Safety, Settings")
+        print("🎤 Voice Experience (3): Error Handling, Accessibility, Onboarding")
+        print("🧠 Voice Intelligence (5): Help & Guidance, Multi-Step Workflow, Component Placement, Debugging, Extended Intelligence")
+        print("📊 Total Engines: 31")
     except Exception as e:
         print(f"⚠️ Startup warning: {e}")
 
