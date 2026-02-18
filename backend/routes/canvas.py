@@ -64,7 +64,8 @@ def create_canvas_routes(db: AsyncIOMotorDatabase):
         )
         
         if canvas_doc:
-            return canvas_doc
+            # Ensure it's serializable
+            return dict(canvas_doc)
         
         # Create new canvas with default layout
         screen_id = f"{project_id}_{screen_name}"
@@ -76,12 +77,28 @@ def create_canvas_routes(db: AsyncIOMotorDatabase):
         default_root = BuilderCanvasEngine.generate_default_screen_layout(screen_name)
         canvas.root_node = default_root
         
-        # Save to database
-        canvas_doc = canvas.model_dump()
-        canvas_doc["updated_at"] = canvas_doc["updated_at"].isoformat()
-        await db.canvas_states.insert_one(canvas_doc)
+        # Convert to dict for storage
+        canvas_dict = canvas.model_dump()
+        canvas_dict["updated_at"] = canvas_dict["updated_at"].isoformat()
         
-        return canvas_doc
+        # Convert nested models
+        def convert_node(node):
+            if node is None:
+                return None
+            result = dict(node) if isinstance(node, dict) else node.model_dump() if hasattr(node, 'model_dump') else dict(node)
+            if 'children' in result and result['children']:
+                result['children'] = [convert_node(c) for c in result['children']]
+            return result
+        
+        if canvas_dict.get('root_node'):
+            canvas_dict['root_node'] = convert_node(canvas_dict['root_node'])
+        
+        # Save to database
+        await db.canvas_states.insert_one(canvas_dict)
+        
+        # Return without _id
+        del_id = canvas_dict.pop('_id', None)
+        return canvas_dict
     
     @router.post("/component/add")
     async def add_component(
