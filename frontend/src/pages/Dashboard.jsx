@@ -499,7 +499,10 @@ const Dashboard = () => {
                             <ExternalLink className="w-4 h-4 mr-2" />
                             Open Preview
                           </DropdownMenuItem>
-                          <DropdownMenuItem className="text-gray-300 focus:text-white focus:bg-gray-800">
+                          <DropdownMenuItem 
+                            onClick={() => handleDuplicateProject(project.id)}
+                            className="text-gray-300 focus:text-white focus:bg-gray-800"
+                          >
                             <Copy className="w-4 h-4 mr-2" />
                             Duplicate
                           </DropdownMenuItem>
