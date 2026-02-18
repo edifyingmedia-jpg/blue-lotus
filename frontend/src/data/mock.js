@@ -1,4 +1,4 @@
-// Mock data for Emergent clone website
+// Mock data for Blue Lotus website
 
 export const navLinks = [
   { label: 'Features', href: '#features' },
