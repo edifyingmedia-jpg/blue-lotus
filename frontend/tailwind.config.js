@@ -80,6 +80,30 @@ module.exports = {
                                 to: {
                                         height: '0'
                                 }
+                        },
+                        'lotus-glow': {
+                                '0%, 100%': {
+                                        filter: 'drop-shadow(0 0 8px #4CC3FF)',
+                                        transform: 'scale(1)'
+                                },
+                                '50%': {
+                                        filter: 'drop-shadow(0 0 16px #4CC3FF) drop-shadow(0 0 24px #7FDBFF)',
+                                        transform: 'scale(1.04)'
+                                }
+                        },
+                        'lotus-bloom': {
+                                '0%': {
+                                        filter: 'drop-shadow(0 0 4px #4CC3FF)',
+                                        transform: 'scale(1)'
+                                },
+                                '50%': {
+                                        filter: 'drop-shadow(0 0 20px #4CC3FF) drop-shadow(0 0 30px #7FDBFF)',
+                                        transform: 'scale(1.08)'
+                                },
+                                '100%': {
+                                        filter: 'drop-shadow(0 0 4px #4CC3FF)',
+                                        transform: 'scale(1)'
+                                }
                         }
                 },
                 animation: {
