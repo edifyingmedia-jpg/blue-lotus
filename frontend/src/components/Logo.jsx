@@ -10,65 +10,98 @@ const Logo = ({ className = '', size = 44, showText = true }) => {
         fill="none"
         xmlns="http://www.w3.org/2000/svg"
       >
-        {/* Outer left petal */}
+        {/* Back outer petals - spread wide */}
         <path
-          d="M20 72 C22 55, 35 35, 50 18 C40 40, 32 60, 28 72 Z"
-          fill="#71717A"
+          d="M15 75 C18 60, 30 45, 50 35 C35 50, 25 65, 22 75 Q18 78, 15 75"
+          fill="url(#petal1)"
+        />
+        <path
+          d="M85 75 C82 60, 70 45, 50 35 C65 50, 75 65, 78 75 Q82 78, 85 75"
+          fill="url(#petal1)"
         />
         
-        {/* Outer right petal */}
+        {/* Second layer petals */}
         <path
-          d="M80 72 C78 55, 65 35, 50 18 C60 40, 68 60, 72 72 Z"
-          fill="#71717A"
+          d="M22 73 C25 55, 38 40, 50 30 C40 48, 32 62, 30 73 Q26 76, 22 73"
+          fill="url(#petal2)"
+        />
+        <path
+          d="M78 73 C75 55, 62 40, 50 30 C60 48, 68 62, 70 73 Q74 76, 78 73"
+          fill="url(#petal2)"
         />
         
-        {/* Second left petal */}
+        {/* Third layer petals */}
         <path
-          d="M28 74 C30 55, 40 35, 50 16 C44 42, 38 60, 35 74 Z"
-          fill="#A1A1AA"
+          d="M30 72 C33 52, 42 38, 50 26 C45 45, 40 58, 38 72 Q34 75, 30 72"
+          fill="url(#petal3)"
+        />
+        <path
+          d="M70 72 C67 52, 58 38, 50 26 C55 45, 60 58, 62 72 Q66 75, 70 72"
+          fill="url(#petal3)"
         />
         
-        {/* Second right petal */}
+        {/* Inner petals */}
         <path
-          d="M72 74 C70 55, 60 35, 50 16 C56 42, 62 60, 65 74 Z"
-          fill="#A1A1AA"
+          d="M38 71 C40 50, 46 36, 50 22 C48 42, 46 56, 45 71 Q42 74, 38 71"
+          fill="url(#petal4)"
+        />
+        <path
+          d="M62 71 C60 50, 54 36, 50 22 C52 42, 54 56, 55 71 Q58 74, 62 71"
+          fill="url(#petal4)"
         />
         
-        {/* Third left petal */}
+        {/* Center front petal */}
         <path
-          d="M35 75 C37 52, 44 32, 50 14 C47 42, 43 60, 41 75 Z"
-          fill="#D4D4D8"
+          d="M45 70 C46 48, 49 32, 50 18 C51 32, 54 48, 55 70 Q52 73, 50 73 Q48 73, 45 70"
+          fill="url(#petal5)"
         />
         
-        {/* Third right petal */}
-        <path
-          d="M65 75 C63 52, 56 32, 50 14 C53 42, 57 60, 59 75 Z"
-          fill="#D4D4D8"
+        {/* Top bulb/bud highlight */}
+        <ellipse
+          cx="50"
+          cy="22"
+          rx="8"
+          ry="6"
+          fill="url(#topHighlight)"
         />
         
-        {/* Inner left petal */}
-        <path
-          d="M41 76 C42 50, 47 30, 50 12 C49 40, 47 58, 46 76 Z"
-          fill="#E4E4E7"
-        />
-        
-        {/* Inner right petal */}
-        <path
-          d="M59 76 C58 50, 53 30, 50 12 C51 40, 53 58, 54 76 Z"
-          fill="#E4E4E7"
-        />
-        
-        {/* Center petal - brightest */}
-        <path
-          d="M46 77 C47 48, 49 28, 50 10 C51 28, 53 48, 54 77 Z"
-          fill="#FAFAFA"
-        />
-        
-        {/* Center highlight */}
-        <path
-          d="M49 55 C49.5 40, 50 25, 50 15 C50 25, 50.5 40, 51 55 Z"
-          fill="white"
-        />
+        <defs>
+          {/* Outer petals - darkest */}
+          <linearGradient id="petal1" x1="50%" y1="0%" x2="50%" y2="100%">
+            <stop offset="0%" stopColor="#9CA3AF" />
+            <stop offset="100%" stopColor="#6B7280" />
+          </linearGradient>
+          
+          {/* Second layer */}
+          <linearGradient id="petal2" x1="50%" y1="0%" x2="50%" y2="100%">
+            <stop offset="0%" stopColor="#D1D5DB" />
+            <stop offset="100%" stopColor="#9CA3AF" />
+          </linearGradient>
+          
+          {/* Third layer */}
+          <linearGradient id="petal3" x1="50%" y1="0%" x2="50%" y2="100%">
+            <stop offset="0%" stopColor="#E5E7EB" />
+            <stop offset="100%" stopColor="#D1D5DB" />
+          </linearGradient>
+          
+          {/* Inner petals */}
+          <linearGradient id="petal4" x1="50%" y1="0%" x2="50%" y2="100%">
+            <stop offset="0%" stopColor="#F3F4F6" />
+            <stop offset="100%" stopColor="#E5E7EB" />
+          </linearGradient>
+          
+          {/* Center petal - brightest */}
+          <linearGradient id="petal5" x1="50%" y1="0%" x2="50%" y2="100%">
+            <stop offset="0%" stopColor="#FFFFFF" />
+            <stop offset="100%" stopColor="#F3F4F6" />
+          </linearGradient>
+          
+          {/* Top highlight */}
+          <radialGradient id="topHighlight" cx="50%" cy="30%" r="70%">
+            <stop offset="0%" stopColor="#FFFFFF" />
+            <stop offset="100%" stopColor="#F9FAFB" stopOpacity="0" />
+          </radialGradient>
+        </defs>
       </svg>
       {showText && (
         <span className="text-xl font-bold">
