@@ -108,7 +108,9 @@ module.exports = {
                 },
                 animation: {
                         'accordion-down': 'accordion-down 0.2s ease-out',
-                        'accordion-up': 'accordion-up 0.2s ease-out'
+                        'accordion-up': 'accordion-up 0.2s ease-out',
+                        'lotus-glow': 'lotus-glow 2.4s ease-in-out infinite',
+                        'lotus-bloom': 'lotus-bloom 1.8s ease-in-out'
                 }
         }
   },
