@@ -824,8 +824,17 @@ class TestAuthenticationFlow(TestSetup):
     
     def test_login_invalid_credentials(self, api_client):
         """Test POST /api/auth/login with invalid credentials fails."""
+        # First create a user
+        unique_email = f"test_invalid_{uuid.uuid4().hex[:8]}@example.com"
+        api_client.post(f"{BASE_URL}/api/auth/signup", json={
+            "email": unique_email,
+            "password": TEST_PASSWORD,
+            "name": TEST_NAME
+        })
+        
+        # Try to login with wrong password
         response = api_client.post(f"{BASE_URL}/api/auth/login", json={
-            "email": TEST_EMAIL,
+            "email": unique_email,
             "password": "WrongPassword123!"
         })
         
