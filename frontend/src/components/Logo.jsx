@@ -9,161 +9,84 @@ const Logo = ({ className = '', size = 44, showText = true }) => {
         viewBox="0 0 100 100"
         fill="none"
         xmlns="http://www.w3.org/2000/svg"
-        className="drop-shadow-[0_0_15px_rgba(255,255,255,0.3)]"
       >
-        {/* Back row petals - outermost */}
-        <ellipse
-          cx="50"
-          cy="58"
-          rx="5"
-          ry="18"
-          fill="url(#petalBack)"
-          transform="rotate(-60, 50, 58)"
+        {/* Back petals - outermost layer */}
+        <path
+          d="M25 65 Q30 35, 50 20 Q45 45, 35 65 Z"
+          fill="#6B7280"
+          opacity="0.6"
         />
-        <ellipse
-          cx="50"
-          cy="58"
-          rx="5"
-          ry="18"
-          fill="url(#petalBack)"
-          transform="rotate(60, 50, 58)"
-        />
-        
-        {/* Second row petals */}
-        <ellipse
-          cx="50"
-          cy="55"
-          rx="6"
-          ry="22"
-          fill="url(#petalMidOuter)"
-          transform="rotate(-45, 50, 55)"
-        />
-        <ellipse
-          cx="50"
-          cy="55"
-          rx="6"
-          ry="22"
-          fill="url(#petalMidOuter)"
-          transform="rotate(45, 50, 55)"
-        />
-        
-        {/* Third row petals */}
-        <ellipse
-          cx="50"
-          cy="52"
-          rx="7"
-          ry="26"
-          fill="url(#petalMid)"
-          transform="rotate(-28, 50, 52)"
-        />
-        <ellipse
-          cx="50"
-          cy="52"
-          rx="7"
-          ry="26"
-          fill="url(#petalMid)"
-          transform="rotate(28, 50, 52)"
-        />
-        
-        {/* Inner side petals */}
-        <ellipse
-          cx="50"
-          cy="50"
-          rx="8"
-          ry="30"
-          fill="url(#petalInner)"
-          transform="rotate(-14, 50, 50)"
-        />
-        <ellipse
-          cx="50"
-          cy="50"
-          rx="8"
-          ry="30"
-          fill="url(#petalInner)"
-          transform="rotate(14, 50, 50)"
-        />
-        
-        {/* Center petal - front */}
-        <ellipse
-          cx="50"
-          cy="47"
-          rx="9"
-          ry="33"
-          fill="url(#petalCenter)"
-        />
-        
-        {/* Highlight on center petal */}
-        <ellipse
-          cx="50"
-          cy="38"
-          rx="4"
-          ry="12"
-          fill="url(#petalHighlight)"
+        <path
+          d="M75 65 Q70 35, 50 20 Q55 45, 65 65 Z"
+          fill="#6B7280"
           opacity="0.6"
         />
         
-        {/* Base glow */}
-        <ellipse 
-          cx="50" 
-          cy="75" 
-          rx="18" 
-          ry="8" 
-          fill="url(#baseGlow)" 
-          opacity="0.5" 
+        {/* Second layer petals */}
+        <path
+          d="M30 68 Q38 38, 50 18 Q46 48, 38 68 Z"
+          fill="#9CA3AF"
+          opacity="0.75"
+        />
+        <path
+          d="M70 68 Q62 38, 50 18 Q54 48, 62 68 Z"
+          fill="#9CA3AF"
+          opacity="0.75"
         />
         
-        {/* Definitions */}
+        {/* Third layer petals */}
+        <path
+          d="M35 70 Q42 38, 50 15 Q48 48, 42 70 Z"
+          fill="#D1D5DB"
+          opacity="0.85"
+        />
+        <path
+          d="M65 70 Q58 38, 50 15 Q52 48, 58 70 Z"
+          fill="#D1D5DB"
+          opacity="0.85"
+        />
+        
+        {/* Inner petals */}
+        <path
+          d="M40 72 Q46 40, 50 12 Q50 50, 46 72 Z"
+          fill="#E5E7EB"
+          opacity="0.9"
+        />
+        <path
+          d="M60 72 Q54 40, 50 12 Q50 50, 54 72 Z"
+          fill="#E5E7EB"
+          opacity="0.9"
+        />
+        
+        {/* Center petal - front and brightest */}
+        <path
+          d="M44 73 Q48 38, 50 10 Q52 38, 56 73 Z"
+          fill="#F9FAFB"
+        />
+        
+        {/* Highlight on center petal */}
+        <path
+          d="M48 50 Q49 30, 50 18 Q51 30, 52 50 Z"
+          fill="white"
+          opacity="0.8"
+        />
+        
+        {/* Base/stem area */}
+        <ellipse
+          cx="50"
+          cy="75"
+          rx="15"
+          ry="5"
+          fill="url(#baseGradient)"
+          opacity="0.7"
+        />
+        
         <defs>
-          {/* Back petals - darker/more transparent */}
-          <linearGradient id="petalBack" x1="0%" y1="0%" x2="0%" y2="100%">
-            <stop offset="0%" stopColor="#9CA3AF" stopOpacity="0.7" />
-            <stop offset="50%" stopColor="#6B7280" stopOpacity="0.6" />
-            <stop offset="100%" stopColor="#4B5563" stopOpacity="0.5" />
+          <linearGradient id="baseGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" stopColor="#4B5563" stopOpacity="0" />
+            <stop offset="50%" stopColor="#6B7280" />
+            <stop offset="100%" stopColor="#4B5563" stopOpacity="0" />
           </linearGradient>
-          
-          {/* Mid outer petals */}
-          <linearGradient id="petalMidOuter" x1="0%" y1="0%" x2="0%" y2="100%">
-            <stop offset="0%" stopColor="#D1D5DB" stopOpacity="0.85" />
-            <stop offset="50%" stopColor="#9CA3AF" stopOpacity="0.75" />
-            <stop offset="100%" stopColor="#6B7280" stopOpacity="0.6" />
-          </linearGradient>
-          
-          {/* Mid petals */}
-          <linearGradient id="petalMid" x1="0%" y1="0%" x2="0%" y2="100%">
-            <stop offset="0%" stopColor="#E5E7EB" stopOpacity="0.95" />
-            <stop offset="40%" stopColor="#D1D5DB" stopOpacity="0.85" />
-            <stop offset="100%" stopColor="#9CA3AF" stopOpacity="0.7" />
-          </linearGradient>
-          
-          {/* Inner petals */}
-          <linearGradient id="petalInner" x1="0%" y1="0%" x2="0%" y2="100%">
-            <stop offset="0%" stopColor="#F3F4F6" />
-            <stop offset="30%" stopColor="#E5E7EB" />
-            <stop offset="70%" stopColor="#D1D5DB" />
-            <stop offset="100%" stopColor="#9CA3AF" stopOpacity="0.8" />
-          </linearGradient>
-          
-          {/* Center petal - brightest */}
-          <linearGradient id="petalCenter" x1="0%" y1="0%" x2="0%" y2="100%">
-            <stop offset="0%" stopColor="#FFFFFF" />
-            <stop offset="20%" stopColor="#F9FAFB" />
-            <stop offset="50%" stopColor="#F3F4F6" />
-            <stop offset="80%" stopColor="#E5E7EB" />
-            <stop offset="100%" stopColor="#D1D5DB" stopOpacity="0.9" />
-          </linearGradient>
-          
-          {/* Highlight */}
-          <linearGradient id="petalHighlight" x1="0%" y1="0%" x2="0%" y2="100%">
-            <stop offset="0%" stopColor="#FFFFFF" stopOpacity="0.9" />
-            <stop offset="100%" stopColor="#FFFFFF" stopOpacity="0" />
-          </linearGradient>
-          
-          {/* Base glow */}
-          <radialGradient id="baseGlow" cx="50%" cy="50%" r="50%">
-            <stop offset="0%" stopColor="#60A5FA" stopOpacity="0.6" />
-            <stop offset="60%" stopColor="#3B82F6" stopOpacity="0.3" />
-            <stop offset="100%" stopColor="#1D4ED8" stopOpacity="0" />
-          </radialGradient>
         </defs>
       </svg>
       {showText && (
