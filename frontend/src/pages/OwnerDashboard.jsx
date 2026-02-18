@@ -87,6 +87,7 @@ const OwnerDashboard = () => {
       setStats(data);
     } catch (err) {
       setError(err.message);
+      throw err; // Re-throw to propagate error to caller
     }
   }, [fetchWithAuth]);
 
