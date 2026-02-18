@@ -799,8 +799,18 @@ class TestAuthenticationFlow(TestSetup):
     
     def test_login_returns_token(self, api_client):
         """Test POST /api/auth/login returns token."""
+        # First create a user to login with
+        unique_email = f"test_login_{uuid.uuid4().hex[:8]}@example.com"
+        signup_response = api_client.post(f"{BASE_URL}/api/auth/signup", json={
+            "email": unique_email,
+            "password": TEST_PASSWORD,
+            "name": TEST_NAME
+        })
+        assert signup_response.status_code == 200, "Signup should succeed"
+        
+        # Now login with the same credentials
         response = api_client.post(f"{BASE_URL}/api/auth/login", json={
-            "email": TEST_EMAIL,
+            "email": unique_email,
             "password": TEST_PASSWORD
         })
         
