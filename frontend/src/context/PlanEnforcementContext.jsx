@@ -81,6 +81,16 @@ const UPGRADE_MESSAGES = {
     description: 'Team collaboration is only available on the Elite plan. Upgrade to add team members.',
     requiredPlan: 'elite',
   },
+  projectLimit: {
+    title: 'Project Limit Reached',
+    description: 'You\'ve reached the maximum number of projects for your plan. Upgrade to create more projects.',
+    requiredPlan: 'creator',
+  },
+  publishLimit: {
+    title: 'Publishing Limit Reached',
+    description: 'You\'ve reached the maximum number of published projects for your plan. Upgrade to publish more.',
+    requiredPlan: 'pro',
+  },
 };
 
 const PlanEnforcementContext = createContext(null);
@@ -92,6 +102,8 @@ export const PlanEnforcementProvider = ({ children }) => {
     bonus: { remaining: 8, total: 10 },
     purchased: 250,
   });
+  const [projectCount, setProjectCount] = useState(3); // Mock: current project count
+  const [publishedCount, setPublishedCount] = useState(1); // Mock: current published count
   const [upgradeModal, setUpgradeModal] = useState({
     isOpen: false,
     type: null,
