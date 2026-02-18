@@ -113,6 +113,12 @@ async def health_check():
             "blueprint_generation_engine": "operational",
             "system_diagnostics_engine": "operational",
             "platform_settings_engine": "operational",
+            "voice_input_engine": "operational",
+            "speech_to_intent_engine": "operational",
+            "voice_orchestration_engine": "operational",
+            "voice_feedback_engine": "operational (OpenAI TTS)",
+            "voice_safety_layer": "operational",
+            "voice_settings_engine": "operational",
             "generation_engine": "operational (mocked)",
             "publishing_engine": "operational (mocked)",
             "export_engine": "operational (mocked)"
