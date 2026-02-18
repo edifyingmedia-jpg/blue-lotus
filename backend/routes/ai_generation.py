@@ -68,12 +68,20 @@ def create_ai_generation_routes(db):
             GenerationMode(request.mode)
         )
         
-        # Check credit balance
-        has_credits = await CreditEngine.has_sufficient_credits(db, user.id, estimated_credits)
-        if not has_credits:
+        # Get user's credits from database
+        user_doc = await db.users.find_one({"id": user.id}, {"_id": 0})
+        if not user_doc or not user_doc.get("credits"):
+            raise HTTPException(status_code=402, detail="No credit information found")
+        
+        from models.schemas import Credits
+        user_credits = Credits(**user_doc["credits"])
+        
+        # Check if user can afford
+        if not CreditEngine.can_afford(user_credits, estimated_credits):
+            total_credits = CreditEngine.get_total_credits(user_credits)
             raise HTTPException(
                 status_code=402,
-                detail=f"Insufficient credits. Need {estimated_credits} credits for this generation."
+                detail=f"Insufficient credits. Need {estimated_credits} credits but have {total_credits}."
             )
         
         # Create generation request
@@ -87,8 +95,8 @@ def create_ai_generation_routes(db):
         # Generate
         result = await AIProjectGenerationEngine.generate(gen_request, use_llm=request.use_llm)
         
-        # If successful, validate with safety layer
-        if result.blueprint:
+        # If successful, validate with safety layer and deduct credits
+        if result.blueprint and result.status.value == "complete":
             safety_result = await ProjectGenerationSafetyLayer.validate_generation(
                 result.blueprint.model_dump()
             )
@@ -103,6 +111,15 @@ def create_ai_generation_routes(db):
                         "message": safety_result.confirmation_message,
                         "voice_message": safety_result.voice_message
                     }
+                }
+            
+            # Deduct credits on success
+            updated_credits, success = CreditEngine.deduct_credits(user_credits, result.credits_used)
+            if success:
+                await db.users.update_one(
+                    {"id": user.id},
+                    {"$set": {"credits": updated_credits.model_dump()}}
+                )
                 }
             
             # Deduct credits on success
