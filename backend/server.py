@@ -171,6 +171,7 @@ async def startup_db_client():
         print("🔧 Build Engines: Project, Data Model, Navigation, AI Instruction")
         print("🔧 Advanced Engines: Orchestration, Runtime Intelligence, Canvas, Component Library")
         print("🔧 Control Engines: AI Orchestration, Blueprint Generation, System Diagnostics, Platform Settings")
+        print("🎤 Voice Engines: Voice Input, Speech-to-Intent, Voice Orchestration, Voice Feedback (TTS), Voice Safety, Voice Settings")
     except Exception as e:
         print(f"⚠️ Startup warning: {e}")
 
