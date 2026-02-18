@@ -442,7 +442,7 @@ const Dashboard = () => {
         </div>
 
         {/* Your Projects */}
-        <div className="bg-gray-900/50 border border-gray-800 rounded-2xl p-6" data-testid="projects-section">
+        <div className="bg-gray-900/50 border border-gray-800 rounded-2xl p-6 transition-all hover:border-gray-700" data-testid="projects-section">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
             <div>
               <h2 className="text-lg font-semibold text-white">Your Projects</h2>
