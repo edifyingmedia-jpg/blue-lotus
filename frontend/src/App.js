@@ -39,6 +39,7 @@ function App() {
               <Route path="/compliance" element={<ComplianceCenter />} />
               <Route path="/checkout" element={<Checkout />} />
               <Route path="/credits" element={<CreditRules />} />
+            <Route path="/plan-demo" element={<PlanDemo />} />
               
               {/* Protected Routes */}
               <Route
