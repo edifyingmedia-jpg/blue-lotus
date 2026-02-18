@@ -623,31 +623,33 @@ class TestVoiceTranscribe(TestVoiceSetup):
     
     def test_transcribe_rejects_small_audio(self, authenticated_client):
         """Test transcribe rejects audio that's too small."""
-        # Create a very small fake audio file
-        small_audio = b"x" * 100  # Less than 1KB
+        # Create a very small fake audio file (less than 1KB)
+        small_audio = b"x" * 100
         
-        response = authenticated_client.post(
+        # Need to use requests directly with files parameter
+        response = requests.post(
             f"{BASE_URL}/api/voice/transcribe",
-            files={"audio": ("test.webm", small_audio, "audio/webm")},
-            data={}
+            headers={"Authorization": authenticated_client.headers.get("Authorization")},
+            files={"audio": ("test.webm", small_audio, "audio/webm")}
         )
         
-        # Should reject as too small
+        # Should reject as too small (400)
         assert response.status_code == 400
+        assert "too small" in response.json().get("detail", "").lower()
         print(f"✅ Transcribe rejects audio that's too small")
     
     def test_transcribe_validates_audio_format(self, authenticated_client):
         """Test transcribe validates audio format."""
-        # Create a fake audio file with valid size
-        fake_audio = b"x" * 2000  # 2KB - above minimum
+        # Create a fake audio file with valid size (above 1KB minimum)
+        fake_audio = b"x" * 2000
         
-        response = authenticated_client.post(
+        response = requests.post(
             f"{BASE_URL}/api/voice/transcribe",
-            files={"audio": ("test.webm", fake_audio, "audio/webm")},
-            data={}
+            headers={"Authorization": authenticated_client.headers.get("Authorization")},
+            files={"audio": ("test.webm", fake_audio, "audio/webm")}
         )
         
-        # Will fail at STT level but should pass validation
+        # Will fail at STT level but should pass size validation
         # Status could be 200 with error in response, or 500 if STT fails
         assert response.status_code in [200, 500]
         print(f"✅ Transcribe endpoint accepts valid audio format (status: {response.status_code})")
