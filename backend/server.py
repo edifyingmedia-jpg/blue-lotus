@@ -57,6 +57,7 @@ from routes.diagnostics import create_diagnostics_routes
 from routes.settings import create_settings_routes
 from routes.voice import create_voice_routes
 from routes.ai_generation import create_ai_generation_routes
+from routes.backend_integration import create_backend_integration_routes
 
 # Create API router with /api prefix
 api_router = APIRouter(prefix="/api")
@@ -77,6 +78,7 @@ api_router.include_router(create_diagnostics_routes(db))
 api_router.include_router(create_settings_routes(db))
 api_router.include_router(create_voice_routes(db))
 api_router.include_router(create_ai_generation_routes(db))
+api_router.include_router(create_backend_integration_routes(db))
 
 # Include the API router
 app.include_router(api_router)
