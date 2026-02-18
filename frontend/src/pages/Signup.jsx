@@ -231,6 +231,13 @@ const Signup = () => {
           </p>
         </div>
       </div>
+
+      {/* User Agreement Modal */}
+      <UserAgreementModal
+        isOpen={showAgreementModal}
+        onAccept={handleAgreementAccept}
+        onCancel={handleAgreementCancel}
+      />
     </div>
   );
 };
