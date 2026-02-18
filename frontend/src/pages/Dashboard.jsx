@@ -275,6 +275,8 @@ const Dashboard = () => {
               </Button>
             )}
           </div>
+        )}
+        </div>
 
           {/* Right Column - Credit Usage Tracker */}
           <div className="hidden lg:block">
