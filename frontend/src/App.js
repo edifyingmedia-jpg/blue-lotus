@@ -3,6 +3,7 @@ import "./App.css";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "./context/AuthContext";
 import { PlanEnforcementProvider } from "./context/PlanEnforcementContext";
+import { RolesProvider } from "./context/RolesContext";
 import UpgradePaywall from "./components/UpgradePaywall";
 
 // Pages
