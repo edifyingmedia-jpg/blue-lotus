@@ -34,6 +34,7 @@ function App() {
             <Route path="/legal/:docId" element={<Legal />} />
             <Route path="/compliance" element={<ComplianceCenter />} />
             <Route path="/checkout" element={<Checkout />} />
+            <Route path="/credits" element={<CreditRules />} />
             
             {/* Protected Routes */}
             <Route
