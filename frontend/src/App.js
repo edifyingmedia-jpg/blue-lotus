@@ -12,6 +12,7 @@ import NewProject from "./pages/NewProject";
 import Builder from "./pages/Builder";
 import Settings from "./pages/Settings";
 import Pricing from "./pages/Pricing";
+import Legal from "./pages/Legal";
 import ProtectedRoute from "./components/ProtectedRoute";
 
 function App() {
@@ -25,6 +26,8 @@ function App() {
             <Route path="/login" element={<Login />} />
             <Route path="/signup" element={<Signup />} />
             <Route path="/pricing" element={<Pricing />} />
+            <Route path="/legal" element={<Legal />} />
+            <Route path="/legal/:docId" element={<Legal />} />
             
             {/* Protected Routes */}
             <Route
