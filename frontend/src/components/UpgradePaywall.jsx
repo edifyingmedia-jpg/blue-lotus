@@ -19,7 +19,9 @@ import {
   Download,
   Upload,
   Rocket,
-  AlertTriangle
+  AlertTriangle,
+  FolderPlus,
+  Globe
 } from 'lucide-react';
 
 // Paywall messages for different blocked actions
@@ -30,6 +32,15 @@ const PAYWALL_MESSAGES = {
     bgColor: 'bg-blue-600/20',
     title: 'Export Blocked',
     message: 'Exporting projects is available on paid plans.',
+    showUpgrade: true,
+    showCredits: false,
+  },
+  download: {
+    icon: Download,
+    iconColor: 'text-blue-400',
+    bgColor: 'bg-blue-600/20',
+    title: 'Download Blocked',
+    message: 'Downloading project code is available on paid plans.',
     showUpgrade: true,
     showCredits: false,
   },
@@ -48,6 +59,24 @@ const PAYWALL_MESSAGES = {
     bgColor: 'bg-orange-600/20',
     title: 'Production Access Required',
     message: 'Production publishing requires a Pro or Elite plan.',
+    showUpgrade: true,
+    showCredits: false,
+  },
+  projectLimit: {
+    icon: FolderPlus,
+    iconColor: 'text-red-400',
+    bgColor: 'bg-red-600/20',
+    title: 'Project Limit Reached',
+    message: 'You\'ve reached the maximum number of projects for your plan.',
+    showUpgrade: true,
+    showCredits: false,
+  },
+  publishLimit: {
+    icon: Globe,
+    iconColor: 'text-orange-400',
+    bgColor: 'bg-orange-600/20',
+    title: 'Publishing Limit Reached',
+    message: 'You\'ve reached the maximum number of published projects for your plan.',
     showUpgrade: true,
     showCredits: false,
   },
