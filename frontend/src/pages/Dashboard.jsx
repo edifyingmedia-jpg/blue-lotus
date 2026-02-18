@@ -198,7 +198,15 @@ const Dashboard = () => {
     return <Smartphone className="w-4 h-4 text-green-400" />;
   };
 
-  const totalCredits = creditData.monthly.remaining + creditData.bonus.remaining + creditData.purchased;
+  const totalCredits = creditData.monthly.remaining + creditData.bonus.remaining + creditData.purchased + creditData.starter;
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gray-950 flex items-center justify-center">
+        <Loader2 className="w-8 h-8 text-blue-500 animate-spin" />
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gray-950">
