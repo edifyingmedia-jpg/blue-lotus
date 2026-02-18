@@ -1,89 +1,145 @@
+"""
+Blue Lotus Backend Server
+========================
+Core engines: Authentication, Credits, Generation, Publishing, Export
+"""
+
 from fastapi import FastAPI, APIRouter
+from fastapi.middleware.cors import CORSMiddleware
 from dotenv import load_dotenv
-from starlette.middleware.cors import CORSMiddleware
-from motor.motor_asyncio import AsyncIOMotorClient
 import os
-import logging
+import sys
 from pathlib import Path
-from pydantic import BaseModel, Field, ConfigDict
-from typing import List
-import uuid
-from datetime import datetime, timezone
+from motor.motor_asyncio import AsyncIOMotorClient
 
+# Add backend to path for imports
+sys.path.insert(0, str(Path(__file__).parent))
 
-ROOT_DIR = Path(__file__).parent
-load_dotenv(ROOT_DIR / '.env')
+load_dotenv()
 
 # MongoDB connection
-mongo_url = os.environ['MONGO_URL']
-client = AsyncIOMotorClient(mongo_url)
-db = client[os.environ['DB_NAME']]
+MONGO_URL = os.environ.get("MONGO_URL", "mongodb://localhost:27017")
+DB_NAME = os.environ.get("DB_NAME", "bluelotus")
 
-# Create the main app without a prefix
-app = FastAPI()
+# Create FastAPI app
+app = FastAPI(
+    title="Blue Lotus API",
+    description="No-code AI app builder backend",
+    version="1.0.0"
+)
 
-# Create a router with the /api prefix
-api_router = APIRouter(prefix="/api")
-
-
-# Define Models
-class StatusCheck(BaseModel):
-    model_config = ConfigDict(extra="ignore")  # Ignore MongoDB's _id field
-    
-    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
-    client_name: str
-    timestamp: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
-
-class StatusCheckCreate(BaseModel):
-    client_name: str
-
-# Add your routes to the router instead of directly to app
-@api_router.get("/")
-async def root():
-    return {"message": "Hello World"}
-
-@api_router.post("/status", response_model=StatusCheck)
-async def create_status_check(input: StatusCheckCreate):
-    status_dict = input.model_dump()
-    status_obj = StatusCheck(**status_dict)
-    
-    # Convert to dict and serialize datetime to ISO string for MongoDB
-    doc = status_obj.model_dump()
-    doc['timestamp'] = doc['timestamp'].isoformat()
-    
-    _ = await db.status_checks.insert_one(doc)
-    return status_obj
-
-@api_router.get("/status", response_model=List[StatusCheck])
-async def get_status_checks():
-    # Exclude MongoDB's _id field from the query results
-    status_checks = await db.status_checks.find({}, {"_id": 0}).to_list(1000)
-    
-    # Convert ISO string timestamps back to datetime objects
-    for check in status_checks:
-        if isinstance(check['timestamp'], str):
-            check['timestamp'] = datetime.fromisoformat(check['timestamp'])
-    
-    return status_checks
-
-# Include the router in the main app
-app.include_router(api_router)
-
+# CORS configuration
 app.add_middleware(
     CORSMiddleware,
+    allow_origins=["*"],
     allow_credentials=True,
-    allow_origins=os.environ.get('CORS_ORIGINS', '*').split(','),
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
-# Configure logging
-logging.basicConfig(
-    level=logging.INFO,
-    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
-)
-logger = logging.getLogger(__name__)
+# MongoDB client
+client = AsyncIOMotorClient(MONGO_URL)
+db = client[DB_NAME]
+
+# Import route creators
+from routes.auth import create_auth_routes
+from routes.projects import create_project_routes
+from routes.generation import create_generation_routes
+from routes.publishing import create_publishing_routes
+from routes.export import create_export_routes
+from routes.credits import create_credits_routes
+
+# Create API router with /api prefix
+api_router = APIRouter(prefix="/api")
+
+# Register routes
+api_router.include_router(create_auth_routes(db))
+api_router.include_router(create_project_routes(db))
+api_router.include_router(create_generation_routes(db))
+api_router.include_router(create_publishing_routes(db))
+api_router.include_router(create_export_routes(db))
+api_router.include_router(create_credits_routes(db))
+
+# Include the API router
+app.include_router(api_router)
+
+
+@app.get("/")
+async def root():
+    return {"message": "Blue Lotus API", "version": "1.0.0"}
+
+
+@app.get("/api/health")
+async def health_check():
+    """Health check endpoint."""
+    try:
+        # Test MongoDB connection
+        await client.admin.command('ping')
+        db_status = "connected"
+    except Exception as e:
+        db_status = f"error: {str(e)}"
+    
+    return {
+        "status": "healthy",
+        "database": db_status,
+        "engines": {
+            "credit_engine": "operational",
+            "generation_engine": "operational (mocked)",
+            "publishing_engine": "operational (mocked)",
+            "export_engine": "operational (mocked)",
+            "plan_enforcement": "operational"
+        }
+    }
+
+
+@app.get("/api/plans")
+async def get_plans():
+    """Get available plans and their features."""
+    from models.schemas import PLAN_CONFIG, PlanType
+    
+    plans = []
+    for plan_type in PlanType:
+        config = PLAN_CONFIG[plan_type]
+        plans.append({
+            "id": plan_type.value,
+            "name": config["name"],
+            "price": config["price"],
+            "monthly_credits": config["monthly_credits"],
+            "daily_bonus": config["daily_bonus"],
+            "features": {
+                "export": config["export_allowed"],
+                "staging": config["publish_staging"],
+                "production": config["publish_production"],
+                "max_projects": config["max_projects"],
+                "max_published": config["max_published"] if config["max_published"] != -1 else "Unlimited",
+                "team_seats": config["team_seats"]
+            }
+        })
+    
+    return {"plans": plans}
+
+
+@app.on_event("startup")
+async def startup_db_client():
+    """Create indexes on startup."""
+    try:
+        # User indexes
+        await db.users.create_index("email", unique=True)
+        await db.users.create_index("id", unique=True)
+        
+        # Project indexes
+        await db.projects.create_index("id", unique=True)
+        await db.projects.create_index("user_id")
+        
+        print("✅ Blue Lotus Backend Started")
+        print(f"📦 Database: {DB_NAME}")
+        print("🔧 Engines: Credit, Generation, Publishing, Export, Plan Enforcement")
+    except Exception as e:
+        print(f"⚠️ Startup warning: {e}")
+
 
 @app.on_event("shutdown")
 async def shutdown_db_client():
+    """Close database connection on shutdown."""
     client.close()
+    print("🛑 Blue Lotus Backend Stopped")
