@@ -177,29 +177,27 @@ export const stats = [
 
 export const footerLinks = {
   product: [
-    { label: 'Features', href: '/#features' },
+    { label: 'Home', href: '/' },
+    { label: 'Builder', href: '/dashboard' },
     { label: 'Pricing', href: '/pricing' },
-    { label: 'Templates', href: '#' },
-    { label: 'Changelog', href: '#' },
-  ],
-  company: [
-    { label: 'About', href: '#' },
-    { label: 'Blog', href: '#' },
-    { label: 'Careers', href: '#' },
-    { label: 'Press', href: '#' },
-  ],
-  resources: [
-    { label: 'Documentation', href: '#' },
-    { label: 'Tutorials', href: '#' },
-    { label: 'Examples', href: '#' },
-    { label: 'Community', href: '#' },
   ],
   legal: [
     { label: 'Terms of Service', href: '/legal/terms' },
     { label: 'Privacy Policy', href: '/legal/privacy' },
     { label: 'Cookie Policy', href: '/legal/cookies' },
     { label: 'Acceptable Use', href: '/legal/acceptableUse' },
+    { label: 'Refund Policy', href: '/legal/refund' },
+  ],
+  compliance: [
+    { label: 'DPA', href: '/legal/dpa' },
+    { label: 'GDPR', href: '/legal/gdpr' },
+    { label: 'CCPA', href: '/legal/ccpa' },
     { label: 'Security', href: '/legal/security' },
+    { label: 'SLA', href: '/legal/sla' },
+  ],
+  company: [
+    { label: 'Accessibility', href: '/legal/accessibility' },
+    { label: 'Contact', href: '/legal/compliance' },
   ],
 };
 
