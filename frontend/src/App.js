@@ -24,6 +24,7 @@ import ComplianceCenter from "./pages/ComplianceCenter";
 import Checkout from "./pages/Checkout";
 import CreditRules from "./pages/CreditRules";
 import PlanDemo from "./pages/PlanDemo";
+import OwnerDashboard from "./pages/OwnerDashboard";
 import ProtectedRoute from "./components/ProtectedRoute";
 
 function App() {
