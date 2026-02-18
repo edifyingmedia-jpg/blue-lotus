@@ -14,6 +14,12 @@ class PlanType(str, Enum):
     ELITE = "elite"
 
 
+class UserRole(str, Enum):
+    USER = "user"
+    ADMIN = "admin"
+    OWNER = "owner"
+
+
 class ProjectType(str, Enum):
     APP = "app"
     WEBSITE = "website"
