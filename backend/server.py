@@ -229,7 +229,7 @@ async def startup_db_client():
         print("🎙️ Voice Control (4): Publishing, Data Modeling, Navigation, Project Review")
         print("🤖 AI Generation (7): Project Gen (GPT-5.2), Intent, Blueprint, Refine, Features, Evolution, Multi-Project")
         print("🔌 Backend Integration (5): Integration, API Connector, Routing, Data Sync, Security")
-        print("📊 Total Engines: 48")
+        print("📊 Total Engines: 49")
     except Exception as e:
         print(f"⚠️ Startup warning: {e}")
 
