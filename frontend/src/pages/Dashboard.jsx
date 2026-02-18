@@ -281,7 +281,7 @@ const Dashboard = () => {
         {/* Top Row - Credit Overview & Plan Status */}
         <div className="grid lg:grid-cols-2 gap-6 mb-8">
           {/* Credit Overview */}
-          <div className="bg-gray-900/50 border border-gray-800 rounded-2xl p-6" data-testid="credit-overview-section">
+          <div className="bg-gray-900/50 border border-gray-800 rounded-2xl p-6 transition-all hover:border-gray-700" data-testid="credit-overview-section">
             <div className="flex items-center justify-between mb-4">
               <h2 className="text-lg font-semibold text-white flex items-center gap-2">
                 <Zap className="w-5 h-5 text-yellow-500" />
