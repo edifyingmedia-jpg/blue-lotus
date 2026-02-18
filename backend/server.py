@@ -74,6 +74,7 @@ api_router.include_router(components_router)
 api_router.include_router(create_blueprint_routes(db))
 api_router.include_router(create_diagnostics_routes(db))
 api_router.include_router(create_settings_routes(db))
+api_router.include_router(create_voice_routes(db))
 
 # Include the API router
 app.include_router(api_router)
