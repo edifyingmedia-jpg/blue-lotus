@@ -472,10 +472,11 @@ const Dashboard = () => {
           {/* Projects Grid */}
           {filteredProjects.length > 0 ? (
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {filteredProjects.map((project) => (
+              {filteredProjects.map((project, index) => (
                 <div
                   key={project.id}
-                  className="group bg-gray-800/30 border border-gray-700 hover:border-blue-500/30 rounded-xl overflow-hidden transition-all"
+                  className="group bg-gray-800/30 border border-gray-700 hover:border-blue-500/30 rounded-xl overflow-hidden transition-all card-hover stagger-item"
+                  style={{ animationDelay: `${index * 0.05}s` }}
                 >
                   {/* Preview */}
                   <div className="relative h-40 bg-gray-800 overflow-hidden">
