@@ -100,7 +100,7 @@ async def health_check():
     return {
         "status": "healthy",
         "database": db_status,
-        "total_engines": 35,
+        "total_engines": 41,
         "engines": {
             # Core Engines (5)
             "credit_engine": "operational",
@@ -144,7 +144,16 @@ async def health_check():
             "voice_driven_publishing_engine": "operational",
             "voice_driven_data_modeling_engine": "operational",
             "voice_driven_navigation_engine": "operational",
-            "voice_driven_project_review_engine": "operational"
+            "voice_driven_project_review_engine": "operational",
+            # AI Generation Engines (6) - NEW
+            "ai_project_generation_engine": "operational (GPT-5.2)",
+            "intent_interpretation_engine": "operational (GPT-5.2)",
+            "project_blueprint_compiler": "operational",
+            "ai_project_refinement_engine": "operational",
+            "ai_feature_expansion_engine": "operational",
+            "ai_app_evolution_engine": "operational",
+            "ai_multi_project_generator_engine": "operational",
+            "project_generation_safety_layer": "operational"
         }
     }
 
