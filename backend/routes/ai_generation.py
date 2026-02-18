@@ -120,10 +120,6 @@ def create_ai_generation_routes(db):
                     {"id": user.id},
                     {"$set": {"credits": updated_credits.model_dump()}}
                 )
-                }
-            
-            # Deduct credits on success
-            await CreditEngine.deduct_credits(db, user.id, result.credits_used, "ai_generation")
         
         return {
             "status": result.status.value,
