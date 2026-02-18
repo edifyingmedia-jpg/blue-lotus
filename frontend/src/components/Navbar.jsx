@@ -1,12 +1,16 @@
 import React, { useState, useEffect } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import { navLinks } from '../data/mock';
 import Logo from './Logo';
 import { Button } from './ui/button';
 import { Menu, X } from 'lucide-react';
+import { useAuth } from '../context/AuthContext';
 
 const Navbar = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const { isAuthenticated } = useAuth();
+  const navigate = useNavigate();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -26,7 +30,9 @@ const Navbar = () => {
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16 md:h-20">
-          <Logo />
+          <Link to="/">
+            <Logo />
+          </Link>
           
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center gap-8">
@@ -42,15 +48,30 @@ const Navbar = () => {
           </div>
 
           <div className="hidden md:flex items-center gap-4">
-            <Button
-              variant="ghost"
-              className="text-gray-300 hover:text-white hover:bg-white/10"
-            >
-              Sign In
-            </Button>
-            <Button className="bg-blue-600 hover:bg-blue-700 text-white">
-              Get Started
-            </Button>
+            {isAuthenticated ? (
+              <Button
+                onClick={() => navigate('/dashboard')}
+                className="bg-blue-600 hover:bg-blue-700 text-white"
+              >
+                Dashboard
+              </Button>
+            ) : (
+              <>
+                <Button
+                  variant="ghost"
+                  onClick={() => navigate('/login')}
+                  className="text-gray-300 hover:text-white hover:bg-white/10"
+                >
+                  Sign In
+                </Button>
+                <Button
+                  onClick={() => navigate('/signup')}
+                  className="bg-blue-600 hover:bg-blue-700 text-white"
+                >
+                  Get Started
+                </Button>
+              </>
+            )}
           </div>
 
           {/* Mobile Menu Button */}
@@ -77,15 +98,39 @@ const Navbar = () => {
                 </a>
               ))}
               <div className="pt-4 space-y-3 border-t border-gray-800">
-                <Button
-                  variant="ghost"
-                  className="w-full text-gray-300 hover:text-white hover:bg-white/10"
-                >
-                  Sign In
-                </Button>
-                <Button className="w-full bg-blue-600 hover:bg-blue-700 text-white">
-                  Get Started
-                </Button>
+                {isAuthenticated ? (
+                  <Button
+                    onClick={() => {
+                      navigate('/dashboard');
+                      setMobileMenuOpen(false);
+                    }}
+                    className="w-full bg-blue-600 hover:bg-blue-700 text-white"
+                  >
+                    Dashboard
+                  </Button>
+                ) : (
+                  <>
+                    <Button
+                      variant="ghost"
+                      onClick={() => {
+                        navigate('/login');
+                        setMobileMenuOpen(false);
+                      }}
+                      className="w-full text-gray-300 hover:text-white hover:bg-white/10"
+                    >
+                      Sign In
+                    </Button>
+                    <Button
+                      onClick={() => {
+                        navigate('/signup');
+                        setMobileMenuOpen(false);
+                      }}
+                      className="w-full bg-blue-600 hover:bg-blue-700 text-white"
+                    >
+                      Get Started
+                    </Button>
+                  </>
+                )}
               </div>
             </div>
           </div>
