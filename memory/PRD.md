@@ -295,7 +295,7 @@ Build a clone of the Emergent website rebranded as "Blue Lotus" - an AI-powered 
     ├── server.py (main FastAPI app)
     ├── models/
     │   └── schemas.py (Pydantic models)
-    ├── engines/ (17 total)
+    ├── engines/ (23 total)
     │   ├── credit_engine.py
     │   ├── plan_enforcement.py
     │   ├── project_engine.py
@@ -312,8 +312,14 @@ Build a clone of the Emergent website rebranded as "Blue Lotus" - an AI-powered 
     │   ├── component_library_engine.py
     │   ├── blueprint_generation_engine.py
     │   ├── system_diagnostics_engine.py
-    │   └── platform_settings_engine.py
-    ├── routes/ (13 total)
+    │   ├── platform_settings_engine.py
+    │   ├── voice_input_engine.py
+    │   ├── speech_to_intent_engine.py
+    │   ├── voice_orchestration_engine.py
+    │   ├── voice_feedback_engine.py (OpenAI TTS)
+    │   ├── voice_safety_layer.py
+    │   └── voice_settings_engine.py
+    ├── routes/ (14 total)
     │   ├── auth.py
     │   ├── projects.py
     │   ├── generation.py
@@ -326,7 +332,8 @@ Build a clone of the Emergent website rebranded as "Blue Lotus" - an AI-powered 
     │   ├── components.py
     │   ├── blueprints.py
     │   ├── diagnostics.py
-    │   └── settings.py
+    │   ├── settings.py
+    │   └── voice.py
     ├── tests/
     │   └── test_new_engines.py
     └── utils/
