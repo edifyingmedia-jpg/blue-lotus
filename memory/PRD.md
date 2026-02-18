@@ -257,6 +257,7 @@ Build a clone of the Emergent website rebranded as "Blue Lotus" - an AI-powered 
 - **Publishing Engine**: Returns mock URLs (needs deployment infrastructure)
 - **Export Engine**: Returns mock download URLs (needs file packaging)
 - **Billing**: Credit purchase works but Stripe not integrated
+- **All 17 engines contain mocked business logic** - scaffolded and ready for real implementation
 
 ---
 
@@ -264,13 +265,14 @@ Build a clone of the Emergent website rebranded as "Blue Lotus" - an AI-powered 
 
 ### P0 - Critical
 - [ ] Connect frontend to real backend APIs (replace mocked AuthContext)
+- [ ] Implement real backend logic in all 17 engines (replace mocked data with MongoDB operations)
 - [ ] Integrate Stripe for billing
 
 ### P1 - Important
-- [ ] LLM integration for Generation Engine
+- [ ] LLM integration for Generation Engine (use Emergent LLM Key)
 - [ ] Real deployment infrastructure for Publishing Engine
 - [ ] File packaging for Export Engine
-- [ ] Account Settings UI implementation
+- [ ] Account Settings UI implementation (connect to /api/settings)
 
 ### P2 - Nice to Have
 - [ ] Team management UI
