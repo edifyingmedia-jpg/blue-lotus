@@ -118,6 +118,10 @@ Build a clone of the Emergent website rebranded as "Blue Lotus" - an AI-powered 
 - `POST /api/credits/purchase` - Buy credit packs
 - `GET /api/plans` - Available plans
 - `GET /api/health` - System health check
+- `POST /api/builder/interpret` - Parse natural language prompt
+- `POST /api/builder/execute` - Execute build instruction
+- `GET /api/builder/suggestions/{id}` - AI suggestions
+- `POST /api/builder/duplicate/{id}` - Duplicate project
 
 ---
 
