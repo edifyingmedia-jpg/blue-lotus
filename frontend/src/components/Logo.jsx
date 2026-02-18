@@ -1,40 +1,36 @@
 import React from 'react';
 
-const Logo = ({ className = '', size = 44, showText = true }) => {
+const Logo = ({ className = '', size = 44, showText = true, animate = true }) => {
+  // Ensure minimum size of 24px as per brand guidelines
+  const logoSize = Math.max(size, 24);
+  
   return (
     <div className={`flex items-center gap-3 ${className}`}>
       <div 
         className="relative"
         style={{ 
-          width: size, 
-          height: size,
-          background: 'transparent'
+          width: logoSize, 
+          height: logoSize,
+          background: 'transparent',
+          padding: '2px' // Minimum clear space
         }}
       >
-        {/* Glow effect behind logo */}
-        <div 
-          className="absolute inset-0 rounded-full opacity-40 blur-md"
-          style={{
-            background: 'radial-gradient(circle, rgba(59,130,246,0.5) 0%, transparent 70%)',
-          }}
-        />
-        {/* Logo image with enforced transparency */}
+        {/* Logo image with brand animation */}
         <img 
           src="/blue-lotus.png" 
           alt="Blue Lotus" 
-          className="relative z-10 object-contain"
+          className={`relative z-10 object-contain ${animate ? 'lotus-logo lotus-float' : ''}`}
           style={{ 
-            width: size, 
-            height: size,
+            width: logoSize, 
+            height: logoSize,
             background: 'transparent',
-            mixBlendMode: 'normal'
           }}
         />
       </div>
       {showText && (
-        <span className="text-xl font-bold">
+        <span className="text-xl font-semibold tracking-tight">
           <span className="text-white">Blue</span>{' '}
-          <span className="text-blue-400">Lotus</span>
+          <span style={{ color: '#4CC3FF' }}>Lotus</span>
         </span>
       )}
     </div>
