@@ -83,7 +83,7 @@ function App() {
                 }
               />
             </Routes>
-            <UpgradePromptModal />
+            <UpgradePaywall />
           </BrowserRouter>
         </div>
       </PlanEnforcementProvider>
