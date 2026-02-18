@@ -136,6 +136,7 @@ Build a clone of the Emergent website rebranded as "Blue Lotus" - an AI-powered 
 │       │   ├── Dashboard.jsx
 │       │   ├── Landing.jsx
 │       │   ├── Legal.jsx
+│       │   ├── Onboarding.jsx  # New onboarding flow
 │       │   └── ...
 │       └── context/       # React context (AuthContext)
 └── backend/               # (Planned - Not implemented)
