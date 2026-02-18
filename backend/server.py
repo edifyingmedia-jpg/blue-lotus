@@ -195,7 +195,8 @@ async def startup_db_client():
         print("🎤 Voice Core (6): Voice Input, STT→Intent, Voice Orchestration, TTS Feedback, Safety, Settings")
         print("🎤 Voice Experience (3): Error Handling, Accessibility, Onboarding")
         print("🧠 Voice Intelligence (5): Help & Guidance, Multi-Step Workflow, Component Placement, Debugging, Extended Intelligence")
-        print("📊 Total Engines: 31")
+        print("🎙️ Voice Control (4): Publishing, Data Modeling, Navigation, Project Review")
+        print("📊 Total Engines: 35")
     except Exception as e:
         print(f"⚠️ Startup warning: {e}")
 
