@@ -161,7 +161,7 @@ export const testimonials = [
     name: 'Sarah Chen',
     role: 'Founder, TechStart',
     avatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&h=100&fit=crop',
-    content: 'Emergent helped us launch our MVP in 2 days instead of 2 months. The AI understands exactly what we need.',
+    content: 'Blue Lotus helped us launch our MVP in 2 days instead of 2 months. The AI understands exactly what we need.',
   },
   {
     id: 2,
