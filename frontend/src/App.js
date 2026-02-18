@@ -15,6 +15,7 @@ import Pricing from "./pages/Pricing";
 import Legal from "./pages/Legal";
 import LegalNav from "./pages/LegalNav";
 import ComplianceCenter from "./pages/ComplianceCenter";
+import Checkout from "./pages/Checkout";
 import ProtectedRoute from "./components/ProtectedRoute";
 
 function App() {
