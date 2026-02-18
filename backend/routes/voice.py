@@ -17,6 +17,10 @@ from engines.voice_feedback_engine import VoiceFeedbackEngine, TTSVoice, TTSMode
 from engines.voice_safety_layer import VoiceSafetyLayer
 from engines.voice_settings_engine import VoiceSettingsEngine
 from engines.credit_engine import CreditEngine
+from engines.voice_driven_publishing_engine import VoiceDrivenPublishingEngine
+from engines.voice_driven_data_modeling_engine import VoiceDrivenDataModelingEngine
+from engines.voice_driven_navigation_engine import VoiceDrivenNavigationEditingEngine
+from engines.voice_driven_project_review_engine import VoiceDrivenProjectReviewEngine
 
 router = APIRouter(prefix="/voice", tags=["Voice"])
 
