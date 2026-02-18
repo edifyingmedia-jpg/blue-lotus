@@ -205,18 +205,25 @@ async def startup_db_client():
         await db.projects.create_index("id", unique=True)
         await db.projects.create_index("user_id")
         
+        # Backend integration indexes
+        await db.backend_connections.create_index("connection_id", unique=True)
+        await db.backend_connections.create_index("project_id")
+        await db.api_routes.create_index("route_id", unique=True)
+        await db.api_routes.create_index("project_id")
+        
         print("✅ Blue Lotus Backend Started")
         print(f"📦 Database: {DB_NAME}")
         print("🔧 Core Engines (5): Credit, Generation, Publishing, Export, Plan Enforcement")
         print("🔧 Build Engines (4): Project, Data Model, Navigation, AI Instruction")
         print("🔧 Advanced Engines (4): Orchestration, Runtime Intelligence, Canvas, Component Library")
         print("🔧 Control Engines (4): AI Orchestration, Blueprint Generation, System Diagnostics, Platform Settings")
-        print("🎤 Voice Core (6): Voice Input, STT→Intent, Voice Orchestration, TTS Feedback, Safety, Settings")
+        print("🎤 Voice Core (6): Voice Input (Whisper), STT→Intent, Orchestration, TTS (OpenAI), Safety, Settings")
         print("🎤 Voice Experience (3): Error Handling, Accessibility, Onboarding")
-        print("🧠 Voice Intelligence (5): Help & Guidance, Multi-Step Workflow, Component Placement, Debugging, Extended Intelligence")
+        print("🧠 Voice Intelligence (5): Help, Multi-Step Workflow, Component Placement, Debugging, Extended")
         print("🎙️ Voice Control (4): Publishing, Data Modeling, Navigation, Project Review")
-        print("🤖 AI Generation (8): Project Generation, Intent Interpretation, Blueprint Compiler, Refinement, Feature Expansion, Evolution, Multi-Project, Safety Layer")
-        print("📊 Total Engines: 43")
+        print("🤖 AI Generation (7): Project Gen (GPT-5.2), Intent, Blueprint, Refine, Features, Evolution, Multi-Project")
+        print("🔌 Backend Integration (5): Integration, API Connector, Routing, Data Sync, Security")
+        print("📊 Total Engines: 48")
     except Exception as e:
         print(f"⚠️ Startup warning: {e}")
 
