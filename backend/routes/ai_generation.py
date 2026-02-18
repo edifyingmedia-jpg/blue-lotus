@@ -5,6 +5,7 @@ from pydantic import BaseModel
 from datetime import datetime, timezone
 import uuid
 
+from routes.auth import get_current_user
 from engines.ai_project_generation_engine import (
     AIProjectGenerationEngine, GenerationRequest, GenerationMode, GenerationResult
 )
