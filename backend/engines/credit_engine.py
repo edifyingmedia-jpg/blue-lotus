@@ -30,7 +30,12 @@ class CreditEngine:
             return credits
         
         now = datetime.now(timezone.utc)
-        hours_since_refresh = (now - credits.last_bonus_refresh).total_seconds() / 3600
+        # Ensure last_bonus_refresh is timezone-aware
+        last_refresh = credits.last_bonus_refresh
+        if last_refresh.tzinfo is None:
+            last_refresh = last_refresh.replace(tzinfo=timezone.utc)
+        
+        hours_since_refresh = (now - last_refresh).total_seconds() / 3600
         
         if hours_since_refresh >= CreditEngine.BONUS_REFRESH_HOURS:
             # Reset bonus credits (no rollover - unused bonus is lost)
