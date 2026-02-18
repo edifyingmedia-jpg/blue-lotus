@@ -38,6 +38,19 @@ Build a clone of the Emergent website rebranded as "Blue Lotus" - an AI-powered 
 - Chat-based command interface
 - Project structure visualization
 
+### ✅ Phase 7: Onboarding Flow (Completed - December 2025)
+- Created `/app/frontend/src/pages/Onboarding.jsx` - 6-step onboarding wizard
+- Step 1: Welcome - Introduction to Blue Lotus with key benefits
+- Step 2: Account Setup - Name, Email, Password form with validation
+- Step 3: Starter Credits - Shows 20 free credits introduction
+- Step 4: Project Type - Select App/Website/Both with visual cards
+- Step 5: Project Brief - Describe project with quick suggestion buttons
+- Step 6: Review Structure - Shows generated screens, data models, flows
+- Progress bar with step count and percentage
+- Back/Continue navigation buttons
+- Updated Hero, CTA, and Navbar "Get Started" buttons to use /onboarding route
+- MOCKED: Account creation and project structure generation
+
 ### ✅ Phase 6: Checkout & Payment Flow (Completed - December 2025)
 - Created `/app/frontend/src/pages/Checkout.jsx` - multi-step checkout flow
 - 4-step wizard: Plan Selection → Order Summary → Payment → Confirmation
