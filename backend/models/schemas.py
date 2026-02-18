@@ -156,6 +156,7 @@ class UserResponse(BaseModel):
     email: str
     name: str
     avatar: Optional[str] = None
+    role: UserRole = UserRole.USER
     plan: PlanType
     credits: Credits
     created_at: datetime
