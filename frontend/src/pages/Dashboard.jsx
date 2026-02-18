@@ -263,7 +263,7 @@ const Dashboard = () => {
             </p>
             {!searchQuery && (
               <Button
-                onClick={() => setShowNewProjectDialog(true)}
+                onClick={() => navigate('/new-project')}
                 className="bg-blue-600 hover:bg-blue-700 text-white"
               >
                 <Plus className="w-5 h-5 mr-2" />
@@ -273,74 +273,6 @@ const Dashboard = () => {
           </div>
         )}
       </main>
-
-      {/* New Project Dialog */}
-      <Dialog open={showNewProjectDialog} onOpenChange={setShowNewProjectDialog}>
-        <DialogContent className="bg-gray-900 border-gray-800 max-w-2xl">
-          <DialogHeader>
-            <DialogTitle className="text-white text-xl">Create New Project</DialogTitle>
-            <DialogDescription className="text-gray-400">
-              Choose a template or start from scratch
-            </DialogDescription>
-          </DialogHeader>
-
-          <div className="space-y-6 mt-4">
-            {/* Project Name */}
-            <div>
-              <label className="text-gray-300 text-sm font-medium">Project Name</label>
-              <Input
-                value={newProjectName}
-                onChange={(e) => setNewProjectName(e.target.value)}
-                placeholder="My Awesome App"
-                className="mt-2 h-11 bg-gray-800 border-gray-700 text-white placeholder:text-gray-500 focus:border-blue-500"
-              />
-            </div>
-
-            {/* Templates */}
-            <div>
-              <label className="text-gray-300 text-sm font-medium">Choose a Template</label>
-              <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 mt-2">
-                {projectTemplates.map((template) => {
-                  const Icon = iconMap[template.icon];
-                  return (
-                    <button
-                      key={template.id}
-                      onClick={() => setSelectedTemplate(template)}
-                      className={`p-4 rounded-lg border text-left transition-all ${
-                        selectedTemplate?.id === template.id
-                          ? 'bg-blue-600/20 border-blue-500 ring-1 ring-blue-500'
-                          : 'bg-gray-800/50 border-gray-700 hover:border-gray-600'
-                      }`}
-                    >
-                      {Icon && <Icon className={`w-6 h-6 mb-2 ${selectedTemplate?.id === template.id ? 'text-blue-400' : 'text-gray-400'}`} />}
-                      <h4 className="text-white text-sm font-medium">{template.name}</h4>
-                      <p className="text-gray-500 text-xs mt-1 line-clamp-2">{template.description}</p>
-                    </button>
-                  );
-                })}
-              </div>
-            </div>
-
-            {/* Actions */}
-            <div className="flex justify-end gap-3 pt-4 border-t border-gray-800">
-              <Button
-                variant="ghost"
-                onClick={() => setShowNewProjectDialog(false)}
-                className="text-gray-400 hover:text-white hover:bg-gray-800"
-              >
-                Cancel
-              </Button>
-              <Button
-                onClick={handleCreateProject}
-                disabled={!newProjectName.trim()}
-                className="bg-blue-600 hover:bg-blue-700 text-white"
-              >
-                Create Project
-              </Button>
-            </div>
-          </div>
-        </DialogContent>
-      </Dialog>
     </div>
   );
 };
