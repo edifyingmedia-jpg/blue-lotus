@@ -98,6 +98,23 @@ const creditRules = [
   'Free users cannot export or download projects.',
 ];
 
+const comparisonTable = {
+  columns: ['Feature', 'Free', 'Creator', 'Pro', 'Elite'],
+  rows: [
+    { feature: 'Monthly Price', values: ['$0', '$9.99', '$19.99', '$29.99'] },
+    { feature: 'Starter Credits', values: ['20 (one-time)', '—', '—', '—'] },
+    { feature: 'Monthly Credits', values: ['0', '150', '400', '800'] },
+    { feature: 'Daily Bonus Credits', values: ['0', '10', '10', '10'] },
+    { feature: 'Bonus Rollovers', values: ['No', 'No', 'No', 'No'] },
+    { feature: 'Export / Download', values: ['No', 'Yes', 'Yes', 'Yes'] },
+    { feature: 'Publish to Staging', values: ['No', 'Yes', 'Yes', 'Yes'] },
+    { feature: 'Publish to Production', values: ['No', 'No', 'Yes', 'Yes'] },
+    { feature: 'Templates', values: ['Basic', 'Basic', 'Advanced', 'Premium'] },
+    { feature: 'Support Level', values: ['Community', 'Basic', 'Priority', 'Priority+'] },
+    { feature: 'Team Access', values: ['No', 'No', 'No', '1–3 seats'] },
+  ],
+};
+
 const faqItems = [
   {
     question: 'Do credits roll over?',
