@@ -521,7 +521,7 @@ const Dashboard = () => {
                     <div className="flex items-center justify-between">
                       <span className="text-gray-500 text-xs flex items-center gap-1">
                         <Clock className="w-3 h-3" />
-                        {project.lastModified}
+                        {project.updated_at ? new Date(project.updated_at).toLocaleDateString() : 'Just created'}
                       </span>
                       <Link to={`/builder/${project.id}`}>
                         <Button size="sm" className="bg-blue-600/20 hover:bg-blue-600/30 text-blue-400 border border-blue-500/30 h-8">
