@@ -131,8 +131,44 @@ const Dashboard = () => {
       project.description.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
-  const handleDeleteProject = (projectId) => {
-    setProjects(projects.filter((p) => p.id !== projectId));
+  const handleDeleteProject = async (projectId) => {
+    try {
+      const token = getAuthToken();
+      const response = await fetch(`${API_URL}/api/projects/${projectId}`, {
+        method: 'DELETE',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+        },
+      });
+      
+      if (response.ok) {
+        setProjects(projects.filter((p) => p.id !== projectId));
+      } else {
+        console.error('Failed to delete project');
+      }
+    } catch (err) {
+      console.error('Failed to delete project:', err);
+    }
+  };
+
+  const handleDuplicateProject = async (projectId) => {
+    try {
+      const token = getAuthToken();
+      const response = await fetch(`${API_URL}/api/builder/duplicate/${projectId}`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+        },
+      });
+      
+      if (response.ok) {
+        fetchProjects(); // Refresh project list
+      } else {
+        console.error('Failed to duplicate project');
+      }
+    } catch (err) {
+      console.error('Failed to duplicate project:', err);
+    }
   };
 
   const handleLogout = () => {
