@@ -102,13 +102,13 @@ async def health_check():
     return {
         "status": "healthy",
         "database": db_status,
-        "total_engines": 41,
+        "total_engines": 48,
         "engines": {
             # Core Engines (5)
             "credit_engine": "operational",
             "plan_enforcement": "operational",
-            "generation_engine": "operational (mocked)",
-            "publishing_engine": "operational (mocked)",
+            "generation_engine": "operational (templates)",
+            "publishing_engine": "operational (real deployment flow)",
             "export_engine": "operational (mocked)",
             # Build Engines (4)
             "project_engine": "operational",
@@ -126,7 +126,7 @@ async def health_check():
             "system_diagnostics_engine": "operational",
             "platform_settings_engine": "operational",
             # Voice Core Engines (6)
-            "voice_input_engine": "operational",
+            "voice_input_engine": "operational (OpenAI Whisper)",
             "speech_to_intent_engine": "operational",
             "voice_orchestration_engine": "operational",
             "voice_feedback_engine": "operational (OpenAI TTS)",
@@ -147,7 +147,7 @@ async def health_check():
             "voice_driven_data_modeling_engine": "operational",
             "voice_driven_navigation_engine": "operational",
             "voice_driven_project_review_engine": "operational",
-            # AI Generation Engines (6) - NEW
+            # AI Generation Engines (7)
             "ai_project_generation_engine": "operational (GPT-5.2)",
             "intent_interpretation_engine": "operational (GPT-5.2)",
             "project_blueprint_compiler": "operational",
@@ -155,7 +155,13 @@ async def health_check():
             "ai_feature_expansion_engine": "operational",
             "ai_app_evolution_engine": "operational",
             "ai_multi_project_generator_engine": "operational",
-            "project_generation_safety_layer": "operational"
+            "project_generation_safety_layer": "operational",
+            # Backend Integration Engines (5) - NEW
+            "backend_integration_engine": "operational",
+            "api_connector_engine": "operational",
+            "backend_routing_engine": "operational",
+            "data_sync_engine": "operational",
+            "backend_security_engine": "operational"
         }
     }
 
