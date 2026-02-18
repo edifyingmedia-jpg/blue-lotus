@@ -5,6 +5,7 @@ import { AuthProvider } from "./context/AuthContext";
 import { PlanEnforcementProvider } from "./context/PlanEnforcementContext";
 import { RolesProvider } from "./context/RolesContext";
 import UpgradePaywall from "./components/UpgradePaywall";
+import MadeWithBlueLotus from "./components/MadeWithBlueLotus";
 
 // Pages
 import LandingPage from "./pages/LandingPage";
