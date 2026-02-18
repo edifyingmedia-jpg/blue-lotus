@@ -187,7 +187,10 @@ const Dashboard = () => {
                 {/* Content */}
                 <div className="p-4">
                   <div className="flex items-start justify-between gap-2 mb-2">
-                    <h3 className="text-white font-semibold truncate">{project.name}</h3>
+                    <div className="flex items-center gap-2">
+                      {getProjectTypeIcon(project)}
+                      <h3 className="text-white font-semibold truncate">{project.name}</h3>
+                    </div>
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>
                         <button className="p-1 text-gray-400 hover:text-white rounded hover:bg-gray-800">
@@ -196,7 +199,7 @@ const Dashboard = () => {
                       </DropdownMenuTrigger>
                       <DropdownMenuContent align="end" className="bg-gray-900 border-gray-800">
                         <DropdownMenuItem
-                          onClick={() => navigate(`/project/${project.id}`)}
+                          onClick={() => navigate(`/builder/${project.id}`)}
                           className="text-gray-300 focus:text-white focus:bg-gray-800"
                         >
                           <Settings className="w-4 h-4 mr-2" />
@@ -239,7 +242,7 @@ const Dashboard = () => {
                     <Button
                       size="sm"
                       variant="ghost"
-                      onClick={() => navigate(`/project/${project.id}`)}
+                      onClick={() => navigate(`/builder/${project.id}`)}
                       className="text-blue-400 hover:text-blue-300 hover:bg-blue-500/10 h-8 px-3"
                     >
                       Open
