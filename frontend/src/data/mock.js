@@ -106,7 +106,7 @@ export const pricingPlans = [
     name: 'Starter',
     price: '$0',
     period: '/month',
-    description: 'Perfect for trying out Emergent',
+    description: 'Perfect for trying out Blue Lotus',
     features: [
       '100 credits/month',
       '1 active project',
