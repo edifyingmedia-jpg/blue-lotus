@@ -231,6 +231,78 @@ const PlanDemo = () => {
             </div>
           </div>
 
+          {/* Project Limits Section */}
+          <div className="grid lg:grid-cols-2 gap-6 mb-8">
+            {/* Project Limits Card */}
+            <ProjectLimitsCard />
+
+            {/* Adjust Project Count */}
+            <div className="bg-gray-900/50 border border-gray-800 rounded-2xl p-6">
+              <h2 className="text-lg font-semibold text-white mb-4">Simulate Project Count</h2>
+              <p className="text-gray-400 text-sm mb-4">
+                Adjust the project count to test limit enforcement.
+              </p>
+              
+              <div className="space-y-4">
+                <div>
+                  <label className="text-gray-400 text-sm block mb-2">Active Projects</label>
+                  <div className="flex items-center gap-3">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => setProjectCount(Math.max(0, projectCount - 1))}
+                      className="border-gray-700 h-10 w-10 p-0"
+                    >
+                      <Minus className="w-4 h-4" />
+                    </Button>
+                    <span className="text-white font-bold text-xl w-16 text-center">{projectCount}</span>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => setProjectCount(projectCount + 1)}
+                      className="border-gray-700 h-10 w-10 p-0"
+                    >
+                      <Plus className="w-4 h-4" />
+                    </Button>
+                    <span className="text-gray-400 text-sm">/ {restrictions.maxProjects} max</span>
+                  </div>
+                </div>
+
+                <div>
+                  <label className="text-gray-400 text-sm block mb-2">Published Projects</label>
+                  <div className="flex items-center gap-3">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => setPublishedCount(Math.max(0, publishedCount - 1))}
+                      className="border-gray-700 h-10 w-10 p-0"
+                    >
+                      <Minus className="w-4 h-4" />
+                    </Button>
+                    <span className="text-white font-bold text-xl w-16 text-center">{publishedCount}</span>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => setPublishedCount(publishedCount + 1)}
+                      className="border-gray-700 h-10 w-10 p-0"
+                    >
+                      <Plus className="w-4 h-4" />
+                    </Button>
+                    <span className="text-gray-400 text-sm">
+                      / {restrictions.maxPublishedProjects === Infinity ? '∞' : restrictions.maxPublishedProjects} max
+                    </span>
+                  </div>
+                </div>
+
+                <div className="pt-4 border-t border-gray-800">
+                  <p className="text-gray-500 text-xs">
+                    Try setting project count to the max limit, then click "Create Project" in Test Actions above.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+
           {/* Test Credit Deduction */}
           <div className="bg-gray-900/50 border border-gray-800 rounded-2xl p-6 mb-8">
             <h2 className="text-lg font-semibold text-white mb-4">Test Credit Usage</h2>
