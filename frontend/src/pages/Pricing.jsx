@@ -356,6 +356,10 @@ const Pricing = () => {
                 </li>
               ))}
             </ul>
+            <Link to="/credits" className="mt-6 inline-flex items-center gap-2 text-blue-400 hover:text-blue-300 transition-colors">
+              View full credit rules and consumption details
+              <ChevronRight className="w-4 h-4" />
+            </Link>
           </div>
         </div>
       </section>
