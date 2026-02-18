@@ -94,17 +94,64 @@ Build a clone of the Emergent website rebranded as "Blue Lotus" - an AI-powered 
    - Orphan screen detection, depth validation
    - Tab bar and drawer management
 
-#### AI Engines (1):
+#### AI Engines (2):
 6. **AI Instruction Engine** (`/app/backend/engines/ai_instruction_engine.py`)
    - Natural language parsing into structured tasks
    - 10 instruction types: create_screen, create_page, generate_flow, etc.
    - Confidence scoring, validation, suggestions
    - Never delete without confirmation
 
+7. **AI Orchestration Engine** (`/app/backend/engines/ai_orchestration_engine.py`)
+   - Full AI coordination across all builder contexts
+   - Intent analysis and routing
+   - Confirmation for destructive operations
+   - Multi-step conversation context
+
 #### Output Engines (3 - Mocked):
-7. **Generation Engine** - Mock structures (ready for LLM)
-8. **Publishing Engine** - Mock URLs (ready for deployment infra)
-9. **Export Engine** - Mock downloads (ready for file packaging)
+8. **Generation Engine** - Mock structures (ready for LLM)
+9. **Publishing Engine** - Mock URLs (ready for deployment infra)
+10. **Export Engine** - Mock downloads (ready for file packaging)
+
+### ✅ Phase 10: Advanced Backend Engines (Completed - December 2025)
+
+#### Build Engines (4):
+11. **Orchestration Engine** (`/app/backend/engines/orchestration_engine.py`)
+    - System event coordination
+    - Event handlers with priority
+    - Action routing and logging
+
+12. **Runtime Intelligence Engine** (`/app/backend/engines/runtime_intelligence_engine.py`)
+    - User behavior analysis
+    - Intent prediction and suggestions
+    - Stalled workflow detection
+    - Prompt optimization
+
+13. **Canvas Engine** (`/app/backend/engines/canvas_engine.py`)
+    - Builder preview rendering
+    - Component placement and layout
+
+14. **Component Library Engine** (`/app/backend/engines/component_library_engine.py`)
+    - Component registry and discovery
+    - Category management
+
+#### Control Engines (3):
+15. **Blueprint Generation Engine** (`/app/backend/engines/blueprint_generation_engine.py`)
+    - Screen/Page/Flow blueprint generation from natural language
+    - 7 blueprint types: screen, page, flow, data_model, navigation, full_app, component
+    - Template-based generation with validation
+    - Blueprint versioning and history
+
+16. **System Diagnostics Engine** (`/app/backend/engines/system_diagnostics_engine.py`)
+    - Comprehensive health monitoring for all 17 engines
+    - Data integrity checks
+    - Performance metrics tracking
+    - Diagnostic logging with severity levels
+
+17. **Platform Settings Engine** (`/app/backend/engines/platform_settings_engine.py`)
+    - 24+ user settings across 7 categories
+    - Global, User, Project, Team scopes
+    - Settings validation, import/export
+    - UI config generation for settings pages
 
 #### API Endpoints
 - `POST /api/auth/signup` - User registration with 20 starter credits
