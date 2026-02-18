@@ -110,7 +110,7 @@ const Footer = () => {
         {/* Bottom bar */}
         <div className="mt-12 pt-8 border-t border-gray-800 flex flex-col md:flex-row justify-between items-center gap-4">
           <p className="text-gray-500 text-sm">
-            © {new Date().getFullYear()} Emergent. All rights reserved.
+            © {new Date().getFullYear()} Blue Lotus. All rights reserved.
           </p>
           <div className="flex items-center gap-2">
             <span className="text-gray-500 text-sm">Backed by</span>
