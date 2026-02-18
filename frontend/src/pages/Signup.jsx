@@ -15,6 +15,8 @@ const Signup = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [showAgreementModal, setShowAgreementModal] = useState(false);
+  const [pendingAction, setPendingAction] = useState(null);
   const { signup, loginWithGoogle } = useAuth();
   const navigate = useNavigate();
 
@@ -27,27 +29,39 @@ const Signup = () => {
       return;
     }
     
-    setLoading(true);
-    try {
-      await signup(name, email, password);
-      navigate('/dashboard');
-    } catch (err) {
-      setError(err.message);
-    } finally {
-      setLoading(false);
-    }
+    // Show agreement modal before proceeding
+    setPendingAction('email');
+    setShowAgreementModal(true);
   };
 
   const handleGoogleSignup = async () => {
+    // Show agreement modal before proceeding
+    setPendingAction('google');
+    setShowAgreementModal(true);
+  };
+
+  const handleAgreementAccept = async () => {
+    setShowAgreementModal(false);
     setLoading(true);
+    
     try {
-      await loginWithGoogle();
+      if (pendingAction === 'email') {
+        await signup(name, email, password);
+      } else if (pendingAction === 'google') {
+        await loginWithGoogle();
+      }
       navigate('/dashboard');
     } catch (err) {
       setError(err.message);
     } finally {
       setLoading(false);
+      setPendingAction(null);
     }
+  };
+
+  const handleAgreementCancel = () => {
+    setShowAgreementModal(false);
+    setPendingAction(null);
   };
 
   return (
