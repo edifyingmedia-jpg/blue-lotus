@@ -348,25 +348,18 @@ const ProjectBuilder = () => {
           </div>
 
           {/* Content */}
-          <div className="flex-1 overflow-hidden">
+          <div className="flex-1 overflow-hidden relative">
             {activeTab === 'preview' ? (
-              <div className="h-full bg-white">
-                <iframe
-                  src="about:blank"
-                  className="w-full h-full border-0"
-                  title="Preview"
-                />
+              <div className="h-full bg-gray-100 flex items-center justify-center">
                 {/* Placeholder content */}
-                <div className="absolute inset-0 flex items-center justify-center bg-gray-100">
-                  <div className="text-center">
-                    <div className="w-16 h-16 bg-blue-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
-                      <Eye className="w-8 h-8 text-blue-600" />
-                    </div>
-                    <h3 className="text-gray-900 font-semibold mb-2">Live Preview</h3>
-                    <p className="text-gray-500 text-sm max-w-xs">
-                      Start describing your app in the chat to see the live preview here
-                    </p>
+                <div className="text-center">
+                  <div className="w-16 h-16 bg-blue-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                    <Eye className="w-8 h-8 text-blue-600" />
                   </div>
+                  <h3 className="text-gray-900 font-semibold mb-2">Live Preview</h3>
+                  <p className="text-gray-500 text-sm max-w-xs">
+                    Start describing your app in the chat to see the live preview here
+                  </p>
                 </div>
               </div>
             ) : (
