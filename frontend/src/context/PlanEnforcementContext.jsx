@@ -217,16 +217,32 @@ export const PlanEnforcementProvider = ({ children }) => {
           return { allowed: false, reason: 'export' };
         }
         break;
+      case 'download':
+        if (!canDownload()) {
+          showUpgradeModal('download');
+          return { allowed: false, reason: 'download' };
+        }
+        break;
       case 'publish':
         if (!canPublish()) {
           showUpgradeModal('publish');
           return { allowed: false, reason: 'publish' };
+        }
+        if (!canPublishMore()) {
+          showUpgradeModal('publishLimit');
+          return { allowed: false, reason: 'publishLimit' };
         }
         break;
       case 'publishProduction':
         if (!canPublishProduction()) {
           showUpgradeModal('publishProduction');
           return { allowed: false, reason: 'publishProduction' };
+        }
+        break;
+      case 'createProject':
+        if (!canCreateProject()) {
+          showUpgradeModal('projectLimit');
+          return { allowed: false, reason: 'projectLimit' };
         }
         break;
       case 'teamAccess':
