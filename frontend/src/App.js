@@ -89,6 +89,14 @@ function App() {
                     </ProtectedRoute>
                   }
                 />
+                <Route
+                  path="/owner"
+                  element={
+                    <ProtectedRoute>
+                      <OwnerDashboard />
+                    </ProtectedRoute>
+                  }
+                />
               </Routes>
               <UpgradePaywall />
               {/* Made with Blue Lotus Badge */}
