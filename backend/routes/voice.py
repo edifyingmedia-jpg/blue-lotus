@@ -449,4 +449,181 @@ def create_voice_routes(db: AsyncIOMotorDatabase):
             "voices": VoiceFeedbackEngine.get_available_voices()
         }
     
+    # ============ Voice-Driven Publishing Routes ============
+    
+    @router.post("/publish")
+    async def voice_publish(
+        command: str,
+        project_id: str,
+        authorization: Optional[str] = Header(None)
+    ):
+        """Publish project using voice command."""
+        user = await get_current_user(authorization, db)
+        if not user:
+            raise HTTPException(status_code=401, detail="Not authenticated")
+        
+        # Get project data for diagnostics
+        project = await db.projects.find_one({"id": project_id, "user_id": user.id}, {"_id": 0})
+        
+        result = await VoiceDrivenPublishingEngine.initiate_publish(
+            project_id=project_id,
+            user_id=user.id,
+            command=command,
+            user_plan=user.plan if hasattr(user, 'plan') else "free",
+            project_data=project or {}
+        )
+        
+        return result.model_dump()
+    
+    @router.post("/publish/confirm")
+    async def confirm_voice_publish(
+        request_id: str,
+        confirmed: bool,
+        authorization: Optional[str] = Header(None)
+    ):
+        """Confirm or cancel a pending publish."""
+        user = await get_current_user(authorization, db)
+        if not user:
+            raise HTTPException(status_code=401, detail="Not authenticated")
+        
+        result = await VoiceDrivenPublishingEngine.confirm_publish(request_id, confirmed)
+        return result.model_dump()
+    
+    @router.get("/publish/commands")
+    async def get_publish_commands(
+        authorization: Optional[str] = Header(None)
+    ):
+        """Get supported publishing voice commands."""
+        user = await get_current_user(authorization, db)
+        if not user:
+            raise HTTPException(status_code=401, detail="Not authenticated")
+        
+        return {"commands": VoiceDrivenPublishingEngine.get_supported_commands()}
+    
+    # ============ Voice-Driven Data Modeling Routes ============
+    
+    @router.post("/data-model")
+    async def voice_data_model(
+        command: str,
+        project_id: Optional[str] = None,
+        authorization: Optional[str] = Header(None)
+    ):
+        """Create or modify data models using voice."""
+        user = await get_current_user(authorization, db)
+        if not user:
+            raise HTTPException(status_code=401, detail="Not authenticated")
+        
+        # Get existing models if project specified
+        existing_models = []
+        if project_id:
+            project = await db.projects.find_one({"id": project_id, "user_id": user.id}, {"_id": 0})
+            if project:
+                existing_models = project.get("data_models", [])
+        
+        result = await VoiceDrivenDataModelingEngine.execute_command(
+            command=command,
+            project_id=project_id,
+            existing_models=existing_models
+        )
+        
+        return result.model_dump()
+    
+    @router.get("/data-model/commands")
+    async def get_data_model_commands(
+        authorization: Optional[str] = Header(None)
+    ):
+        """Get supported data modeling voice commands."""
+        user = await get_current_user(authorization, db)
+        if not user:
+            raise HTTPException(status_code=401, detail="Not authenticated")
+        
+        return {"commands": VoiceDrivenDataModelingEngine.get_supported_commands()}
+    
+    # ============ Voice-Driven Navigation Routes ============
+    
+    @router.post("/navigation")
+    async def voice_navigation(
+        command: str,
+        project_id: str,
+        current_screen: Optional[str] = None,
+        authorization: Optional[str] = Header(None)
+    ):
+        """Modify navigation using voice commands."""
+        user = await get_current_user(authorization, db)
+        if not user:
+            raise HTTPException(status_code=401, detail="Not authenticated")
+        
+        # Get existing screens
+        project = await db.projects.find_one({"id": project_id, "user_id": user.id}, {"_id": 0})
+        existing_screens = project.get("screens", []) if project else []
+        
+        result = await VoiceDrivenNavigationEditingEngine.execute_command(
+            command=command,
+            project_id=project_id,
+            current_screen=current_screen,
+            existing_screens=existing_screens
+        )
+        
+        return result.model_dump()
+    
+    @router.get("/navigation/integrity/{project_id}")
+    async def check_navigation_integrity(
+        project_id: str,
+        authorization: Optional[str] = Header(None)
+    ):
+        """Check navigation integrity for a project."""
+        user = await get_current_user(authorization, db)
+        if not user:
+            raise HTTPException(status_code=401, detail="Not authenticated")
+        
+        project = await db.projects.find_one({"id": project_id, "user_id": user.id}, {"_id": 0})
+        screens = [s.get("name", "") for s in project.get("screens", [])] if project else []
+        
+        return VoiceDrivenNavigationEditingEngine.check_navigation_integrity(project_id, screens)
+    
+    @router.get("/navigation/commands")
+    async def get_navigation_commands(
+        authorization: Optional[str] = Header(None)
+    ):
+        """Get supported navigation voice commands."""
+        user = await get_current_user(authorization, db)
+        if not user:
+            raise HTTPException(status_code=401, detail="Not authenticated")
+        
+        return {"commands": VoiceDrivenNavigationEditingEngine.get_supported_commands()}
+    
+    # ============ Voice-Driven Project Review Routes ============
+    
+    @router.post("/review")
+    async def voice_project_review(
+        project_id: str,
+        command: Optional[str] = None,
+        authorization: Optional[str] = Header(None)
+    ):
+        """Get a voice-driven project review."""
+        user = await get_current_user(authorization, db)
+        if not user:
+            raise HTTPException(status_code=401, detail="Not authenticated")
+        
+        project = await db.projects.find_one({"id": project_id, "user_id": user.id}, {"_id": 0})
+        if not project:
+            raise HTTPException(status_code=404, detail="Project not found")
+        
+        # Parse command to get review mode
+        mode = VoiceDrivenProjectReviewEngine.parse_review_command(command or "summarize")
+        
+        review = await VoiceDrivenProjectReviewEngine.generate_review(project, mode)
+        return review.model_dump()
+    
+    @router.get("/review/commands")
+    async def get_review_commands(
+        authorization: Optional[str] = Header(None)
+    ):
+        """Get supported project review voice commands."""
+        user = await get_current_user(authorization, db)
+        if not user:
+            raise HTTPException(status_code=401, detail="Not authenticated")
+        
+        return {"commands": VoiceDrivenProjectReviewEngine.get_supported_commands()}
+    
     return router
