@@ -230,8 +230,9 @@ class TestBlueprintGeneration(TestSetup):
         print(f"✅ Invalid blueprint type correctly rejected with 400")
     
     def test_list_blueprints(self, authenticated_client):
-        """Test GET /api/blueprints."""
-        response = authenticated_client.get(f"{BASE_URL}/api/blueprints")
+        """Test GET /api/blueprints/."""
+        # Note: FastAPI requires trailing slash for this route
+        response = authenticated_client.get(f"{BASE_URL}/api/blueprints/")
         
         assert response.status_code == 200, f"Expected 200, got {response.status_code}: {response.text}"
         
@@ -243,10 +244,11 @@ class TestBlueprintGeneration(TestSetup):
         print(f"✅ Listed {data['count']} blueprints")
     
     def test_list_blueprints_with_filter(self, authenticated_client):
-        """Test GET /api/blueprints with type filter."""
-        response = authenticated_client.get(f"{BASE_URL}/api/blueprints?blueprint_type=screen")
+        """Test GET /api/blueprints/ with type filter."""
+        # Note: FastAPI requires trailing slash for this route
+        response = authenticated_client.get(f"{BASE_URL}/api/blueprints/?blueprint_type=screen")
         
-        assert response.status_code == 200
+        assert response.status_code == 200, f"Expected 200, got {response.status_code}: {response.text}"
         
         data = response.json()
         for bp in data["blueprints"]:
