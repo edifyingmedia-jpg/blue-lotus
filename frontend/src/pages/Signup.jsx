@@ -205,18 +205,12 @@ const Signup = () => {
             </div>
 
             <div className="flex items-start gap-2">
-              <input 
-                type="checkbox" 
-                id="terms"
-                className="w-4 h-4 mt-0.5 rounded border-gray-700 bg-gray-900 text-blue-600 focus:ring-blue-500" 
-                required
-              />
-              <label htmlFor="terms" className="text-gray-400 text-sm">
-                I agree to the{' '}
-                <Link to="/terms" className="text-blue-400 hover:underline">Terms of Service</Link>
+              <p className="text-gray-400 text-sm">
+                By creating an account, you agree to our{' '}
+                <Link to="/legal/terms" className="text-blue-400 hover:underline">Terms of Service</Link>
                 {' '}and{' '}
-                <Link to="/privacy" className="text-blue-400 hover:underline">Privacy Policy</Link>
-              </label>
+                <Link to="/legal/privacy" className="text-blue-400 hover:underline">Privacy Policy</Link>
+              </p>
             </div>
 
             <Button
