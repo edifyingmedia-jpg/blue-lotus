@@ -399,42 +399,42 @@ const Dashboard = () => {
         </div>
 
         {/* Quick Actions */}
-        <div className="bg-gray-900/50 border border-gray-800 rounded-2xl p-6 mb-8" data-testid="quick-actions-section">
+        <div className="bg-gray-900/50 border border-gray-800 rounded-2xl p-6 mb-8 transition-all hover:border-gray-700" data-testid="quick-actions-section">
           <h2 className="text-lg font-semibold text-white mb-4">Quick Actions</h2>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
             <button 
               onClick={() => navigate('/new-project')}
-              className="p-4 bg-gray-800/50 hover:bg-blue-600/10 border border-gray-700 hover:border-blue-500/30 rounded-xl transition-all group text-left"
+              className="p-4 bg-gray-800/50 hover:bg-blue-600/10 border border-gray-700 hover:border-blue-500/30 rounded-xl transition-all group text-left card-hover"
               data-testid="quick-action-screen"
             >
-              <Layout className="w-6 h-6 text-blue-400 mb-2" />
+              <Layout className="w-6 h-6 text-blue-400 mb-2 transition-transform group-hover:scale-110" />
               <p className="text-white font-medium">Generate Screen</p>
               <p className="text-gray-500 text-xs mt-1">Create a new screen with AI</p>
             </button>
             <button 
               onClick={() => navigate('/new-project')}
-              className="p-4 bg-gray-800/50 hover:bg-purple-600/10 border border-gray-700 hover:border-purple-500/30 rounded-xl transition-all group text-left"
+              className="p-4 bg-gray-800/50 hover:bg-purple-600/10 border border-gray-700 hover:border-purple-500/30 rounded-xl transition-all group text-left card-hover"
               data-testid="quick-action-page"
             >
-              <FileText className="w-6 h-6 text-purple-400 mb-2" />
+              <FileText className="w-6 h-6 text-purple-400 mb-2 transition-transform group-hover:scale-110" />
               <p className="text-white font-medium">Generate Page</p>
               <p className="text-gray-500 text-xs mt-1">Build a full page layout</p>
             </button>
             <button 
               onClick={() => projects.length > 0 && navigate(`/builder/${projects[0].id}`)}
-              className="p-4 bg-gray-800/50 hover:bg-green-600/10 border border-gray-700 hover:border-green-500/30 rounded-xl transition-all group text-left"
+              className="p-4 bg-gray-800/50 hover:bg-green-600/10 border border-gray-700 hover:border-green-500/30 rounded-xl transition-all group text-left card-hover"
               data-testid="quick-action-refine"
             >
-              <Wand2 className="w-6 h-6 text-green-400 mb-2" />
+              <Wand2 className="w-6 h-6 text-green-400 mb-2 transition-transform group-hover:scale-110" />
               <p className="text-white font-medium">Refine Project</p>
               <p className="text-gray-500 text-xs mt-1">Improve existing work</p>
             </button>
             <button 
               onClick={() => projects.length > 0 && navigate(`/builder/${projects[0].id}`)}
-              className="p-4 bg-gray-800/50 hover:bg-orange-600/10 border border-gray-700 hover:border-orange-500/30 rounded-xl transition-all group text-left"
+              className="p-4 bg-gray-800/50 hover:bg-orange-600/10 border border-gray-700 hover:border-orange-500/30 rounded-xl transition-all group text-left card-hover"
               data-testid="quick-action-publish"
             >
-              <Upload className="w-6 h-6 text-orange-400 mb-2" />
+              <Upload className="w-6 h-6 text-orange-400 mb-2 transition-transform group-hover:scale-110" />
               <p className="text-white font-medium">Publish</p>
               <p className="text-gray-500 text-xs mt-1">Deploy your app live</p>
             </button>
