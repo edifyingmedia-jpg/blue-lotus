@@ -284,9 +284,10 @@ class TestVoiceProcess(TestVoiceSetup):
     
     def test_process_help_command(self, authenticated_client):
         """Test processing 'help' voice command (no credits)."""
+        # Use a clear help command without other keywords
         response = authenticated_client.post(
             f"{BASE_URL}/api/voice/process",
-            json={"text": "Help me create a screen"}
+            json={"text": "How do I use this app"}
         )
         assert response.status_code == 200
         
