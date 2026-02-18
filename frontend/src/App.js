@@ -88,6 +88,10 @@ function App() {
               />
             </Routes>
             <UpgradePaywall />
+            {/* Made with Blue Lotus Badge */}
+            <div className="fixed bottom-4 right-4 z-50">
+              <MadeWithBlueLotus />
+            </div>
           </BrowserRouter>
         </div>
       </PlanEnforcementProvider>
