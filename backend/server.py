@@ -70,6 +70,9 @@ api_router.include_router(create_builder_routes(db))
 api_router.include_router(create_intelligence_routes(db))
 api_router.include_router(create_canvas_routes(db))
 api_router.include_router(components_router)
+api_router.include_router(create_blueprint_routes(db))
+api_router.include_router(create_diagnostics_routes(db))
+api_router.include_router(create_settings_routes(db))
 
 # Include the API router
 app.include_router(api_router)
