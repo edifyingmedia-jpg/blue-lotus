@@ -165,7 +165,17 @@ class PublishingEngine:
         try:
             # Simulate build process
             deployment.build_logs.append("Compiling project structure...")
-            deployment.build_logs.append(f"Processing {len(getattr(project, 'structure', {}).get('screens', []))} screens...")
+            
+            # Get screens count safely
+            structure = getattr(project, 'structure', None)
+            screens_count = 0
+            if structure:
+                if hasattr(structure, 'screens'):
+                    screens_count = len(structure.screens) if structure.screens else 0
+                elif isinstance(structure, dict):
+                    screens_count = len(structure.get('screens', []))
+            
+            deployment.build_logs.append(f"Processing {screens_count} screens...")
             deployment.build_logs.append("Generating static assets...")
             
             # Update status
