@@ -283,10 +283,13 @@ export const PlanEnforcementProvider = ({ children }) => {
   const getPlanRestrictions = () => {
     return {
       canExport: planConfig.export,
+      canDownload: planConfig.download,
       canPublish: planConfig.publish,
       canPublishProduction: planConfig.publishProduction,
       hasTeamAccess: currentPlan === 'elite',
       planName: planConfig.name,
+      maxProjects: planConfig.maxProjects,
+      maxPublishedProjects: planConfig.maxPublishedProjects,
     };
   };
 
@@ -297,9 +300,18 @@ export const PlanEnforcementProvider = ({ children }) => {
     setCredits,
     totalCredits,
     planConfig,
+    projectCount,
+    setProjectCount,
+    publishedCount,
+    setPublishedCount,
     canExport,
+    canDownload,
     canPublish,
     canPublishProduction,
+    canCreateProject,
+    canPublishMore,
+    getProjectLimits,
+    getPublishLimits,
     hasEnoughCredits,
     deductCredits,
     attemptAction,
