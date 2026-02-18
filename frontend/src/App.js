@@ -8,7 +8,8 @@ import LandingPage from "./pages/LandingPage";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
 import Dashboard from "./pages/Dashboard";
-import ProjectBuilder from "./pages/ProjectBuilder";
+import NewProject from "./pages/NewProject";
+import Builder from "./pages/Builder";
 import Settings from "./pages/Settings";
 import Pricing from "./pages/Pricing";
 import ProtectedRoute from "./components/ProtectedRoute";
@@ -35,10 +36,18 @@ function App() {
               }
             />
             <Route
-              path="/project/:id"
+              path="/new-project"
               element={
                 <ProtectedRoute>
-                  <ProjectBuilder />
+                  <NewProject />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/builder/:id"
+              element={
+                <ProtectedRoute>
+                  <Builder />
                 </ProtectedRoute>
               }
             />
