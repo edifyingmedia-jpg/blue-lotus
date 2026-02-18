@@ -112,12 +112,6 @@ const Footer = () => {
           <p className="text-gray-500 text-sm">
             © {new Date().getFullYear()} Blue Lotus. All rights reserved.
           </p>
-          <div className="flex items-center gap-2">
-            <span className="text-gray-500 text-sm">Backed by</span>
-            <span className="px-2 py-1 bg-orange-500/10 border border-orange-500/30 rounded text-orange-400 text-xs font-bold">
-              Y Combinator
-            </span>
-          </div>
         </div>
       </div>
     </footer>
