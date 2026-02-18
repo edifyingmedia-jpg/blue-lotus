@@ -13,7 +13,14 @@ module.exports = {
   			sm: 'calc(var(--radius) - 4px)'
   		},
   		colors: {
-  			background: 'hsl(var(--background))',
+  			// Blue Lotus Brand Colors
+			'bl-glow': '#4CC3FF',
+			'bl-deep': '#003A66',
+			'bl-soft': '#7FDBFF',
+			'bl-midnight': '#020B14',
+			'bl-panel': '#03121F',
+			
+			background: 'hsl(var(--background))',
   			foreground: 'hsl(var(--foreground))',
   			card: {
   				DEFAULT: 'hsl(var(--card))',
