@@ -62,11 +62,11 @@ def create_publishing_routes(db: AsyncIOMotorDatabase):
         
         # Publish
         if request.environment == "staging":
-            success, msg, url = await PublishingEngine.publish_to_staging(project)
+            success, msg, url, deployment = await PublishingEngine.publish_to_staging(project, user.id)
             update_field = "staging_url"
             new_status = ProjectStatus.STAGED
         else:
-            success, msg, url = await PublishingEngine.publish_to_production(project)
+            success, msg, url, deployment = await PublishingEngine.publish_to_production(project, user.id)
             update_field = "production_url"
             new_status = ProjectStatus.PUBLISHED
         
