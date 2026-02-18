@@ -164,7 +164,7 @@ const Login = () => {
             <Button
               type="submit"
               disabled={loading}
-              className="w-full h-12 bg-blue-600 hover:bg-blue-700 text-white font-medium"
+              className="w-full h-12 bg-blue-600 hover:bg-blue-700 text-white font-medium transition-all hover:shadow-lg hover:shadow-blue-600/25 btn-press"
             >
               {loading ? 'Signing in...' : 'Sign In'}
               <ArrowRight className="w-5 h-5 ml-2" />
