@@ -3,7 +3,7 @@ import "./App.css";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "./context/AuthContext";
 import { PlanEnforcementProvider } from "./context/PlanEnforcementContext";
-import UpgradePromptModal from "./components/UpgradePromptModal";
+import UpgradePaywall from "./components/UpgradePaywall";
 
 // Pages
 import LandingPage from "./pages/LandingPage";
