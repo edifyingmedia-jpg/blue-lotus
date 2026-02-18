@@ -59,6 +59,7 @@ from routes.voice import create_voice_routes
 from routes.ai_generation import create_ai_generation_routes
 from routes.backend_integration import create_backend_integration_routes
 from routes.billing import create_billing_routes, create_webhook_routes
+from routes.admin import create_admin_routes
 
 # Create API router with /api prefix
 api_router = APIRouter(prefix="/api")
