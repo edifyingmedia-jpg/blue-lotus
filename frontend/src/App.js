@@ -30,6 +30,7 @@ function App() {
             <Route path="/pricing" element={<Pricing />} />
             <Route path="/legal" element={<LegalNav />} />
             <Route path="/legal/:docId" element={<Legal />} />
+            <Route path="/compliance" element={<ComplianceCenter />} />
             
             {/* Protected Routes */}
             <Route
