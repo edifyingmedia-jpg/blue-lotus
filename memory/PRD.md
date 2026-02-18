@@ -264,6 +264,65 @@ Build a clone of the Emergent website rebranded as "Blue Lotus" - an AI-powered 
 - `VoiceConfirmationDialog.jsx` - Safety confirmation modal
 - `VoiceInputPanel.jsx` - Complete voice input UI
 
+### ✅ Phase 12: Voice Experience System (Completed - December 2025)
+**Voice-driven onboarding, accessibility, and error handling:**
+
+#### Voice Experience Engines (3):
+24. **Voice Error Handling Engine** (`/app/backend/engines/voice_error_handling_engine.py`)
+    - 12 error types: unclear_speech, background_noise, partial_command, ambiguous_intent, etc.
+    - 7 recovery actions: ask_clarification, repeat_prompt, fallback_text, etc.
+    - Sensitive data sanitization for voice output
+    - Retry management with max attempts
+
+25. **Voice Accessibility Engine** (`/app/backend/engines/voice_accessibility_engine.py`)
+    - WCAG 2.1 AA and ADA Section 508 compliance
+    - Screen reader announcements
+    - Keyboard shortcuts (V to toggle, Escape to cancel)
+    - High contrast, reduced motion, large controls modes
+    - ARIA labels for all voice components
+
+26. **Voice Onboarding Engine** (`/app/backend/engines/voice_onboarding_engine.py`)
+    - 4-step voice-guided onboarding flow
+    - Welcome → Project Type → Description → Structure Ready
+    - Voice/text mode selection
+    - Hands-free project setup
+
+### ✅ Phase 13: Advanced Voice Intelligence (Completed - December 2025)
+**Multi-step workflows, component placement, debugging, and enhanced intelligence:**
+
+#### Voice Intelligence Engines (5):
+27. **Voice Help & Guidance Engine** (`/app/backend/engines/voice_help_guidance_engine.py`)
+    - 9 help categories: getting_started, screens, pages, data_models, etc.
+    - Contextual help detection
+    - Proactive suggestions based on user state
+    - Project state explanations
+    - Step-by-step walkthroughs
+
+28. **Voice Multi-Step Workflow Engine** (`/app/backend/engines/voice_multistep_workflow_engine.py`)
+    - 5 workflow templates: checkout_flow, onboarding_flow, signup_flow, data_model_binding, crud_screens
+    - Session memory for workflow context
+    - Branching workflows based on responses
+    - Confirmation before finalizing
+
+29. **Voice Component Placement Engine** (`/app/backend/engines/voice_component_placement_engine.py`)
+    - 24 component types: button, text, image, form, list, card, etc.
+    - 10 position types: above, below, left_of, right_of, inside, centered, etc.
+    - Data model binding via voice
+    - Property modification via speech
+
+30. **Voice Debugging Engine** (`/app/backend/engines/voice_debugging_engine.py`)
+    - 8 issue types: navigation, data_binding, component, missing_model, broken_flow, etc.
+    - 4 explanation modes: simple_voice, detailed_voice, text_only, step_by_step
+    - Project health analysis
+    - Spoken debugging summaries
+
+31. **Extended Voice Intelligence Engine** (`/app/backend/engines/extended_voice_intelligence_engine.py`)
+    - User state detection: focused, exploring, confused, frustrated, completing
+    - Intent refinement with conversational mapping
+    - Workflow prediction based on recent actions
+    - Command disambiguation
+    - Proactive suggestions
+
 ---
 
 ## Architecture
