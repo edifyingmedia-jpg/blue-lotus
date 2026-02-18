@@ -46,7 +46,7 @@ class GenerateVariationsRequest(BaseModel):
     count: int = 3
 
 
-def create_ai_generation_routes(db, get_current_user):
+def create_ai_generation_routes(db):
     """Create AI generation API routes."""
     router = APIRouter(prefix="/api/ai", tags=["AI Generation"])
     
