@@ -8,6 +8,7 @@ Build a no-code AI app builder called "Blue Lotus" - an AI-powered no-code, no-d
 - **Rapid Prototypers**: Developers who need quick MVP prototypes
 - **Business Users**: Non-technical users who need custom applications
 - **Agencies**: Teams building multiple client projects
+- **Platform Owners**: Administrators managing the platform (Owner Dashboard)
 
 ## Core Requirements
 1. **Dark Theme** with blue secondary colors and blue lotus branding
@@ -15,6 +16,7 @@ Build a no-code AI app builder called "Blue Lotus" - an AI-powered no-code, no-d
 3. **AI-Orchestrated Builder**: Chat and voice-based interface for app generation
 4. **Voice-First Experience**: Full voice control via OpenAI Whisper + TTS
 5. **External Backend Integration**: Connect to Firebase, Supabase, REST APIs
+6. **Owner Dashboard**: Platform administration for owners
 
 ---
 
@@ -34,14 +36,14 @@ Build a no-code AI app builder called "Blue Lotus" - an AI-powered no-code, no-d
 - Credit system with plan enforcement
 
 ### ✅ Phase 11-13: Voice System (Completed - December 2025)
-- **Voice Input Engine** - OpenAI Whisper STT integration
-- **Speech-to-Intent Engine** - Intent parsing
-- **Voice Orchestration Engine** - Command routing
-- **Voice Feedback Engine** - OpenAI TTS integration  
-- **Voice Safety Layer** - Destructive action confirmation
-- **Voice Experience Engines** - Error handling, accessibility, onboarding
-- **Voice Intelligence Engines** - Help, workflows, component placement, debugging
-- **Voice Control Engines** - Publishing, data modeling, navigation, review
+- Voice Input Engine - OpenAI Whisper STT integration
+- Speech-to-Intent Engine - Intent parsing
+- Voice Orchestration Engine - Command routing
+- Voice Feedback Engine - OpenAI TTS integration  
+- Voice Safety Layer - Destructive action confirmation
+- Voice Experience Engines - Error handling, accessibility, onboarding
+- Voice Intelligence Engines - Help, workflows, component placement, debugging
+- Voice Control Engines - Publishing, data modeling, navigation, review
 
 ### ✅ Phase 14: Frontend-Backend Integration (Completed - December 2025)
 - AuthContext connected to real /api/auth/* endpoints
@@ -50,20 +52,20 @@ Build a no-code AI app builder called "Blue Lotus" - an AI-powered no-code, no-d
 - Project creation, deletion, duplication working
 
 ### ✅ Phase 15: AI Generation System (Completed - December 2025)
-- **AI Project Generation Engine** - GPT-5.2 for full project generation
-- **Intent Interpretation Engine** - Extracts screens, flows, models from description
-- **Project Blueprint Compiler** - Converts intent to structured blueprints
-- **AI Project Refinement Engine** - Analyzes and improves projects
-- **AI Feature Expansion Engine** - Adds features to existing projects
-- **AI App Evolution Engine** - Roadmap generation
-- **AI Multi-Project Generator** - Create variations
+- AI Project Generation Engine - GPT-5.2 for full project generation
+- Intent Interpretation Engine - Extracts screens, flows, models
+- Project Blueprint Compiler - Converts intent to structured blueprints
+- AI Project Refinement Engine - Analyzes and improves projects
+- AI Feature Expansion Engine - Adds features to existing projects
+- AI App Evolution Engine - Roadmap generation
+- AI Multi-Project Generator - Create variations
 
 ### ✅ Phase 16: Backend Integration System (Completed - December 2025)
-- **Backend Integration Engine** - Connect to external APIs
-- **API Connector Engine** - REST/GraphQL execution
-- **Backend Routing Engine** - Route API calls to components
-- **Data Sync Engine** - Sync UI with backend data
-- **Backend Security Engine** - Protect API calls and credentials
+- Backend Integration Engine - Connect to external APIs
+- API Connector Engine - REST/GraphQL execution
+- Backend Routing Engine - Route API calls to components
+- Data Sync Engine - Sync UI with backend data
+- Backend Security Engine - Protect API calls and credentials
 
 ### ✅ Phase 17: Publishing Engine Enhancement (Completed - December 2025)
 - Real deployment workflow with validation
@@ -71,11 +73,28 @@ Build a no-code AI app builder called "Blue Lotus" - an AI-powered no-code, no-d
 - Build logs and deployment tracking
 - URL generation with subdomains
 
+### ✅ Phase 18: Stripe Billing Integration (Completed - December 2025)
+- Billing Engine with 4 subscription plans (Free, Creator, Pro, Elite)
+- 4 Credit packages (Starter, Growth, Pro, Enterprise)
+- Stripe checkout session creation
+- Payment status tracking
+- Subscription management
+- Webhook handling for payment events
+
+### ✅ Phase 19: Owner Dashboard (Completed - December 2025)
+- Admin Engine for platform management
+- Owner-restricted access via email whitelist or role
+- Core sections implemented:
+  - **Overview**: Platform stats (users, projects, sessions, credits, revenue, system status)
+  - **Users Management**: List, search, suspend, reactivate, delete users
+  - **Projects Management**: List, search, archive, delete projects
+  - **Billing**: Revenue overview, users by plan, recent transactions
+
 ---
 
 ## Master System Architecture
 
-### Total Engines: 48
+### Total Engines: 50
 
 ```
 CORE ENGINES (5)
@@ -84,6 +103,12 @@ CORE ENGINES (5)
 ├── generation_engine.py      - Template-based generation
 ├── publishing_engine.py      - Staging/production deployment
 └── export_engine.py          - Project export
+
+BILLING ENGINE (1)
+└── billing_engine.py         - Stripe subscription & payments
+
+ADMIN ENGINE (1)
+└── admin_engine.py           - Owner Dashboard operations
 
 BUILD ENGINES (4)
 ├── project_engine.py         - Project CRUD
@@ -163,6 +188,34 @@ BACKEND INTEGRATION ENGINES (5)
 - `PUT /api/projects/{id}` - Update project
 - `DELETE /api/projects/{id}` - Delete project
 
+### Billing (NEW)
+- `GET /api/billing/plans` - Get subscription plans
+- `GET /api/billing/plans/compare` - Plan comparison
+- `GET /api/billing/credits/packages` - Credit packages
+- `POST /api/billing/subscribe` - Create subscription checkout
+- `POST /api/billing/credits/purchase` - Purchase credits
+- `GET /api/billing/status/{session_id}` - Check payment status
+- `GET /api/billing/info` - User billing info
+- `GET /api/billing/transactions` - Transaction history
+
+### Admin (NEW - Owner Only)
+- `GET /api/admin/stats` - Platform statistics
+- `GET /api/admin/health` - System health
+- `GET /api/admin/users` - List all users
+- `GET /api/admin/users/{id}` - User details
+- `PUT /api/admin/users/{id}/role` - Update user role
+- `PUT /api/admin/users/{id}/plan` - Update user plan
+- `POST /api/admin/users/{id}/suspend` - Suspend user
+- `POST /api/admin/users/{id}/reactivate` - Reactivate user
+- `DELETE /api/admin/users/{id}` - Delete user
+- `GET /api/admin/projects` - List all projects
+- `POST /api/admin/projects/{id}/archive` - Archive project
+- `DELETE /api/admin/projects/{id}` - Delete project
+- `GET /api/admin/billing/overview` - Billing overview
+- `GET /api/admin/analytics` - Platform analytics
+- `GET /api/admin/transactions` - All transactions
+- `POST /api/admin/transactions/{id}/refund` - Process refund
+
 ### AI Generation
 - `POST /api/ai/generate` - Generate project from description
 - `POST /api/ai/interpret` - Preview interpreted structure
@@ -200,6 +253,8 @@ BACKEND INTEGRATION ENGINES (5)
 - Voice TTS (OpenAI)
 - Backend Integration (HTTP client, security)
 - Publishing workflow (deployment simulation)
+- Billing system (Stripe integration)
+- Owner Dashboard (admin engine with real queries)
 
 ### 🟡 SCAFFOLDED (Routes work, return mock data)
 - Export engine (mock download URLs)
@@ -213,6 +268,7 @@ BACKEND INTEGRATION ENGINES (5)
 - **Database**: MongoDB
 - **AI**: GPT-5.2 via Emergent LLM Key
 - **Voice**: OpenAI Whisper (STT), OpenAI TTS
+- **Payments**: Stripe
 - **Auth**: JWT tokens
 
 ---
@@ -220,18 +276,24 @@ BACKEND INTEGRATION ENGINES (5)
 ## Backlog
 
 ### P0 - Critical
-- [ ] Stripe payment integration
+- [x] Stripe payment integration ✅
+- [x] Owner Dashboard ✅
 - [ ] Real file export (code generation)
+- [ ] Frontend UI for AI Project Generation
 
 ### P1 - Important
 - [ ] Voice UI components in Builder page
 - [ ] Account Settings UI
 - [ ] Team management
+- [ ] Frontend for Stripe Billing (user-facing pricing page integration)
 
 ### P2 - Nice to Have
-- [ ] Analytics dashboard
+- [ ] Analytics dashboard (extended)
 - [ ] Usage reports
 - [ ] Multi-language support
+- [ ] System Settings in Owner Dashboard
+- [ ] Compliance Center in Owner Dashboard
+- [ ] Support Center in Owner Dashboard
 
 ---
 
@@ -251,3 +313,15 @@ BACKEND INTEGRATION ENGINES (5)
 - Transparent background
 - Glow animation on idle
 - Bloom animation on hover
+
+---
+
+## Owner Dashboard Access
+
+Access is restricted to:
+1. Users with `role` set to "owner" or "admin" in the database
+2. Users whose email is in the `OWNER_EMAILS` environment variable
+
+Current owner emails: `owner@bluelotus.ai, admin@bluelotus.ai`
+
+Test credentials: `owner@bluelotus.ai / owner123`
