@@ -351,7 +351,7 @@ const Dashboard = () => {
           </div>
 
           {/* Plan Status */}
-          <div className="bg-gray-900/50 border border-gray-800 rounded-2xl p-6" data-testid="plan-status-section">
+          <div className="bg-gray-900/50 border border-gray-800 rounded-2xl p-6 transition-all hover:border-gray-700" data-testid="plan-status-section">
             <div className="flex items-center justify-between mb-4">
               <h2 className="text-lg font-semibold text-white flex items-center gap-2">
                 <Crown className="w-5 h-5 text-blue-400" />
