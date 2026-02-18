@@ -219,6 +219,7 @@ async def startup_db_client():
         print("✅ Blue Lotus Backend Started")
         print(f"📦 Database: {DB_NAME}")
         print("🔧 Core Engines (5): Credit, Generation, Publishing, Export, Plan Enforcement")
+        print("💳 Billing Engine (1): Stripe Integration")
         print("🔧 Build Engines (4): Project, Data Model, Navigation, AI Instruction")
         print("🔧 Advanced Engines (4): Orchestration, Runtime Intelligence, Canvas, Component Library")
         print("🔧 Control Engines (4): AI Orchestration, Blueprint Generation, System Diagnostics, Platform Settings")
