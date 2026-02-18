@@ -28,8 +28,9 @@ const CTASection = () => {
         
         <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
           <Button
-            onClick={() => navigate('/signup')}
+            onClick={() => navigate('/onboarding')}
             className="h-14 px-8 bg-blue-600 hover:bg-blue-700 text-white text-lg font-medium rounded-xl shadow-lg shadow-blue-500/25 hover:shadow-blue-500/40 transition-all"
+            data-testid="cta-create-project-btn"
           >
             Create Your Project
             <ArrowRight className="w-5 h-5 ml-2" />
