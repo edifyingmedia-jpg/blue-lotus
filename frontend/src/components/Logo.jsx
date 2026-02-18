@@ -4,7 +4,7 @@ const Logo = ({ className = '', size = 44, showText = true }) => {
   return (
     <div className={`flex items-center gap-3 ${className}`}>
       <img 
-        src="/lotus-logo.gif" 
+        src="/blue-lotus.png" 
         alt="Blue Lotus" 
         style={{ width: size, height: size }}
         className="object-contain"
