@@ -43,11 +43,13 @@ Build a clone of the Emergent website rebranded as "Blue Lotus" - an AI-powered 
 - Created `/app/frontend/src/pages/Legal.jsx` page component
 - Created `/app/frontend/src/pages/LegalNav.jsx` - centralized navigation page
 - Created `/app/frontend/src/pages/ComplianceCenter.jsx` - data rights & compliance request form
+- Created `/app/frontend/src/components/UserAgreementModal.jsx` - terms acceptance modal
 - Routes: `/legal` (hub), `/legal/:docId` (docs), `/compliance` (compliance center)
 - Footer links updated with 4 sections: Product, Legal, Compliance, Company
 - Policies included: Terms of Service, Privacy Policy, Cookie Policy, Acceptable Use, Refund Policy, DMCA, Security, Disclaimer, DPA, GDPR, CCPA, Accessibility, SLA, API Terms, Billing, IP Policy, Compliance
 - Legal nav organized into 5 categories
 - Compliance Center features: Data Rights actions, Legal docs, Security docs, Request form
+- User Agreement Modal integrated into Signup flow
 
 ---
 
