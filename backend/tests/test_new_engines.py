@@ -359,6 +359,35 @@ class TestBlueprintGeneration(TestSetup):
 class TestSystemDiagnostics(TestSetup):
     """Test System Diagnostics Engine endpoints."""
     
+    @pytest.fixture(scope="class")
+    def api_client(self):
+        """Shared requests session."""
+        session = requests.Session()
+        session.headers.update({"Content-Type": "application/json"})
+        return session
+    
+    @pytest.fixture(scope="class")
+    def auth_token(self, api_client):
+        """Get authentication token by signing up a new user."""
+        unique_email = f"test_diagnostics_{uuid.uuid4().hex[:8]}@example.com"
+        response = api_client.post(f"{BASE_URL}/api/auth/signup", json={
+            "email": unique_email,
+            "password": TEST_PASSWORD,
+            "name": TEST_NAME
+        })
+        
+        if response.status_code == 200:
+            data = response.json()
+            return data.get("access_token")
+        
+        pytest.skip(f"Authentication failed - status: {response.status_code}")
+    
+    @pytest.fixture(scope="class")
+    def authenticated_client(self, api_client, auth_token):
+        """Session with auth header."""
+        api_client.headers.update({"Authorization": f"Bearer {auth_token}"})
+        return api_client
+    
     def test_get_system_health(self, authenticated_client):
         """Test GET /api/diagnostics/health."""
         response = authenticated_client.get(f"{BASE_URL}/api/diagnostics/health")
