@@ -38,7 +38,14 @@ Build a clone of the Emergent website rebranded as "Blue Lotus" - an AI-powered 
 - Chat-based command interface
 - Project structure visualization
 
-### ✅ Phase 4: Legal Documentation (Completed - December 2025)
+### ✅ Phase 5: Pricing System (Completed - December 2025)
+- Updated `/app/frontend/src/data/mock.js` with new pricing tiers and credit data
+- Revamped `/app/frontend/src/pages/Pricing.jsx` with credit-based pricing
+- 4 Tiers: Free (20 starter credits), Creator ($9.99/150 credits), Pro ($19.99/400 credits), Elite ($29.99/800 credits)
+- Credit add-on packs: 100 ($4.99), 250 ($9.99), 600 ($19.99), 1500 ($39.99)
+- Monthly/Yearly billing toggle with 20% yearly discount
+- Credit rules: daily bonus, no rollover, purchased credits never expire
+- Export restrictions on free tier
 - Created `/app/frontend/src/data/legal.js` with 17 policies
 - Created `/app/frontend/src/pages/Legal.jsx` page component
 - Created `/app/frontend/src/pages/LegalNav.jsx` - centralized navigation page
