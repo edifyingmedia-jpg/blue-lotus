@@ -30,71 +30,73 @@ function App() {
   return (
     <AuthProvider>
       <PlanEnforcementProvider>
-        <div className="App">
-          <BrowserRouter>
-            <Routes>
-              {/* Public Routes */}
-              <Route path="/" element={<LandingPage />} />
-              <Route path="/login" element={<Login />} />
-              <Route path="/signup" element={<Signup />} />
-              <Route path="/onboarding" element={<Onboarding />} />
-              <Route path="/pricing" element={<Pricing />} />
-              <Route path="/legal" element={<LegalNav />} />
-              <Route path="/legal/:docId" element={<Legal />} />
-              <Route path="/compliance" element={<ComplianceCenter />} />
-              <Route path="/checkout" element={<Checkout />} />
-              <Route path="/credits" element={<CreditRules />} />
-            <Route path="/plan-demo" element={<PlanDemo />} />
-              
-              {/* Protected Routes */}
-              <Route
-                path="/dashboard"
-                element={
-                  <ProtectedRoute>
-                    <Dashboard />
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path="/new-project"
-                element={
-                  <ProtectedRoute>
-                    <NewProject />
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path="/builder/:id"
-                element={
-                  <ProtectedRoute>
-                    <Builder />
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path="/settings"
-                element={
-                  <ProtectedRoute>
-                    <Settings />
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path="/settings/:tab"
-                element={
-                  <ProtectedRoute>
-                    <Settings />
-                  </ProtectedRoute>
-                }
-              />
-            </Routes>
-            <UpgradePaywall />
-            {/* Made with Blue Lotus Badge */}
-            <div className="fixed bottom-4 right-4 z-50">
-              <MadeWithBlueLotus />
-            </div>
-          </BrowserRouter>
-        </div>
+        <VoiceProvider>
+          <div className="App">
+            <BrowserRouter>
+              <Routes>
+                {/* Public Routes */}
+                <Route path="/" element={<LandingPage />} />
+                <Route path="/login" element={<Login />} />
+                <Route path="/signup" element={<Signup />} />
+                <Route path="/onboarding" element={<Onboarding />} />
+                <Route path="/pricing" element={<Pricing />} />
+                <Route path="/legal" element={<LegalNav />} />
+                <Route path="/legal/:docId" element={<Legal />} />
+                <Route path="/compliance" element={<ComplianceCenter />} />
+                <Route path="/checkout" element={<Checkout />} />
+                <Route path="/credits" element={<CreditRules />} />
+              <Route path="/plan-demo" element={<PlanDemo />} />
+                
+                {/* Protected Routes */}
+                <Route
+                  path="/dashboard"
+                  element={
+                    <ProtectedRoute>
+                      <Dashboard />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/new-project"
+                  element={
+                    <ProtectedRoute>
+                      <NewProject />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/builder/:id"
+                  element={
+                    <ProtectedRoute>
+                      <Builder />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/settings"
+                  element={
+                    <ProtectedRoute>
+                      <Settings />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/settings/:tab"
+                  element={
+                    <ProtectedRoute>
+                      <Settings />
+                    </ProtectedRoute>
+                  }
+                />
+              </Routes>
+              <UpgradePaywall />
+              {/* Made with Blue Lotus Badge */}
+              <div className="fixed bottom-4 right-4 z-50">
+                <MadeWithBlueLotus />
+              </div>
+            </BrowserRouter>
+          </div>
+        </VoiceProvider>
       </PlanEnforcementProvider>
     </AuthProvider>
   );
