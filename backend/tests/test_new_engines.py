@@ -775,8 +775,18 @@ class TestAuthenticationFlow(TestSetup):
     
     def test_signup_duplicate_email_fails(self, api_client):
         """Test POST /api/auth/signup with duplicate email fails."""
+        # First create a user
+        unique_email = f"test_dup_{uuid.uuid4().hex[:8]}@example.com"
+        first_response = api_client.post(f"{BASE_URL}/api/auth/signup", json={
+            "email": unique_email,
+            "password": TEST_PASSWORD,
+            "name": TEST_NAME
+        })
+        assert first_response.status_code == 200, "First signup should succeed"
+        
+        # Try to create another user with the same email
         response = api_client.post(f"{BASE_URL}/api/auth/signup", json={
-            "email": TEST_EMAIL,
+            "email": unique_email,
             "password": TEST_PASSWORD,
             "name": TEST_NAME
         })
