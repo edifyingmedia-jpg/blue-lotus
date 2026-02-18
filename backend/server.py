@@ -233,6 +233,10 @@ async def startup_db_client():
         print("🔧 Core Engines (5): Credit, Generation, Publishing, Export, Plan Enforcement")
         print("💳 Billing Engine (1): Stripe Integration")
         print("👑 Admin Engine (1): Owner Dashboard")
+        print("📊 Analytics Engine (1): Platform Metrics")
+        print("⚙️ System Settings Engine (1): Platform Configuration")
+        print("📜 Compliance Engine (1): Legal Documents")
+        print("🎫 Support Engine (1): Tickets & Help")
         print("🔧 Build Engines (4): Project, Data Model, Navigation, AI Instruction")
         print("🔧 Advanced Engines (4): Orchestration, Runtime Intelligence, Canvas, Component Library")
         print("🔧 Control Engines (4): AI Orchestration, Blueprint Generation, System Diagnostics, Platform Settings")
@@ -242,7 +246,7 @@ async def startup_db_client():
         print("🎙️ Voice Control (4): Publishing, Data Modeling, Navigation, Project Review")
         print("🤖 AI Generation (7): Project Gen (GPT-5.2), Intent, Blueprint, Refine, Features, Evolution, Multi-Project")
         print("🔌 Backend Integration (5): Integration, API Connector, Routing, Data Sync, Security")
-        print("📊 Total Engines: 50")
+        print("📊 Total Engines: 54")
     except Exception as e:
         print(f"⚠️ Startup warning: {e}")
 
