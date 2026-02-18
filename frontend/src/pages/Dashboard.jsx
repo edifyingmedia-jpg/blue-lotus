@@ -244,6 +244,12 @@ const Dashboard = () => {
                     <p className="text-white font-medium">{user?.name}</p>
                     <p className="text-gray-400 text-sm truncate">{user?.email}</p>
                   </div>
+                  {(user?.role === 'owner' || user?.role === 'admin') && (
+                    <DropdownMenuItem onClick={() => navigate('/owner')} className="text-purple-400 focus:text-purple-300 focus:bg-purple-500/10">
+                      <Shield className="w-4 h-4 mr-2" />
+                      Owner Dashboard
+                    </DropdownMenuItem>
+                  )}
                   <DropdownMenuItem onClick={() => navigate('/settings')} className="text-gray-300 focus:text-white focus:bg-gray-800">
                     <User className="w-4 h-4 mr-2" />
                     Profile Settings
