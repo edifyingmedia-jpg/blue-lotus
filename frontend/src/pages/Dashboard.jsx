@@ -47,24 +47,63 @@ import {
 const API_URL = process.env.REACT_APP_BACKEND_URL;
 
 const Dashboard = () => {
-  const { user, logout } = useAuth();
+  const { user, logout, getAuthToken, refreshUser } = useAuth();
   const navigate = useNavigate();
-  const [projects, setProjects] = useState(mockProjects);
+  const [projects, setProjects] = useState([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [timeUntilBonus, setTimeUntilBonus] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-  // Mock credit data
-  const creditData = {
-    monthly: { remaining: 103, total: 150 },
-    bonus: { remaining: 8, total: 10 },
-    purchased: 250,
+  // Fetch projects from API
+  const fetchProjects = useCallback(async () => {
+    try {
+      const token = getAuthToken();
+      if (!token) return;
+      
+      const response = await fetch(`${API_URL}/api/projects/`, {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+        },
+      });
+      
+      if (response.ok) {
+        const data = await response.json();
+        setProjects(data);
+      } else {
+        setError('Failed to load projects');
+      }
+    } catch (err) {
+      setError('Failed to load projects');
+      console.error('Failed to fetch projects:', err);
+    } finally {
+      setLoading(false);
+    }
+  }, [getAuthToken]);
+
+  useEffect(() => {
+    fetchProjects();
+    refreshUser(); // Refresh user data to get latest credits
+  }, [fetchProjects, refreshUser]);
+
+  // Credit data from user object
+  const creditData = user?.credits ? {
+    monthly: { remaining: user.credits.monthly, total: user.credits.monthly_total },
+    bonus: { remaining: user.credits.bonus, total: user.credits.bonus_total },
+    purchased: user.credits.purchased,
+    starter: user.credits.starter || 0,
+  } : {
+    monthly: { remaining: 0, total: 0 },
+    bonus: { remaining: 0, total: 0 },
+    purchased: 0,
+    starter: 20,
   };
 
-  // Mock plan data
+  // Plan data from user
   const planData = {
-    name: 'Creator',
-    price: '$9.99',
-    nextBillingDate: 'March 1, 2026',
+    name: user?.plan?.charAt(0).toUpperCase() + (user?.plan?.slice(1) || ''),
+    price: user?.plan === 'free' ? '$0' : user?.plan === 'creator' ? '$9.99' : user?.plan === 'pro' ? '$19.99' : '$29.99',
+    nextBillingDate: 'Not set',
   };
 
   // Bonus credit timer
