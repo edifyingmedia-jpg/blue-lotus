@@ -313,9 +313,10 @@ class TestVoiceProcess(TestVoiceSetup):
     
     def test_process_delete_command_requires_confirmation(self, authenticated_client):
         """Test processing 'delete' command requires confirmation (safety layer)."""
+        # Use a clear delete command
         response = authenticated_client.post(
             f"{BASE_URL}/api/voice/process",
-            json={"text": "Delete the dashboard screen"}
+            json={"text": "Delete this screen"}
         )
         assert response.status_code == 200
         
