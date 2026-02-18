@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { mockProjects } from '../data/mock';
 import Logo from '../components/Logo';
+import CreditUsageTracker from '../components/CreditUsageTracker';
 import { Button } from '../components/ui/button';
 import { Input } from '../components/ui/input';
 import {
