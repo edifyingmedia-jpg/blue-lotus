@@ -323,6 +323,30 @@ Build a clone of the Emergent website rebranded as "Blue Lotus" - an AI-powered 
     - Command disambiguation
     - Proactive suggestions
 
+### ✅ Phase 14: Frontend-Backend Integration (Completed - December 2025)
+**Connected frontend to real backend APIs:**
+
+- **AuthContext.js** - Refactored from mocked data to real API calls
+  - `login()` calls POST /api/auth/login
+  - `signup()` calls POST /api/auth/signup  
+  - `refreshUser()` calls GET /api/auth/me
+  - JWT tokens stored in localStorage
+  - `authFetch()` helper for authenticated requests
+
+- **Dashboard.jsx** - Fetches real data from backend
+  - Projects loaded from GET /api/projects/
+  - User credits and plan from user object
+  - Real project deletion via DELETE /api/projects/{id}
+  - Real project duplication via POST /api/builder/duplicate/{id}
+
+- **Backend Routes Verified Working:**
+  - Auth: signup, login, me endpoints ✅
+  - Projects: list, create, update, delete ✅
+  - Builder: interpret, execute, suggestions, duplicate ✅
+  - Voice: All 35 engine routes operational ✅
+
+- **Tests Created:** /app/backend/tests/test_auth_projects.py (18 tests, 100% pass)
+
 ---
 
 ## Architecture
@@ -337,24 +361,24 @@ Build a clone of the Emergent website rebranded as "Blue Lotus" - an AI-powered 
 │       │   ├── MadeWithBlueLotus.jsx
 │       │   └── ...
 │       ├── context/
-│       │   ├── AuthContext.js
+│       │   ├── AuthContext.js (REAL API integration)
 │       │   ├── PlanEnforcementContext.jsx
-│       │   └── RolesContext.jsx
+│       │   └── VoiceContext.jsx
 │       ├── pages/
 │       │   ├── Onboarding.jsx
-│       │   ├── Dashboard.jsx
+│       │   ├── Dashboard.jsx (REAL API integration)
 │       │   ├── Builder.jsx
 │       │   ├── Pricing.jsx
 │       │   └── ...
 │       └── data/
-│           ├── mock.js
+│           ├── mock.js (landing page content only)
 │           └── legal.js
 │
 └── backend/
-    ├── server.py (main FastAPI app)
+    ├── server.py (main FastAPI app - 35 engines)
     ├── models/
     │   └── schemas.py (Pydantic models)
-    ├── engines/ (31 total)
+    ├── engines/ (35 total)
     │   ├── # Core Engines (5)
     │   ├── credit_engine.py
     │   ├── plan_enforcement.py
@@ -392,8 +416,13 @@ Build a clone of the Emergent website rebranded as "Blue Lotus" - an AI-powered 
     │   ├── voice_multistep_workflow_engine.py
     │   ├── voice_component_placement_engine.py
     │   ├── voice_debugging_engine.py
-    │   └── extended_voice_intelligence_engine.py
-    ├── routes/ (14 total)
+    │   ├── extended_voice_intelligence_engine.py
+    │   ├── # Voice Control Engines (4)
+    │   ├── voice_driven_publishing_engine.py
+    │   ├── voice_driven_data_modeling_engine.py
+    │   ├── voice_driven_navigation_engine.py
+    │   └── voice_driven_project_review_engine.py
+    ├── routes/ (15 total)
     │   ├── auth.py
     │   ├── projects.py
     │   ├── generation.py
@@ -407,9 +436,9 @@ Build a clone of the Emergent website rebranded as "Blue Lotus" - an AI-powered 
     │   ├── blueprints.py
     │   ├── diagnostics.py
     │   ├── settings.py
-    │   └── voice.py
+    │   └── voice.py (includes voice control routes)
     ├── tests/
-    │   └── test_new_engines.py
+    │   └── test_auth_projects.py
     └── utils/
         └── auth.py (JWT utilities)
 ```
