@@ -667,11 +667,11 @@ class TestVoiceIntegration(TestVoiceSetup):
         session_id = session_response.json()["session_id"]
         print(f"  1. Session started: {session_id}")
         
-        # 2. Process voice command
+        # 2. Process voice command (use free command to avoid credit issues)
         process_response = authenticated_client.post(
             f"{BASE_URL}/api/voice/process",
             json={
-                "text": "Create a login screen with email and password",
+                "text": "Explain this project",
                 "session_id": session_id
             }
         )
