@@ -98,45 +98,51 @@ async def health_check():
     return {
         "status": "healthy",
         "database": db_status,
+        "total_engines": 35,
         "engines": {
-            # Core Engines
+            # Core Engines (5)
             "credit_engine": "operational",
             "plan_enforcement": "operational",
             "generation_engine": "operational (mocked)",
             "publishing_engine": "operational (mocked)",
             "export_engine": "operational (mocked)",
-            # Build Engines
+            # Build Engines (4)
             "project_engine": "operational",
             "data_model_engine": "operational",
             "navigation_engine": "operational",
             "ai_instruction_engine": "operational",
-            # Advanced Engines
+            # Advanced Engines (4)
             "orchestration_engine": "operational",
             "runtime_intelligence_engine": "operational",
             "canvas_engine": "operational",
             "component_library_engine": "operational",
-            # Control Engines
+            # Control Engines (4)
             "ai_orchestration_engine": "operational",
             "blueprint_generation_engine": "operational",
             "system_diagnostics_engine": "operational",
             "platform_settings_engine": "operational",
-            # Voice Core Engines
+            # Voice Core Engines (6)
             "voice_input_engine": "operational",
             "speech_to_intent_engine": "operational",
             "voice_orchestration_engine": "operational",
             "voice_feedback_engine": "operational (OpenAI TTS)",
             "voice_safety_layer": "operational",
             "voice_settings_engine": "operational",
-            # Voice Experience Engines
+            # Voice Experience Engines (3)
             "voice_error_handling_engine": "operational",
             "voice_accessibility_engine": "operational",
             "voice_onboarding_engine": "operational",
-            # Voice Intelligence Engines
+            # Voice Intelligence Engines (5)
             "voice_help_guidance_engine": "operational",
             "voice_multistep_workflow_engine": "operational",
             "voice_component_placement_engine": "operational",
             "voice_debugging_engine": "operational",
-            "extended_voice_intelligence_engine": "operational"
+            "extended_voice_intelligence_engine": "operational",
+            # Voice Control Engines (4)
+            "voice_driven_publishing_engine": "operational",
+            "voice_driven_data_modeling_engine": "operational",
+            "voice_driven_navigation_engine": "operational",
+            "voice_driven_project_review_engine": "operational"
         }
     }
 
