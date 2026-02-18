@@ -115,12 +115,20 @@ class PublishingEngine:
     def _generate_commit_hash(cls, project: Project) -> str:
         """Generate a hash representing the current project state."""
         import json
+        
+        # Get structure as dict, handling Pydantic models
+        structure = getattr(project, 'structure', {})
+        if hasattr(structure, 'model_dump'):
+            structure = structure.model_dump()
+        elif not isinstance(structure, dict):
+            structure = {}
+        
         content = json.dumps({
             "id": project.id,
             "name": project.name,
-            "structure": getattr(project, 'structure', {}),
+            "structure": structure,
             "timestamp": datetime.now(timezone.utc).isoformat()
-        }, sort_keys=True)
+        }, sort_keys=True, default=str)
         return hashlib.sha256(content.encode()).hexdigest()[:12]
     
     @classmethod
