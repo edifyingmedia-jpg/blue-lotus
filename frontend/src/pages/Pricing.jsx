@@ -5,6 +5,7 @@ import Footer from '../components/Footer';
 import { Button } from '../components/ui/button';
 import { 
   Check, 
+  X,
   HelpCircle, 
   Zap, 
   Sparkles,
