@@ -215,13 +215,13 @@ const Dashboard = () => {
       <header className="border-b border-gray-800 bg-gray-900/50 backdrop-blur-sm sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
-            <Link to="/">
+            <Link to="/" className="transition-transform hover:scale-105">
               <Logo size={36} />
             </Link>
 
             <div className="flex items-center gap-4">
               {/* Credits */}
-              <div className="hidden sm:flex items-center gap-2 px-3 py-1.5 bg-gray-800/50 border border-gray-700 rounded-lg">
+              <div className="hidden sm:flex items-center gap-2 px-3 py-1.5 bg-gray-800/50 border border-gray-700 rounded-lg transition-all hover:border-yellow-500/30">
                 <Zap className="w-4 h-4 text-yellow-400" />
                 <span className="text-white text-sm font-medium">{totalCredits}</span>
                 <span className="text-gray-400 text-sm">credits</span>
