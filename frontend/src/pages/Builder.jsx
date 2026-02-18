@@ -304,7 +304,7 @@ const Builder = () => {
 
       {/* Main Content */}
       <div className="flex-1 flex overflow-hidden">
-        {/* Left Panel - AI Chat (Emergent Style) */}
+        {/* Left Panel - AI Chat */}
         <div
           className={`${
             showSidebar ? 'w-[420px]' : 'w-0'
