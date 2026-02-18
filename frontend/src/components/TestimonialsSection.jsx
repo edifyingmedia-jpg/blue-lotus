@@ -18,9 +18,6 @@ const TestimonialsSection = () => {
             Loved by
             <span className="text-blue-400"> builders worldwide</span>
           </h2>
-          <p className="text-gray-400 text-lg max-w-2xl mx-auto">
-            See what our community has to say about building with Emergent.
-          </p>
         </div>
 
         <div className="grid md:grid-cols-3 gap-8">
@@ -28,7 +25,6 @@ const TestimonialsSection = () => {
             <div
               key={testimonial.id}
               className="group relative p-6 bg-gray-900/50 border border-gray-800 rounded-2xl hover:border-blue-500/50 transition-all duration-300"
-              style={{ animationDelay: `${index * 100}ms` }}
             >
               {/* Quote icon */}
               <Quote className="w-8 h-8 text-blue-500/30 mb-4" />
