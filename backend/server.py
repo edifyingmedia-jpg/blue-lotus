@@ -97,6 +97,10 @@ async def health_check():
             "data_model_engine": "operational",
             "navigation_engine": "operational",
             "ai_instruction_engine": "operational",
+            "orchestration_engine": "operational",
+            "runtime_intelligence_engine": "operational",
+            "canvas_engine": "operational",
+            "component_library_engine": "operational",
             "generation_engine": "operational (mocked)",
             "publishing_engine": "operational (mocked)",
             "export_engine": "operational (mocked)"
