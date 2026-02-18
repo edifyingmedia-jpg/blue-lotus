@@ -275,7 +275,35 @@ const Dashboard = () => {
               </Button>
             )}
           </div>
-        )}
+
+          {/* Right Column - Credit Usage Tracker */}
+          <div className="hidden lg:block">
+            <div className="sticky top-24">
+              <CreditUsageTracker 
+                monthlyCredits={150}
+                monthlyCreditsUsed={47}
+                bonusCredits={8}
+                maxBonusCredits={10}
+                purchasedCredits={250}
+                creditsUsedToday={12}
+                avgCreditsPerGeneration={3}
+              />
+            </div>
+          </div>
+        </div>
+
+        {/* Mobile Credit Tracker */}
+        <div className="lg:hidden mt-8">
+          <CreditUsageTracker 
+            monthlyCredits={150}
+            monthlyCreditsUsed={47}
+            bonusCredits={8}
+            maxBonusCredits={10}
+            purchasedCredits={250}
+            creditsUsedToday={12}
+            avgCreditsPerGeneration={3}
+          />
+        </div>
       </main>
     </div>
   );
