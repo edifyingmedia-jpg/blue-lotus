@@ -117,6 +117,11 @@ export const PlanEnforcementProvider = ({ children }) => {
     return planConfig.export;
   };
 
+  // Check if user can download
+  const canDownload = () => {
+    return planConfig.download;
+  };
+
   // Check if user can publish (to staging)
   const canPublish = () => {
     return planConfig.publish;
@@ -125,6 +130,39 @@ export const PlanEnforcementProvider = ({ children }) => {
   // Check if user can publish to production
   const canPublishProduction = () => {
     return planConfig.publishProduction;
+  };
+
+  // Check if user can create more projects
+  const canCreateProject = () => {
+    return projectCount < planConfig.maxProjects;
+  };
+
+  // Check if user can publish more projects
+  const canPublishMore = () => {
+    if (planConfig.maxPublishedProjects === Infinity) return true;
+    return publishedCount < planConfig.maxPublishedProjects;
+  };
+
+  // Get project limits info
+  const getProjectLimits = () => {
+    return {
+      current: projectCount,
+      max: planConfig.maxProjects,
+      remaining: planConfig.maxProjects - projectCount,
+      percentUsed: (projectCount / planConfig.maxProjects) * 100,
+    };
+  };
+
+  // Get published limits info
+  const getPublishLimits = () => {
+    const isUnlimited = planConfig.maxPublishedProjects === Infinity;
+    return {
+      current: publishedCount,
+      max: isUnlimited ? 'Unlimited' : planConfig.maxPublishedProjects,
+      remaining: isUnlimited ? Infinity : planConfig.maxPublishedProjects - publishedCount,
+      isUnlimited,
+      percentUsed: isUnlimited ? 0 : (publishedCount / planConfig.maxPublishedProjects) * 100,
+    };
   };
 
   // Check if user has enough credits
