@@ -30,18 +30,18 @@ def create_admin_routes(db):
     router = APIRouter(prefix="/admin", tags=["Admin"])
     
     async def verify_owner_access(authorization: str):
-        """Verify user has owner/admin access."""
+        """Verify user has owner-only access (admins cannot access)."""
         user = await get_current_user(authorization, db)
         if not user:
             raise HTTPException(status_code=401, detail="Not authenticated")
         
-        # Check if user is owner or admin
+        # Check if user is owner ONLY (admins cannot access)
         user_doc = await db.users.find_one({"id": user.id}, {"role": 1, "email": 1, "_id": 0})
         user_role = user_doc.get("role", "user") if user_doc else "user"
         user_email = user_doc.get("email", "") if user_doc else ""
         
-        # Allow access if user is owner/admin role OR email is in OWNER_EMAILS list
-        if user_role not in ["owner", "admin"] and user_email not in OWNER_EMAILS:
+        # Only allow owner role OR email in OWNER_EMAILS list
+        if user_role != "owner" and user_email not in OWNER_EMAILS:
             raise HTTPException(status_code=403, detail="Access denied. Owner privileges required.")
         
         return user
