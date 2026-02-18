@@ -348,7 +348,12 @@ Build a clone of the Emergent website rebranded as "Blue Lotus" - an AI-powered 
 - **Publishing Engine**: Returns mock URLs (needs deployment infrastructure)
 - **Export Engine**: Returns mock download URLs (needs file packaging)
 - **Billing**: Credit purchase works but Stripe not integrated
-- **All 17 engines contain mocked business logic** - scaffolded and ready for real implementation
+- **Voice Command Execution**: Voice commands are parsed and routed, but actual screen/page creation returns mocked results
+- **All 23 engines contain mocked business logic** - scaffolded and ready for real implementation
+
+**REAL Integrations (Working):**
+- **OpenAI Whisper** (Speech-to-Text) - Transcribes audio via Emergent LLM Key
+- **OpenAI TTS** (Text-to-Speech) - Generates voice responses via Emergent LLM Key
 
 ---
 
