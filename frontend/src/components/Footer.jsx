@@ -4,6 +4,25 @@ import { footerLinks } from '../data/mock';
 import Logo from './Logo';
 import { Github, Twitter, Linkedin, Youtube } from 'lucide-react';
 
+const FooterLinkSection = ({ title, links }) => (
+  <div>
+    <h4 className="text-white font-semibold mb-4">{title}</h4>
+    <ul className="space-y-3">
+      {links.map((link) => (
+        <li key={link.label}>
+          <Link
+            to={link.href}
+            className="text-gray-400 hover:text-blue-400 text-sm transition-colors duration-200"
+            data-testid={`footer-link-${link.label.toLowerCase().replace(/\s+/g, '-')}`}
+          >
+            {link.label}
+          </Link>
+        </li>
+      ))}
+    </ul>
+  </div>
+);
+
 const Footer = () => {
   const socialLinks = [
     { icon: Twitter, href: '#', label: 'Twitter' },
@@ -40,88 +59,29 @@ const Footer = () => {
           </div>
 
           {/* Product links */}
-          <div>
-            <h4 className="text-white font-semibold mb-4">Product</h4>
-            <ul className="space-y-3">
-              {footerLinks.product.map((link) => (
-                <li key={link.label}>
-                  {link.href.startsWith('/') && !link.href.includes('#') ? (
-                    <Link
-                      to={link.href}
-                      className="text-gray-400 hover:text-blue-400 text-sm transition-colors duration-200"
-                    >
-                      {link.label}
-                    </Link>
-                  ) : (
-                    <a
-                      href={link.href}
-                      className="text-gray-400 hover:text-blue-400 text-sm transition-colors duration-200"
-                    >
-                      {link.label}
-                    </a>
-                  )}
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          {/* Company links */}
-          <div>
-            <h4 className="text-white font-semibold mb-4">Company</h4>
-            <ul className="space-y-3">
-              {footerLinks.company.map((link) => (
-                <li key={link.label}>
-                  <a
-                    href={link.href}
-                    className="text-gray-400 hover:text-blue-400 text-sm transition-colors duration-200"
-                  >
-                    {link.label}
-                  </a>
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          {/* Resources links */}
-          <div>
-            <h4 className="text-white font-semibold mb-4">Resources</h4>
-            <ul className="space-y-3">
-              {footerLinks.resources.map((link) => (
-                <li key={link.label}>
-                  <a
-                    href={link.href}
-                    className="text-gray-400 hover:text-blue-400 text-sm transition-colors duration-200"
-                  >
-                    {link.label}
-                  </a>
-                </li>
-              ))}
-            </ul>
-          </div>
+          <FooterLinkSection title="Product" links={footerLinks.product} />
 
           {/* Legal links */}
-          <div>
-            <h4 className="text-white font-semibold mb-4">Legal</h4>
-            <ul className="space-y-3">
-              {footerLinks.legal.map((link) => (
-                <li key={link.label}>
-                  <Link
-                    to={link.href}
-                    className="text-gray-400 hover:text-blue-400 text-sm transition-colors duration-200"
-                  >
-                    {link.label}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </div>
+          <FooterLinkSection title="Legal" links={footerLinks.legal} />
+
+          {/* Compliance links */}
+          <FooterLinkSection title="Compliance" links={footerLinks.compliance} />
+
+          {/* Company links */}
+          <FooterLinkSection title="Company" links={footerLinks.company} />
         </div>
 
         {/* Bottom bar */}
         <div className="mt-12 pt-8 border-t border-gray-800 flex flex-col md:flex-row justify-between items-center gap-4">
           <p className="text-gray-500 text-sm">
-            © {new Date().getFullYear()} Blue Lotus. All rights reserved.
+            © 2026 Blue Lotus. All rights reserved.
           </p>
+          <Link 
+            to="/legal" 
+            className="text-gray-500 hover:text-blue-400 text-sm transition-colors"
+          >
+            View all legal documents →
+          </Link>
         </div>
       </div>
     </footer>
