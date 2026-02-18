@@ -197,6 +197,7 @@ export const footerLinks = {
   ],
   company: [
     { label: 'Accessibility', href: '/legal/accessibility' },
+    { label: 'Compliance Center', href: '/compliance' },
     { label: 'Contact', href: '/legal/compliance' },
   ],
 };
