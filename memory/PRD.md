@@ -354,30 +354,45 @@ Build a clone of the Emergent website rebranded as "Blue Lotus" - an AI-powered 
     ├── server.py (main FastAPI app)
     ├── models/
     │   └── schemas.py (Pydantic models)
-    ├── engines/ (23 total)
+    ├── engines/ (31 total)
+    │   ├── # Core Engines (5)
     │   ├── credit_engine.py
     │   ├── plan_enforcement.py
+    │   ├── generation_engine.py
+    │   ├── publishing_engine.py
+    │   ├── export_engine.py
+    │   ├── # Build Engines (4)
     │   ├── project_engine.py
     │   ├── data_model_engine.py
     │   ├── navigation_engine.py
     │   ├── ai_instruction_engine.py
-    │   ├── ai_orchestration_engine.py
-    │   ├── generation_engine.py
-    │   ├── publishing_engine.py
-    │   ├── export_engine.py
+    │   ├── # Advanced Engines (4)
     │   ├── orchestration_engine.py
     │   ├── runtime_intelligence_engine.py
     │   ├── canvas_engine.py
     │   ├── component_library_engine.py
+    │   ├── # Control Engines (4)
+    │   ├── ai_orchestration_engine.py
     │   ├── blueprint_generation_engine.py
     │   ├── system_diagnostics_engine.py
     │   ├── platform_settings_engine.py
+    │   ├── # Voice Core Engines (6)
     │   ├── voice_input_engine.py
     │   ├── speech_to_intent_engine.py
     │   ├── voice_orchestration_engine.py
     │   ├── voice_feedback_engine.py (OpenAI TTS)
     │   ├── voice_safety_layer.py
-    │   └── voice_settings_engine.py
+    │   ├── voice_settings_engine.py
+    │   ├── # Voice Experience Engines (3)
+    │   ├── voice_error_handling_engine.py
+    │   ├── voice_accessibility_engine.py
+    │   ├── voice_onboarding_engine.py
+    │   ├── # Voice Intelligence Engines (5)
+    │   ├── voice_help_guidance_engine.py
+    │   ├── voice_multistep_workflow_engine.py
+    │   ├── voice_component_placement_engine.py
+    │   ├── voice_debugging_engine.py
+    │   └── extended_voice_intelligence_engine.py
     ├── routes/ (14 total)
     │   ├── auth.py
     │   ├── projects.py
