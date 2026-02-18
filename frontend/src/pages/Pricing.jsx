@@ -210,7 +210,7 @@ const Pricing = () => {
                   </ul>
 
                   {/* CTA */}
-                  <Link to="/signup" className="mt-auto">
+                  <Link to={tier.id === 'free' ? '/signup' : `/checkout?plan=${tier.id}`} className="mt-auto">
                     <Button
                       className={`w-full h-11 font-medium ${
                         tier.highlight
