@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import { footerLinks } from '../data/mock';
 import Logo from './Logo';
 import { Github, Twitter, Linkedin, Youtube } from 'lucide-react';
