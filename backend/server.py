@@ -49,6 +49,9 @@ from routes.publishing import create_publishing_routes
 from routes.export import create_export_routes
 from routes.credits import create_credits_routes
 from routes.builder import create_builder_routes
+from routes.intelligence import create_intelligence_routes
+from routes.canvas import create_canvas_routes
+from routes.components import router as components_router
 
 # Create API router with /api prefix
 api_router = APIRouter(prefix="/api")
@@ -61,6 +64,9 @@ api_router.include_router(create_publishing_routes(db))
 api_router.include_router(create_export_routes(db))
 api_router.include_router(create_credits_routes(db))
 api_router.include_router(create_builder_routes(db))
+api_router.include_router(create_intelligence_routes(db))
+api_router.include_router(create_canvas_routes(db))
+api_router.include_router(components_router)
 
 # Include the API router
 app.include_router(api_router)
