@@ -65,8 +65,9 @@ const Navbar = () => {
                   Sign In
                 </Button>
                 <Button
-                  onClick={() => navigate('/signup')}
+                  onClick={() => navigate('/onboarding')}
                   className="bg-blue-600 hover:bg-blue-700 text-white"
+                  data-testid="navbar-get-started-btn"
                 >
                   Get Started
                 </Button>
