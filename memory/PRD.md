@@ -19,14 +19,15 @@ Build a clone of the Emergent website rebranded as "Blue Lotus" - an AI-powered 
 ## What's Been Implemented
 
 ### ✅ Phase 1: Landing Page & Branding (Completed)
-- Custom Blue Lotus logo and branding
-- Dark theme with blue accents
+- Custom Blue Lotus logo (transparent background, glow animation)
+- Dark theme with brand colors (#4CC3FF, #003A66, #7FDBFF, #020B14)
 - Hero section with marketing copy
 - Features, How It Works, CTA sections
 - Footer with navigation links
+- "Made with Blue Lotus" badge
 
 ### ✅ Phase 2: Multi-Page App Structure (Completed)
-- Login/Signup pages (mocked auth)
+- Login/Signup pages
 - Dashboard with project listing
 - New Project creation flow
 - Settings page with tabs
@@ -38,85 +39,80 @@ Build a clone of the Emergent website rebranded as "Blue Lotus" - an AI-powered 
 - Chat-based command interface
 - Project structure visualization
 
-### ✅ Phase 7: Onboarding Flow (Completed - December 2025)
-- Created `/app/frontend/src/pages/Onboarding.jsx` - 6-step onboarding wizard
-- Step 1: Welcome - Introduction to Blue Lotus with key benefits
-- Step 2: Account Setup - Name, Email, Password form with validation
-- Step 3: Starter Credits - Shows 20 free credits introduction
-- Step 4: Project Type - Select App/Website/Both with visual cards
-- Step 5: Project Brief - Describe project with quick suggestion buttons
-- Step 6: Review Structure - Shows generated screens, data models, flows
-- Progress bar with step count and percentage
-- Back/Continue navigation buttons
-- Updated Hero, CTA, and Navbar "Get Started" buttons to use /onboarding route
-- MOCKED: Account creation and project structure generation
+### ✅ Phase 4: Legal Documentation (Completed)
+- 17 legal pages (Terms, Privacy, GDPR, CCPA, DPA, etc.)
+- Legal navigation page
+- Compliance Center for data rights
+- User Agreement modal on signup
 
-### ✅ Phase 6: Checkout & Payment Flow (Completed - December 2025)
-- Created `/app/frontend/src/pages/Checkout.jsx` - multi-step checkout flow
-- 4-step wizard: Plan Selection → Order Summary → Payment → Confirmation
-- Progress stepper with visual indicators
-- Plan preselection via URL query param (`/checkout?plan=pro`)
-- Payment form with card formatting
-- Processing state with spinner
-- Success screen with next steps checklist
-- Updated Pricing page CTAs to link to checkout
+### ✅ Phase 5: Pricing & Credits System UI (Completed)
+- Complete pricing page with 4 tiers
+- Credit add-on packs
+- Feature comparison table
+- Credit usage rules documentation
 
-### ✅ Phase 5: Pricing System (Completed - December 2025)
-- Updated `/app/frontend/src/data/mock.js` with new pricing tiers and credit data
-- Revamped `/app/frontend/src/pages/Pricing.jsx` with credit-based pricing
-- 4 Tiers: Free (20 starter credits), Creator ($9.99/150 credits), Pro ($19.99/400 credits), Elite ($29.99/800 credits)
-- Credit add-on packs: 100 ($4.99), 250 ($9.99), 600 ($19.99), 1500 ($39.99)
-- Monthly/Yearly billing toggle with 20% yearly discount
-- Credit rules: daily bonus, no rollover, purchased credits never expire
-- Export restrictions on free tier
-- Created `/app/frontend/src/data/legal.js` with 17 policies
-- Created `/app/frontend/src/pages/Legal.jsx` page component
-- Created `/app/frontend/src/pages/LegalNav.jsx` - centralized navigation page
-- Created `/app/frontend/src/pages/ComplianceCenter.jsx` - data rights & compliance request form
-- Created `/app/frontend/src/components/UserAgreementModal.jsx` - terms acceptance modal
-- Routes: `/legal` (hub), `/legal/:docId` (docs), `/compliance` (compliance center)
-- Footer links updated with 4 sections: Product, Legal, Compliance, Company
-- Policies included: Terms of Service, Privacy Policy, Cookie Policy, Acceptable Use, Refund Policy, DMCA, Security, Disclaimer, DPA, GDPR, CCPA, Accessibility, SLA, API Terms, Billing, IP Policy, Compliance
-- Legal nav organized into 5 categories
-- Compliance Center features: Data Rights actions, Legal docs, Security docs, Request form
-- User Agreement Modal integrated into Signup flow
+### ✅ Phase 6: Checkout & Payment Flow UI (Completed)
+- Multi-step checkout wizard
+- Plan selection and payment forms
+- Confirmation screen
 
----
+### ✅ Phase 7: Onboarding Flow (Completed)
+- 6-step onboarding wizard
+- Welcome, Account Setup, Credits Intro, Project Type, Project Brief, Review Structure
+- Progress tracking
 
-## Current State
+### ✅ Phase 8: Brand System (Completed - February 2025)
+- Blue Lotus logo with transparent background
+- Brand color palette enforced: Glow Blue (#4CC3FF), Deep Blue (#003A66), Soft Blue (#7FDBFF), Midnight (#020B14)
+- Logo glow animation (pulse + bloom on hover)
+- No purple/violet colors - pure blue theme
+- Inter typography
 
-### Frontend (Complete - Prototype)
-- **Framework**: React with React Router
-- **Styling**: Tailwind CSS
-- **UI Components**: Shadcn/UI
-- **State**: Local mocked data
+### ✅ Phase 9: Backend Core Engines (Completed - February 2025)
+**Built complete FastAPI backend with MongoDB:**
 
-### Backend (Not Implemented)
-- **Planned**: FastAPI + MongoDB
-- **Status**: All data is mocked in `/app/frontend/src/data/`
+#### Credit Engine (`/app/backend/engines/credit_engine.py`)
+- 4 credit sources: Monthly, Bonus, Purchased, Starter
+- Deduction priority: Bonus → Monthly → Purchased → Starter
+- Daily bonus refresh (24h cycle, no rollover)
+- Purchased credits never expire
 
----
+#### Plan Enforcement Engine (`/app/backend/engines/plan_enforcement.py`)
+- Free: 3 projects, no export/publish
+- Creator: 10 projects, staging only, $9.99/mo
+- Pro: 25 projects, production, $19.99/mo
+- Elite: 100 projects, unlimited publish, team seats, $29.99/mo
 
-## Prioritized Backlog
+#### Generation Engine (`/app/backend/engines/generation_engine.py`)
+- Screen generation: 3 credits
+- Page generation: 5 credits
+- Flow generation: 8 credits
+- Refinement: 1 credit
+- (Currently mocked - ready for LLM integration)
 
-### P0 - Immediate
-- [x] Complete legal documentation implementation
+#### Publishing Engine (`/app/backend/engines/publishing_engine.py`)
+- Staging deployment (Creator+)
+- Production deployment (Pro+)
+- URL generation for deployments
 
-### P1 - Backend Foundation
-- [ ] Create API contracts document (`contracts.md`)
-- [ ] Implement user authentication (register, login, JWT)
-- [ ] Implement project CRUD operations
-- [ ] Connect frontend to backend
+#### Export Engine (`/app/backend/engines/export_engine.py`)
+- Full app/website export
+- Code package export
+- Static assets export
+- (Blocked for Free users)
 
-### P2 - Enhanced Features
-- [ ] Real AI integration for builder chat
-- [ ] Project persistence in MongoDB
-- [ ] User profile management
-
-### P3 - Production Readiness
-- [ ] Error handling and validation
-- [ ] Loading states and UX polish
-- [ ] Performance optimization
+#### API Endpoints
+- `POST /api/auth/signup` - User registration with 20 starter credits
+- `POST /api/auth/login` - Authentication with JWT
+- `GET /api/auth/me` - Current user profile
+- `GET/POST /api/projects/` - Project CRUD
+- `POST /api/generate/` - AI generation (deducts credits)
+- `POST /api/publish/` - Deploy to staging/production
+- `POST /api/export/` - Export project
+- `GET /api/credits/balance` - Credit balance with refresh timer
+- `POST /api/credits/purchase` - Buy credit packs
+- `GET /api/plans` - Available plans
+- `GET /api/health` - System health check
 
 ---
 
@@ -126,26 +122,97 @@ Build a clone of the Emergent website rebranded as "Blue Lotus" - an AI-powered 
 /app
 ├── frontend/
 │   └── src/
-│       ├── components/     # Reusable UI components
-│       │   └── ui/        # Shadcn components
-│       ├── data/          # Mock data files
-│       │   ├── mock.js    # Project & user data
-│       │   └── legal.js   # Legal policy content
-│       ├── pages/         # Page components
-│       │   ├── Builder.jsx
-│       │   ├── Dashboard.jsx
-│       │   ├── Landing.jsx
-│       │   ├── Legal.jsx
-│       │   ├── Onboarding.jsx  # New onboarding flow
+│       ├── components/
+│       │   ├── ui/ (shadcn)
+│       │   ├── Logo.jsx (brand logo with animation)
+│       │   ├── MadeWithBlueLotus.jsx
 │       │   └── ...
-│       └── context/       # React context (AuthContext)
-└── backend/               # (Planned - Not implemented)
+│       ├── context/
+│       │   ├── AuthContext.js
+│       │   ├── PlanEnforcementContext.jsx
+│       │   └── RolesContext.jsx
+│       ├── pages/
+│       │   ├── Onboarding.jsx
+│       │   ├── Dashboard.jsx
+│       │   ├── Builder.jsx
+│       │   ├── Pricing.jsx
+│       │   └── ...
+│       └── data/
+│           ├── mock.js
+│           └── legal.js
+│
+└── backend/
+    ├── server.py (main FastAPI app)
+    ├── models/
+    │   └── schemas.py (Pydantic models)
+    ├── engines/
+    │   ├── credit_engine.py
+    │   ├── plan_enforcement.py
+    │   ├── generation_engine.py
+    │   ├── publishing_engine.py
+    │   └── export_engine.py
+    ├── routes/
+    │   ├── auth.py
+    │   ├── projects.py
+    │   ├── generation.py
+    │   ├── publishing.py
+    │   ├── export.py
+    │   └── credits.py
+    └── utils/
+        └── auth.py (JWT utilities)
 ```
 
 ---
 
-## Notes
-- All functionality is currently **MOCKED**
-- Authentication accepts any credentials
-- AI responses are hardcoded
-- No database connection exists
+## What's Still Mocked
+
+- **Generation Engine**: Returns mock structures (needs LLM integration)
+- **Publishing Engine**: Returns mock URLs (needs deployment infrastructure)
+- **Export Engine**: Returns mock download URLs (needs file packaging)
+- **Billing**: Credit purchase works but Stripe not integrated
+
+---
+
+## Backlog / Future Tasks
+
+### P0 - Critical
+- [ ] Connect frontend to real backend APIs (replace mocked AuthContext)
+- [ ] Integrate Stripe for billing
+
+### P1 - Important
+- [ ] LLM integration for Generation Engine
+- [ ] Real deployment infrastructure for Publishing Engine
+- [ ] File packaging for Export Engine
+- [ ] Account Settings UI implementation
+
+### P2 - Nice to Have
+- [ ] Team management UI
+- [ ] Role-based access control enforcement
+- [ ] Analytics dashboard
+- [ ] Usage reports
+
+---
+
+## Brand Guidelines
+
+### Colors
+- Glow Blue: #4CC3FF (primary)
+- Deep Blue: #003A66 (borders, secondary)
+- Soft Blue: #7FDBFF (accents)
+- Midnight: #020B14 (background)
+
+### Logo
+- Transparent background (enforced)
+- Glow animation on idle
+- Bloom animation on hover
+- Minimum size: 24px
+
+### Typography
+- Font: Inter
+- Weights: 300-700
+- No serif fonts
+
+### Restrictions
+- No purple/violet
+- No external branding
+- No auto-generated badges
