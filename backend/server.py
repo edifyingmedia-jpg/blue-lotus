@@ -48,6 +48,7 @@ from routes.generation import create_generation_routes
 from routes.publishing import create_publishing_routes
 from routes.export import create_export_routes
 from routes.credits import create_credits_routes
+from routes.builder import create_builder_routes
 
 # Create API router with /api prefix
 api_router = APIRouter(prefix="/api")
@@ -59,6 +60,7 @@ api_router.include_router(create_generation_routes(db))
 api_router.include_router(create_publishing_routes(db))
 api_router.include_router(create_export_routes(db))
 api_router.include_router(create_credits_routes(db))
+api_router.include_router(create_builder_routes(db))
 
 # Include the API router
 app.include_router(api_router)
