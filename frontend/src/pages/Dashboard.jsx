@@ -1,17 +1,10 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { mockProjects, projectTemplates } from '../data/mock';
+import { mockProjects } from '../data/mock';
 import Logo from '../components/Logo';
 import { Button } from '../components/ui/button';
 import { Input } from '../components/ui/input';
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-} from '../components/ui/dialog';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -30,34 +23,21 @@ import {
   Clock,
   Rocket,
   Loader2,
-  FileText,
-  Layout,
-  LayoutDashboard,
-  ShoppingCart,
-  BookOpen,
   User,
   CreditCard,
   LogOut,
   ChevronDown,
   Zap,
+  Smartphone,
+  Globe,
+  Layers,
 } from 'lucide-react';
-
-const iconMap = {
-  FileText,
-  Layout,
-  LayoutDashboard,
-  ShoppingCart,
-  BookOpen,
-  Rocket,
-};
 
 const Dashboard = () => {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
   const [projects, setProjects] = useState(mockProjects);
   const [searchQuery, setSearchQuery] = useState('');
-  const [showNewProjectDialog, setShowNewProjectDialog] = useState(false);
-  const [selectedTemplate, setSelectedTemplate] = useState(null);
   const [newProjectName, setNewProjectName] = useState('');
 
   const filteredProjects = projects.filter(
