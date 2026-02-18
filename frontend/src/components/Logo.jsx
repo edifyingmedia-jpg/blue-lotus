@@ -10,91 +10,41 @@ const Logo = ({ className = '', size = 44, showText = true }) => {
         fill="none"
         xmlns="http://www.w3.org/2000/svg"
       >
-        {/* Back outer petals - widest spread */}
-        <path
-          d="M12 70 Q20 50, 50 30 Q30 55, 20 70 Q15 73, 12 70"
-          fill="#6B7280"
-          opacity="0.8"
-        />
-        <path
-          d="M88 70 Q80 50, 50 30 Q70 55, 80 70 Q85 73, 88 70"
-          fill="#6B7280"
-          opacity="0.8"
-        />
+        {/* Back outer petals - rounded cloud-like shapes */}
+        <ellipse cx="25" cy="60" rx="18" ry="15" fill="#71717A" opacity="0.7" />
+        <ellipse cx="75" cy="60" rx="18" ry="15" fill="#71717A" opacity="0.7" />
         
-        {/* Second layer - slightly inside */}
-        <path
-          d="M20 68 Q28 48, 50 28 Q35 52, 28 68 Q23 72, 20 68"
-          fill="#9CA3AF"
-          opacity="0.9"
-        />
-        <path
-          d="M80 68 Q72 48, 50 28 Q65 52, 72 68 Q77 72, 80 68"
-          fill="#9CA3AF"
-          opacity="0.9"
-        />
+        {/* Second layer petals */}
+        <ellipse cx="30" cy="55" rx="16" ry="18" fill="#9CA3AF" opacity="0.85" />
+        <ellipse cx="70" cy="55" rx="16" ry="18" fill="#9CA3AF" opacity="0.85" />
         
-        {/* Third layer */}
-        <path
-          d="M28 67 Q35 45, 50 25 Q40 50, 35 67 Q31 71, 28 67"
-          fill="#D1D5DB"
-        />
-        <path
-          d="M72 67 Q65 45, 50 25 Q60 50, 65 67 Q69 71, 72 67"
-          fill="#D1D5DB"
-        />
+        {/* Third layer petals - rounder */}
+        <ellipse cx="35" cy="50" rx="14" ry="20" fill="#D1D5DB" />
+        <ellipse cx="65" cy="50" rx="14" ry="20" fill="#D1D5DB" />
         
-        {/* Fourth layer - closer to center */}
-        <path
-          d="M35 66 Q42 43, 50 22 Q45 48, 42 66 Q38 70, 35 66"
-          fill="#E5E7EB"
-        />
-        <path
-          d="M65 66 Q58 43, 50 22 Q55 48, 58 66 Q62 70, 65 66"
-          fill="#E5E7EB"
-        />
+        {/* Inner side petals */}
+        <ellipse cx="40" cy="47" rx="12" ry="22" fill="#E5E7EB" />
+        <ellipse cx="60" cy="47" rx="12" ry="22" fill="#E5E7EB" />
         
-        {/* Inner petals */}
-        <path
-          d="M42 65 Q46 40, 50 20 Q48 45, 47 65 Q44 69, 42 65"
-          fill="#F3F4F6"
-        />
-        <path
-          d="M58 65 Q54 40, 50 20 Q52 45, 53 65 Q56 69, 58 65"
-          fill="#F3F4F6"
-        />
+        {/* Center front petal - tallest, brightest */}
+        <ellipse cx="50" cy="45" rx="10" ry="25" fill="#F9FAFB" />
         
-        {/* Center petal - front, brightest */}
-        <path
-          d="M47 64 Q48 38, 50 18 Q52 38, 53 64 Q51 68, 50 68 Q49 68, 47 64"
-          fill="#FFFFFF"
-        />
+        {/* Top bulb - rounded cap */}
+        <ellipse cx="50" cy="25" rx="15" ry="12" fill="url(#topBulb)" />
         
-        {/* Top rounded bulb shape */}
-        <ellipse
-          cx="50"
-          cy="23"
-          rx="12"
-          ry="8"
-          fill="url(#bulbGradient)"
-        />
+        {/* Small highlight bubbles for 3D effect */}
+        <circle cx="43" cy="22" r="4" fill="white" opacity="0.7" />
+        <circle cx="55" cy="28" r="3" fill="white" opacity="0.5" />
         
-        {/* Highlight shine */}
-        <ellipse
-          cx="47"
-          cy="20"
-          rx="4"
-          ry="3"
-          fill="white"
-          opacity="0.6"
-        />
+        {/* Side highlight on center petal */}
+        <ellipse cx="46" cy="40" rx="4" ry="12" fill="white" opacity="0.4" />
         
         <defs>
-          <linearGradient id="bulbGradient" x1="50%" y1="0%" x2="50%" y2="100%">
+          <radialGradient id="topBulb" cx="40%" cy="30%" r="70%">
             <stop offset="0%" stopColor="#FFFFFF" />
-            <stop offset="50%" stopColor="#F9FAFB" />
+            <stop offset="70%" stopColor="#F3F4F6" />
             <stop offset="100%" stopColor="#E5E7EB" />
-          </linearGradient>
+          </radialGradient>
         </defs>
       </svg>
       {showText && (
