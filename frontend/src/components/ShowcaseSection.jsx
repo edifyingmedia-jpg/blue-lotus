@@ -26,7 +26,7 @@ const ShowcaseSection = () => {
           </span>
           <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-4">
             Apps built with
-            <span className="text-blue-400"> Emergent</span>
+            <span className="text-blue-400"> Blue Lotus</span>
           </h2>
           <p className="text-gray-400 text-lg max-w-2xl mx-auto">
             See what our users have created in minutes, not months.
