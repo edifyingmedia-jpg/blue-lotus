@@ -125,6 +125,7 @@ class User(BaseModel):
     password_hash: str
     name: str
     avatar: Optional[str] = None
+    role: UserRole = UserRole.USER
     plan: PlanType = PlanType.FREE
     credits: Credits = Field(default_factory=Credits)
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
