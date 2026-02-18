@@ -1,10 +1,10 @@
-// Mock data for Blue Lotus website
+// Mock data for Blue Lotus AI App Builder
 
 export const navLinks = [
-  { label: 'Features', href: '#features' },
-  { label: 'How It Works', href: '#how-it-works' },
-  { label: 'Showcase', href: '#showcase' },
-  { label: 'Pricing', href: '#pricing' },
+  { label: 'Features', href: '/#features' },
+  { label: 'How It Works', href: '/#how-it-works' },
+  { label: 'Showcase', href: '/#showcase' },
+  { label: 'Pricing', href: '/pricing' },
 ];
 
 export const features = [
@@ -188,9 +188,9 @@ export const stats = [
 
 export const footerLinks = {
   product: [
-    { label: 'Features', href: '#features' },
-    { label: 'Pricing', href: '#pricing' },
-    { label: 'Showcase', href: '#showcase' },
+    { label: 'Features', href: '/#features' },
+    { label: 'Pricing', href: '/pricing' },
+    { label: 'Showcase', href: '/#showcase' },
     { label: 'Changelog', href: '#' },
   ],
   company: [
@@ -211,3 +211,95 @@ export const footerLinks = {
     { label: 'Cookie Policy', href: '#' },
   ],
 };
+
+// Mock user data
+export const mockUser = {
+  id: '1',
+  name: 'John Doe',
+  email: 'john@example.com',
+  avatar: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=100&h=100&fit=crop',
+  plan: 'Pro',
+  credits: 1850,
+  maxCredits: 2500,
+};
+
+// Mock projects data
+export const mockProjects = [
+  {
+    id: '1',
+    name: 'E-Commerce Store',
+    description: 'A full-featured online store with Stripe payments',
+    status: 'deployed',
+    lastEdited: '2 hours ago',
+    thumbnail: 'https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=300&h=200&fit=crop',
+    url: 'https://my-store.bluelotus.app',
+  },
+  {
+    id: '2',
+    name: 'Task Manager',
+    description: 'Kanban-style project management tool',
+    status: 'building',
+    lastEdited: '5 minutes ago',
+    thumbnail: 'https://images.unsplash.com/photo-1611224923853-80b023f02d71?w=300&h=200&fit=crop',
+    url: null,
+  },
+  {
+    id: '3',
+    name: 'Blog Platform',
+    description: 'Personal blog with markdown support',
+    status: 'deployed',
+    lastEdited: '1 day ago',
+    thumbnail: 'https://images.unsplash.com/photo-1499750310107-5fef28a66643?w=300&h=200&fit=crop',
+    url: 'https://my-blog.bluelotus.app',
+  },
+];
+
+// Mock chat messages
+export const mockChatMessages = [
+  {
+    id: '1',
+    role: 'assistant',
+    content: 'Hello! I\'m your AI assistant. Tell me what kind of app you want to build, and I\'ll help you create it.',
+    timestamp: new Date(Date.now() - 60000),
+  },
+];
+
+// Template options for new projects
+export const projectTemplates = [
+  {
+    id: 'blank',
+    name: 'Blank Project',
+    description: 'Start from scratch with a clean slate',
+    icon: 'FileText',
+  },
+  {
+    id: 'landing',
+    name: 'Landing Page',
+    description: 'Marketing page with hero, features, and CTA',
+    icon: 'Layout',
+  },
+  {
+    id: 'dashboard',
+    name: 'Dashboard',
+    description: 'Admin panel with charts and data tables',
+    icon: 'LayoutDashboard',
+  },
+  {
+    id: 'ecommerce',
+    name: 'E-Commerce',
+    description: 'Online store with products and checkout',
+    icon: 'ShoppingCart',
+  },
+  {
+    id: 'blog',
+    name: 'Blog',
+    description: 'Content platform with posts and categories',
+    icon: 'BookOpen',
+  },
+  {
+    id: 'saas',
+    name: 'SaaS App',
+    description: 'Full application with auth and billing',
+    icon: 'Rocket',
+  },
+];
