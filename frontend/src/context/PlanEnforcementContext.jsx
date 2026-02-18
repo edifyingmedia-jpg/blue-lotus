@@ -1,39 +1,51 @@
 import React, { createContext, useContext, useState } from 'react';
 
-// Plan tier configuration
+// Plan tier configuration with project limits
 const PLAN_CONFIG = {
   free: {
     name: 'Free',
     export: false,
+    download: false,
     publish: false,
     publishProduction: false,
     monthlyCredits: 0,
     dailyBonus: 0,
+    maxProjects: 3,
+    maxPublishedProjects: 0,
   },
   creator: {
     name: 'Creator',
     export: true,
+    download: true,
     publish: true, // Staging only
     publishProduction: false,
     monthlyCredits: 150,
     dailyBonus: 10,
+    maxProjects: 10,
+    maxPublishedProjects: 2,
   },
   pro: {
     name: 'Pro',
     export: true,
+    download: true,
     publish: true,
     publishProduction: true,
     monthlyCredits: 400,
     dailyBonus: 10,
+    maxProjects: 25,
+    maxPublishedProjects: 5,
   },
   elite: {
     name: 'Elite',
     export: true,
+    download: true,
     publish: true,
     publishProduction: true,
     unlimitedPublishing: true,
     monthlyCredits: 800,
     dailyBonus: 10,
+    maxProjects: 100,
+    maxPublishedProjects: Infinity, // Unlimited
   },
 };
 
@@ -42,6 +54,11 @@ const UPGRADE_MESSAGES = {
   export: {
     title: 'Export Requires Upgrade',
     description: 'Free users cannot export apps or websites. Upgrade to Creator or higher to unlock exporting.',
+    requiredPlan: 'creator',
+  },
+  download: {
+    title: 'Download Requires Upgrade',
+    description: 'Free users cannot download project code. Upgrade to Creator or higher to unlock downloads.',
     requiredPlan: 'creator',
   },
   publish: {
