@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
 import { stats } from '../data/mock';
@@ -6,7 +7,17 @@ import { ArrowRight, Mail } from 'lucide-react';
 
 const HeroSection = () => {
   const [email, setEmail] = useState('');
-  const [isHovered, setIsHovered] = useState(false);
+  const navigate = useNavigate();
+
+  const handleGoogleSignup = () => {
+    navigate('/signup');
+  };
+
+  const handleEmailSignup = () => {
+    if (email) {
+      navigate('/signup');
+    }
+  };
 
   return (
     <section className="relative min-h-screen flex items-center justify-center overflow-hidden bg-gray-950">
@@ -48,9 +59,8 @@ const HeroSection = () => {
           <div className="max-w-md mx-auto space-y-4 mb-12">
             {/* Google Sign In */}
             <Button
+              onClick={handleGoogleSignup}
               className="w-full bg-white hover:bg-gray-100 text-gray-900 h-12 text-base font-medium gap-3"
-              onMouseEnter={() => setIsHovered(true)}
-              onMouseLeave={() => setIsHovered(false)}
             >
               <svg className="w-5 h-5" viewBox="0 0 24 24">
                 <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
@@ -79,7 +89,7 @@ const HeroSection = () => {
                   className="pl-10 h-12 bg-gray-800/50 border-gray-700 text-white placeholder:text-gray-500 focus:border-blue-500 focus:ring-blue-500/20"
                 />
               </div>
-              <Button className="h-12 px-6 bg-blue-600 hover:bg-blue-700 text-white">
+              <Button onClick={handleEmailSignup} className="h-12 px-6 bg-blue-600 hover:bg-blue-700 text-white">
                 <ArrowRight className="w-5 h-5" />
               </Button>
             </div>
