@@ -9,7 +9,7 @@ const MadeWithBlueLotus = ({ className = '' }) => {
       data-testid="made-with-blue-lotus"
     >
       <img 
-        src="/lotus-logo.gif" 
+        src="/blue-lotus.png" 
         alt="Blue Lotus" 
         className="w-4 h-4 object-contain"
       />
