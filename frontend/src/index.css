@@ -2,19 +2,116 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Blue Lotus Brand System */
+:root {
+    /* Brand Colors */
+    --bl-glow-blue: #4CC3FF;
+    --bl-deep-blue: #003A66;
+    --bl-soft-blue: #7FDBFF;
+    --bl-midnight: #020B14;
+    --bl-panel-bg: #03121F;
+    
+    /* Brand Typography */
+    --bl-font-primary: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
 body {
     margin: 0;
-    font-family:
-        -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
-        "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
-        sans-serif;
+    font-family: var(--bl-font-primary);
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    background-color: var(--bl-midnight);
 }
 
 code {
-    font-family:
-        source-code-pro, Menlo, Monaco, Consolas, "Courier New", monospace;
+    font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New", monospace;
+}
+
+/* Opening Lotus Animation */
+@keyframes lotusGlowPulse {
+    0%, 100% {
+        filter: drop-shadow(0 0 8px var(--bl-glow-blue));
+        transform: scale(1);
+    }
+    50% {
+        filter: drop-shadow(0 0 16px var(--bl-glow-blue)) drop-shadow(0 0 24px var(--bl-soft-blue));
+        transform: scale(1.04);
+    }
+}
+
+@keyframes lotusBloom {
+    0% {
+        filter: drop-shadow(0 0 4px var(--bl-glow-blue));
+        transform: scale(1);
+    }
+    50% {
+        filter: drop-shadow(0 0 20px var(--bl-glow-blue)) drop-shadow(0 0 30px var(--bl-soft-blue));
+        transform: scale(1.08);
+    }
+    100% {
+        filter: drop-shadow(0 0 4px var(--bl-glow-blue));
+        transform: scale(1);
+    }
+}
+
+@keyframes subtleFloat {
+    0%, 100% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(-2px);
+    }
+}
+
+.lotus-logo {
+    animation: lotusGlowPulse 2.4s ease-in-out infinite;
+}
+
+.lotus-logo:hover {
+    animation: lotusBloom 1.8s ease-in-out forwards;
+}
+
+.lotus-float {
+    animation: subtleFloat 3s ease-in-out infinite;
+}
+
+/* Brand Button Styles */
+.bl-btn-primary {
+    background-color: var(--bl-glow-blue);
+    color: #000000;
+    transition: all 0.3s ease;
+}
+
+.bl-btn-primary:hover {
+    box-shadow: 0 0 20px var(--bl-glow-blue), 0 0 40px rgba(76, 195, 255, 0.3);
+    transform: translateY(-2px);
+}
+
+/* Brand Panel Styles */
+.bl-panel {
+    background-color: var(--bl-panel-bg);
+    border: 1px solid var(--bl-deep-blue);
+}
+
+/* Brand Input Styles */
+.bl-input {
+    background-color: var(--bl-panel-bg);
+    border: 1px solid var(--bl-deep-blue);
+    transition: all 0.3s ease;
+}
+
+.bl-input:focus {
+    border-color: var(--bl-glow-blue);
+    box-shadow: 0 0 0 2px rgba(76, 195, 255, 0.2);
+}
+
+/* Brand Glow Effects */
+.bl-glow {
+    box-shadow: 0 0 20px rgba(76, 195, 255, 0.3);
+}
+
+.bl-glow-text {
+    text-shadow: 0 0 10px var(--bl-glow-blue);
 }
 
 @layer base {
@@ -46,30 +143,30 @@ code {
         --radius: 0.5rem;
     }
     .dark {
-        --background: 0 0% 3.9%;
+        --background: 210 100% 4%;
         --foreground: 0 0% 98%;
-        --card: 0 0% 3.9%;
+        --card: 210 100% 4%;
         --card-foreground: 0 0% 98%;
-        --popover: 0 0% 3.9%;
+        --popover: 210 100% 4%;
         --popover-foreground: 0 0% 98%;
-        --primary: 0 0% 98%;
-        --primary-foreground: 0 0% 9%;
-        --secondary: 0 0% 14.9%;
+        --primary: 195 100% 72%;
+        --primary-foreground: 0 0% 0%;
+        --secondary: 203 100% 20%;
         --secondary-foreground: 0 0% 98%;
-        --muted: 0 0% 14.9%;
+        --muted: 203 100% 20%;
         --muted-foreground: 0 0% 63.9%;
-        --accent: 0 0% 14.9%;
-        --accent-foreground: 0 0% 98%;
+        --accent: 195 100% 72%;
+        --accent-foreground: 0 0% 0%;
         --destructive: 0 62.8% 30.6%;
         --destructive-foreground: 0 0% 98%;
-        --border: 0 0% 14.9%;
-        --input: 0 0% 14.9%;
-        --ring: 0 0% 83.1%;
-        --chart-1: 220 70% 50%;
-        --chart-2: 160 60% 45%;
-        --chart-3: 30 80% 55%;
-        --chart-4: 280 65% 60%;
-        --chart-5: 340 75% 55%;
+        --border: 203 100% 20%;
+        --input: 210 100% 7%;
+        --ring: 195 100% 72%;
+        --chart-1: 195 100% 72%;
+        --chart-2: 195 100% 60%;
+        --chart-3: 195 100% 50%;
+        --chart-4: 195 100% 40%;
+        --chart-5: 195 100% 30%;
     }
 }
 
