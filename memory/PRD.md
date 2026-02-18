@@ -232,19 +232,40 @@ Build a clone of the Emergent website rebranded as "Blue Lotus" - an AI-powered 
     ├── server.py (main FastAPI app)
     ├── models/
     │   └── schemas.py (Pydantic models)
-    ├── engines/
+    ├── engines/ (17 total)
     │   ├── credit_engine.py
     │   ├── plan_enforcement.py
+    │   ├── project_engine.py
+    │   ├── data_model_engine.py
+    │   ├── navigation_engine.py
+    │   ├── ai_instruction_engine.py
+    │   ├── ai_orchestration_engine.py
     │   ├── generation_engine.py
     │   ├── publishing_engine.py
-    │   └── export_engine.py
-    ├── routes/
+    │   ├── export_engine.py
+    │   ├── orchestration_engine.py
+    │   ├── runtime_intelligence_engine.py
+    │   ├── canvas_engine.py
+    │   ├── component_library_engine.py
+    │   ├── blueprint_generation_engine.py
+    │   ├── system_diagnostics_engine.py
+    │   └── platform_settings_engine.py
+    ├── routes/ (13 total)
     │   ├── auth.py
     │   ├── projects.py
     │   ├── generation.py
     │   ├── publishing.py
     │   ├── export.py
-    │   └── credits.py
+    │   ├── credits.py
+    │   ├── builder.py
+    │   ├── intelligence.py
+    │   ├── canvas.py
+    │   ├── components.py
+    │   ├── blueprints.py
+    │   ├── diagnostics.py
+    │   └── settings.py
+    ├── tests/
+    │   └── test_new_engines.py
     └── utils/
         └── auth.py (JWT utilities)
 ```
