@@ -3,7 +3,6 @@
 export const navLinks = [
   { label: 'Features', href: '/#features' },
   { label: 'How It Works', href: '/#how-it-works' },
-  { label: 'Showcase', href: '/#showcase' },
   { label: 'Pricing', href: '/pricing' },
 ];
 
@@ -11,62 +10,52 @@ export const features = [
   {
     id: 1,
     icon: 'Sparkles',
-    title: 'Natural Language to Code',
-    description: 'Describe your app in plain English and watch it come to life. Our AI understands your vision and generates production-ready code.',
+    title: 'AI-Generated Structure',
+    description: 'Describe what you want. Blue Lotus creates full layouts, navigation, and logic instantly.',
   },
   {
     id: 2,
-    icon: 'Layers',
-    title: 'Full-Stack Generation',
-    description: 'Frontend, backend, database, and APIs - all generated automatically. Complete applications, not just components.',
+    icon: 'MousePointerOff',
+    title: 'No Code. No Dragging.',
+    description: 'Everything is generated for you — screens, flows, data, and copy. You guide it with simple prompts.',
   },
   {
     id: 3,
-    icon: 'Zap',
-    title: 'Instant Deployment',
-    description: 'One-click deployment with automatic SSL, routing, and scaling. Your app goes live in seconds, not hours.',
-  },
-  {
-    id: 4,
-    icon: 'Shield',
-    title: 'Self-Healing Code',
-    description: 'Built-in testing and debugging. Our AI automatically detects issues and applies fixes for rock-solid stability.',
-  },
-  {
-    id: 5,
-    icon: 'Code',
-    title: 'Real, Exportable Code',
-    description: 'Own your code completely. Download, modify, self-host, or sync to GitHub. No vendor lock-in, ever.',
-  },
-  {
-    id: 6,
-    icon: 'Plug',
-    title: 'Third-Party Integrations',
-    description: 'Connect to any API effortlessly. Stripe, Twilio, OpenAI - our agents configure integrations automatically.',
+    icon: 'Rocket',
+    title: 'Publish Anywhere',
+    description: 'Deploy your app or website with one click. Staging and production environments included.',
   },
 ];
 
 export const howItWorks = [
   {
     step: 1,
-    title: 'Describe Your App',
-    description: 'Tell us what you want to build in plain language. Be as detailed or as brief as you like.',
+    title: 'Describe your project',
+    description: 'Tell Blue Lotus what you\'re building and who it\'s for.',
   },
   {
     step: 2,
-    title: 'AI Generates Code',
-    description: 'Our multi-agent system creates frontend, backend, database schemas, and API integrations.',
+    title: 'Review your generated structure',
+    description: 'Screens, pages, data models, and flows appear automatically.',
   },
   {
     step: 3,
-    title: 'Review & Iterate',
-    description: 'See your app in real-time. Make changes through conversation, just like talking to a developer.',
+    title: 'Refine with natural language',
+    description: 'Add features, adjust layouts, and rewrite copy using simple instructions.',
   },
   {
     step: 4,
-    title: 'Deploy & Scale',
-    description: 'Launch with one click. We handle hosting, SSL, and scaling so you can focus on your users.',
+    title: 'Publish instantly',
+    description: 'Launch your app or website with a single click.',
   },
+];
+
+export const whyBlueLotus = [
+  'No learning curve',
+  'No design tools',
+  'No technical setup',
+  'No drag-and-drop',
+  'No code required',
 ];
 
 export const showcaseApps = [
@@ -108,11 +97,11 @@ export const pricingPlans = [
     period: '/month',
     description: 'Perfect for trying out Blue Lotus',
     features: [
-      '100 credits/month',
+      '100 AI generations/month',
       '1 active project',
-      'Basic AI models',
+      'Basic templates',
       'Community support',
-      'Code export',
+      'Staging environment',
     ],
     cta: 'Get Started',
     popular: false,
@@ -124,13 +113,13 @@ export const pricingPlans = [
     period: '/month',
     description: 'For serious builders and startups',
     features: [
-      '2,500 credits/month',
+      '2,500 AI generations/month',
       'Unlimited projects',
-      'Advanced AI models',
+      'All templates',
       'Priority support',
       'Custom domains',
+      'Production deployment',
       'Team collaboration',
-      'GitHub sync',
     ],
     cta: 'Start Pro Trial',
     popular: true,
@@ -142,7 +131,7 @@ export const pricingPlans = [
     period: '',
     description: 'For large teams and organizations',
     features: [
-      'Unlimited credits',
+      'Unlimited generations',
       'Unlimited projects',
       'Dedicated support',
       'SLA guarantee',
@@ -161,36 +150,36 @@ export const testimonials = [
     name: 'Sarah Chen',
     role: 'Founder, TechStart',
     avatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&h=100&fit=crop',
-    content: 'Blue Lotus helped us launch our MVP in 2 days instead of 2 months. The AI understands exactly what we need.',
+    content: 'Blue Lotus helped us launch our MVP in 2 days instead of 2 months. No code, no complexity — just results.',
   },
   {
     id: 2,
     name: 'Marcus Johnson',
     role: 'CTO, InnovateCo',
     avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&h=100&fit=crop',
-    content: 'The code quality is impressive. We exported our project and it was production-ready from day one.',
+    content: 'Finally, a builder that doesn\'t require dragging boxes around. I just describe what I need and it appears.',
   },
   {
     id: 3,
     name: 'Emily Rodriguez',
     role: 'Product Manager',
     avatar: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=100&h=100&fit=crop',
-    content: 'Finally, a tool that lets me prototype ideas without waiting for engineering. Game changer for product teams.',
+    content: 'Game changer for prototyping. I can explore ideas without waiting for design or engineering.',
   },
 ];
 
 export const stats = [
-  { value: '$100M+', label: 'ARR Achieved' },
-  { value: '50K+', label: 'Apps Built' },
+  { value: '50K+', label: 'Projects Built' },
+  { value: '10K+', label: 'Creators' },
   { value: '99.9%', label: 'Uptime' },
-  { value: '< 30s', label: 'Avg. Deploy Time' },
+  { value: '< 60s', label: 'Time to First Screen' },
 ];
 
 export const footerLinks = {
   product: [
     { label: 'Features', href: '/#features' },
     { label: 'Pricing', href: '/pricing' },
-    { label: 'Showcase', href: '/#showcase' },
+    { label: 'Templates', href: '#' },
     { label: 'Changelog', href: '#' },
   ],
   company: [
@@ -202,7 +191,7 @@ export const footerLinks = {
   resources: [
     { label: 'Documentation', href: '#' },
     { label: 'Tutorials', href: '#' },
-    { label: 'API Reference', href: '#' },
+    { label: 'Examples', href: '#' },
     { label: 'Community', href: '#' },
   ],
   legal: [
@@ -230,6 +219,7 @@ export const mockProjects = [
     name: 'E-Commerce Store',
     description: 'A full-featured online store with Stripe payments',
     status: 'deployed',
+    type: 'app',
     lastEdited: '2 hours ago',
     thumbnail: 'https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=300&h=200&fit=crop',
     url: 'https://my-store.bluelotus.app',
@@ -239,67 +229,19 @@ export const mockProjects = [
     name: 'Task Manager',
     description: 'Kanban-style project management tool',
     status: 'building',
+    type: 'app',
     lastEdited: '5 minutes ago',
     thumbnail: 'https://images.unsplash.com/photo-1611224923853-80b023f02d71?w=300&h=200&fit=crop',
     url: null,
   },
   {
     id: '3',
-    name: 'Blog Platform',
-    description: 'Personal blog with markdown support',
+    name: 'Marketing Site',
+    description: 'Landing page with pricing and contact form',
     status: 'deployed',
+    type: 'website',
     lastEdited: '1 day ago',
     thumbnail: 'https://images.unsplash.com/photo-1499750310107-5fef28a66643?w=300&h=200&fit=crop',
-    url: 'https://my-blog.bluelotus.app',
-  },
-];
-
-// Mock chat messages
-export const mockChatMessages = [
-  {
-    id: '1',
-    role: 'assistant',
-    content: 'Hello! I\'m your AI assistant. Tell me what kind of app you want to build, and I\'ll help you create it.',
-    timestamp: new Date(Date.now() - 60000),
-  },
-];
-
-// Template options for new projects
-export const projectTemplates = [
-  {
-    id: 'blank',
-    name: 'Blank Project',
-    description: 'Start from scratch with a clean slate',
-    icon: 'FileText',
-  },
-  {
-    id: 'landing',
-    name: 'Landing Page',
-    description: 'Marketing page with hero, features, and CTA',
-    icon: 'Layout',
-  },
-  {
-    id: 'dashboard',
-    name: 'Dashboard',
-    description: 'Admin panel with charts and data tables',
-    icon: 'LayoutDashboard',
-  },
-  {
-    id: 'ecommerce',
-    name: 'E-Commerce',
-    description: 'Online store with products and checkout',
-    icon: 'ShoppingCart',
-  },
-  {
-    id: 'blog',
-    name: 'Blog',
-    description: 'Content platform with posts and categories',
-    icon: 'BookOpen',
-  },
-  {
-    id: 'saas',
-    name: 'SaaS App',
-    description: 'Full application with auth and billing',
-    icon: 'Rocket',
+    url: 'https://my-site.bluelotus.app',
   },
 ];
