@@ -369,11 +369,20 @@ def create_ai_generation_routes(db):
         
         # Check credits (estimate for all variations)
         estimated_credits = request.count * 4  # ~4 credits per variation
-        has_credits = await CreditEngine.has_sufficient_credits(db, user.id, estimated_credits)
-        if not has_credits:
+        
+        # Get user's credits from database
+        user_doc = await db.users.find_one({"id": user.id}, {"_id": 0})
+        if not user_doc or not user_doc.get("credits"):
+            raise HTTPException(status_code=402, detail="No credit information found")
+        
+        from models.schemas import Credits
+        user_credits = Credits(**user_doc["credits"])
+        
+        if not CreditEngine.can_afford(user_credits, estimated_credits):
+            total_credits = CreditEngine.get_total_credits(user_credits)
             raise HTTPException(
                 status_code=402,
-                detail=f"Insufficient credits. Need ~{estimated_credits} credits for {request.count} variations."
+                detail=f"Insufficient credits. Need ~{estimated_credits} credits for {request.count} variations but have {total_credits}."
             )
         
         result = await AIMultiProjectGeneratorEngine.generate_variations(
@@ -384,7 +393,12 @@ def create_ai_generation_routes(db):
         )
         
         # Deduct credits
-        await CreditEngine.deduct_credits(db, user.id, result.total_credits, "ai_variations")
+        updated_credits, success = CreditEngine.deduct_credits(user_credits, result.total_credits)
+        if success:
+            await db.users.update_one(
+                {"id": user.id},
+                {"$set": {"credits": updated_credits.model_dump()}}
+            )
         
         return {
             "batch_id": result.batch_id,
