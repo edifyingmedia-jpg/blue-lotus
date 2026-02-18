@@ -1,10 +1,10 @@
 import React from 'react';
 import { features } from '../data/mock';
-import { Sparkles, MousePointer2, Rocket } from 'lucide-react';
+import { Sparkles, Hand, Rocket } from 'lucide-react';
 
 const iconMap = {
   Sparkles,
-  MousePointerOff: MousePointer2, // Using MousePointer2 as alternative
+  MousePointerOff: Hand,
   Rocket,
 };
 
