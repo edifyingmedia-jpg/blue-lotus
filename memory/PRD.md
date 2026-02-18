@@ -164,11 +164,42 @@ Build a clone of the Emergent website rebranded as "Blue Lotus" - an AI-powered 
 - `GET /api/credits/balance` - Credit balance with refresh timer
 - `POST /api/credits/purchase` - Buy credit packs
 - `GET /api/plans` - Available plans
-- `GET /api/health` - System health check
+- `GET /api/health` - System health check (17 engines)
 - `POST /api/builder/interpret` - Parse natural language prompt
 - `POST /api/builder/execute` - Execute build instruction
 - `GET /api/builder/suggestions/{id}` - AI suggestions
 - `POST /api/builder/duplicate/{id}` - Duplicate project
+
+**New Blueprint Endpoints:**
+- `POST /api/blueprints/generate` - Generate blueprint from spec
+- `GET /api/blueprints/` - List all blueprints
+- `GET /api/blueprints/{id}` - Get specific blueprint
+- `POST /api/blueprints/{id}/validate` - Validate blueprint
+- `POST /api/blueprints/{id}/apply` - Apply blueprint
+- `DELETE /api/blueprints/{id}` - Delete blueprint
+
+**New Diagnostics Endpoints:**
+- `GET /api/diagnostics/health` - Full system health report
+- `GET /api/diagnostics/integrity` - Data integrity check
+- `GET /api/diagnostics/logs` - Diagnostic logs
+- `GET /api/diagnostics/errors` - Recent errors
+- `GET /api/diagnostics/metrics` - Performance metrics
+- `POST /api/diagnostics/resolve/{id}` - Resolve diagnostic
+- `POST /api/diagnostics/cleanup` - Cleanup old diagnostics
+
+**New Settings Endpoints:**
+- `GET /api/settings/definitions` - All setting definitions
+- `GET /api/settings/user` - User settings
+- `GET /api/settings/user/ui` - Settings UI config
+- `PUT /api/settings/user/{key}` - Update single setting
+- `PUT /api/settings/user` - Bulk update settings
+- `DELETE /api/settings/user/{key}` - Reset to default
+- `GET /api/settings/project/{id}` - Project settings
+- `PUT /api/settings/project/{id}/{key}` - Update project setting
+- `GET /api/settings/global` - Global settings
+- `GET /api/settings/export` - Export user settings
+- `POST /api/settings/import` - Import user settings
+- `GET /api/settings/history` - Settings change history
 
 ---
 
