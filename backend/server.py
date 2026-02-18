@@ -99,29 +99,44 @@ async def health_check():
         "status": "healthy",
         "database": db_status,
         "engines": {
+            # Core Engines
             "credit_engine": "operational",
             "plan_enforcement": "operational",
+            "generation_engine": "operational (mocked)",
+            "publishing_engine": "operational (mocked)",
+            "export_engine": "operational (mocked)",
+            # Build Engines
             "project_engine": "operational",
             "data_model_engine": "operational",
             "navigation_engine": "operational",
             "ai_instruction_engine": "operational",
+            # Advanced Engines
             "orchestration_engine": "operational",
             "runtime_intelligence_engine": "operational",
             "canvas_engine": "operational",
             "component_library_engine": "operational",
+            # Control Engines
             "ai_orchestration_engine": "operational",
             "blueprint_generation_engine": "operational",
             "system_diagnostics_engine": "operational",
             "platform_settings_engine": "operational",
+            # Voice Core Engines
             "voice_input_engine": "operational",
             "speech_to_intent_engine": "operational",
             "voice_orchestration_engine": "operational",
             "voice_feedback_engine": "operational (OpenAI TTS)",
             "voice_safety_layer": "operational",
             "voice_settings_engine": "operational",
-            "generation_engine": "operational (mocked)",
-            "publishing_engine": "operational (mocked)",
-            "export_engine": "operational (mocked)"
+            # Voice Experience Engines
+            "voice_error_handling_engine": "operational",
+            "voice_accessibility_engine": "operational",
+            "voice_onboarding_engine": "operational",
+            # Voice Intelligence Engines
+            "voice_help_guidance_engine": "operational",
+            "voice_multistep_workflow_engine": "operational",
+            "voice_component_placement_engine": "operational",
+            "voice_debugging_engine": "operational",
+            "extended_voice_intelligence_engine": "operational"
         }
     }
 
