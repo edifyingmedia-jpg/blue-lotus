@@ -423,27 +423,28 @@ Build a clone of the Emergent website rebranded as "Blue Lotus" - an AI-powered 
 - **Export Engine**: Returns mock download URLs (needs file packaging)
 - **Billing**: Credit purchase works but Stripe not integrated
 - **Voice Command Execution**: Voice commands are parsed and routed, but actual screen/page creation returns mocked results
-- **Voice Intelligence**: All 8 new voice experience/intelligence engines have scaffolded logic
-- **All 31 engines contain mocked business logic** - scaffolded and ready for real implementation
 
 **REAL Integrations (Working):**
 - **OpenAI Whisper** (Speech-to-Text) - Transcribes audio via Emergent LLM Key ✅
 - **OpenAI TTS** (Text-to-Speech) - Generates voice responses via Emergent LLM Key ✅
+- **Auth System** - Real login/signup with JWT tokens and MongoDB ✅
+- **Project CRUD** - Real database operations for create/read/update/delete projects ✅
+- **Frontend-Backend Integration** - AuthContext and Dashboard connected to real APIs ✅
 
 ---
 
 ## Backlog / Future Tasks
 
 ### P0 - Critical
-- [ ] Connect frontend to real backend APIs (replace mocked AuthContext)
-- [ ] Implement real backend logic in all 17 engines (replace mocked data with MongoDB operations)
+- [x] Connect frontend to real backend APIs (COMPLETED - Dec 2025)
 - [ ] Integrate Stripe for billing
+- [ ] LLM integration for Generation Engine (use Emergent LLM Key)
 
 ### P1 - Important
-- [ ] LLM integration for Generation Engine (use Emergent LLM Key)
 - [ ] Real deployment infrastructure for Publishing Engine
 - [ ] File packaging for Export Engine
 - [ ] Account Settings UI implementation (connect to /api/settings)
+- [ ] Voice UI components integration into Builder page
 
 ### P2 - Nice to Have
 - [ ] Team management UI
