@@ -169,6 +169,7 @@ def create_auth_routes(db: AsyncIOMotorDatabase):
             email=user.email,
             name=user.name,
             avatar=user.avatar,
+            role=user.role,
             plan=user.plan,
             credits=user.credits,
             created_at=user.created_at
