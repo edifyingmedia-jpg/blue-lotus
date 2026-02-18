@@ -137,18 +137,21 @@ const Dashboard = () => {
 
       {/* Main Content */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* Page Header */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
+        <div className="lg:grid lg:grid-cols-[1fr_360px] lg:gap-8">
+          {/* Left Column - Projects */}
           <div>
-            <h1 className="text-2xl font-bold text-white">My Projects</h1>
-            <p className="text-gray-400 mt-1">{projects.length} projects total</p>
-          </div>
-          <Button
-            onClick={() => navigate('/new-project')}
-            className="bg-blue-600 hover:bg-blue-700 text-white"
-          >
-            <Plus className="w-5 h-5 mr-2" />
-            New Project
+            {/* Page Header */}
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
+              <div>
+                <h1 className="text-2xl font-bold text-white">My Projects</h1>
+                <p className="text-gray-400 mt-1">{projects.length} projects total</p>
+              </div>
+              <Button
+                onClick={() => navigate('/new-project')}
+                className="bg-blue-600 hover:bg-blue-700 text-white"
+              >
+                <Plus className="w-5 h-5 mr-2" />
+                New Project
           </Button>
         </div>
 
