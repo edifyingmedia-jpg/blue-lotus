@@ -24,7 +24,8 @@ const legalSections = [
       { label: "Privacy Policy", path: "/legal/privacy" },
       { label: "Cookie Policy", path: "/legal/cookies" },
       { label: "Acceptable Use Policy", path: "/legal/acceptableUse" },
-      { label: "Refund Policy", path: "/legal/refund" }
+      { label: "Refund Policy", path: "/legal/refund" },
+      { label: "Disclaimer", path: "/legal/disclaimer" }
     ]
   },
   {
