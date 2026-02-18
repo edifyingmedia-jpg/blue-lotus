@@ -107,7 +107,7 @@ async def health_check():
     return {
         "status": "healthy",
         "database": db_status,
-        "total_engines": 49,
+        "total_engines": 50,
         "engines": {
             # Core Engines (5)
             "credit_engine": "operational",
@@ -115,8 +115,10 @@ async def health_check():
             "generation_engine": "operational (templates)",
             "publishing_engine": "operational (real deployment flow)",
             "export_engine": "operational (mocked)",
-            # Billing Engine (1) - NEW
+            # Billing Engine (1)
             "billing_engine": "operational (Stripe)",
+            # Admin Engine (1) - NEW
+            "admin_engine": "operational (Owner Dashboard)",
             # Build Engines (4)
             "project_engine": "operational",
             "data_model_engine": "operational",
