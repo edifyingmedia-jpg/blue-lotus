@@ -45,12 +45,21 @@ const Footer = () => {
             <ul className="space-y-3">
               {footerLinks.product.map((link) => (
                 <li key={link.label}>
-                  <a
-                    href={link.href}
-                    className="text-gray-400 hover:text-blue-400 text-sm transition-colors duration-200"
-                  >
-                    {link.label}
-                  </a>
+                  {link.href.startsWith('/') && !link.href.includes('#') ? (
+                    <Link
+                      to={link.href}
+                      className="text-gray-400 hover:text-blue-400 text-sm transition-colors duration-200"
+                    >
+                      {link.label}
+                    </Link>
+                  ) : (
+                    <a
+                      href={link.href}
+                      className="text-gray-400 hover:text-blue-400 text-sm transition-colors duration-200"
+                    >
+                      {link.label}
+                    </a>
+                  )}
                 </li>
               ))}
             </ul>
