@@ -10,6 +10,7 @@ import UpgradePaywall from "./components/UpgradePaywall";
 import LandingPage from "./pages/LandingPage";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
+import Onboarding from "./pages/Onboarding";
 import Dashboard from "./pages/Dashboard";
 import NewProject from "./pages/NewProject";
 import Builder from "./pages/Builder";
