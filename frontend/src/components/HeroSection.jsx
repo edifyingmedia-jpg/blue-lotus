@@ -29,12 +29,6 @@ const HeroSection = () => {
 
       <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-20">
         <div className="text-center">
-          {/* Y Combinator Badge */}
-          <div className="inline-flex items-center gap-2 px-4 py-2 bg-orange-500/10 border border-orange-500/30 rounded-full mb-8">
-            <span className="text-orange-400 font-bold">Y</span>
-            <span className="text-gray-300 text-sm">Combinator S24</span>
-          </div>
-
           {/* Main heading */}
           <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold mb-6">
             <span className="text-white">Build Full-Stack</span>
