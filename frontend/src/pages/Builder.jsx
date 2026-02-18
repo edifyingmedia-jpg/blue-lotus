@@ -602,7 +602,7 @@ const Builder = () => {
               </p>
               <div className="flex items-center gap-1 text-gray-500 text-xs">
                 <Zap className="w-3 h-3 text-yellow-500" />
-                <span>{user?.credits || 1850} credits</span>
+                <span>{user?.credits ? (user.credits.monthly + user.credits.bonus + user.credits.purchased + (user.credits.starter || 0)) : 1850} credits</span>
               </div>
             </div>
           </div>
