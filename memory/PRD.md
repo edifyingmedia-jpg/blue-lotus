@@ -28,7 +28,7 @@ Build a no-code AI app builder called "Blue Lotus" - an AI-powered no-code, no-d
 - Landing page with Blue Lotus branding
 - Login/Signup with real backend auth (JWT)
 - Dashboard with real project CRUD
-- Builder interface
+- **NEW: Builder Workspace** with two-panel layout
 - Pricing & Legal pages
 - **Complete Owner Dashboard** with 8 sections
 
@@ -52,160 +52,53 @@ Build a no-code AI app builder called "Blue Lotus" - an AI-powered no-code, no-d
 
 ---
 
+## Builder Workspace - NEW Implementation
+
+### Two-Panel Layout
+- **Left Panel (35%)**: AI Conversation Stream
+- **Right Panel (65%)**: Live Preview
+
+### Multi-Agent AI System
+Four specialized agents collaborate on each request:
+1. **🏗️ Architect** (Blue): Plans structural changes
+2. **🎨 Designer** (Purple): Handles visual aspects
+3. **⚙️ Engineer** (Green): Implements changes
+4. **👁️ Reviewer** (Orange): Reviews and approves
+
+### Features
+- Real-time agent conversation with streaming messages
+- Voice input support (Web Speech API)
+- Device mode switcher (Mobile/Tablet/Desktop)
+- Undo functionality with history tracking
+- Change confirmation for large modifications
+- Live preview with responsive sizing
+- Panel toggle (show/hide sidebar)
+- Save status indicator
+- Suggested prompts for quick actions
+
+### User Controls
+- Accept or reject AI changes
+- Undo last action
+- Refine existing components
+- Voice-to-prompt conversion
+
+---
+
 ## Owner Dashboard - Complete Implementation
 
 ### Access Control
 - **Owner-only access** (admins cannot access)
 - Access via email whitelist (`OWNER_EMAILS` env var) or `role: "owner"` in database
-- Current owner email: `owner@bluelotus.ai`
 
-### 8 Sections Implemented
-
-#### 1. Overview
-- Total users, projects, active sessions, credits used
-- Revenue display
-- System status indicator
-- User retention metrics (7-day, 30-day, churn rate)
-- Project funnel (draft → staged → published)
-- Recent signups chart (7 days)
-
-#### 2. Users Management
-- Full user list with pagination
-- Search users by name/email
-- View user details (role, plan, projects, status)
-- Actions: Suspend, Reactivate, Delete users
-- Role badges (owner, admin, user)
-- Status badges (active, suspended)
-
-#### 3. Projects Management
-- Full project list with pagination
-- Search projects by name
-- View project details (owner, type, status, updated)
-- Actions: Archive, Delete projects
-- Status badges (draft, staged, published, archived)
-
-#### 4. Billing & Plans
-- Subscription revenue overview
-- Credit purchases total
-- Users by plan breakdown
-- Recent transactions list
-- Transaction status (paid, refunded)
-
-#### 5. Analytics
-- AI generation statistics (total, by type)
-- Daily signups chart (30 days)
-- User metrics (active 7d, churn rate)
-- Voice usage stats (when available)
-
-#### 6. System Settings
-- **Feature Flags** with toggles:
-  - Voice Commands
-  - AI Generation
-  - Publishing
-  - Export
-  - Team Features
-  - Beta Features
-- **Global Limits**:
-  - Max Free Projects (3)
-  - Max File Upload (10 MB)
-  - Session Timeout (60 min)
-  - API Rate Limit (100/min)
-- **Branding**: App name, tagline, primary color
-
-#### 7. Compliance Center
-- Legal documents management (Terms, Privacy, Cookie, AUP)
-- Document versioning
-- "Add Document" functionality
-- **Third-Party Services** documentation:
-  - MongoDB (Database storage)
-  - Stripe (Payment processing)
-  - OpenAI (AI generation)
-
-#### 8. Support Center
-- **Ticket Statistics**: Total, Open, In Progress, Resolved
-- Support tickets list with priority badges
-- Ticket actions: Mark In Progress, Resolve, Close
-- **Help Articles**: Create, edit, publish articles
-- **Recent Feedback**: User feedback submissions
-
----
-
-## API Routes
-
-### Admin Routes (Owner Only)
-```
-# Stats & Health
-GET  /api/admin/stats
-GET  /api/admin/health
-
-# Users
-GET  /api/admin/users
-GET  /api/admin/users/{id}
-PUT  /api/admin/users/{id}/role
-PUT  /api/admin/users/{id}/plan
-POST /api/admin/users/{id}/suspend
-POST /api/admin/users/{id}/reactivate
-DELETE /api/admin/users/{id}
-
-# Projects
-GET  /api/admin/projects
-POST /api/admin/projects/{id}/archive
-DELETE /api/admin/projects/{id}
-
-# Billing
-GET  /api/admin/billing/overview
-GET  /api/admin/transactions
-POST /api/admin/transactions/{id}/refund
-
-# Analytics
-GET  /api/admin/analytics/ai-usage
-GET  /api/admin/analytics/voice-usage
-GET  /api/admin/analytics/retention
-GET  /api/admin/analytics/project-funnel
-GET  /api/admin/analytics/errors
-GET  /api/admin/analytics/signups
-
-# Settings
-GET  /api/admin/settings/branding
-PUT  /api/admin/settings/branding
-GET  /api/admin/settings/features
-PUT  /api/admin/settings/features/{key}
-GET  /api/admin/settings/limits
-PUT  /api/admin/settings/limits/{key}
-GET  /api/admin/settings/email-templates
-PUT  /api/admin/settings/email-templates/{key}
-GET  /api/admin/settings/notifications
-PUT  /api/admin/settings/notifications
-
-# Compliance
-GET  /api/admin/compliance/documents
-GET  /api/admin/compliance/documents/{type}
-POST /api/admin/compliance/documents
-GET  /api/admin/compliance/documents/{type}/versions
-GET  /api/admin/compliance/consents
-GET  /api/admin/compliance/third-party
-PUT  /api/admin/compliance/third-party
-
-# Support
-GET  /api/admin/support/tickets
-GET  /api/admin/support/tickets/stats
-GET  /api/admin/support/tickets/{id}
-POST /api/admin/support/tickets/{id}/reply
-PUT  /api/admin/support/tickets/{id}/status
-GET  /api/admin/support/articles
-POST /api/admin/support/articles
-PUT  /api/admin/support/articles/{id}
-DELETE /api/admin/support/articles/{id}
-GET  /api/admin/support/feedback
-```
-
-### Other Routes
-- `/api/auth/*` - Authentication
-- `/api/projects/*` - Project CRUD
-- `/api/billing/*` - Stripe billing
-- `/api/ai/*` - AI generation
-- `/api/voice/*` - Voice processing
-- `/api/publishing/*` - Deployment
+### 8 Sections
+1. **Overview**: Stats, retention, churn, project funnel, signups chart
+2. **Users Management**: List, search, suspend/reactivate/delete
+3. **Projects Management**: List, search, archive/delete
+4. **Billing & Plans**: Revenue, users by plan, transactions
+5. **Analytics**: AI usage, signups, retention metrics
+6. **System Settings**: Feature flags, global limits, branding
+7. **Compliance Center**: Legal documents, third-party services
+8. **Support Center**: Tickets, help articles, feedback
 
 ---
 
@@ -213,8 +106,8 @@ GET  /api/admin/support/feedback
 - **Frontend**: React 18, Tailwind CSS, Shadcn/UI
 - **Backend**: FastAPI, Pydantic, Motor (async MongoDB)
 - **Database**: MongoDB
-- **AI**: GPT-5.2 via Emergent LLM Key
-- **Voice**: OpenAI Whisper (STT), OpenAI TTS
+- **AI**: GPT-5.2 via Emergent LLM Key (backend)
+- **Voice**: OpenAI Whisper (STT), OpenAI TTS, Web Speech API (frontend)
 - **Payments**: Stripe
 
 ---
@@ -225,16 +118,36 @@ GET  /api/admin/support/feedback
 
 ---
 
+## What's Real vs Mocked
+
+### ✅ REAL (Working with Actual Logic)
+- Auth system (JWT, MongoDB)
+- Project CRUD (MongoDB)
+- Credit system (deductions, limits)
+- Backend AI Generation (GPT-5.2 via Emergent LLM Key)
+- Voice STT/TTS (OpenAI via backend)
+- Billing system (Stripe)
+- Owner Dashboard (admin engine with real queries)
+
+### 🟡 MOCKED/SIMULATED
+- **Builder AI conversation** (client-side simulation with delays)
+- Project structure changes in Builder (not persisted)
+- Export engine (mock download URLs)
+
+---
+
 ## Backlog
 
 ### P0 - Critical
 - [x] Stripe payment integration ✅
 - [x] Complete Owner Dashboard (all 8 sections) ✅
-- [ ] Frontend UI for AI Project Generation
+- [x] Builder Workspace with multi-agent AI ✅
+- [ ] Connect Builder to backend AI Generation API
 
 ### P1 - Important
-- [ ] Voice UI components in Builder page
-- [ ] Account Settings UI
+- [ ] Persist Builder changes to database
+- [ ] Real-time AI generation in Builder
+- [ ] Voice UI components in Builder (backend integration)
 - [ ] User-facing Stripe billing UI
 
 ### P2 - Nice to Have
@@ -245,4 +158,4 @@ GET  /api/admin/support/feedback
 ---
 
 ## Last Updated
-December 2025 - Owner Dashboard Complete (54 Engines)
+December 2025 - Builder Workspace Complete (54 Engines)
