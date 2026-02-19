@@ -315,8 +315,17 @@ const Builder = () => {
         })
       });
       
-      const data = await response.json();
-      console.log('GPT response:', data);
+      console.log('GPT response status:', response.status);
+      
+      let data;
+      try {
+        data = await response.json();
+        console.log('GPT response data:', data);
+      } catch (jsonErr) {
+        console.error('Failed to parse JSON:', jsonErr);
+        await addAgentMessage(AGENTS.ENGINEER, "Error parsing response. Using fallback...", 300);
+        throw new Error('Invalid response from AI');
+      }
       
       if (response.ok && data.success && data.components?.length > 0) {
         await addAgentMessage(AGENTS.ENGINEER, `Created ${data.components.length} component(s)!`, 300);
