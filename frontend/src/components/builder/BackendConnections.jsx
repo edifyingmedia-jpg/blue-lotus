@@ -181,10 +181,35 @@ const BackendConnections = ({ isOpen, onClose, projectId }) => {
   };
 
   const handleCreateConnection = async () => {
+    // Validate required fields
+    if (!connectionName.trim()) {
+      toast.error('Please enter a connection name');
+      return;
+    }
+
+    // Check required credentials based on provider
+    const provider = selectedProvider;
+    const missingFields = [];
+    
+    for (const field of provider.fields) {
+      if (field.required && !formData[field.key]) {
+        missingFields.push(field.label);
+      }
+    }
+    
+    if (missingFields.length > 0) {
+      toast.error(`Missing required fields: ${missingFields.join(', ')}`);
+      return;
+    }
+
     setLoading(true);
 
     try {
       const token = getAuthToken();
+      
+      // Use a default project ID if none provided
+      const effectiveProjectId = projectId || 'default-project';
+      
       const response = await fetch(`${API_URL}/api/backend/connections`, {
         method: 'POST',
         headers: {
@@ -192,21 +217,28 @@ const BackendConnections = ({ isOpen, onClose, projectId }) => {
           'Content-Type': 'application/json'
         },
         body: JSON.stringify({
-          project_id: projectId,
+          project_id: effectiveProjectId,
           provider: selectedProvider.id,
           name: connectionName,
           credentials: formData
         })
       });
 
+      const data = await response.json();
+
       if (response.ok) {
+        toast.success('Connection created successfully!');
         await fetchConnections();
         setView('list');
         setSelectedProvider(null);
         setFormData({});
+        setConnectionName('');
+      } else {
+        toast.error(data.detail || 'Failed to create connection');
       }
     } catch (err) {
       console.error('Failed to create connection:', err);
+      toast.error('Network error. Please try again.');
     } finally {
       setLoading(false);
     }
