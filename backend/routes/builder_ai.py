@@ -8,7 +8,7 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-router = APIRouter(prefix="/api/builder", tags=["builder-ai"])
+router = APIRouter(prefix="/builder", tags=["builder-ai"])
 
 # Import emergent integrations
 from emergentintegrations.llm.chat import LlmChat, UserMessage
