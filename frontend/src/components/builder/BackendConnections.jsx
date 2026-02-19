@@ -250,13 +250,20 @@ const BackendConnections = ({ isOpen, onClose, projectId }) => {
 
     try {
       const token = getAuthToken();
-      await fetch(`${API_URL}/api/backend/connections/${connectionId}`, {
+      const response = await fetch(`${API_URL}/api/backend/connections/${connectionId}`, {
         method: 'DELETE',
         headers: { 'Authorization': `Bearer ${token}` }
       });
-      await fetchConnections();
+      
+      if (response.ok) {
+        toast.success('Connection deleted');
+        await fetchConnections();
+      } else {
+        toast.error('Failed to delete connection');
+      }
     } catch (err) {
       console.error('Failed to delete connection:', err);
+      toast.error('Network error. Please try again.');
     }
   };
 
