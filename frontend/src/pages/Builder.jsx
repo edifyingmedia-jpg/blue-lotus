@@ -111,6 +111,9 @@ const Builder = () => {
   const [history, setHistory] = useState([]);
   const [historyIndex, setHistoryIndex] = useState(-1);
 
+  // Backend connections modal
+  const [showBackendConnections, setShowBackendConnections] = useState(false);
+
   // Check voice support
   useEffect(() => {
     setVoiceSupported('webkitSpeechRecognition' in window || 'SpeechRecognition' in window);
