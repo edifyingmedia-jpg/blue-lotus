@@ -379,19 +379,6 @@ def generate_components_locally(prompt_lower: str, original_prompt: str) -> List
         return components
     
     return []  # Return empty to trigger GPT fallback
-                success=False,
-                components=[],
-                message=f"Failed to parse AI response: {response[:200]}"
-            )
-        
-        return GenerateComponentsResponse(
-            success=True,
-            components=components,
-            message=f"Generated {len(components)} component(s)"
-        )
-        
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"AI generation failed: {str(e)}")
 
 def create_builder_ai_routes():
     return router
