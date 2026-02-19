@@ -15,7 +15,7 @@ import Signup from "./pages/Signup";
 import Onboarding from "./pages/Onboarding";
 import Dashboard from "./pages/Dashboard";
 import NewProject from "./pages/NewProject";
-import Builder from "./pages/Builder";
+import BuilderNew from "./pages/BuilderNew";
 import Settings from "./pages/Settings";
 import Pricing from "./pages/Pricing";
 import Legal from "./pages/Legal";
