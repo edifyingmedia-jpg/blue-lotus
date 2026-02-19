@@ -111,6 +111,9 @@ const Builder = () => {
   // History for undo
   const [history, setHistory] = useState([]);
   const [historyIndex, setHistoryIndex] = useState(-1);
+  
+  // Generated blueprint from AI
+  const [generatedBlueprint, setGeneratedBlueprint] = useState(null);
 
   // Backend connections modal
   const [showBackendConnections, setShowBackendConnections] = useState(false);
