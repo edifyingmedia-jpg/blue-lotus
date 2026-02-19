@@ -315,14 +315,24 @@ const Builder = () => {
       if (response.ok && data.blueprint) {
         await addAgentMessage(AGENTS.ENGINEER, "Components generated successfully!", 300);
         
+        // Transform screens to have consistent 'id' field
+        const transformedScreens = (data.blueprint.screens || []).map((screen, i) => ({
+          ...screen,
+          id: screen.screen_id || screen.id || `gen-s${i}`,
+          components: screen.components || []
+        }));
+        
         // Update the structure with generated content
         const generatedStructure = {
-          screens: data.blueprint.screens || [],
+          screens: transformedScreens,
           flows: data.blueprint.flows || [],
           data_models: data.blueprint.data_models || [],
           navigation: data.blueprint.navigation || {},
           theme: data.blueprint.theme || {}
         };
+        
+        console.log('Generated structure:', generatedStructure);
+        console.log('First screen components:', generatedStructure.screens[0]?.components);
         
         // Create pending changes from the blueprint
         const changes = [];
