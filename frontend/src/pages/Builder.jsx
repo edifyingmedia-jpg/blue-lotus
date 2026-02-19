@@ -379,9 +379,26 @@ const Builder = () => {
   };
 
   const applyChanges = (changes) => {
-    // Save to history for undo
+    // Save current state to history for undo
     setHistory(prev => [...prev.slice(0, historyIndex + 1), { structure: { ...structure } }]);
     setHistoryIndex(prev => prev + 1);
+    
+    // Apply the generated blueprint to structure
+    if (generatedBlueprint) {
+      setStructure(prev => ({
+        ...prev,
+        screens: [...(prev?.screens || []), ...(generatedBlueprint.screens || [])],
+        flows: [...(prev?.flows || []), ...(generatedBlueprint.flows || [])],
+        data_models: [...(prev?.data_models || []), ...(generatedBlueprint.data_models || [])],
+        navigation: generatedBlueprint.navigation || prev?.navigation,
+        theme: generatedBlueprint.theme || prev?.theme
+      }));
+      
+      // Select the first new screen if available
+      if (generatedBlueprint.screens?.length > 0) {
+        setSelectedScreen(generatedBlueprint.screens[0]);
+      }
+    }
     
     // Add success message
     setMessages(prev => [...prev, {
@@ -393,10 +410,34 @@ const Builder = () => {
     
     setPendingChanges([]);
     setShowConfirmation(false);
+    setGeneratedBlueprint(null);
     setSaveStatus('saving');
     
-    // Simulate save
-    setTimeout(() => setSaveStatus('saved'), 1000);
+    // Save to backend
+    saveProjectChanges();
+  };
+  
+  // Save project changes to backend
+  const saveProjectChanges = async () => {
+    try {
+      const token = getAuthToken();
+      await fetch(`${API_URL}/api/projects/${id}`, {
+        method: 'PUT',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          structure: structure,
+          updated_at: new Date().toISOString()
+        })
+      });
+      setSaveStatus('saved');
+    } catch (err) {
+      console.error('Failed to save:', err);
+      setSaveStatus('error');
+      setTimeout(() => setSaveStatus('saved'), 3000);
+    }
   };
 
   const rejectChanges = () => {
