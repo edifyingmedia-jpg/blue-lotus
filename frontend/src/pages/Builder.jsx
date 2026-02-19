@@ -280,74 +280,217 @@ const Builder = () => {
     scrollToBottom();
   }, [messages]);
 
-  // Multi-agent AI conversation - REAL API CALL
+  // Multi-agent AI conversation - Generate components for CURRENT screen
   const runAgentConversation = async (userInput) => {
     const agents = [AGENTS.ARCHITECT, AGENTS.DESIGNER, AGENTS.ENGINEER];
     setActiveAgents(agents.map(a => a.id));
     
     // Agent 1: Architect analyzes
-    await addAgentMessage(AGENTS.ARCHITECT, `Analyzing request: "${userInput}"`, 500);
-    await addAgentMessage(AGENTS.ARCHITECT, "Planning structural changes...", 400);
+    await addAgentMessage(AGENTS.ARCHITECT, `Analyzing: "${userInput}"`, 400);
+    await addAgentMessage(AGENTS.ARCHITECT, "Planning component structure...", 300);
     
     // Agent 2: Designer proposes
-    await addAgentMessage(AGENTS.DESIGNER, "Preparing UI components and styling...", 500);
+    await addAgentMessage(AGENTS.DESIGNER, "Designing UI components...", 400);
     
-    // Agent 3: Engineer implements - CALL REAL API
-    await addAgentMessage(AGENTS.ENGINEER, "Generating components...", 400);
+    // Agent 3: Engineer implements
+    await addAgentMessage(AGENTS.ENGINEER, "Building components...", 300);
     
     try {
-      const token = getAuthToken();
-      console.log('Calling AI generate API...');
+      // Generate components based on user request (LOCAL generation - no API needed)
+      const generatedComponents = generateComponentsFromPrompt(userInput);
       
-      const response = await fetch(`${API_URL}/api/ai/generate`, {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          description: userInput,
-          mode: 'incremental',
-          use_llm: false,
-          options: { project_id: id }
-        })
+      console.log('Generated components:', generatedComponents);
+      
+      if (generatedComponents.length > 0) {
+        await addAgentMessage(AGENTS.ENGINEER, `Created ${generatedComponents.length} component(s)!`, 300);
+        
+        // Create changes to add components to CURRENT screen
+        const changes = [{
+          type: 'add_components',
+          description: `Added: ${generatedComponents.map(c => c.name || c.type).join(', ')}`,
+          data: generatedComponents
+        }];
+        
+        setPendingChanges(changes);
+        setGeneratedBlueprint({ components: generatedComponents });
+        
+        // Reviewer
+        setActiveAgents([AGENTS.REVIEWER.id]);
+        await addAgentMessage(AGENTS.REVIEWER, `Reviewing ${generatedComponents.length} component(s)...`, 400);
+        await addAgentMessage(AGENTS.REVIEWER, "Ready to apply!", 300);
+        setActiveAgents([]);
+        
+        setShowConfirmation(true);
+        return { success: true, changes };
+      } else {
+        await addAgentMessage(AGENTS.ENGINEER, "I couldn't understand that request. Try being more specific.", 300);
+        setActiveAgents([]);
+        return { success: false, error: 'Could not generate components' };
+      }
+    } catch (err) {
+      console.error('Generation error:', err);
+      await addAgentMessage(AGENTS.ENGINEER, `Error: ${err.message}`, 300);
+      setActiveAgents([]);
+      return { success: false, error: err.message };
+    }
+  };
+  
+  // Generate components based on natural language prompt
+  const generateComponentsFromPrompt = (prompt) => {
+    const lower = prompt.toLowerCase();
+    const components = [];
+    
+    // Form detection
+    if (lower.includes('form') || lower.includes('input') || lower.includes('field')) {
+      const fields = [];
+      if (lower.includes('name')) fields.push({ label: 'Name', type: 'text', placeholder: 'Enter your name' });
+      if (lower.includes('email')) fields.push({ label: 'Email', type: 'email', placeholder: 'Enter your email' });
+      if (lower.includes('password')) fields.push({ label: 'Password', type: 'password', placeholder: 'Enter password' });
+      if (lower.includes('message') || lower.includes('comment')) fields.push({ label: 'Message', type: 'textarea', placeholder: 'Enter your message' });
+      if (lower.includes('phone')) fields.push({ label: 'Phone', type: 'tel', placeholder: 'Enter phone number' });
+      
+      if (fields.length === 0) {
+        fields.push({ label: 'Field 1', type: 'text', placeholder: 'Enter text' });
+        fields.push({ label: 'Field 2', type: 'text', placeholder: 'Enter text' });
+      }
+      
+      components.push({
+        id: `form-${Date.now()}`,
+        type: 'form',
+        name: lower.includes('contact') ? 'Contact Form' : lower.includes('login') ? 'Login Form' : lower.includes('signup') ? 'Signup Form' : 'Form',
+        fields: fields,
+        submitLabel: lower.includes('login') ? 'Login' : lower.includes('signup') ? 'Sign Up' : lower.includes('contact') ? 'Send Message' : 'Submit'
       });
-      
-      console.log('API response status:', response.status);
-      const data = await response.json();
-      console.log('API response data:', data);
-      
-      if (response.ok && data.blueprint) {
-        await addAgentMessage(AGENTS.ENGINEER, "Components generated successfully!", 300);
-        
-        // Transform screens to have consistent 'id' field
-        const transformedScreens = (data.blueprint.screens || []).map((screen, i) => ({
-          ...screen,
-          id: screen.screen_id || screen.id || `gen-s${i}`,
-          components: screen.components || []
-        }));
-        
-        // Update the structure with generated content
-        const generatedStructure = {
-          screens: transformedScreens,
-          flows: data.blueprint.flows || [],
-          data_models: data.blueprint.data_models || [],
-          navigation: data.blueprint.navigation || {},
-          theme: data.blueprint.theme || {}
-        };
-        
-        console.log('Generated structure:', generatedStructure);
-        console.log('First screen components:', generatedStructure.screens[0]?.components);
-        
-        // Create pending changes from the blueprint
-        const changes = [];
-        if (generatedStructure.screens?.length > 0) {
-          changes.push({ 
-            type: 'add_screens', 
-            description: `Added ${generatedStructure.screens.length} screen(s)`,
-            data: generatedStructure.screens
-          });
-        }
+    }
+    
+    // Button detection
+    if (lower.includes('button')) {
+      const buttonText = lower.includes('submit') ? 'Submit' : 
+                        lower.includes('save') ? 'Save' :
+                        lower.includes('cancel') ? 'Cancel' :
+                        lower.includes('delete') ? 'Delete' :
+                        lower.includes('add') ? 'Add New' :
+                        lower.includes('edit') ? 'Edit' : 'Click Me';
+      components.push({
+        id: `btn-${Date.now()}`,
+        type: 'button',
+        name: buttonText,
+        label: buttonText,
+        variant: lower.includes('secondary') || lower.includes('cancel') ? 'secondary' : 'primary'
+      });
+    }
+    
+    // List detection
+    if (lower.includes('list') || lower.includes('items')) {
+      const listItems = [];
+      const match = lower.match(/(\d+)\s*(items?|things?)/);
+      const count = match ? parseInt(match[1]) : 3;
+      for (let i = 1; i <= count; i++) {
+        listItems.push({ text: `Item ${i}`, id: i });
+      }
+      components.push({
+        id: `list-${Date.now()}`,
+        type: 'list',
+        name: 'Item List',
+        items: listItems
+      });
+    }
+    
+    // Card detection
+    if (lower.includes('card')) {
+      components.push({
+        id: `card-${Date.now()}`,
+        type: 'card',
+        name: 'Card',
+        title: 'Card Title',
+        content: 'This is the card content. You can customize this text.'
+      });
+    }
+    
+    // Header/Title detection
+    if (lower.includes('header') || lower.includes('title') || lower.includes('heading')) {
+      components.push({
+        id: `header-${Date.now()}`,
+        type: 'header',
+        name: 'Header',
+        content: lower.includes('welcome') ? 'Welcome' : 'Page Title'
+      });
+    }
+    
+    // Text/Paragraph detection
+    if (lower.includes('text') || lower.includes('paragraph') || lower.includes('description')) {
+      components.push({
+        id: `text-${Date.now()}`,
+        type: 'text',
+        name: 'Text',
+        content: 'This is a text paragraph. You can edit this content to display your information.'
+      });
+    }
+    
+    // Image detection
+    if (lower.includes('image') || lower.includes('picture') || lower.includes('photo')) {
+      components.push({
+        id: `img-${Date.now()}`,
+        type: 'image',
+        name: 'Image',
+        src: '',
+        alt: 'Image description'
+      });
+    }
+    
+    // Grid/Stats detection
+    if (lower.includes('grid') || lower.includes('stats') || lower.includes('dashboard') || lower.includes('metrics')) {
+      components.push({
+        id: `grid-${Date.now()}`,
+        type: 'stats',
+        name: 'Stats Grid',
+        items: [
+          { label: 'Users', value: '1,234' },
+          { label: 'Revenue', value: '$5,678' },
+          { label: 'Orders', value: '890' },
+          { label: 'Views', value: '12.3K' }
+        ]
+      });
+    }
+    
+    // Table detection
+    if (lower.includes('table')) {
+      components.push({
+        id: `table-${Date.now()}`,
+        type: 'table',
+        name: 'Data Table',
+        columns: ['Name', 'Email', 'Status'],
+        rows: [
+          ['John Doe', 'john@example.com', 'Active'],
+          ['Jane Smith', 'jane@example.com', 'Pending']
+        ]
+      });
+    }
+    
+    // Navigation detection
+    if (lower.includes('nav') || lower.includes('menu')) {
+      components.push({
+        id: `nav-${Date.now()}`,
+        type: 'nav',
+        name: 'Navigation',
+        items: ['Home', 'About', 'Services', 'Contact']
+      });
+    }
+    
+    // If no specific components detected, try to create something useful
+    if (components.length === 0) {
+      // Generic container with the user's request
+      components.push({
+        id: `section-${Date.now()}`,
+        type: 'container',
+        name: 'Section',
+        title: prompt.slice(0, 50),
+        content: `Generated from: "${prompt}"`
+      });
+    }
+    
+    return components;
+  };
         if (generatedStructure.flows?.length > 0) {
           changes.push({ 
             type: 'add_flows', 
