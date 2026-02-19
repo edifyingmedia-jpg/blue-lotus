@@ -83,6 +83,7 @@ const suggestedPrompts = [
 const Builder = () => {
   const { id } = useParams();
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const { user, getAuthToken } = useAuth();
   const messagesEndRef = useRef(null);
   const inputRef = useRef(null);
