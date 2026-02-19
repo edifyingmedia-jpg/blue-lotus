@@ -1120,14 +1120,16 @@ const ScreenRenderer = ({ screen, deviceView }) => {
 
 // Component Renderer - Renders individual UI components
 const ComponentRenderer = ({ component, deviceView }) => {
-  const type = component.type?.toLowerCase() || 'container';
+  const type = (component.type || 'container').toLowerCase();
+  const name = component.name || '';
+  const props = component.props || {};
   
   switch (type) {
     case 'header':
     case 'heading':
       return (
         <h3 className="text-lg font-semibold text-gray-800">
-          {component.content || component.text || component.title || 'Header'}
+          {component.content || component.text || component.title || name || 'Header'}
         </h3>
       );
     
@@ -1135,7 +1137,7 @@ const ComponentRenderer = ({ component, deviceView }) => {
     case 'paragraph':
       return (
         <p className="text-gray-600">
-          {component.content || component.text || 'Text content'}
+          {component.content || component.text || name || 'Text content'}
         </p>
       );
     
@@ -1148,7 +1150,7 @@ const ComponentRenderer = ({ component, deviceView }) => {
               : 'bg-blue-600 text-white hover:bg-blue-700'
           }`}
         >
-          {component.label || component.text || 'Button'}
+          {component.label || component.text || name || 'Button'}
         </button>
       );
     
@@ -1156,8 +1158,8 @@ const ComponentRenderer = ({ component, deviceView }) => {
     case 'textfield':
       return (
         <input
-          type={component.inputType || 'text'}
-          placeholder={component.placeholder || 'Enter text...'}
+          type={component.inputType || props.type || 'text'}
+          placeholder={component.placeholder || props.placeholder || name || 'Enter text...'}
           className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
         />
       );
@@ -1165,40 +1167,48 @@ const ComponentRenderer = ({ component, deviceView }) => {
     case 'card':
       return (
         <div className="bg-white rounded-xl p-4 shadow-sm border border-gray-100">
-          {component.title && <h4 className="font-semibold text-gray-800 mb-2">{component.title}</h4>}
+          <h4 className="font-semibold text-gray-800 mb-2">{component.title || name || 'Card'}</h4>
           {component.content && <p className="text-gray-600 text-sm">{component.content}</p>}
-          {component.children?.map((child, i) => (
+          {(component.children || []).map((child, i) => (
             <ComponentRenderer key={i} component={child} deviceView={deviceView} />
           ))}
         </div>
       );
     
     case 'list':
+      const items = component.items || props.items || [];
       return (
-        <div className="space-y-2">
-          {(component.items || []).map((item, i) => (
+        <div className="space-y-2 bg-white rounded-xl p-4 shadow-sm">
+          <h4 className="font-medium text-gray-700 mb-2">{name || 'List'}</h4>
+          {items.length > 0 ? items.map((item, i) => (
             <div key={i} className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
               <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
                 <span className="text-blue-600 text-sm font-medium">{i + 1}</span>
               </div>
-              <span className="text-gray-700">{typeof item === 'string' ? item : item.text || item.label}</span>
+              <span className="text-gray-700">{typeof item === 'string' ? item : item.text || item.label || `Item ${i+1}`}</span>
             </div>
-          ))}
+          )) : (
+            <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg text-gray-400">
+              <List className="w-5 h-5" />
+              <span>List items will appear here</span>
+            </div>
+          )}
         </div>
       );
     
     case 'image':
       return (
         <div className="bg-gray-200 rounded-lg h-40 flex items-center justify-center">
-          <span className="text-gray-400">📷 Image</span>
+          <span className="text-gray-400">📷 {name || 'Image'}</span>
         </div>
       );
     
     case 'form':
+      const fields = component.fields || props.fields || [];
       return (
         <div className="space-y-3 bg-white rounded-xl p-4 shadow-sm">
-          {component.title && <h4 className="font-semibold text-gray-800">{component.title}</h4>}
-          {(component.fields || []).map((field, i) => (
+          <h4 className="font-semibold text-gray-800">{component.title || name || 'Form'}</h4>
+          {fields.length > 0 ? fields.map((field, i) => (
             <div key={i}>
               <label className="block text-sm text-gray-600 mb-1">{field.label || `Field ${i + 1}`}</label>
               <input
@@ -1207,7 +1217,12 @@ const ComponentRenderer = ({ component, deviceView }) => {
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm"
               />
             </div>
-          ))}
+          )) : (
+            <>
+              <input placeholder="Name" className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm" />
+              <input placeholder="Email" className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm" />
+            </>
+          )}
           <button className="w-full bg-blue-600 text-white py-2 rounded-lg font-medium">
             {component.submitLabel || 'Submit'}
           </button>
@@ -1216,22 +1231,48 @@ const ComponentRenderer = ({ component, deviceView }) => {
     
     case 'grid':
     case 'row':
+      const cols = props.columns || 2;
+      const children = component.children || component.items || [];
+      return (
+        <div className={`grid gap-3 bg-white rounded-xl p-4 shadow-sm`} style={{gridTemplateColumns: `repeat(${Math.min(cols, deviceView === 'mobile' ? 2 : 4)}, 1fr)`}}>
+          {children.length > 0 ? children.map((child, i) => (
+            <ComponentRenderer key={i} component={child} deviceView={deviceView} />
+          )) : (
+            // Show placeholder grid items
+            Array.from({length: Math.min(cols, 4)}).map((_, i) => (
+              <div key={i} className="bg-gray-100 rounded-lg p-4 text-center">
+                <div className="w-8 h-8 bg-blue-200 rounded-lg mx-auto mb-2" />
+                <p className="text-gray-500 text-sm">Item {i + 1}</p>
+              </div>
+            ))
+          )}
+        </div>
+      );
+      
+    case 'stats':
+    case 'stats_grid':
       return (
         <div className={`grid ${deviceView === 'mobile' ? 'grid-cols-2' : 'grid-cols-4'} gap-3`}>
-          {(component.children || component.items || []).map((child, i) => (
-            <ComponentRenderer key={i} component={child} deviceView={deviceView} />
+          {['Users', 'Revenue', 'Orders', 'Views'].map((label, i) => (
+            <div key={i} className={`rounded-xl p-4 shadow-sm ${
+              ['bg-blue-100', 'bg-green-100', 'bg-purple-100', 'bg-orange-100'][i]
+            }`}>
+              <div className={`w-8 h-8 ${['bg-blue-500', 'bg-green-500', 'bg-purple-500', 'bg-orange-500'][i]} rounded-lg mb-2`} />
+              <div className="text-lg font-bold text-gray-800">0</div>
+              <div className="text-xs text-gray-500">{label}</div>
+            </div>
           ))}
         </div>
       );
-    
+
     case 'container':
     case 'section':
     default:
       return (
         <div className="bg-white rounded-xl p-4 shadow-sm">
-          {component.title && <h4 className="font-semibold text-gray-800 mb-2">{component.title}</h4>}
+          <h4 className="font-semibold text-gray-800 mb-2">{component.title || name || type}</h4>
           {component.content && <p className="text-gray-600">{component.content}</p>}
-          {component.children?.map((child, i) => (
+          {(component.children || []).map((child, i) => (
             <ComponentRenderer key={i} component={child} deviceView={deviceView} />
           ))}
         </div>
