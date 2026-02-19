@@ -280,57 +280,114 @@ const Builder = () => {
     scrollToBottom();
   }, [messages]);
 
-  // Multi-agent AI conversation - Generate components for CURRENT screen
+  // Multi-agent AI conversation - Generate components using GPT
   const runAgentConversation = async (userInput) => {
     const agents = [AGENTS.ARCHITECT, AGENTS.DESIGNER, AGENTS.ENGINEER];
     setActiveAgents(agents.map(a => a.id));
     
     // Agent 1: Architect analyzes
-    await addAgentMessage(AGENTS.ARCHITECT, `Analyzing: "${userInput}"`, 400);
-    await addAgentMessage(AGENTS.ARCHITECT, "Planning component structure...", 300);
+    await addAgentMessage(AGENTS.ARCHITECT, `Understanding: "${userInput}"`, 400);
+    await addAgentMessage(AGENTS.ARCHITECT, "Planning the component structure...", 300);
     
     // Agent 2: Designer proposes
-    await addAgentMessage(AGENTS.DESIGNER, "Designing UI components...", 400);
+    await addAgentMessage(AGENTS.DESIGNER, "Designing the UI layout...", 400);
     
-    // Agent 3: Engineer implements
-    await addAgentMessage(AGENTS.ENGINEER, "Building components...", 300);
+    // Agent 3: Engineer implements - CALL GPT API
+    await addAgentMessage(AGENTS.ENGINEER, "Building your components with AI...", 300);
     
     try {
-      // Generate components based on user request (LOCAL generation - no API needed)
-      const generatedComponents = generateComponentsFromPrompt(userInput);
+      const token = getAuthToken();
+      console.log('Calling GPT-powered builder API...');
       
-      console.log('Generated components:', generatedComponents);
+      const response = await fetch(`${API_URL}/api/builder/generate-components`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          prompt: userInput,
+          current_screen: selectedScreen?.name || 'Main Screen',
+          context: {
+            project_type: project?.type || 'app',
+            existing_components: selectedScreen?.components?.length || 0
+          }
+        })
+      });
       
-      if (generatedComponents.length > 0) {
-        await addAgentMessage(AGENTS.ENGINEER, `Created ${generatedComponents.length} component(s)!`, 300);
+      const data = await response.json();
+      console.log('GPT response:', data);
+      
+      if (response.ok && data.success && data.components?.length > 0) {
+        await addAgentMessage(AGENTS.ENGINEER, `Created ${data.components.length} component(s)!`, 300);
         
-        // Create changes to add components to CURRENT screen
         const changes = [{
           type: 'add_components',
-          description: `Added: ${generatedComponents.map(c => c.name || c.type).join(', ')}`,
-          data: generatedComponents
+          description: data.message || `Added: ${data.components.map(c => c.name || c.type).join(', ')}`,
+          data: data.components
         }];
         
         setPendingChanges(changes);
-        setGeneratedBlueprint({ components: generatedComponents });
+        setGeneratedBlueprint({ components: data.components });
         
         // Reviewer
         setActiveAgents([AGENTS.REVIEWER.id]);
-        await addAgentMessage(AGENTS.REVIEWER, `Reviewing ${generatedComponents.length} component(s)...`, 400);
-        await addAgentMessage(AGENTS.REVIEWER, "Ready to apply!", 300);
+        await addAgentMessage(AGENTS.REVIEWER, `Reviewing ${data.components.length} component(s)...`, 400);
+        await addAgentMessage(AGENTS.REVIEWER, "Everything looks great! Ready to apply.", 300);
         setActiveAgents([]);
         
         setShowConfirmation(true);
         return { success: true, changes };
       } else {
+        // Fallback to local generation if GPT fails
+        await addAgentMessage(AGENTS.ENGINEER, data.message || "Using fallback generation...", 300);
+        const fallbackComponents = generateComponentsFromPrompt(userInput);
+        
+        if (fallbackComponents.length > 0) {
+          const changes = [{
+            type: 'add_components',
+            description: `Added: ${fallbackComponents.map(c => c.name || c.type).join(', ')}`,
+            data: fallbackComponents
+          }];
+          
+          setPendingChanges(changes);
+          setGeneratedBlueprint({ components: fallbackComponents });
+          
+          setActiveAgents([AGENTS.REVIEWER.id]);
+          await addAgentMessage(AGENTS.REVIEWER, "Ready to apply!", 300);
+          setActiveAgents([]);
+          
+          setShowConfirmation(true);
+          return { success: true, changes };
+        }
+        
         await addAgentMessage(AGENTS.ENGINEER, "I couldn't understand that request. Try being more specific.", 300);
         setActiveAgents([]);
         return { success: false, error: 'Could not generate components' };
       }
     } catch (err) {
       console.error('Generation error:', err);
-      await addAgentMessage(AGENTS.ENGINEER, `Error: ${err.message}`, 300);
-      setActiveAgents([]);
+      await addAgentMessage(AGENTS.ENGINEER, `Error: ${err.message}. Using local generation...`, 300);
+      
+      // Fallback to local generation
+      const fallbackComponents = generateComponentsFromPrompt(userInput);
+      if (fallbackComponents.length > 0) {
+        const changes = [{
+          type: 'add_components',
+          description: `Added: ${fallbackComponents.map(c => c.name || c.type).join(', ')}`,
+          data: fallbackComponents
+        }];
+        
+        setPendingChanges(changes);
+        setGeneratedBlueprint({ components: fallbackComponents });
+        
+        setActiveAgents([AGENTS.REVIEWER.id]);
+        await addAgentMessage(AGENTS.REVIEWER, "Ready to apply!", 300);
+        setActiveAgents([]);
+        
+        setShowConfirmation(true);
+      }
+      
       return { success: false, error: err.message };
     }
   };
