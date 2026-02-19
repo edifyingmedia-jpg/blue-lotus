@@ -402,7 +402,7 @@ const Dashboard = () => {
         {/* Quick Actions */}
         <div className="bg-gray-900/50 border border-gray-800 rounded-2xl p-6 mb-8 transition-all hover:border-gray-700" data-testid="quick-actions-section">
           <h2 className="text-lg font-semibold text-white mb-4">Quick Actions</h2>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+          <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
             <button 
               onClick={() => navigate('/new-project')}
               className="p-4 bg-gray-800/50 hover:bg-blue-600/10 border border-gray-700 hover:border-blue-500/30 rounded-xl transition-all group text-left card-hover"
@@ -429,6 +429,15 @@ const Dashboard = () => {
               <Wand2 className="w-6 h-6 text-green-400 mb-2 transition-transform group-hover:scale-110" />
               <p className="text-white font-medium">Refine Project</p>
               <p className="text-gray-500 text-xs mt-1">Improve existing work</p>
+            </button>
+            <button 
+              onClick={() => projects.length > 0 && navigate(`/builder/${projects[0].id}?openBackend=true`)}
+              className="p-4 bg-gray-800/50 hover:bg-cyan-600/10 border border-gray-700 hover:border-cyan-500/30 rounded-xl transition-all group text-left card-hover"
+              data-testid="quick-action-backend"
+            >
+              <Database className="w-6 h-6 text-cyan-400 mb-2 transition-transform group-hover:scale-110" />
+              <p className="text-white font-medium">Backend Connections</p>
+              <p className="text-gray-500 text-xs mt-1">Connect Firebase, Supabase</p>
             </button>
             <button 
               onClick={() => projects.length > 0 && navigate(`/builder/${projects[0].id}`)}
