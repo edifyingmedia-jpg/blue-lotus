@@ -18,12 +18,15 @@ from engines.backend_security_engine import BackendSecurityEngine, SecurityConfi
 
 
 class CreateConnectionRequest(BaseModel):
+    project_id: str
     name: str
     provider: str
-    base_url: str
-    auth_type: str = "none"
-    auth_config: Dict[str, Any] = {}
-    headers: Dict[str, str] = {}
+    credentials: Dict[str, Any] = {}
+
+
+class TestConnectionRequest(BaseModel):
+    provider: str
+    credentials: Dict[str, Any] = {}
 
 
 class ExecuteRequestRequest(BaseModel):
