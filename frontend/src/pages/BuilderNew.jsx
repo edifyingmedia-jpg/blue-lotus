@@ -568,9 +568,9 @@ const ComponentRenderer = ({ component, onRemove }) => {
     case 'grid':
       return (
         <Wrapper>
-          <div className={`grid grid-cols-${Math.min(component.columns || 2, 4)} gap-3`}>
+          <div className="grid grid-cols-2 gap-3">
             {(component.children || []).map((child, i) => (
-              <ComponentRenderer key={i} component={child} onRemove={() => {}} />
+              <ComponentRenderer key={child.id || i} component={child} onRemove={() => {}} />
             ))}
           </div>
         </Wrapper>
