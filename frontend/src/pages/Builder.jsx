@@ -296,6 +296,8 @@ const Builder = () => {
     
     try {
       const token = getAuthToken();
+      console.log('Calling AI generate API...');
+      
       const response = await fetch(`${API_URL}/api/ai/generate`, {
         method: 'POST',
         headers: {
@@ -305,12 +307,14 @@ const Builder = () => {
         body: JSON.stringify({
           description: userInput,
           mode: 'incremental',
-          use_llm: true,
+          use_llm: false,
           options: { project_id: id }
         })
       });
       
+      console.log('API response status:', response.status);
       const data = await response.json();
+      console.log('API response data:', data);
       
       if (response.ok && data.blueprint) {
         await addAgentMessage(AGENTS.ENGINEER, "Components generated successfully!", 300);
