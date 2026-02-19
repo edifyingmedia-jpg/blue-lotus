@@ -465,18 +465,23 @@ const Builder = () => {
     
     // Apply the generated blueprint to structure
     if (generatedBlueprint) {
-      setStructure(prev => ({
-        ...prev,
-        screens: [...(prev?.screens || []), ...(generatedBlueprint.screens || [])],
-        flows: [...(prev?.flows || []), ...(generatedBlueprint.flows || [])],
-        data_models: [...(prev?.data_models || []), ...(generatedBlueprint.data_models || [])],
-        navigation: generatedBlueprint.navigation || prev?.navigation,
-        theme: generatedBlueprint.theme || prev?.theme
-      }));
+      const newStructure = {
+        ...structure,
+        screens: [...(structure?.screens || []), ...(generatedBlueprint.screens || [])],
+        flows: [...(structure?.flows || []), ...(generatedBlueprint.flows || [])],
+        data_models: [...(structure?.data_models || []), ...(generatedBlueprint.data_models || [])],
+        navigation: generatedBlueprint.navigation || structure?.navigation,
+        theme: generatedBlueprint.theme || structure?.theme
+      };
       
-      // Select the first new screen if available
+      setStructure(newStructure);
+      console.log('New structure after apply:', newStructure);
+      
+      // Select the first new screen if available (to show the generated content)
       if (generatedBlueprint.screens?.length > 0) {
-        setSelectedScreen(generatedBlueprint.screens[0]);
+        const firstNewScreen = generatedBlueprint.screens[0];
+        console.log('Selecting new screen:', firstNewScreen);
+        setSelectedScreen(firstNewScreen);
       }
     }
     
