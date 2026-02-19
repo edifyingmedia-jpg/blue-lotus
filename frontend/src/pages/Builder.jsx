@@ -5,6 +5,7 @@ import Logo from '../components/Logo';
 import { Button } from '../components/ui/button';
 import { ScrollArea } from '../components/ui/scroll-area';
 import { Textarea } from '../components/ui/textarea';
+import BackendConnections from '../components/builder/BackendConnections';
 import {
   Send,
   ArrowLeft,
@@ -50,6 +51,7 @@ import {
   Save,
   Cloud,
   CloudOff,
+  Server,
 } from 'lucide-react';
 
 const API_URL = process.env.REACT_APP_BACKEND_URL;
