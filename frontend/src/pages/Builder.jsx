@@ -115,6 +115,13 @@ const Builder = () => {
   // Backend connections modal
   const [showBackendConnections, setShowBackendConnections] = useState(false);
 
+  // Check for URL parameter to auto-open backend connections modal
+  useEffect(() => {
+    if (searchParams.get('openBackend') === 'true') {
+      setShowBackendConnections(true);
+    }
+  }, [searchParams]);
+
   // Check voice support
   useEffect(() => {
     setVoiceSupported('webkitSpeechRecognition' in window || 'SpeechRecognition' in window);
