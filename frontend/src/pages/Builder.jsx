@@ -1321,18 +1321,67 @@ const ComponentRenderer = ({ component, deviceView }) => {
       
     case 'stats':
     case 'stats_grid':
+      const statsItems = component.items || [
+        { label: 'Users', value: '1,234' },
+        { label: 'Revenue', value: '$5,678' },
+        { label: 'Orders', value: '890' },
+        { label: 'Views', value: '12.3K' }
+      ];
       return (
         <div className={`grid ${deviceView === 'mobile' ? 'grid-cols-2' : 'grid-cols-4'} gap-3`}>
-          {['Users', 'Revenue', 'Orders', 'Views'].map((label, i) => (
+          {statsItems.map((stat, i) => (
             <div key={i} className={`rounded-xl p-4 shadow-sm ${
-              ['bg-blue-100', 'bg-green-100', 'bg-purple-100', 'bg-orange-100'][i]
+              ['bg-blue-100', 'bg-green-100', 'bg-purple-100', 'bg-orange-100'][i % 4]
             }`}>
-              <div className={`w-8 h-8 ${['bg-blue-500', 'bg-green-500', 'bg-purple-500', 'bg-orange-500'][i]} rounded-lg mb-2`} />
-              <div className="text-lg font-bold text-gray-800">0</div>
-              <div className="text-xs text-gray-500">{label}</div>
+              <div className={`w-8 h-8 ${['bg-blue-500', 'bg-green-500', 'bg-purple-500', 'bg-orange-500'][i % 4]} rounded-lg mb-2`} />
+              <div className="text-lg font-bold text-gray-800">{stat.value || '0'}</div>
+              <div className="text-xs text-gray-500">{stat.label}</div>
             </div>
           ))}
         </div>
+      );
+    
+    case 'table':
+      const columns = component.columns || ['Column 1', 'Column 2', 'Column 3'];
+      const rows = component.rows || [['Data 1', 'Data 2', 'Data 3']];
+      return (
+        <div className="bg-white rounded-xl shadow-sm overflow-hidden">
+          <table className="w-full">
+            <thead className="bg-gray-50">
+              <tr>
+                {columns.map((col, i) => (
+                  <th key={i} className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                    {col}
+                  </th>
+                ))}
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-gray-100">
+              {rows.map((row, i) => (
+                <tr key={i} className="hover:bg-gray-50">
+                  {row.map((cell, j) => (
+                    <td key={j} className="px-4 py-3 text-sm text-gray-700">{cell}</td>
+                  ))}
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      );
+    
+    case 'nav':
+    case 'navigation':
+      const navItems = component.items || ['Home', 'About', 'Services', 'Contact'];
+      return (
+        <nav className="bg-white rounded-xl shadow-sm p-2 flex gap-2">
+          {navItems.map((item, i) => (
+            <button key={i} className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+              i === 0 ? 'bg-blue-600 text-white' : 'text-gray-600 hover:bg-gray-100'
+            }`}>
+              {typeof item === 'string' ? item : item.label || item.text}
+            </button>
+          ))}
+        </nav>
       );
 
     case 'container':
