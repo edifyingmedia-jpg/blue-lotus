@@ -849,7 +849,7 @@ const Builder = () => {
                   : 'w-full max-w-5xl h-full max-h-[700px]'
               }`}
             >
-              {/* Mock App Preview */}
+              {/* Dynamic App Preview - Renders generated screens */}
               <div className="h-full flex flex-col">
                 {/* App Header */}
                 <div className="h-14 bg-gradient-to-r from-blue-600 to-blue-700 flex items-center justify-between px-4">
@@ -857,7 +857,9 @@ const Builder = () => {
                     <div className="w-8 h-8 bg-white/20 rounded-lg flex items-center justify-center">
                       <Sparkles className="w-4 h-4 text-white" />
                     </div>
-                    <div className="h-4 w-20 bg-white/30 rounded" />
+                    <span className="text-white font-medium text-sm">
+                      {project?.name || 'My App'}
+                    </span>
                   </div>
                   <div className="flex items-center gap-2">
                     <div className="w-8 h-8 bg-white/20 rounded-full flex items-center justify-center">
@@ -866,83 +868,280 @@ const Builder = () => {
                   </div>
                 </div>
 
-                {/* App Content */}
+                {/* App Content - Renders dynamic or default content */}
                 <div className="flex-1 bg-gray-50 p-4 overflow-auto">
-                  {/* Welcome Section */}
-                  <div className="mb-6">
-                    <div className="h-6 w-40 bg-gray-300 rounded mb-2" />
-                    <div className="h-4 w-56 bg-gray-200 rounded" />
-                  </div>
-
-                  {/* Stats Cards */}
-                  <div className={`grid ${deviceView === 'mobile' ? 'grid-cols-2' : 'grid-cols-4'} gap-3 mb-6`}>
-                    {[
-                      { color: 'bg-blue-100', iconBg: 'bg-blue-500' },
-                      { color: 'bg-green-100', iconBg: 'bg-green-500' },
-                      { color: 'bg-purple-100', iconBg: 'bg-purple-500' },
-                      { color: 'bg-orange-100', iconBg: 'bg-orange-500' },
-                    ].map((item, i) => (
-                      <div key={i} className={`${item.color} rounded-xl p-4 shadow-sm transition-all hover:scale-105`}>
-                        <div className={`w-8 h-8 ${item.iconBg} rounded-lg mb-2`} />
-                        <div className="h-5 w-12 bg-gray-400/30 rounded mb-1" />
-                        <div className="h-3 w-16 bg-gray-400/20 rounded" />
-                      </div>
-                    ))}
-                  </div>
-
-                  {/* Content Section */}
-                  <div className="bg-white rounded-xl p-4 shadow-sm mb-4">
-                    <div className="h-5 w-24 bg-gray-300 rounded mb-3" />
-                    <div className="space-y-3">
-                      {[1, 2, 3].map((i) => (
-                        <div key={i} className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
-                          <div className="w-10 h-10 bg-gradient-to-br from-blue-400 to-blue-600 rounded-full" />
-                          <div className="flex-1">
-                            <div className="h-4 w-24 bg-gray-300 rounded mb-1" />
-                            <div className="h-3 w-32 bg-gray-200 rounded" />
-                          </div>
-                          <ChevronRight className="w-5 h-5 text-gray-400" />
-                        </div>
-                      ))}
+                  {structure?.screens?.length > 0 ? (
+                    // Render generated screens
+                    <div className="space-y-4">
+                      {selectedScreen ? (
+                        <ScreenRenderer screen={selectedScreen} deviceView={deviceView} />
+                      ) : (
+                        <ScreenRenderer screen={structure.screens[0]} deviceView={deviceView} />
+                      )}
                     </div>
-                  </div>
+                  ) : (
+                    // Default placeholder content
+                    <>
+                      {/* Welcome Section */}
+                      <div className="mb-6">
+                        <h2 className="text-xl font-bold text-gray-800 mb-1">Welcome to your app</h2>
+                        <p className="text-gray-500 text-sm">Start building by describing what you want</p>
+                      </div>
 
-                  {/* Action Button */}
-                  <button className="w-full bg-blue-600 hover:bg-blue-700 text-white rounded-xl p-4 text-center transition-colors">
-                    <span className="font-medium">Get Started</span>
-                  </button>
+                      {/* Stats Cards */}
+                      <div className={`grid ${deviceView === 'mobile' ? 'grid-cols-2' : 'grid-cols-4'} gap-3 mb-6`}>
+                        {[
+                          { color: 'bg-blue-100', iconBg: 'bg-blue-500', label: 'Users', value: '0' },
+                          { color: 'bg-green-100', iconBg: 'bg-green-500', label: 'Revenue', value: '$0' },
+                          { color: 'bg-purple-100', iconBg: 'bg-purple-500', label: 'Orders', value: '0' },
+                          { color: 'bg-orange-100', iconBg: 'bg-orange-500', label: 'Views', value: '0' },
+                        ].map((item, i) => (
+                          <div key={i} className={`${item.color} rounded-xl p-4 shadow-sm transition-all hover:scale-105`}>
+                            <div className={`w-8 h-8 ${item.iconBg} rounded-lg mb-2`} />
+                            <div className="text-lg font-bold text-gray-800">{item.value}</div>
+                            <div className="text-xs text-gray-500">{item.label}</div>
+                          </div>
+                        ))}
+                      </div>
+
+                      {/* Content Section */}
+                      <div className="bg-white rounded-xl p-4 shadow-sm mb-4">
+                        <h3 className="font-semibold text-gray-800 mb-3">Recent Items</h3>
+                        <div className="space-y-3">
+                          {[1, 2, 3].map((i) => (
+                            <div key={i} className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
+                              <div className="w-10 h-10 bg-gradient-to-br from-blue-400 to-blue-600 rounded-full" />
+                              <div className="flex-1">
+                                <div className="font-medium text-gray-800">Item {i}</div>
+                                <div className="text-xs text-gray-500">Description here</div>
+                              </div>
+                              <ChevronRight className="w-5 h-5 text-gray-400" />
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+
+                      {/* Action Button */}
+                      <button className="w-full bg-blue-600 hover:bg-blue-700 text-white rounded-xl p-4 text-center transition-colors">
+                        <span className="font-medium">Get Started</span>
+                      </button>
+                    </>
+                  )}
                 </div>
 
                 {/* Bottom Navigation */}
                 <div className="h-16 bg-white border-t border-gray-200 flex items-center justify-around px-4">
-                  {[
-                    { icon: Home, active: true },
-                    { icon: BarChart3 },
-                    { icon: Plus, special: true },
-                    { icon: Bell },
-                    { icon: User },
-                  ].map((item, i) => (
-                    <div
-                      key={i}
-                      className={`w-10 h-10 rounded-full flex items-center justify-center transition-colors ${
-                        item.special
-                          ? 'bg-blue-600 text-white shadow-lg shadow-blue-500/30'
-                          : item.active
-                          ? 'bg-blue-100'
-                          : 'hover:bg-gray-100'
-                      }`}
-                    >
-                      <item.icon className={`w-5 h-5 ${item.active && !item.special ? 'text-blue-600' : item.special ? 'text-white' : 'text-gray-400'}`} />
-                    </div>
-                  ))}
+                  {(structure?.navigation?.items || [
+                    { icon: 'home', label: 'Home', active: true },
+                    { icon: 'chart', label: 'Stats' },
+                    { icon: 'plus', label: 'Add', special: true },
+                    { icon: 'bell', label: 'Alerts' },
+                    { icon: 'user', label: 'Profile' },
+                  ]).slice(0, 5).map((item, i) => {
+                    const IconComponent = item.icon === 'home' ? Home : 
+                                         item.icon === 'chart' ? BarChart3 :
+                                         item.icon === 'plus' ? Plus :
+                                         item.icon === 'bell' ? Bell : User;
+                    return (
+                      <div
+                        key={i}
+                        className={`w-10 h-10 rounded-full flex items-center justify-center transition-colors cursor-pointer ${
+                          item.special
+                            ? 'bg-blue-600 text-white shadow-lg shadow-blue-500/30'
+                            : item.active
+                            ? 'bg-blue-100'
+                            : 'hover:bg-gray-100'
+                        }`}
+                        onClick={() => item.screen_id && setSelectedScreen(
+                          structure?.screens?.find(s => s.id === item.screen_id) || null
+                        )}
+                      >
+                        <IconComponent className={`w-5 h-5 ${item.active && !item.special ? 'text-blue-600' : item.special ? 'text-white' : 'text-gray-400'}`} />
+                      </div>
+                    );
+                  })}
                 </div>
               </div>
             </div>
+
+            {/* Screen Selector - Shows available screens */}
+            {structure?.screens?.length > 1 && (
+              <div className="absolute bottom-4 left-4 right-4 bg-gray-900/90 backdrop-blur rounded-lg p-2">
+                <p className="text-xs text-gray-400 mb-2">Screens ({structure.screens.length})</p>
+                <div className="flex gap-2 overflow-x-auto">
+                  {structure.screens.map((screen, i) => (
+                    <button
+                      key={screen.id || i}
+                      onClick={() => setSelectedScreen(screen)}
+                      className={`px-3 py-1.5 rounded text-xs whitespace-nowrap transition-colors ${
+                        selectedScreen?.id === screen.id
+                          ? 'bg-blue-600 text-white'
+                          : 'bg-gray-800 text-gray-300 hover:bg-gray-700'
+                      }`}
+                    >
+                      {screen.name || `Screen ${i + 1}`}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
           </div>
         </div>
       </div>
     </div>
   );
+};
+
+// Screen Renderer Component - Renders a generated screen
+const ScreenRenderer = ({ screen, deviceView }) => {
+  if (!screen) return null;
+  
+  return (
+    <div className="space-y-4">
+      {/* Screen Title */}
+      {screen.name && (
+        <h2 className="text-xl font-bold text-gray-800">{screen.name}</h2>
+      )}
+      {screen.description && (
+        <p className="text-gray-500 text-sm">{screen.description}</p>
+      )}
+      
+      {/* Render Components */}
+      {screen.components?.map((component, i) => (
+        <ComponentRenderer key={component.id || i} component={component} deviceView={deviceView} />
+      ))}
+      
+      {/* Fallback if no components */}
+      {(!screen.components || screen.components.length === 0) && (
+        <div className="bg-white rounded-xl p-6 shadow-sm text-center">
+          <Layout className="w-12 h-12 text-gray-300 mx-auto mb-3" />
+          <p className="text-gray-500">Screen: {screen.name}</p>
+          <p className="text-gray-400 text-sm mt-1">Components will appear here</p>
+        </div>
+      )}
+    </div>
+  );
+};
+
+// Component Renderer - Renders individual UI components
+const ComponentRenderer = ({ component, deviceView }) => {
+  const type = component.type?.toLowerCase() || 'container';
+  
+  switch (type) {
+    case 'header':
+    case 'heading':
+      return (
+        <h3 className="text-lg font-semibold text-gray-800">
+          {component.content || component.text || component.title || 'Header'}
+        </h3>
+      );
+    
+    case 'text':
+    case 'paragraph':
+      return (
+        <p className="text-gray-600">
+          {component.content || component.text || 'Text content'}
+        </p>
+      );
+    
+    case 'button':
+      return (
+        <button 
+          className={`px-4 py-2 rounded-lg font-medium transition-colors ${
+            component.variant === 'secondary' 
+              ? 'bg-gray-200 text-gray-800 hover:bg-gray-300'
+              : 'bg-blue-600 text-white hover:bg-blue-700'
+          }`}
+        >
+          {component.label || component.text || 'Button'}
+        </button>
+      );
+    
+    case 'input':
+    case 'textfield':
+      return (
+        <input
+          type={component.inputType || 'text'}
+          placeholder={component.placeholder || 'Enter text...'}
+          className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+        />
+      );
+    
+    case 'card':
+      return (
+        <div className="bg-white rounded-xl p-4 shadow-sm border border-gray-100">
+          {component.title && <h4 className="font-semibold text-gray-800 mb-2">{component.title}</h4>}
+          {component.content && <p className="text-gray-600 text-sm">{component.content}</p>}
+          {component.children?.map((child, i) => (
+            <ComponentRenderer key={i} component={child} deviceView={deviceView} />
+          ))}
+        </div>
+      );
+    
+    case 'list':
+      return (
+        <div className="space-y-2">
+          {(component.items || []).map((item, i) => (
+            <div key={i} className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
+              <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
+                <span className="text-blue-600 text-sm font-medium">{i + 1}</span>
+              </div>
+              <span className="text-gray-700">{typeof item === 'string' ? item : item.text || item.label}</span>
+            </div>
+          ))}
+        </div>
+      );
+    
+    case 'image':
+      return (
+        <div className="bg-gray-200 rounded-lg h-40 flex items-center justify-center">
+          <span className="text-gray-400">📷 Image</span>
+        </div>
+      );
+    
+    case 'form':
+      return (
+        <div className="space-y-3 bg-white rounded-xl p-4 shadow-sm">
+          {component.title && <h4 className="font-semibold text-gray-800">{component.title}</h4>}
+          {(component.fields || []).map((field, i) => (
+            <div key={i}>
+              <label className="block text-sm text-gray-600 mb-1">{field.label || `Field ${i + 1}`}</label>
+              <input
+                type={field.type || 'text'}
+                placeholder={field.placeholder || ''}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm"
+              />
+            </div>
+          ))}
+          <button className="w-full bg-blue-600 text-white py-2 rounded-lg font-medium">
+            {component.submitLabel || 'Submit'}
+          </button>
+        </div>
+      );
+    
+    case 'grid':
+    case 'row':
+      return (
+        <div className={`grid ${deviceView === 'mobile' ? 'grid-cols-2' : 'grid-cols-4'} gap-3`}>
+          {(component.children || component.items || []).map((child, i) => (
+            <ComponentRenderer key={i} component={child} deviceView={deviceView} />
+          ))}
+        </div>
+      );
+    
+    case 'container':
+    case 'section':
+    default:
+      return (
+        <div className="bg-white rounded-xl p-4 shadow-sm">
+          {component.title && <h4 className="font-semibold text-gray-800 mb-2">{component.title}</h4>}
+          {component.content && <p className="text-gray-600">{component.content}</p>}
+          {component.children?.map((child, i) => (
+            <ComponentRenderer key={i} component={child} deviceView={deviceView} />
+          ))}
+        </div>
+      );
+  }
 };
 
 // Message Bubble Component
