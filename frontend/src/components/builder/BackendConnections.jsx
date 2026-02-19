@@ -167,15 +167,24 @@ const BackendConnections = ({ isOpen, onClose, projectId }) => {
       });
 
       const data = await response.json();
+      const success = response.ok && data.success;
+      
       setTestResult({
-        success: response.ok,
-        message: data.message || (response.ok ? 'Connection successful!' : 'Connection failed')
+        success: success,
+        message: data.message || (success ? 'Connection successful!' : 'Connection failed')
       });
+      
+      if (success) {
+        toast.success('Connection test passed!');
+      } else {
+        toast.error(data.message || 'Connection test failed');
+      }
     } catch (err) {
       setTestResult({
         success: false,
         message: 'Failed to test connection: ' + err.message
       });
+      toast.error('Network error during test');
     } finally {
       setTesting(false);
     }
