@@ -1070,19 +1070,21 @@ const Builder = () => {
 const ScreenRenderer = ({ screen, deviceView }) => {
   if (!screen) return null;
   
+  const screenDescription = screen.description || screen.purpose || '';
+  
   return (
     <div className="space-y-4">
       {/* Screen Title */}
       {screen.name && (
         <h2 className="text-xl font-bold text-gray-800">{screen.name}</h2>
       )}
-      {screen.description && (
-        <p className="text-gray-500 text-sm">{screen.description}</p>
+      {screenDescription && (
+        <p className="text-gray-500 text-sm">{screenDescription}</p>
       )}
       
       {/* Render Components */}
       {screen.components?.map((component, i) => (
-        <ComponentRenderer key={component.id || i} component={component} deviceView={deviceView} />
+        <ComponentRenderer key={component.component_id || component.id || i} component={component} deviceView={deviceView} />
       ))}
       
       {/* Fallback if no components */}
