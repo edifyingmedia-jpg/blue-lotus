@@ -422,7 +422,7 @@ const Dashboard = () => {
               <p className="text-gray-500 text-xs mt-1">Build a full page layout</p>
             </button>
             <button 
-              onClick={() => projects.length > 0 && navigate(`/builder/${projects[0].id}`)}
+              onClick={() => projects.length > 0 ? navigate(`/builder/${projects[0].id}`) : navigate('/new-project')}
               className="p-4 bg-gray-800/50 hover:bg-green-600/10 border border-gray-700 hover:border-green-500/30 rounded-xl transition-all group text-left card-hover"
               data-testid="quick-action-refine"
             >
@@ -431,7 +431,7 @@ const Dashboard = () => {
               <p className="text-gray-500 text-xs mt-1">Improve existing work</p>
             </button>
             <button 
-              onClick={() => projects.length > 0 && navigate(`/builder/${projects[0].id}?openBackend=true`)}
+              onClick={() => navigate(`/builder/${projects.length > 0 ? projects[0].id : 'new'}?openBackend=true`)}
               className="p-4 bg-gray-800/50 hover:bg-cyan-600/10 border border-gray-700 hover:border-cyan-500/30 rounded-xl transition-all group text-left card-hover"
               data-testid="quick-action-backend"
             >
@@ -440,7 +440,7 @@ const Dashboard = () => {
               <p className="text-gray-500 text-xs mt-1">Connect Firebase, Supabase</p>
             </button>
             <button 
-              onClick={() => projects.length > 0 && navigate(`/builder/${projects[0].id}`)}
+              onClick={() => projects.length > 0 ? navigate(`/builder/${projects[0].id}`) : navigate('/new-project')}
               className="p-4 bg-gray-800/50 hover:bg-orange-600/10 border border-gray-700 hover:border-orange-500/30 rounded-xl transition-all group text-left card-hover"
               data-testid="quick-action-publish"
             >
