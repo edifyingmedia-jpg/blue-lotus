@@ -1440,6 +1440,158 @@ const ComponentRenderer = ({ component, deviceView }) => {
           ))}
         </nav>
       );
+    
+    case 'video':
+      return (
+        <div className="bg-gray-900 rounded-xl overflow-hidden shadow-sm">
+          <div className="aspect-video flex items-center justify-center bg-gray-800">
+            <div className="text-center">
+              <div className="w-16 h-16 bg-white/20 rounded-full flex items-center justify-center mx-auto mb-3">
+                <span className="text-3xl">▶</span>
+              </div>
+              <p className="text-gray-400">{name || 'Video Player'}</p>
+            </div>
+          </div>
+          {component.controls !== false && (
+            <div className="p-3 flex items-center gap-3 bg-gray-900">
+              <button className="text-white">▶</button>
+              <div className="flex-1 h-1 bg-gray-700 rounded-full">
+                <div className="w-1/3 h-full bg-blue-500 rounded-full"></div>
+              </div>
+              <span className="text-gray-400 text-sm">0:00 / 0:00</span>
+            </div>
+          )}
+        </div>
+      );
+    
+    case 'upload':
+      return (
+        <div className="border-2 border-dashed border-gray-300 rounded-xl p-8 text-center hover:border-blue-400 transition-colors cursor-pointer bg-gray-50">
+          <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-3">
+            <span className="text-2xl">📤</span>
+          </div>
+          <p className="text-gray-700 font-medium">{component.label || 'Upload File'}</p>
+          <p className="text-gray-500 text-sm mt-1">Drag & drop or click to browse</p>
+          {component.accept && (
+            <p className="text-gray-400 text-xs mt-2">Accepts: {component.accept}</p>
+          )}
+        </div>
+      );
+    
+    case 'timeline':
+      return (
+        <div className="bg-gray-100 rounded-xl p-4 shadow-sm">
+          <p className="text-gray-600 text-sm mb-2">{name || 'Timeline'}</p>
+          <div className="h-12 bg-gray-200 rounded-lg relative overflow-hidden">
+            <div className="absolute inset-y-0 left-0 w-1/4 bg-blue-500/30 rounded-l-lg"></div>
+            <div className="absolute inset-y-0 left-1/4 w-1 bg-blue-600"></div>
+            <div className="absolute inset-0 flex items-center px-2">
+              {[0, 25, 50, 75, 100].map((tick, i) => (
+                <div key={i} className="flex-1 text-center text-xs text-gray-500">{tick}%</div>
+              ))}
+            </div>
+          </div>
+        </div>
+      );
+    
+    case 'progress':
+      const progressValue = component.value || 60;
+      const progressMax = component.max || 100;
+      return (
+        <div className="bg-white rounded-xl p-4 shadow-sm">
+          <div className="flex justify-between mb-2">
+            <span className="text-gray-700 font-medium">{name || 'Progress'}</span>
+            <span className="text-gray-500 text-sm">{progressValue}%</span>
+          </div>
+          <div className="h-3 bg-gray-200 rounded-full overflow-hidden">
+            <div 
+              className="h-full bg-blue-600 rounded-full transition-all"
+              style={{ width: `${(progressValue / progressMax) * 100}%` }}
+            ></div>
+          </div>
+        </div>
+      );
+    
+    case 'slider':
+      return (
+        <div className="bg-white rounded-xl p-4 shadow-sm">
+          <label className="text-gray-700 font-medium mb-2 block">{name || 'Slider'}</label>
+          <input 
+            type="range" 
+            min={component.min || 0} 
+            max={component.max || 100} 
+            defaultValue={component.value || 50}
+            className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-blue-600"
+          />
+          <div className="flex justify-between text-xs text-gray-500 mt-1">
+            <span>{component.min || 0}</span>
+            <span>{component.max || 100}</span>
+          </div>
+        </div>
+      );
+    
+    case 'toggle':
+      return (
+        <div className="flex items-center justify-between bg-white rounded-xl p-4 shadow-sm">
+          <span className="text-gray-700 font-medium">{component.label || name || 'Toggle'}</span>
+          <button className={`w-12 h-6 rounded-full transition-colors ${component.checked ? 'bg-blue-600' : 'bg-gray-300'}`}>
+            <div className={`w-5 h-5 bg-white rounded-full shadow transition-transform ${component.checked ? 'translate-x-6' : 'translate-x-0.5'}`}></div>
+          </button>
+        </div>
+      );
+    
+    case 'dropdown':
+    case 'select':
+      const dropdownOptions = component.options || ['Option 1', 'Option 2', 'Option 3'];
+      return (
+        <div className="bg-white rounded-xl p-4 shadow-sm">
+          <label className="text-gray-700 font-medium mb-2 block">{name || 'Dropdown'}</label>
+          <select className="w-full px-4 py-2 border border-gray-300 rounded-lg bg-white focus:ring-2 focus:ring-blue-500">
+            <option value="">{component.placeholder || 'Select an option'}</option>
+            {dropdownOptions.map((opt, i) => (
+              <option key={i} value={typeof opt === 'string' ? opt : opt.value}>
+                {typeof opt === 'string' ? opt : opt.label}
+              </option>
+            ))}
+          </select>
+        </div>
+      );
+    
+    case 'tabs':
+      const tabItems = component.tabs || [{label: 'Tab 1', content: 'Content 1'}, {label: 'Tab 2', content: 'Content 2'}];
+      return (
+        <div className="bg-white rounded-xl shadow-sm overflow-hidden">
+          <div className="flex border-b border-gray-200">
+            {tabItems.map((tab, i) => (
+              <button key={i} className={`px-4 py-3 text-sm font-medium transition-colors ${
+                i === 0 ? 'text-blue-600 border-b-2 border-blue-600' : 'text-gray-500 hover:text-gray-700'
+              }`}>
+                {tab.label}
+              </button>
+            ))}
+          </div>
+          <div className="p-4">
+            <p className="text-gray-600">{tabItems[0]?.content || 'Tab content'}</p>
+          </div>
+        </div>
+      );
+    
+    case 'modal':
+      return (
+        <div className="bg-white rounded-xl shadow-lg border border-gray-200 overflow-hidden">
+          <div className="flex items-center justify-between p-4 border-b border-gray-100">
+            <h3 className="font-semibold text-gray-800">{component.title || 'Modal'}</h3>
+            <button className="text-gray-400 hover:text-gray-600">✕</button>
+          </div>
+          <div className="p-4">
+            <p className="text-gray-600">{component.content || 'Modal content goes here'}</p>
+          </div>
+          <div className="flex justify-end gap-2 p-4 bg-gray-50">
+            <button className="px-4 py-2 text-gray-600 hover:bg-gray-100 rounded-lg">Cancel</button>
+            <button className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">Confirm</button>
+          </div>
+        </div>
+      );
 
     case 'container':
     case 'section':
