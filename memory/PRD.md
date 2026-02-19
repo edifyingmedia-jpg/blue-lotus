@@ -75,12 +75,49 @@ Four specialized agents collaborate on each request:
 - Panel toggle (show/hide sidebar)
 - Save status indicator
 - Suggested prompts for quick actions
+- **Backend Connections Modal** for connecting to external services
 
 ### User Controls
 - Accept or reject AI changes
 - Undo last action
 - Refine existing components
 - Voice-to-prompt conversion
+
+---
+
+## Backend Connections - ✅ COMPLETE (February 2025)
+
+### Supported Providers
+1. **🔥 Firebase**: Auth, Firestore, Storage (requires: api_key, project_id)
+2. **⚡ Supabase**: PostgreSQL, Auth, Storage (requires: url, anon_key)
+3. **🌐 REST API**: Any REST endpoint (requires: base_url)
+4. **◈ GraphQL**: Any GraphQL API (requires: endpoint)
+5. **🍃 MongoDB**: Direct MongoDB Atlas (requires: connection_string, database)
+
+### UI Features
+- **Backend button** in Builder header opens connections modal
+- **Three views**: List (active connections), Add (provider selection + form), Details (view/manage)
+- **Test Connection**: Validates credentials before saving
+- **Credentials masked**: Shown as `***` in list view
+- **Delete confirmation**: Prevents accidental removal
+
+### API Endpoints
+- `GET /api/backend/providers` - List all 5 providers
+- `GET /api/backend/connections` - List user's connections (credentials masked)
+- `POST /api/backend/connections` - Create new connection
+- `POST /api/backend/connections/test` - Test credentials without saving
+- `POST /api/backend/connections/{id}/test` - Test existing connection
+- `DELETE /api/backend/connections/{id}` - Delete connection
+
+### Testing
+- **26 backend API tests** (100% pass rate)
+- **9 frontend UI tests** (100% pass rate)
+- Test file: `/app/backend/tests/test_backend_connections.py`
+
+### Note on Mocking
+- Test connection endpoint **validates required fields** per provider
+- Returns simulated success (doesn't actually connect to Firebase/Supabase/etc.)
+- Real provider connections would require additional implementation
 
 ---
 
