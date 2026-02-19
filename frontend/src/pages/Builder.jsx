@@ -1039,19 +1039,23 @@ const Builder = () => {
               <div className="absolute bottom-4 left-4 right-4 bg-gray-900/90 backdrop-blur rounded-lg p-2">
                 <p className="text-xs text-gray-400 mb-2">Screens ({structure.screens.length})</p>
                 <div className="flex gap-2 overflow-x-auto">
-                  {structure.screens.map((screen, i) => (
-                    <button
-                      key={screen.id || i}
-                      onClick={() => setSelectedScreen(screen)}
-                      className={`px-3 py-1.5 rounded text-xs whitespace-nowrap transition-colors ${
-                        selectedScreen?.id === screen.id
-                          ? 'bg-blue-600 text-white'
-                          : 'bg-gray-800 text-gray-300 hover:bg-gray-700'
-                      }`}
-                    >
-                      {screen.name || `Screen ${i + 1}`}
-                    </button>
-                  ))}
+                  {structure.screens.map((screen, i) => {
+                    const screenId = screen.id || screen.screen_id || i;
+                    const selectedId = selectedScreen?.id || selectedScreen?.screen_id;
+                    return (
+                      <button
+                        key={screenId}
+                        onClick={() => setSelectedScreen(screen)}
+                        className={`px-3 py-1.5 rounded text-xs whitespace-nowrap transition-colors ${
+                          selectedId === screenId
+                            ? 'bg-blue-600 text-white'
+                            : 'bg-gray-800 text-gray-300 hover:bg-gray-700'
+                        }`}
+                      >
+                        {screen.name || `Screen ${i + 1}`}
+                      </button>
+                    );
+                  })}
                 </div>
               </div>
             )}
