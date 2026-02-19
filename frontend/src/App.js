@@ -69,7 +69,7 @@ function App() {
                   path="/builder/:id"
                   element={
                     <ProtectedRoute>
-                      <Builder />
+                      <BuilderNew />
                     </ProtectedRoute>
                   }
                 />
