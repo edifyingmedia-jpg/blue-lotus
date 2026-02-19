@@ -509,55 +509,55 @@ const Builder = () => {
     });
   };
 
-  const generateChangesFromInput = (input) => {
-    const lowerInput = input.toLowerCase();
-    const changes = [];
-    
-    if (lowerInput.includes('screen') || lowerInput.includes('page')) {
-      changes.push({ type: 'add_screen', description: 'New screen created' });
-      changes.push({ type: 'update_navigation', description: 'Navigation updated' });
-    }
-    if (lowerInput.includes('data') || lowerInput.includes('model')) {
-      changes.push({ type: 'add_model', description: 'Data model created' });
-    }
-    if (lowerInput.includes('style') || lowerInput.includes('color') || lowerInput.includes('theme')) {
-      changes.push({ type: 'update_style', description: 'Visual style updated' });
-    }
-    if (lowerInput.includes('flow') || lowerInput.includes('action')) {
-      changes.push({ type: 'add_flow', description: 'New flow created' });
-    }
-    
-    if (changes.length === 0) {
-      changes.push({ type: 'update', description: 'Project updated based on request' });
-    }
-    
-    return changes;
-  };
-
   const applyChanges = (changes) => {
     // Save current state to history for undo
     setHistory(prev => [...prev.slice(0, historyIndex + 1), { structure: { ...structure } }]);
     setHistoryIndex(prev => prev + 1);
     
-    // Apply the generated blueprint to structure
-    if (generatedBlueprint) {
+    // Apply components to CURRENT screen (or create a new screen if none exists)
+    if (generatedBlueprint?.components) {
+      const newComponents = generatedBlueprint.components;
+      
+      // Get current screen or create one
+      let targetScreen = selectedScreen || structure?.screens?.[0];
+      
+      if (!targetScreen) {
+        // Create a new screen if none exists
+        targetScreen = {
+          id: `screen-${Date.now()}`,
+          name: 'Main Screen',
+          type: 'screen',
+          components: []
+        };
+      }
+      
+      // Add new components to the screen
+      const updatedScreen = {
+        ...targetScreen,
+        components: [...(targetScreen.components || []), ...newComponents]
+      };
+      
+      // Update structure
+      const existingScreens = structure?.screens || [];
+      const screenIndex = existingScreens.findIndex(s => (s.id || s.screen_id) === (targetScreen.id || targetScreen.screen_id));
+      
+      let newScreens;
+      if (screenIndex >= 0) {
+        newScreens = [...existingScreens];
+        newScreens[screenIndex] = updatedScreen;
+      } else {
+        newScreens = [...existingScreens, updatedScreen];
+      }
+      
       const newStructure = {
         ...structure,
-        screens: [...(structure?.screens || []), ...(generatedBlueprint.screens || [])],
-        flows: [...(structure?.flows || []), ...(generatedBlueprint.flows || [])],
-        data_models: [...(structure?.data_models || []), ...(generatedBlueprint.data_models || [])],
-        navigation: generatedBlueprint.navigation || structure?.navigation,
-        theme: generatedBlueprint.theme || structure?.theme
+        screens: newScreens
       };
       
       setStructure(newStructure);
-      console.log('New structure after apply:', newStructure);
-      
-      // Select the first new screen if available (to show the generated content)
-      if (generatedBlueprint.screens?.length > 0) {
-        const firstNewScreen = generatedBlueprint.screens[0];
-        console.log('Selecting new screen:', firstNewScreen);
-        setSelectedScreen(firstNewScreen);
+      setSelectedScreen(updatedScreen);
+      console.log('Applied components to screen:', updatedScreen);
+    }
       }
     }
     
