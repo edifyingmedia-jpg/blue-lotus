@@ -141,7 +141,10 @@ const Builder = () => {
       if (response.ok) {
         const data = await response.json();
         setProject(data);
-        setStructure(data.structure || generateDefaultStructure(data.type));
+        
+        // Transform structure - convert string arrays to object arrays
+        const transformedStructure = transformStructure(data.structure, data.type);
+        setStructure(transformedStructure);
         
         // Add initial message
         setMessages([{
@@ -167,6 +170,73 @@ const Builder = () => {
       setStructure(generateDefaultStructure('app'));
     }
   }, [id, getAuthToken]);
+  
+  // Transform backend structure to frontend-compatible format
+  const transformStructure = (rawStructure, projectType) => {
+    if (!rawStructure) return generateDefaultStructure(projectType);
+    
+    // Handle screens - can be strings or objects
+    const screens = (rawStructure.screens || []).map((screen, i) => {
+      if (typeof screen === 'string') {
+        return {
+          id: `s${i + 1}`,
+          name: screen,
+          type: 'screen',
+          components: []
+        };
+      }
+      return {
+        id: screen.id || `s${i + 1}`,
+        name: screen.name || `Screen ${i + 1}`,
+        type: 'screen',
+        components: screen.components || [],
+        description: screen.description || screen.purpose || ''
+      };
+    });
+    
+    // Handle data models
+    const dataModels = (rawStructure.data_models || rawStructure.dataModels || []).map((model, i) => {
+      if (typeof model === 'string') {
+        return { id: `d${i + 1}`, name: model, fields: [] };
+      }
+      return {
+        id: model.id || `d${i + 1}`,
+        name: model.name,
+        fields: model.fields || []
+      };
+    });
+    
+    // Handle flows
+    const flows = (rawStructure.flows || []).map((flow, i) => {
+      if (typeof flow === 'string') {
+        return { id: `f${i + 1}`, name: flow, steps: [] };
+      }
+      return {
+        id: flow.id || `f${i + 1}`,
+        name: flow.name,
+        steps: flow.steps || []
+      };
+    });
+    
+    // Handle navigation
+    const navigation = rawStructure.navigation || {
+      type: 'tabs',
+      items: screens.slice(0, 5).map(s => ({ 
+        icon: 'home', 
+        label: s.name, 
+        screen_id: s.id 
+      }))
+    };
+    
+    return {
+      screens,
+      pages: rawStructure.pages || [],
+      dataModels,
+      flows,
+      navigation,
+      theme: rawStructure.theme || {}
+    };
+  };
 
   useEffect(() => {
     fetchProject();
