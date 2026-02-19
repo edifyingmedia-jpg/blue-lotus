@@ -471,6 +471,16 @@ const Builder = () => {
           <Button
             variant="ghost"
             size="sm"
+            onClick={() => setShowBackendConnections(true)}
+            className="text-gray-400 hover:text-white hover:bg-gray-800"
+          >
+            <Server className="w-4 h-4 mr-2" />
+            Backend
+          </Button>
+
+          <Button
+            variant="ghost"
+            size="sm"
             className="text-gray-400 hover:text-white hover:bg-gray-800"
           >
             <Settings className="w-4 h-4" />
@@ -482,6 +492,13 @@ const Builder = () => {
           </Button>
         </div>
       </header>
+
+      {/* Backend Connections Modal */}
+      <BackendConnections
+        isOpen={showBackendConnections}
+        onClose={() => setShowBackendConnections(false)}
+        projectId={id}
+      />
 
       {/* Main Content - Two Panel Layout */}
       <div className="flex-1 flex overflow-hidden">
