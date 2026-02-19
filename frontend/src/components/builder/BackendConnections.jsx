@@ -117,7 +117,8 @@ const BackendConnections = ({ isOpen, onClose, projectId }) => {
   const fetchConnections = useCallback(async () => {
     try {
       const token = getAuthToken();
-      const response = await fetch(`${API_URL}/api/backend/connections?project_id=${projectId}`, {
+      const effectiveProjectId = projectId || 'default-project';
+      const response = await fetch(`${API_URL}/api/backend/connections?project_id=${effectiveProjectId}`, {
         headers: { 'Authorization': `Bearer ${token}` }
       });
       if (response.ok) {
