@@ -405,7 +405,7 @@ const Builder = () => {
       }
     } catch (err) {
       console.error('AI generation error:', err);
-      await addAgentMessage(AGENTS.ENGINEER, `Error: ${err.message}. Using local generation.`, 300);
+      await addAgentMessage(AGENTS.ENGINEER, `Error: ${err.message}`, 300);
       
       // Fallback to simulated generation
       const simulatedChanges = generateChangesFromInput(userInput);
