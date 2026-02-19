@@ -558,8 +558,6 @@ const Builder = () => {
       setSelectedScreen(updatedScreen);
       console.log('Applied components to screen:', updatedScreen);
     }
-      }
-    }
     
     // Add success message
     setMessages(prev => [...prev, {
