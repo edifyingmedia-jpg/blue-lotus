@@ -78,20 +78,22 @@ export const AuthProvider = ({ children }) => {
         body: JSON.stringify({ name, email, password }),
       });
 
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.detail || 'Signup failed');
-      }
-
       const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.detail || 'Signup failed');
+      }
 
       // Store token and user
       localStorage.setItem('bluelotus_token', data.access_token);
       setUser(data.user);
       return data.user;
     } catch (err) {
-      setError(err.message);
-      throw err;
+      const errorMessage = err.message === 'Failed to fetch' 
+        ? 'Network error. Please check your connection and try again.'
+        : err.message;
+      setError(errorMessage);
+      throw new Error(errorMessage);
     }
   };
 
