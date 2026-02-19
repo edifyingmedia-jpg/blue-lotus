@@ -77,11 +77,12 @@ export const AuthProvider = ({ children }) => {
         body: JSON.stringify({ name, email, password }),
       });
 
-      const data = await response.json();
-
       if (!response.ok) {
-        throw new Error(data.detail || 'Signup failed');
+        const errorData = await response.json();
+        throw new Error(errorData.detail || 'Signup failed');
       }
+
+      const data = await response.json();
 
       // Store token and user
       localStorage.setItem('bluelotus_token', data.access_token);
