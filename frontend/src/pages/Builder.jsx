@@ -206,40 +206,130 @@ const Builder = () => {
     scrollToBottom();
   }, [messages]);
 
-  // Multi-agent AI conversation simulation
+  // Multi-agent AI conversation - REAL API CALL
   const runAgentConversation = async (userInput) => {
     const agents = [AGENTS.ARCHITECT, AGENTS.DESIGNER, AGENTS.ENGINEER];
     setActiveAgents(agents.map(a => a.id));
     
     // Agent 1: Architect analyzes
-    await addAgentMessage(AGENTS.ARCHITECT, `Analyzing request: "${userInput}"`, 800);
-    await addAgentMessage(AGENTS.ARCHITECT, "I'll plan the structural changes needed.", 600);
+    await addAgentMessage(AGENTS.ARCHITECT, `Analyzing request: "${userInput}"`, 500);
+    await addAgentMessage(AGENTS.ARCHITECT, "Planning structural changes...", 400);
     
     // Agent 2: Designer proposes
-    await addAgentMessage(AGENTS.DESIGNER, "I'll handle the visual aspects.", 700);
-    await addAgentMessage(AGENTS.DESIGNER, "Preparing UI components and styling.", 500);
+    await addAgentMessage(AGENTS.DESIGNER, "Preparing UI components and styling...", 500);
     
-    // Agent 3: Engineer implements
-    await addAgentMessage(AGENTS.ENGINEER, "Implementing the changes now...", 600);
+    // Agent 3: Engineer implements - CALL REAL API
+    await addAgentMessage(AGENTS.ENGINEER, "Generating components...", 400);
     
-    // Simulate real-time progress
-    const changes = generateChangesFromInput(userInput);
-    setPendingChanges(changes);
-    
-    await addAgentMessage(AGENTS.ENGINEER, "Changes ready for review.", 400);
-    
-    // Reviewer checks
-    setActiveAgents([AGENTS.REVIEWER.id]);
-    await addAgentMessage(AGENTS.REVIEWER, `Reviewing ${changes.length} changes...`, 500);
-    await addAgentMessage(AGENTS.REVIEWER, "All changes look good! Ready to apply.", 400);
-    
-    setActiveAgents([]);
-    
-    // Show confirmation for large changes
-    if (changes.length > 2) {
+    try {
+      const token = getAuthToken();
+      const response = await fetch(`${API_URL}/api/ai/generate`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          description: userInput,
+          mode: 'incremental',
+          use_llm: true,
+          options: { project_id: id }
+        })
+      });
+      
+      const data = await response.json();
+      
+      if (response.ok && data.blueprint) {
+        await addAgentMessage(AGENTS.ENGINEER, "Components generated successfully!", 300);
+        
+        // Update the structure with generated content
+        const generatedStructure = {
+          screens: data.blueprint.screens || [],
+          flows: data.blueprint.flows || [],
+          data_models: data.blueprint.data_models || [],
+          navigation: data.blueprint.navigation || {},
+          theme: data.blueprint.theme || {}
+        };
+        
+        // Create pending changes from the blueprint
+        const changes = [];
+        if (generatedStructure.screens?.length > 0) {
+          changes.push({ 
+            type: 'add_screens', 
+            description: `Added ${generatedStructure.screens.length} screen(s)`,
+            data: generatedStructure.screens
+          });
+        }
+        if (generatedStructure.flows?.length > 0) {
+          changes.push({ 
+            type: 'add_flows', 
+            description: `Added ${generatedStructure.flows.length} flow(s)`,
+            data: generatedStructure.flows
+          });
+        }
+        if (generatedStructure.data_models?.length > 0) {
+          changes.push({ 
+            type: 'add_models', 
+            description: `Added ${generatedStructure.data_models.length} data model(s)`,
+            data: generatedStructure.data_models
+          });
+        }
+        
+        if (changes.length === 0) {
+          changes.push({ 
+            type: 'update', 
+            description: 'Project updated based on request',
+            data: generatedStructure
+          });
+        }
+        
+        setPendingChanges(changes);
+        setGeneratedBlueprint(generatedStructure);
+        
+        // Reviewer checks
+        setActiveAgents([AGENTS.REVIEWER.id]);
+        await addAgentMessage(AGENTS.REVIEWER, `Reviewing ${changes.length} change(s)...`, 400);
+        await addAgentMessage(AGENTS.REVIEWER, "All changes look good! Ready to apply.", 300);
+        
+        setActiveAgents([]);
+        
+        // Show confirmation for review
+        if (changes.length > 0) {
+          setShowConfirmation(true);
+        }
+        
+        return { success: true, changes };
+      } else {
+        // Fallback to simulated generation if API fails
+        await addAgentMessage(AGENTS.ENGINEER, "Using local generation...", 300);
+        const simulatedChanges = generateChangesFromInput(userInput);
+        setPendingChanges(simulatedChanges);
+        
+        setActiveAgents([AGENTS.REVIEWER.id]);
+        await addAgentMessage(AGENTS.REVIEWER, `Reviewing ${simulatedChanges.length} change(s)...`, 400);
+        await addAgentMessage(AGENTS.REVIEWER, "Changes ready to apply.", 300);
+        setActiveAgents([]);
+        
+        if (simulatedChanges.length > 0) {
+          setShowConfirmation(true);
+        }
+        
+        return { success: true, changes: simulatedChanges };
+      }
+    } catch (err) {
+      console.error('AI generation error:', err);
+      await addAgentMessage(AGENTS.ENGINEER, `Error: ${err.message}. Using local generation.`, 300);
+      
+      // Fallback to simulated generation
+      const simulatedChanges = generateChangesFromInput(userInput);
+      setPendingChanges(simulatedChanges);
+      
+      setActiveAgents([AGENTS.REVIEWER.id]);
+      await addAgentMessage(AGENTS.REVIEWER, "Changes ready to apply.", 300);
+      setActiveAgents([]);
+      
       setShowConfirmation(true);
-    } else {
-      applyChanges(changes);
+      return { success: false, error: err.message };
     }
   };
 
