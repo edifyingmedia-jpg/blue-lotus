@@ -48,6 +48,7 @@ import {
   XCircle,
   AlertTriangle,
   Wand2,
+  List,
   Save,
   Cloud,
   CloudOff,
