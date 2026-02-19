@@ -223,7 +223,7 @@ async def startup_db_client():
         await db.projects.create_index("user_id")
         
         # Backend integration indexes
-        await db.backend_connections.create_index("connection_id", unique=True)
+        await db.backend_connections.create_index("id", unique=True)
         await db.backend_connections.create_index("project_id")
         await db.api_routes.create_index("route_id", unique=True)
         await db.api_routes.create_index("project_id")
