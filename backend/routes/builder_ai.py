@@ -281,6 +281,75 @@ def generate_components_locally(prompt_lower: str, original_prompt: str) -> List
         ]
         return components
     
+    # Recipe/Cooking app
+    if 'recipe' in prompt_lower or 'cooking' in prompt_lower or 'food' in prompt_lower or 'ingredient' in prompt_lower:
+        components = [
+            {"id": f"recipe-{uuid.uuid4().hex[:8]}", "type": "nav", "name": "Recipe Navigation", "items": ["Home", "Recipes", "Favorites", "Shopping List"]},
+            {"id": f"recipe-{uuid.uuid4().hex[:8]}", "type": "input", "name": "Search Recipes", "placeholder": "Search recipes...", "inputType": "text"},
+            {"id": f"recipe-{uuid.uuid4().hex[:8]}", "type": "header", "name": "Featured Recipe", "content": "Delicious Pasta Carbonara"},
+            {"id": f"recipe-{uuid.uuid4().hex[:8]}", "type": "image", "name": "Recipe Image", "src": "", "alt": "Pasta Carbonara"},
+            {"id": f"recipe-{uuid.uuid4().hex[:8]}", "type": "stats", "name": "Recipe Info", "items": [
+                {"label": "Prep Time", "value": "15 min"},
+                {"label": "Cook Time", "value": "20 min"},
+                {"label": "Servings", "value": "4"},
+                {"label": "Rating", "value": "⭐ 4.8"}
+            ]},
+            {"id": f"recipe-{uuid.uuid4().hex[:8]}", "type": "container", "name": "Ingredients", "title": "Ingredients", "children": [
+                {"id": f"recipe-{uuid.uuid4().hex[:8]}", "type": "list", "name": "Ingredient List", "items": [
+                    {"text": "400g spaghetti", "id": 1},
+                    {"text": "200g pancetta", "id": 2},
+                    {"text": "4 egg yolks", "id": 3},
+                    {"text": "100g Pecorino cheese", "id": 4},
+                    {"text": "Black pepper", "id": 5}
+                ]}
+            ]},
+            {"id": f"recipe-{uuid.uuid4().hex[:8]}", "type": "container", "name": "Instructions", "title": "Cooking Steps", "children": [
+                {"id": f"recipe-{uuid.uuid4().hex[:8]}", "type": "list", "name": "Steps", "items": [
+                    {"text": "1. Cook pasta in salted water", "id": 1},
+                    {"text": "2. Fry pancetta until crispy", "id": 2},
+                    {"text": "3. Mix egg yolks with cheese", "id": 3},
+                    {"text": "4. Combine all ingredients", "id": 4},
+                    {"text": "5. Serve with pepper", "id": 5}
+                ]},
+                {"id": f"recipe-{uuid.uuid4().hex[:8]}", "type": "button", "name": "Start Timer", "label": "⏱ Start Timer", "variant": "primary"}
+            ]},
+            {"id": f"recipe-{uuid.uuid4().hex[:8]}", "type": "container", "name": "Reviews", "title": "Reviews & Ratings", "children": [
+                {"id": f"recipe-{uuid.uuid4().hex[:8]}", "type": "list", "name": "Review List", "items": [
+                    {"text": "⭐⭐⭐⭐⭐ Amazing recipe! - John", "id": 1},
+                    {"text": "⭐⭐⭐⭐ Very tasty! - Sarah", "id": 2}
+                ]},
+                {"id": f"recipe-{uuid.uuid4().hex[:8]}", "type": "input", "name": "Add Review", "placeholder": "Write a review...", "inputType": "text"},
+                {"id": f"recipe-{uuid.uuid4().hex[:8]}", "type": "button", "name": "Submit Review", "label": "Submit Review", "variant": "primary"}
+            ]}
+        ]
+        return components
+    
+    # Music/Spotify clone
+    if 'music' in prompt_lower or 'spotify' in prompt_lower or 'playlist' in prompt_lower or 'audio' in prompt_lower:
+        components = [
+            {"id": f"music-{uuid.uuid4().hex[:8]}", "type": "nav", "name": "Music Navigation", "items": ["Home", "Search", "Library", "Playlists"]},
+            {"id": f"music-{uuid.uuid4().hex[:8]}", "type": "input", "name": "Search Music", "placeholder": "Search songs, artists...", "inputType": "text"},
+            {"id": f"music-{uuid.uuid4().hex[:8]}", "type": "header", "name": "Now Playing", "content": "Now Playing"},
+            {"id": f"music-{uuid.uuid4().hex[:8]}", "type": "card", "name": "Current Track", "title": "Song Title - Artist Name", "content": "Album Name • 2024"},
+            {"id": f"music-{uuid.uuid4().hex[:8]}", "type": "progress", "name": "Progress Bar", "value": 45, "max": 100},
+            {"id": f"music-{uuid.uuid4().hex[:8]}", "type": "grid", "name": "Playback Controls", "columns": 5, "children": [
+                {"id": f"music-{uuid.uuid4().hex[:8]}", "type": "button", "name": "Shuffle", "label": "🔀", "variant": "secondary"},
+                {"id": f"music-{uuid.uuid4().hex[:8]}", "type": "button", "name": "Previous", "label": "⏮", "variant": "secondary"},
+                {"id": f"music-{uuid.uuid4().hex[:8]}", "type": "button", "name": "Play/Pause", "label": "▶", "variant": "primary"},
+                {"id": f"music-{uuid.uuid4().hex[:8]}", "type": "button", "name": "Next", "label": "⏭", "variant": "secondary"},
+                {"id": f"music-{uuid.uuid4().hex[:8]}", "type": "button", "name": "Repeat", "label": "🔁", "variant": "secondary"}
+            ]},
+            {"id": f"music-{uuid.uuid4().hex[:8]}", "type": "slider", "name": "Volume", "min": 0, "max": 100, "value": 75},
+            {"id": f"music-{uuid.uuid4().hex[:8]}", "type": "container", "name": "Playlist", "title": "Up Next", "children": [
+                {"id": f"music-{uuid.uuid4().hex[:8]}", "type": "list", "name": "Queue", "items": [
+                    {"text": "Song 2 - Artist B (3:45)", "id": 1},
+                    {"text": "Song 3 - Artist C (4:12)", "id": 2},
+                    {"text": "Song 4 - Artist D (3:30)", "id": 3}
+                ]}
+            ]}
+        ]
+        return components
+    
     # Video creator/editor
     if 'video' in prompt_lower and ('creator' in prompt_lower or 'editor' in prompt_lower or 'maker' in prompt_lower):
         components = [
