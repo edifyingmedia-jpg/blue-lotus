@@ -36,7 +36,7 @@ class GenerateComponentsResponse(BaseModel):
     success: bool
     components: List[Dict[str, Any]]
     message: str
-    thinking: Optional[List[Dict[str, Any]]] = None
+    thinking: Optional[List[Any]] = None
     suggestions: Optional[List[Any]] = None
     errors_fixed: Optional[List[str]] = None
     blueprint: Optional[Dict[str, Any]] = None
