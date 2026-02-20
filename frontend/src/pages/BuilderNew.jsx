@@ -1,12 +1,13 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, useSearchParams } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { Button } from '../components/ui/button';
 import { ScrollArea } from '../components/ui/scroll-area';
 import { toast } from 'sonner';
+import BackendConnections from '../components/builder/BackendConnections';
 import {
   Send, ArrowLeft, Smartphone, Monitor, Tablet, RefreshCw, Trash2,
-  Plus, Loader2, Check, Layout, Home, User, Settings, Bell
+  Plus, Loader2, Check, Layout, Home, User, Settings, Bell, Server
 } from 'lucide-react';
 
 const API_URL = process.env.REACT_APP_BACKEND_URL;
@@ -14,6 +15,7 @@ const API_URL = process.env.REACT_APP_BACKEND_URL;
 const BuilderNew = () => {
   const { id } = useParams();
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const { getAuthToken } = useAuth();
   const inputRef = useRef(null);
 
@@ -25,6 +27,16 @@ const BuilderNew = () => {
   const [generating, setGenerating] = useState(false);
   const [deviceView, setDeviceView] = useState('mobile');
   const [messages, setMessages] = useState([]);
+  
+  // Backend connections modal state
+  const [showBackendConnections, setShowBackendConnections] = useState(false);
+  
+  // Check for URL parameter to auto-open backend connections modal
+  useEffect(() => {
+    if (searchParams.get('openBackend') === 'true') {
+      setShowBackendConnections(true);
+    }
+  }, [searchParams]);
 
   // Fetch project on mount
   useEffect(() => {
