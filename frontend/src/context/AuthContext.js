@@ -50,13 +50,7 @@ export const AuthProvider = ({ children }) => {
         body: JSON.stringify({ email, password }),
       });
 
-      // Read the response body only once
-      let data;
-      try {
-        data = await response.json();
-      } catch (parseError) {
-        throw new Error('Server returned invalid response');
-      }
+      const data = await response.json();
 
       if (!response.ok) {
         throw new Error(data.detail || 'Login failed');
@@ -67,9 +61,10 @@ export const AuthProvider = ({ children }) => {
       setUser(data.user);
       return data.user;
     } catch (err) {
-      const errorMessage = err.message === 'Failed to fetch' 
-        ? 'Network error. Please check your connection and try again.'
-        : err.message;
+      let errorMessage = err.message;
+      if (err.message === 'Failed to fetch') {
+        errorMessage = 'Network error. Please check your connection and try again.';
+      }
       setError(errorMessage);
       throw new Error(errorMessage);
     }
@@ -86,13 +81,7 @@ export const AuthProvider = ({ children }) => {
         body: JSON.stringify({ name, email, password }),
       });
 
-      // Read the response body only once
-      let data;
-      try {
-        data = await response.json();
-      } catch (parseError) {
-        throw new Error('Server returned invalid response');
-      }
+      const data = await response.json();
 
       if (!response.ok) {
         throw new Error(data.detail || 'Signup failed');
@@ -103,9 +92,10 @@ export const AuthProvider = ({ children }) => {
       setUser(data.user);
       return data.user;
     } catch (err) {
-      const errorMessage = err.message === 'Failed to fetch' 
-        ? 'Network error. Please check your connection and try again.'
-        : err.message;
+      let errorMessage = err.message;
+      if (err.message === 'Failed to fetch') {
+        errorMessage = 'Network error. Please check your connection and try again.';
+      }
       setError(errorMessage);
       throw new Error(errorMessage);
     }
