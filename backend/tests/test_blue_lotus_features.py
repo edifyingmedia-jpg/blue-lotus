@@ -7,7 +7,7 @@ import requests
 import os
 import time
 
-BASE_URL = os.environ.get('REACT_APP_BACKEND_URL', 'https://blue-lotus-dev.preview.emergentagent.com')
+BASE_URL = os.environ.get('REACT_APP_BACKEND_URL', 'https://blue-lotus-builder-1.preview.emergentagent.com')
 
 
 class TestLoginFlow:
@@ -291,7 +291,7 @@ class TestBillingAPI:
             headers=self.headers,
             json={
                 "plan": "pro",
-                "origin_url": "https://blue-lotus-dev.preview.emergentagent.com"
+                "origin_url": "https://blue-lotus-builder-1.preview.emergentagent.com"
             }
         )
         

@@ -6,7 +6,7 @@ import pytest
 import requests
 import os
 
-BASE_URL = os.environ.get('REACT_APP_BACKEND_URL', 'https://blue-lotus-dev.preview.emergentagent.com')
+BASE_URL = os.environ.get('REACT_APP_BACKEND_URL', 'https://blue-lotus-builder-1.preview.emergentagent.com')
 
 # Test credentials
 OWNER_EMAIL = "owner@bluelotus.ai"
