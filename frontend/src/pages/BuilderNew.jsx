@@ -266,6 +266,18 @@ const BuilderNew = () => {
               ))}
             </div>
             
+            {/* Backend Connections Button */}
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => setShowBackendConnections(true)}
+              className="text-gray-400 hover:text-white hover:bg-gray-800"
+              data-testid="backend-connections-btn"
+            >
+              <Server className="w-4 h-4 mr-2" />
+              Backend
+            </Button>
+            
             <button onClick={fetchProject} className="p-2 text-gray-400 hover:text-white" title="Refresh">
               <RefreshCw className="w-4 h-4" />
             </button>
