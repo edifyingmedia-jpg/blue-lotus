@@ -32,10 +32,16 @@ const BuilderNew = () => {
   // Backend connections modal state
   const [showBackendConnections, setShowBackendConnections] = useState(false);
   
+  // External AI settings modal state
+  const [showExternalAI, setShowExternalAI] = useState(false);
+  
   // Check for URL parameter to auto-open backend connections modal
   useEffect(() => {
     if (searchParams.get('openBackend') === 'true') {
       setShowBackendConnections(true);
+    }
+    if (searchParams.get('openExternalAI') === 'true') {
+      setShowExternalAI(true);
     }
   }, [searchParams]);
 
