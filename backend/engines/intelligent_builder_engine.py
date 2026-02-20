@@ -605,11 +605,8 @@ Include realistic content, proper hierarchy, and comprehensive coverage.
         return add_ids(components)
     
     def _log_thinking(self, message: str):
-        """Add to thinking log"""
-        self.thinking_log.append({
-            "timestamp": datetime.utcnow().isoformat(),
-            "message": message
-        })
+        """Add to thinking log - stores only strings"""
+        self.thinking_log.append(message)
     
     async def suggest_improvements(self, components: List[Dict], user_goal: str) -> List[Dict]:
         """Generate improvement suggestions for existing components"""
