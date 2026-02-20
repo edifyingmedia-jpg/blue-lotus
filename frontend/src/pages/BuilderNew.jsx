@@ -5,9 +5,10 @@ import { Button } from '../components/ui/button';
 import { ScrollArea } from '../components/ui/scroll-area';
 import { toast } from 'sonner';
 import BackendConnections from '../components/builder/BackendConnections';
+import ExternalAISettings from '../components/builder/ExternalAISettings';
 import {
   Send, ArrowLeft, Smartphone, Monitor, Tablet, RefreshCw, Trash2,
-  Plus, Loader2, Check, Layout, Home, User, Settings, Bell, Server
+  Plus, Loader2, Check, Layout, Home, User, Settings, Bell, Server, Brain
 } from 'lucide-react';
 
 const API_URL = process.env.REACT_APP_BACKEND_URL;
