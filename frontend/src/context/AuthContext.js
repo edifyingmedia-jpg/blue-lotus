@@ -50,7 +50,13 @@ export const AuthProvider = ({ children }) => {
         body: JSON.stringify({ email, password }),
       });
 
-      const data = await response.json();
+      // Read the response body only once
+      let data;
+      try {
+        data = await response.json();
+      } catch (parseError) {
+        throw new Error('Server returned invalid response');
+      }
 
       if (!response.ok) {
         throw new Error(data.detail || 'Login failed');
@@ -80,7 +86,13 @@ export const AuthProvider = ({ children }) => {
         body: JSON.stringify({ name, email, password }),
       });
 
-      const data = await response.json();
+      // Read the response body only once
+      let data;
+      try {
+        data = await response.json();
+      } catch (parseError) {
+        throw new Error('Server returned invalid response');
+      }
 
       if (!response.ok) {
         throw new Error(data.detail || 'Signup failed');
