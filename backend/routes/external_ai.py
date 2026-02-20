@@ -278,6 +278,9 @@ async def call_external_ai(
     
     provider = config.provider
     
+    # Log the actual model being used
+    print(f"[External AI] Provider: {provider}, Model: {config.model}")
+    
     async with httpx.AsyncClient(timeout=60.0) as client:
         if provider == AIProvider.OPENAI:
             response = await client.post(
