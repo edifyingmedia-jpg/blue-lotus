@@ -387,6 +387,12 @@ const BuilderNew = () => {
         onClose={() => setShowBackendConnections(false)}
         projectId={id}
       />
+      
+      {/* External AI Settings Modal */}
+      <ExternalAISettings
+        isOpen={showExternalAI}
+        onClose={() => setShowExternalAI(false)}
+      />
     </div>
   );
 };
