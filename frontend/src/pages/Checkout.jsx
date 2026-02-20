@@ -445,20 +445,20 @@ const Checkout = () => {
                 </Button>
               ) : (
                 <Button
-                  onClick={handleCompletePurchase}
+                  onClick={handleStartCheckout}
                   disabled={isProcessing}
-                  className="bg-green-600 hover:bg-green-700 text-white min-w-[180px]"
+                  className="bg-green-600 hover:bg-green-700 text-white min-w-[200px]"
                   data-testid="complete-purchase-btn"
                 >
                   {isProcessing ? (
                     <>
-                      <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin mr-2" />
-                      Processing...
+                      <Loader2 className="w-4 h-4 animate-spin mr-2" />
+                      Redirecting to Stripe...
                     </>
                   ) : (
                     <>
-                      <Lock className="w-4 h-4 mr-2" />
-                      Complete Purchase
+                      <CreditCard className="w-4 h-4 mr-2" />
+                      Pay with Stripe
                     </>
                   )}
                 </Button>
