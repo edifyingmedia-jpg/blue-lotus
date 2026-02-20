@@ -59,9 +59,7 @@ const plans = [
 
 const steps = [
   { id: 'plan_selection', title: 'Choose Plan', number: 1 },
-  { id: 'summary', title: 'Review Order', number: 2 },
-  { id: 'payment', title: 'Payment', number: 3 },
-  { id: 'confirmation', title: 'Confirm', number: 4 },
+  { id: 'summary', title: 'Review & Pay', number: 2 },
 ];
 
 const Checkout = () => {
