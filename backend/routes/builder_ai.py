@@ -642,5 +642,103 @@ def generate_components_locally(prompt_lower: str, original_prompt: str) -> List
     
     return []  # Return empty to trigger GPT fallback
 
+
+# ============ ADVANCED AI ENDPOINTS ============
+
+@router.post("/fix-errors")
+async def fix_errors(
+    request: FixErrorsRequest,
+    authorization: Optional[str] = Header(None)
+):
+    """Self-correct component errors based on description"""
+    if not INTELLIGENT_ENGINE_AVAILABLE or not EMERGENT_LLM_KEY:
+        raise HTTPException(status_code=503, detail="Intelligent engine not available")
+    
+    try:
+        engine = IntelligentBuilderEngine(api_key=EMERGENT_LLM_KEY)
+        fixed_components, explanation = await engine.fix_component_errors(
+            request.components,
+            request.error_description
+        )
+        
+        return {
+            "success": True,
+            "components": fixed_components,
+            "explanation": explanation
+        }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@router.post("/suggest-improvements")
+async def suggest_improvements(
+    request: SuggestImprovementsRequest,
+    authorization: Optional[str] = Header(None)
+):
+    """Get AI-powered improvement suggestions for existing components"""
+    if not INTELLIGENT_ENGINE_AVAILABLE or not EMERGENT_LLM_KEY:
+        raise HTTPException(status_code=503, detail="Intelligent engine not available")
+    
+    try:
+        engine = IntelligentBuilderEngine(api_key=EMERGENT_LLM_KEY)
+        suggestions = await engine.suggest_improvements(
+            request.components,
+            request.user_goal
+        )
+        
+        return {
+            "success": True,
+            "suggestions": suggestions
+        }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@router.post("/expand-feature")
+async def expand_feature(
+    request: ExpandFeatureRequest,
+    authorization: Optional[str] = Header(None)
+):
+    """Add new features to an existing app while maintaining consistency"""
+    if not INTELLIGENT_ENGINE_AVAILABLE or not EMERGENT_LLM_KEY:
+        raise HTTPException(status_code=503, detail="Intelligent engine not available")
+    
+    try:
+        engine = IntelligentBuilderEngine(api_key=EMERGENT_LLM_KEY)
+        new_components = await engine.expand_feature(
+            request.existing_components,
+            request.feature_request
+        )
+        
+        return {
+            "success": True,
+            "components": new_components,
+            "message": f"Added {len(new_components)} new components for '{request.feature_request}'"
+        }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@router.get("/ai-status")
+async def get_ai_status():
+    """Check the status of AI capabilities"""
+    return {
+        "intelligent_engine": INTELLIGENT_ENGINE_AVAILABLE,
+        "llm_key_configured": bool(EMERGENT_LLM_KEY),
+        "capabilities": {
+            "multi_phase_generation": INTELLIGENT_ENGINE_AVAILABLE and bool(EMERGENT_LLM_KEY),
+            "self_correction": INTELLIGENT_ENGINE_AVAILABLE and bool(EMERGENT_LLM_KEY),
+            "suggestions": INTELLIGENT_ENGINE_AVAILABLE and bool(EMERGENT_LLM_KEY),
+            "feature_expansion": INTELLIGENT_ENGINE_AVAILABLE and bool(EMERGENT_LLM_KEY),
+            "pattern_matching": True,
+            "supported_apps": [
+                "YouTube clone", "E-commerce", "Social media", "Chat/Messaging",
+                "Recipe/Cooking", "Music player", "Video editor", "Dashboard",
+                "Login/Signup", "Contact forms", "Generic forms"
+            ]
+        }
+    }
+
+
 def create_builder_ai_routes():
     return router
