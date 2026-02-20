@@ -23,8 +23,8 @@ const PROVIDERS = [
     id: 'anthropic',
     name: 'Anthropic',
     logo: '🧠',
-    models: ['claude-3-opus-20240229', 'claude-3-sonnet-20240229', 'claude-3-haiku-20240307'],
-    description: 'Claude 3 models'
+    models: ['claude-sonnet-4-20250514', 'claude-3-opus-latest', 'claude-3-sonnet-latest', 'claude-3-haiku-latest'],
+    description: 'Claude models'
   },
   {
     id: 'google',
