@@ -115,13 +115,24 @@ async def generate_components(
     request: GenerateComponentsRequest,
     authorization: Optional[str] = Header(None)
 ):
-    """Generate UI components using intelligent multi-phase AI or fast pattern matching"""
+    """Generate UI components using pattern matching or intelligent AI"""
     
     prompt_lower = request.prompt.lower()
     mode = request.mode or "intelligent"
     
-    # Use intelligent engine for complex generation
-    if mode == "intelligent" and INTELLIGENT_ENGINE_AVAILABLE and EMERGENT_LLM_KEY:
+    # FIRST: Try fast pattern matching for common apps
+    components = generate_components_locally(prompt_lower, request.prompt)
+    
+    if components:
+        return GenerateComponentsResponse(
+            success=True,
+            components=components,
+            message=f"Generated {len(components)} component(s)",
+            thinking=["🚀 Using optimized pattern matching"]
+        )
+    
+    # SECOND: Use intelligent AI engine for complex/custom requests
+    if INTELLIGENT_ENGINE_AVAILABLE and EMERGENT_LLM_KEY:
         try:
             print(f"[Builder AI] Using intelligent engine for: {request.prompt[:50]}...")
             engine = IntelligentBuilderEngine(api_key=EMERGENT_LLM_KEY)
@@ -154,16 +165,6 @@ async def generate_components(
             print(f"[Builder AI] Intelligent engine error: {e}")
             import traceback
             traceback.print_exc()
-    
-    # Fast local generation for common patterns (fallback or quick mode)
-    components = generate_components_locally(prompt_lower, request.prompt)
-    
-    if components:
-        return GenerateComponentsResponse(
-            success=True,
-            components=components,
-            message=f"Generated {len(components)} component(s)"
-        )
     
     # Fallback to basic GPT for complex requests
     if EMERGENT_LLM_KEY:
