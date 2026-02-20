@@ -319,6 +319,18 @@ const BuilderNew = () => {
               Backend
             </Button>
             
+            {/* External AI Settings Button */}
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => setShowExternalAI(true)}
+              className="text-gray-400 hover:text-white hover:bg-gray-800"
+              data-testid="external-ai-btn"
+            >
+              <Brain className="w-4 h-4 mr-2" />
+              AI Provider
+            </Button>
+            
             <button onClick={fetchProject} className="p-2 text-gray-400 hover:text-white" title="Refresh">
               <RefreshCw className="w-4 h-4" />
             </button>
