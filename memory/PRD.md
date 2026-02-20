@@ -1,197 +1,117 @@
-# Blue Lotus - No-Code AI App Builder
-## Product Requirements Document
+# Blue Lotus - AI App Builder Platform
 
-### Last Updated: 2025-12-20
+## Original Problem Statement
+Building a comprehensive no-code AI app builder named "Blue Lotus" where users can build and deploy apps using natural language, voice commands, and a powerful builder interface. The platform should be production-ready with full authentication, billing, and AI generation capabilities.
 
----
+## Owner Identity
+- Owner Account: `owner@bluelotus.ai`
+- Owner Name: Tiffany Williams
+- Password: owner123
+- Plan: Elite
 
-## Overview
-Blue Lotus is a comprehensive no-code AI app builder that allows users to create apps using natural language instructions. The platform features an intelligent AI generation system, backend integrations, and Stripe billing.
-
----
-
-## Core Features Implemented
-
-### 1. AI App Builder (COMPLETE)
-- **Pattern-Based Generation**: Fast component generation for common app types:
-  - YouTube clone
-  - E-commerce / Shopping apps
-  - Social media / Twitter clone
-  - Chat / Messaging apps
-  - Recipe / Cooking apps
-  - Music player / Spotify clone
-  - Video creator / Editor
-  - Dashboard / Analytics
-  - Login / Signup forms
-  - Contact forms
-  - Generic forms
-
-- **Intelligent AI Engine**: Multi-phase generation with:
-  - Request understanding
-  - App structure planning
-  - Component generation
-  - Self-correction capabilities
-
-- **External AI Provider Integration** (NEW):
-  - Support for OpenAI (GPT-4, GPT-4-turbo, GPT-4o)
-  - Support for Anthropic (Claude 3 Opus, Sonnet, Haiku)
-  - Support for Google (Gemini Pro, Gemini 1.5)
-  - Support for custom OpenAI-compatible endpoints
-  - Connection testing
-  - Model selection and configuration
-
-### 2. Backend Integrations (COMPLETE)
-- **Supabase**: Full PostgreSQL, Auth, Storage integration
-- **Firebase**: Firestore, Auth, Storage
-- **REST API**: Custom API endpoints
-- **GraphQL**: Custom GraphQL endpoints
-- **MongoDB**: Direct Atlas connection
-
-### 3. Billing System (COMPLETE)
-- **Stripe Integration**: Real payment processing
-- **Subscription Plans**: Free, Pro ($29/mo), Business ($99/mo)
-- **Credit System**: Monthly credits, daily bonus, purchased credits
-- **Checkout Flow**: Redirects to Stripe hosted checkout
-
-### 4. User Authentication (COMPLETE)
-- Email/password authentication
-- Google OAuth integration
-- JWT-based sessions
-- Password reset functionality
-
-### 5. Owner Dashboard (COMPLETE)
-- User management
-- Analytics overview
-- System settings
-- Compliance management
-- Support tickets
+## Core Requirements
+1. **Full-Stack Application:** React frontend + FastAPI backend + MongoDB
+2. **Powerful AI Builder:** AI system for generating complex, working applications
+3. **External AI Integration:** Allow users to connect their own AI models (OpenAI, Anthropic, Google)
+4. **Stripe Billing:** Subscriptions and credit purchases
+5. **Stability:** Robust authentication system
 
 ---
 
-## Technical Architecture
+## What's Been Implemented
 
-### Frontend
-- React 18
-- Tailwind CSS
-- Shadcn/UI components
-- React Router DOM
-- Sonner (toast notifications)
+### ✅ Completed (Feb 20, 2026)
+- **Authentication System Rebuilt:** Complete rewrite of Login/Signup with idempotent fetch patterns
+  - Login working: `owner@bluelotus.ai` / `owner123`
+  - Signup working for new users
+  - JWT-based session management
+- **User Dashboard:** Shows credits, plan status, quick actions
+- **Builder UI:** Functional BuilderNew.jsx with AI generation
+- **Intelligent AI Engine:** `intelligent_engine.py` with multi-step reasoning
+- **External AI Provider Integration:** Users can configure their own API keys
 
-### Backend
-- FastAPI
-- MongoDB (Motor async driver)
-- 54+ modular engines
-- Pydantic models
-
-### Integrations
-- Emergent LLM Key (GPT-5.2)
-- Stripe (payments)
-- External AI providers (OpenAI, Anthropic, Google)
-
----
-
-## API Endpoints
-
-### Builder AI
-- `POST /api/builder/generate-components` - Generate UI components
-- `POST /api/builder/fix-errors` - Self-correct component errors
-- `POST /api/builder/suggest-improvements` - Get AI suggestions
-- `POST /api/builder/expand-feature` - Add features to existing app
-- `GET /api/builder/ai-status` - Check AI capabilities
-
-### External AI
-- `GET /api/external-ai/providers` - List supported providers
-- `GET /api/external-ai/config` - Get user's AI config
-- `POST /api/external-ai/config` - Save AI config
-- `DELETE /api/external-ai/config` - Remove AI config
-- `POST /api/external-ai/test` - Test connection
-- `POST /api/external-ai/generate` - Generate with external AI
-
-### Backend Connections
-- `GET /api/backend/connections` - List connections
-- `POST /api/backend/connections` - Create connection
-- `POST /api/backend/connections/test` - Test connection
-- `DELETE /api/backend/connections/{id}` - Delete connection
-
-### Billing
-- `GET /api/billing/plans` - Get subscription plans
-- `POST /api/billing/subscribe` - Create checkout session
-- `GET /api/billing/status/{session_id}` - Check payment status
-- `POST /api/webhook/stripe` - Stripe webhook
+### ✅ Previously Completed
+- Full project scaffolding (React + FastAPI + MongoDB)
+- User roles and permissions (owner, admin, user)
+- Credit system with monthly/bonus/purchased credits
+- Plan types (Free, Pro, Elite) with different allocations
+- Builder UI with code generation capabilities
+- External AI settings component
 
 ---
 
-## Data Models
+## Architecture
 
-### User
-```json
-{
-  "user_id": "uuid",
-  "email": "string",
-  "hashed_password": "string",
-  "role": "user|owner|admin",
-  "plan": "free|pro|business",
-  "credits": {...}
-}
 ```
-
-### Project
-```json
-{
-  "project_id": "uuid",
-  "user_id": "uuid",
-  "name": "string",
-  "status": "draft|published",
-  "components": [...],
-  "settings": {...}
-}
-```
-
-### External AI Config
-```json
-{
-  "user_id": "uuid",
-  "provider": "openai|anthropic|google|custom",
-  "api_key": "encrypted",
-  "model": "string",
-  "endpoint": "string (optional)",
-  "max_tokens": 4096,
-  "temperature": 0.7,
-  "enabled": true
-}
+/app
+├── backend
+│   ├── core/
+│   │   └── intelligent_engine.py  (Advanced AI logic)
+│   ├── engines/                   (Credit, Plan engines)
+│   ├── models/                    (Pydantic schemas)
+│   ├── routes/
+│   │   ├── auth.py               (Login/Signup/Me)
+│   │   ├── builder_ai.py
+│   │   ├── builder_intelligent_ai.py
+│   │   └── external_ai.py
+│   ├── server.py
+│   └── requirements.txt
+└── frontend
+    └── src
+        ├── components/
+        │   └── builder/
+        │       └── ExternalAISettings.jsx
+        ├── context/
+        │   └── AuthContext.js    (Rebuilt - clean implementation)
+        ├── pages/
+        │   ├── Login.jsx         (Rebuilt)
+        │   ├── Signup.jsx        (Rebuilt)
+        │   ├── Dashboard.jsx
+        │   └── BuilderNew.jsx
+        └── App.js
 ```
 
 ---
 
-## Credentials
-- **Test Account**: owner@bluelotus.ai / owner123
-- **Stripe**: Test key configured
-- **Emergent LLM Key**: Configured in backend
+## Prioritized Backlog
+
+### P0 - Critical (Completed)
+- [x] Fix authentication "body stream already read" error
+- [x] Ensure owner account exists and is accessible
+
+### P1 - High Priority
+- [ ] Implement async polling for AI generation (prevent timeouts)
+- [ ] Complete Stripe billing integration
+  - Backend checkout session creation
+  - Webhook handlers for payment events
+  - Credit allocation on successful payment
+
+### P2 - Medium Priority
+- [ ] Voice UI integration into Builder
+- [ ] Replace mocked logic in placeholder engines
+- [ ] Account Settings UI
+- [ ] Team Management UI
+
+### P3 - Low Priority / Backlog
+- [ ] Logo redesign (user was previously dissatisfied)
+- [ ] Enhanced error handling throughout
+- [ ] Performance optimizations
 
 ---
 
-## Backlog / Future Tasks
+## Key API Endpoints
+- `POST /api/auth/login` - User login
+- `POST /api/auth/signup` - User registration
+- `GET /api/auth/me` - Get current user
+- `POST /api/builder/generate/intelligent` - AI app generation
+- `GET/POST /api/external-ai/config` - External AI provider settings
 
-### P1 (High Priority)
-- [ ] Voice control integration in builder
-- [ ] Real-time collaboration
-- [ ] App publishing to custom domains
+## Database Schema
+- **users**: {id, email, name, password_hash, role, plan, credits, created_at, updated_at}
+- **projects**: {id, user_id, name, description, screens, created_at}
 
-### P2 (Medium Priority)
-- [ ] Team management UI
-- [ ] Advanced billing analytics
-- [ ] Template marketplace
-
-### P3 (Low Priority)
-- [ ] Logo customization tool
-- [ ] White-label options
-- [ ] API documentation
-
----
-
-## Recent Changes (Dec 20, 2025)
-1. Added External AI Provider integration
-2. Enhanced pattern-based generation for complex apps
-3. Fixed builder component rendering
-4. Improved Supabase connection testing
-5. Simplified Stripe checkout flow
+## Test Credentials
+- Email: `owner@bluelotus.ai`
+- Password: `owner123`
+- Role: owner
+- Plan: Elite
