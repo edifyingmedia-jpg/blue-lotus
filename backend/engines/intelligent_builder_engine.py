@@ -264,6 +264,111 @@ class IntelligentBuilderEngine:
         self.thinking_log = []
         
         try:
+            # For quick mode or simple requests, use fast path
+            if quick_mode:
+                return await self._quick_generate(prompt)
+            
+            # Use single comprehensive GPT call for speed
+            self._log_thinking("🧠 Analyzing your request...")
+            self._log_thinking("📋 Planning app structure...")
+            self._log_thinking("🎨 Generating components...")
+            
+            components = await self._single_call_generate(prompt)
+            
+            if components:
+                return GenerationResult(
+                    success=True,
+                    phase=GenerationPhase.COMPLETE,
+                    components=components,
+                    blueprint=None,
+                    thinking=self.thinking_log,
+                    suggestions=[],
+                    warnings=[],
+                    errors_fixed=[],
+                    message=f"Generated {len(components)} components with AI"
+                )
+            
+            # Fallback to pattern matching
+            return await self._quick_generate(prompt)
+            
+        except Exception as e:
+            self._log_thinking(f"⚠️ Encountered issue, using fallback: {str(e)}")
+            return await self._quick_generate(prompt)
+    
+    async def _single_call_generate(self, prompt: str) -> List[Dict]:
+        """Single comprehensive GPT call for fast generation"""
+        try:
+            comprehensive_prompt = """You are an expert app builder. Generate comprehensive UI components for any app request.
+
+ANALYZE the request to understand:
+- What type of app is being requested
+- What screens and features are needed
+- What components will provide the best user experience
+
+GENERATE complete components including:
+- Navigation and headers
+- Main content areas with proper hierarchy
+- Interactive elements (buttons, forms, inputs)
+- Data display (cards, lists, tables, stats)
+- Supporting elements (modals, alerts, etc.)
+
+COMPONENT SCHEMA - use these types:
+- header: {id, type:"header", name, content}
+- text: {id, type:"text", name, content}
+- button: {id, type:"button", name, label, variant:"primary"|"secondary"|"danger"}
+- input: {id, type:"input", name, placeholder, inputType:"text"|"email"|"password"}
+- form: {id, type:"form", name, fields:[{label, type, placeholder}], submitLabel}
+- card: {id, type:"card", name, title, content}
+- list: {id, type:"list", name, items:[{text, id}]}
+- image: {id, type:"image", name, src, alt}
+- stats: {id, type:"stats", name, items:[{label, value}]}
+- table: {id, type:"table", name, columns:[], rows:[[]]}
+- nav: {id, type:"nav", name, items:[]}
+- video: {id, type:"video", name, src, controls:true}
+- container: {id, type:"container", name, title, children:[]}
+- grid: {id, type:"grid", name, columns:number, children:[]}
+- progress: {id, type:"progress", name, value, max}
+- slider: {id, type:"slider", name, min, max, value}
+- toggle: {id, type:"toggle", name, label, checked}
+- dropdown: {id, type:"dropdown", name, options:[], placeholder}
+- upload: {id, type:"upload", name, accept}
+- chart: {id, type:"chart", name, chartType, data:[]}
+- search: {id, type:"search", name, placeholder}
+
+OUTPUT only a JSON array of components. Be comprehensive and creative.
+Include realistic placeholder content that makes sense for the app type."""
+
+            chat = LlmChat(
+                api_key=self.api_key,
+                session_id=f"{self.session_id}-smart",
+                system_message=comprehensive_prompt
+            ).with_model("openai", "gpt-5.2")
+            
+            response = await chat.send_message(UserMessage(
+                text=f"Build this app: {prompt}"
+            ))
+            
+            components = self._parse_json_response(response)
+            if isinstance(components, list) and len(components) > 0:
+                self._log_thinking(f"✅ Created {len(components)} components")
+                return self._ensure_component_ids(components)
+            return []
+        except Exception as e:
+            print(f"[IntelligentBuilder] Single call error: {e}")
+            return []
+    
+    async def generate_app_multi_phase(
+        self, 
+        prompt: str, 
+        context: Dict[str, Any] = None
+    ) -> GenerationResult:
+        """
+        Multi-phase generation for complex apps (slower but more thorough).
+        Use this for enterprise-level apps that need detailed planning.
+        """
+        self.thinking_log = []
+        
+        try:
             # Phase 1: Understanding
             self._log_thinking("🧠 Analyzing your request...")
             understanding = await self._understand_request(prompt)
