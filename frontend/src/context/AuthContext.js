@@ -22,10 +22,12 @@ export const AuthProvider = ({ children }) => {
           });
           
           if (response.ok) {
-            const userData = await response.json();
-            setUser(userData);
+            const text = await response.text();
+            if (text) {
+              const userData = JSON.parse(text);
+              setUser(userData);
+            }
           } else {
-            // Token invalid, clear it
             localStorage.removeItem('bluelotus_token');
           }
         } catch (err) {
@@ -41,69 +43,79 @@ export const AuthProvider = ({ children }) => {
 
   const login = async (email, password) => {
     setError(null);
+    
+    const response = await fetch(`${API_URL}/api/auth/login`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ email, password }),
+    });
+
+    // Read response as text first to avoid "body stream already read" error
+    const text = await response.text();
+    
+    if (!text) {
+      throw new Error('Empty response from server');
+    }
+    
+    let data;
     try {
-      const response = await fetch(`${API_URL}/api/auth/login`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ email, password }),
-      });
+      data = JSON.parse(text);
+    } catch (e) {
+      throw new Error('Invalid response from server');
+    }
 
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.detail || 'Login failed');
-      }
-
-      // Store token and user
-      localStorage.setItem('bluelotus_token', data.access_token);
-      setUser(data.user);
-      return data.user;
-    } catch (err) {
-      let errorMessage = err.message;
-      if (err.message === 'Failed to fetch') {
-        errorMessage = 'Network error. Please check your connection and try again.';
-      }
+    if (!response.ok) {
+      const errorMessage = data.detail || 'Login failed';
       setError(errorMessage);
       throw new Error(errorMessage);
     }
+
+    // Store token and user
+    localStorage.setItem('bluelotus_token', data.access_token);
+    setUser(data.user);
+    return data.user;
   };
 
   const signup = async (name, email, password) => {
     setError(null);
+    
+    const response = await fetch(`${API_URL}/api/auth/signup`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ name, email, password }),
+    });
+
+    // Read response as text first
+    const text = await response.text();
+    
+    if (!text) {
+      throw new Error('Empty response from server');
+    }
+    
+    let data;
     try {
-      const response = await fetch(`${API_URL}/api/auth/signup`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ name, email, password }),
-      });
+      data = JSON.parse(text);
+    } catch (e) {
+      throw new Error('Invalid response from server');
+    }
 
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.detail || 'Signup failed');
-      }
-
-      // Store token and user
-      localStorage.setItem('bluelotus_token', data.access_token);
-      setUser(data.user);
-      return data.user;
-    } catch (err) {
-      let errorMessage = err.message;
-      if (err.message === 'Failed to fetch') {
-        errorMessage = 'Network error. Please check your connection and try again.';
-      }
+    if (!response.ok) {
+      const errorMessage = data.detail || 'Signup failed';
       setError(errorMessage);
       throw new Error(errorMessage);
     }
+
+    // Store token and user
+    localStorage.setItem('bluelotus_token', data.access_token);
+    setUser(data.user);
+    return data.user;
   };
 
   const loginWithGoogle = async () => {
-    // Google OAuth would be implemented with redirect flow
-    // For now, show not implemented message
     setError('Google login is not yet implemented');
     throw new Error('Google login is not yet implemented');
   };
@@ -114,10 +126,8 @@ export const AuthProvider = ({ children }) => {
   };
 
   const updateUser = async (updates) => {
-    // Update local state immediately
     const updatedUser = { ...user, ...updates };
     setUser(updatedUser);
-    // In production, this would also sync to backend
     return updatedUser;
   };
 
@@ -133,9 +143,12 @@ export const AuthProvider = ({ children }) => {
       });
       
       if (response.ok) {
-        const userData = await response.json();
-        setUser(userData);
-        return userData;
+        const text = await response.text();
+        if (text) {
+          const userData = JSON.parse(text);
+          setUser(userData);
+          return userData;
+        }
       }
     } catch (err) {
       console.error('Failed to refresh user:', err);
@@ -143,12 +156,10 @@ export const AuthProvider = ({ children }) => {
     return null;
   };
 
-  // Helper to get auth token for API calls
   const getAuthToken = () => {
     return localStorage.getItem('bluelotus_token');
   };
 
-  // Helper for authenticated API calls
   const authFetch = async (url, options = {}) => {
     const token = getAuthToken();
     const headers = {
@@ -163,7 +174,6 @@ export const AuthProvider = ({ children }) => {
     const response = await fetch(url, { ...options, headers });
     
     if (response.status === 401) {
-      // Token expired, logout
       logout();
       throw new Error('Session expired. Please login again.');
     }
