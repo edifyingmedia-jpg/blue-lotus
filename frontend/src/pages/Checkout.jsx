@@ -1,9 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
 import Navbar from '../components/Navbar';
 import { Button } from '../components/ui/button';
 import { Input } from '../components/ui/input';
 import { Label } from '../components/ui/label';
+import { toast } from 'sonner';
 import { 
   Check, 
   ChevronLeft, 
@@ -17,8 +19,12 @@ import {
   Crown,
   Star,
   Lock,
-  CheckCircle2
+  CheckCircle2,
+  Loader2,
+  AlertCircle
 } from 'lucide-react';
+
+const API_URL = process.env.REACT_APP_BACKEND_URL;
 
 const plans = [
   {
