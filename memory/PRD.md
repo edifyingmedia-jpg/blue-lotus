@@ -1,207 +1,197 @@
-# Blue Lotus - Product Requirements Document
+# Blue Lotus - No-Code AI App Builder
+## Product Requirements Document
 
-## Original Problem Statement
-Build a no-code AI app builder called "Blue Lotus" - an AI-powered no-code, no-drag application builder. Users interact solely through natural language prompts (text or voice) to generate entire application structures (screens, data models, flows) without ever seeing or manipulating code or UI elements directly.
-
-## User Personas
-- **No-Code Entrepreneurs**: Users who want to build apps without coding
-- **Rapid Prototypers**: Developers who need quick MVP prototypes
-- **Business Users**: Non-technical users who need custom applications
-- **Agencies**: Teams building multiple client projects
-- **Platform Owners**: Administrators managing the platform (Owner Dashboard)
-
-## Core Requirements
-1. **Dark Theme** with blue secondary colors and blue lotus branding
-2. **No-Code, No-Drag Philosophy**: Users interact solely via natural language
-3. **AI-Orchestrated Builder**: Chat and voice-based interface for app generation
-4. **Voice-First Experience**: Full voice control via OpenAI Whisper + TTS
-5. **External Backend Integration**: Connect to Firebase, Supabase, REST APIs
-6. **Owner Dashboard**: Complete platform administration for owners
+### Last Updated: 2025-12-20
 
 ---
 
-## Implementation Status
-
-### ✅ Complete: Full-Stack Application with 54 Engines
-
-**Frontend:**
-- Landing page with Blue Lotus branding
-- Login/Signup with real backend auth (JWT)
-- Dashboard with real project CRUD
-- **NEW: Builder Workspace** with two-panel layout
-- Pricing & Legal pages
-- **Complete Owner Dashboard** with 8 sections
-
-**Backend (54 Engines):**
-- Core Engines (5): Credit, Generation, Publishing, Export, Plan Enforcement
-- Billing Engine (1): Stripe subscription & payments
-- Admin Engine (1): Owner Dashboard operations
-- Analytics Engine (1): Platform metrics
-- System Settings Engine (1): Platform configuration
-- Compliance Engine (1): Legal documents
-- Support Engine (1): Tickets & help articles
-- Build Engines (4): Project, Data Model, Navigation, AI Instruction
-- Advanced Engines (4): Orchestration, Runtime Intelligence, Canvas, Component Library
-- Control Engines (4): AI Orchestration, Blueprint Generation, System Diagnostics, Platform Settings
-- Voice Core Engines (6): Voice Input, STT→Intent, Orchestration, TTS, Safety, Settings
-- Voice Experience Engines (3): Error Handling, Accessibility, Onboarding
-- Voice Intelligence Engines (5): Help, Multi-Step Workflow, Component Placement, Debugging, Extended
-- Voice Control Engines (4): Publishing, Data Modeling, Navigation, Project Review
-- AI Generation Engines (7): Project Gen, Intent, Blueprint, Refine, Features, Evolution, Multi-Project
-- Backend Integration Engines (5): Integration, API Connector, Routing, Data Sync, Security
+## Overview
+Blue Lotus is a comprehensive no-code AI app builder that allows users to create apps using natural language instructions. The platform features an intelligent AI generation system, backend integrations, and Stripe billing.
 
 ---
 
-## Builder Workspace - NEW Implementation
+## Core Features Implemented
 
-### Two-Panel Layout
-- **Left Panel (35%)**: AI Conversation Stream
-- **Right Panel (65%)**: Live Preview
+### 1. AI App Builder (COMPLETE)
+- **Pattern-Based Generation**: Fast component generation for common app types:
+  - YouTube clone
+  - E-commerce / Shopping apps
+  - Social media / Twitter clone
+  - Chat / Messaging apps
+  - Recipe / Cooking apps
+  - Music player / Spotify clone
+  - Video creator / Editor
+  - Dashboard / Analytics
+  - Login / Signup forms
+  - Contact forms
+  - Generic forms
 
-### Multi-Agent AI System
-Four specialized agents collaborate on each request:
-1. **🏗️ Architect** (Blue): Plans structural changes
-2. **🎨 Designer** (Purple): Handles visual aspects
-3. **⚙️ Engineer** (Green): Implements changes
-4. **👁️ Reviewer** (Orange): Reviews and approves
+- **Intelligent AI Engine**: Multi-phase generation with:
+  - Request understanding
+  - App structure planning
+  - Component generation
+  - Self-correction capabilities
 
-### Features
-- Real-time agent conversation with streaming messages
-- Voice input support (Web Speech API)
-- Device mode switcher (Mobile/Tablet/Desktop)
-- Undo functionality with history tracking
-- Change confirmation for large modifications
-- Live preview with responsive sizing
-- Panel toggle (show/hide sidebar)
-- Save status indicator
-- Suggested prompts for quick actions
-- **Backend Connections Modal** for connecting to external services
+- **External AI Provider Integration** (NEW):
+  - Support for OpenAI (GPT-4, GPT-4-turbo, GPT-4o)
+  - Support for Anthropic (Claude 3 Opus, Sonnet, Haiku)
+  - Support for Google (Gemini Pro, Gemini 1.5)
+  - Support for custom OpenAI-compatible endpoints
+  - Connection testing
+  - Model selection and configuration
 
-### User Controls
-- Accept or reject AI changes
-- Undo last action
-- Refine existing components
-- Voice-to-prompt conversion
+### 2. Backend Integrations (COMPLETE)
+- **Supabase**: Full PostgreSQL, Auth, Storage integration
+- **Firebase**: Firestore, Auth, Storage
+- **REST API**: Custom API endpoints
+- **GraphQL**: Custom GraphQL endpoints
+- **MongoDB**: Direct Atlas connection
+
+### 3. Billing System (COMPLETE)
+- **Stripe Integration**: Real payment processing
+- **Subscription Plans**: Free, Pro ($29/mo), Business ($99/mo)
+- **Credit System**: Monthly credits, daily bonus, purchased credits
+- **Checkout Flow**: Redirects to Stripe hosted checkout
+
+### 4. User Authentication (COMPLETE)
+- Email/password authentication
+- Google OAuth integration
+- JWT-based sessions
+- Password reset functionality
+
+### 5. Owner Dashboard (COMPLETE)
+- User management
+- Analytics overview
+- System settings
+- Compliance management
+- Support tickets
 
 ---
 
-## Backend Connections - ✅ COMPLETE (February 2025)
+## Technical Architecture
 
-### Supported Providers
-1. **🔥 Firebase**: Auth, Firestore, Storage (requires: api_key, project_id)
-2. **⚡ Supabase**: PostgreSQL, Auth, Storage (requires: url, anon_key)
-3. **🌐 REST API**: Any REST endpoint (requires: base_url)
-4. **◈ GraphQL**: Any GraphQL API (requires: endpoint)
-5. **🍃 MongoDB**: Direct MongoDB Atlas (requires: connection_string, database)
+### Frontend
+- React 18
+- Tailwind CSS
+- Shadcn/UI components
+- React Router DOM
+- Sonner (toast notifications)
 
-### UI Features
-- **Backend button** in Builder header opens connections modal
-- **Three views**: List (active connections), Add (provider selection + form), Details (view/manage)
-- **Test Connection**: Validates credentials before saving
-- **Credentials masked**: Shown as `***` in list view
-- **Delete confirmation**: Prevents accidental removal
+### Backend
+- FastAPI
+- MongoDB (Motor async driver)
+- 54+ modular engines
+- Pydantic models
 
-### API Endpoints
-- `GET /api/backend/providers` - List all 5 providers
-- `GET /api/backend/connections` - List user's connections (credentials masked)
-- `POST /api/backend/connections` - Create new connection
-- `POST /api/backend/connections/test` - Test credentials without saving
-- `POST /api/backend/connections/{id}/test` - Test existing connection
+### Integrations
+- Emergent LLM Key (GPT-5.2)
+- Stripe (payments)
+- External AI providers (OpenAI, Anthropic, Google)
+
+---
+
+## API Endpoints
+
+### Builder AI
+- `POST /api/builder/generate-components` - Generate UI components
+- `POST /api/builder/fix-errors` - Self-correct component errors
+- `POST /api/builder/suggest-improvements` - Get AI suggestions
+- `POST /api/builder/expand-feature` - Add features to existing app
+- `GET /api/builder/ai-status` - Check AI capabilities
+
+### External AI
+- `GET /api/external-ai/providers` - List supported providers
+- `GET /api/external-ai/config` - Get user's AI config
+- `POST /api/external-ai/config` - Save AI config
+- `DELETE /api/external-ai/config` - Remove AI config
+- `POST /api/external-ai/test` - Test connection
+- `POST /api/external-ai/generate` - Generate with external AI
+
+### Backend Connections
+- `GET /api/backend/connections` - List connections
+- `POST /api/backend/connections` - Create connection
+- `POST /api/backend/connections/test` - Test connection
 - `DELETE /api/backend/connections/{id}` - Delete connection
 
-### Testing
-- **26 backend API tests** (100% pass rate)
-- **9 frontend UI tests** (100% pass rate)
-- Test file: `/app/backend/tests/test_backend_connections.py`
-
-### Note on Mocking
-- Test connection endpoint **validates required fields** per provider
-- Returns simulated success (doesn't actually connect to Firebase/Supabase/etc.)
-- Real provider connections would require additional implementation
+### Billing
+- `GET /api/billing/plans` - Get subscription plans
+- `POST /api/billing/subscribe` - Create checkout session
+- `GET /api/billing/status/{session_id}` - Check payment status
+- `POST /api/webhook/stripe` - Stripe webhook
 
 ---
 
-## Owner Dashboard - Complete Implementation
+## Data Models
 
-### Access Control
-- **Owner-only access** (admins cannot access)
-- Access via email whitelist (`OWNER_EMAILS` env var) or `role: "owner"` in database
+### User
+```json
+{
+  "user_id": "uuid",
+  "email": "string",
+  "hashed_password": "string",
+  "role": "user|owner|admin",
+  "plan": "free|pro|business",
+  "credits": {...}
+}
+```
 
-### 8 Sections
-1. **Overview**: Stats, retention, churn, project funnel, signups chart
-2. **Users Management**: List, search, suspend/reactivate/delete
-3. **Projects Management**: List, search, archive/delete
-4. **Billing & Plans**: Revenue, users by plan, transactions
-5. **Analytics**: AI usage, signups, retention metrics
-6. **System Settings**: Feature flags, global limits, branding
-7. **Compliance Center**: Legal documents, third-party services
-8. **Support Center**: Tickets, help articles, feedback
+### Project
+```json
+{
+  "project_id": "uuid",
+  "user_id": "uuid",
+  "name": "string",
+  "status": "draft|published",
+  "components": [...],
+  "settings": {...}
+}
+```
 
----
-
-## Tech Stack
-- **Frontend**: React 18, Tailwind CSS, Shadcn/UI
-- **Backend**: FastAPI, Pydantic, Motor (async MongoDB)
-- **Database**: MongoDB
-- **AI**: GPT-5.2 via Emergent LLM Key (backend)
-- **Voice**: OpenAI Whisper (STT), OpenAI TTS, Web Speech API (frontend)
-- **Payments**: Stripe
-
----
-
-## Test Credentials
-- **Owner**: owner@bluelotus.ai / owner123
-- **Regular User**: test@test.com / test123
-
----
-
-## What's Real vs Mocked
-
-### ✅ REAL (Working with Actual Logic)
-- Auth system (JWT, MongoDB)
-- Project CRUD (MongoDB)
-- Credit system (deductions, limits)
-- Backend AI Generation (GPT-5.2 via Emergent LLM Key)
-- Voice STT/TTS (OpenAI via backend)
-- Billing system (Stripe)
-- Owner Dashboard (admin engine with real queries)
-
-### 🟡 MOCKED/SIMULATED
-- **Builder AI conversation** (client-side simulation with delays)
-- Project structure changes in Builder (not persisted)
-- Export engine (mock download URLs)
+### External AI Config
+```json
+{
+  "user_id": "uuid",
+  "provider": "openai|anthropic|google|custom",
+  "api_key": "encrypted",
+  "model": "string",
+  "endpoint": "string (optional)",
+  "max_tokens": 4096,
+  "temperature": 0.7,
+  "enabled": true
+}
+```
 
 ---
 
-## Backlog
-
-### P0 - Critical
-- [x] Stripe payment integration ✅
-- [x] Complete Owner Dashboard (all 8 sections) ✅
-- [x] Builder Workspace with multi-agent AI ✅
-- [x] Backend Connections UI ✅ (February 2025)
-- [ ] Connect Builder to backend AI Generation API (replace mock conversation)
-
-### P1 - Important
-- [ ] Persist Builder changes to database
-- [ ] Real-time AI generation in Builder
-- [ ] Voice UI components in Builder (backend integration)
-- [ ] User-facing Stripe billing UI
-- [ ] Implement REAL provider connections (Firebase, Supabase, etc.)
-
-### P2 - Nice to Have
-- [ ] Backend Management section in Owner Dashboard
-- [ ] Extended analytics with charts
-- [ ] Multi-language support
-- [ ] Account Settings & Team Management UI
+## Credentials
+- **Test Account**: owner@bluelotus.ai / owner123
+- **Stripe**: Test key configured
+- **Emergent LLM Key**: Configured in backend
 
 ---
 
-## Last Updated
-February 2025 - Backend Connections UI Complete (54 Engines)
+## Backlog / Future Tasks
 
-## Changelog
-- **Feb 2025**: Backend Connections UI completed with 5 providers (Firebase, Supabase, REST API, GraphQL, MongoDB)
-- **Dec 2025**: Builder Workspace overhaul with multi-agent AI simulation
-- **Dec 2025**: Owner Dashboard complete (8 sections)
-- **Dec 2025**: Stripe billing integration
+### P1 (High Priority)
+- [ ] Voice control integration in builder
+- [ ] Real-time collaboration
+- [ ] App publishing to custom domains
+
+### P2 (Medium Priority)
+- [ ] Team management UI
+- [ ] Advanced billing analytics
+- [ ] Template marketplace
+
+### P3 (Low Priority)
+- [ ] Logo customization tool
+- [ ] White-label options
+- [ ] API documentation
+
+---
+
+## Recent Changes (Dec 20, 2025)
+1. Added External AI Provider integration
+2. Enhanced pattern-based generation for complex apps
+3. Fixed builder component rendering
+4. Improved Supabase connection testing
+5. Simplified Stripe checkout flow
