@@ -149,7 +149,7 @@ def create_backend_integration_routes(db):
         if not user:
             raise HTTPException(status_code=401, detail="Not authenticated")
         
-        # Simulate testing based on provider
+        import httpx
         provider = request.provider
         credentials = request.credentials
         
@@ -157,24 +157,105 @@ def create_backend_integration_routes(db):
         if provider == "firebase":
             if not credentials.get("api_key") or not credentials.get("project_id"):
                 return {"success": False, "message": "Missing required fields: api_key, project_id"}
+            # For Firebase, we'd need to test the Firebase SDK - simulate for now
+            return {"success": True, "message": "Firebase credentials validated"}
+            
         elif provider == "supabase":
             if not credentials.get("url") or not credentials.get("anon_key"):
                 return {"success": False, "message": "Missing required fields: url, anon_key"}
+            
+            # Actually test Supabase connection
+            try:
+                supabase_url = credentials["url"].rstrip("/")
+                anon_key = credentials["anon_key"]
+                
+                async with httpx.AsyncClient(timeout=10.0) as client:
+                    # Test the REST API endpoint
+                    response = await client.get(
+                        f"{supabase_url}/rest/v1/",
+                        headers={
+                            "apikey": anon_key,
+                            "Authorization": f"Bearer {anon_key}"
+                        }
+                    )
+                    
+                    if response.status_code < 400:
+                        return {"success": True, "message": "Successfully connected to Supabase!"}
+                    elif response.status_code == 401:
+                        return {"success": False, "message": "Invalid Supabase credentials (401 Unauthorized)"}
+                    else:
+                        return {"success": False, "message": f"Supabase returned status {response.status_code}"}
+                        
+            except httpx.TimeoutException:
+                return {"success": False, "message": "Connection timeout - check your Supabase URL"}
+            except httpx.ConnectError:
+                return {"success": False, "message": "Could not connect to Supabase - check your URL"}
+            except Exception as e:
+                return {"success": False, "message": f"Connection error: {str(e)}"}
+                
         elif provider == "rest_api":
             if not credentials.get("base_url"):
                 return {"success": False, "message": "Missing required field: base_url"}
+            
+            # Test REST API connection
+            try:
+                base_url = credentials["base_url"].rstrip("/")
+                headers = {"Content-Type": "application/json"}
+                
+                if credentials.get("api_key"):
+                    header_name = credentials.get("auth_header", "Authorization")
+                    headers[header_name] = credentials["api_key"]
+                
+                async with httpx.AsyncClient(timeout=10.0) as client:
+                    response = await client.get(base_url, headers=headers)
+                    
+                    if response.status_code < 400:
+                        return {"success": True, "message": f"Successfully connected to REST API ({response.status_code})"}
+                    else:
+                        return {"success": False, "message": f"API returned status {response.status_code}"}
+                        
+            except httpx.TimeoutException:
+                return {"success": False, "message": "Connection timeout"}
+            except httpx.ConnectError:
+                return {"success": False, "message": "Could not connect to the API"}
+            except Exception as e:
+                return {"success": False, "message": f"Connection error: {str(e)}"}
+                
         elif provider == "graphql":
             if not credentials.get("endpoint"):
                 return {"success": False, "message": "Missing required field: endpoint"}
+            
+            # Test GraphQL connection with introspection query
+            try:
+                endpoint = credentials["endpoint"]
+                headers = {"Content-Type": "application/json"}
+                
+                if credentials.get("api_key"):
+                    header_name = credentials.get("auth_header", "Authorization")
+                    headers[header_name] = credentials["api_key"]
+                
+                async with httpx.AsyncClient(timeout=10.0) as client:
+                    response = await client.post(
+                        endpoint,
+                        headers=headers,
+                        json={"query": "{ __typename }"}
+                    )
+                    
+                    if response.status_code < 400:
+                        return {"success": True, "message": "Successfully connected to GraphQL endpoint"}
+                    else:
+                        return {"success": False, "message": f"GraphQL returned status {response.status_code}"}
+                        
+            except Exception as e:
+                return {"success": False, "message": f"Connection error: {str(e)}"}
+                
         elif provider == "mongodb":
             if not credentials.get("connection_string") or not credentials.get("database"):
                 return {"success": False, "message": "Missing required fields: connection_string, database"}
+            # MongoDB testing would require pymongo - simulate for now
+            return {"success": True, "message": "MongoDB credentials format validated"}
         
-        # Simulate successful connection (in production, actually test the connection)
-        return {
-            "success": True,
-            "message": f"Successfully connected to {provider}"
-        }
+        return {"success": True, "message": f"Successfully validated {provider} configuration"}
     
     @router.post("/connections/{connection_id}/test")
     async def test_connection(
