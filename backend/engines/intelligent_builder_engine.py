@@ -360,7 +360,8 @@ Include realistic placeholder content that makes sense for the app type."""
     async def generate_app_multi_phase(
         self, 
         prompt: str, 
-        context: Dict[str, Any] = None
+        context: Dict[str, Any] = None,
+        skip_validation: bool = False
     ) -> GenerationResult:
         """
         Multi-phase generation for complex apps (slower but more thorough).
@@ -385,7 +386,7 @@ Include realistic placeholder content that makes sense for the app type."""
             self._log_thinking("🎨 Generating components...")
             components = await self._generate_components(blueprint, prompt)
             
-            if quick_mode:
+            if skip_validation:
                 return GenerationResult(
                     success=True,
                     phase=GenerationPhase.COMPLETE,
