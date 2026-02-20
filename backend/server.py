@@ -61,6 +61,7 @@ from routes.backend_integration import create_backend_integration_routes
 from routes.billing import create_billing_routes, create_webhook_routes
 from routes.admin import create_admin_routes
 from routes.builder_ai import create_builder_ai_routes
+from routes.external_ai import create_external_ai_routes
 
 # Create API router with /api prefix
 api_router = APIRouter(prefix="/api")
