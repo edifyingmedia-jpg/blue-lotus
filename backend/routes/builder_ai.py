@@ -115,11 +115,39 @@ async def generate_components(
     request: GenerateComponentsRequest,
     authorization: Optional[str] = Header(None)
 ):
-    """Generate UI components using smart template matching (fast) or GPT (for complex requests)"""
+    """Generate UI components using intelligent multi-phase AI or fast pattern matching"""
     
     prompt_lower = request.prompt.lower()
+    mode = request.mode or "intelligent"
     
-    # Fast local generation for common patterns
+    # Use intelligent engine for complex generation
+    if mode == "intelligent" and INTELLIGENT_ENGINE_AVAILABLE and EMERGENT_LLM_KEY:
+        try:
+            print(f"[Builder AI] Using intelligent engine for: {request.prompt[:50]}...")
+            engine = IntelligentBuilderEngine(api_key=EMERGENT_LLM_KEY)
+            
+            result = await engine.generate_app(
+                prompt=request.prompt,
+                context=request.context,
+                quick_mode=(mode == "quick")
+            )
+            
+            if result.success and result.components:
+                return GenerateComponentsResponse(
+                    success=True,
+                    components=result.components,
+                    message=result.message,
+                    thinking=[t if isinstance(t, dict) else {"message": str(t)} for t in result.thinking],
+                    suggestions=result.suggestions,
+                    errors_fixed=result.errors_fixed,
+                    blueprint=result.blueprint
+                )
+        except Exception as e:
+            print(f"[Builder AI] Intelligent engine error: {e}")
+            import traceback
+            traceback.print_exc()
+    
+    # Fast local generation for common patterns (fallback or quick mode)
     components = generate_components_locally(prompt_lower, request.prompt)
     
     if components:
@@ -129,10 +157,10 @@ async def generate_components(
             message=f"Generated {len(components)} component(s)"
         )
     
-    # Fallback to GPT for complex requests (if key available)
+    # Fallback to basic GPT for complex requests
     if EMERGENT_LLM_KEY:
         try:
-            print(f"[Builder AI] Using GPT for: {request.prompt[:50]}...")
+            print(f"[Builder AI] Using basic GPT for: {request.prompt[:50]}...")
             chat = LlmChat(
                 api_key=EMERGENT_LLM_KEY,
                 session_id=f"builder-{id(request)}",
