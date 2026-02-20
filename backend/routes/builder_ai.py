@@ -13,17 +13,48 @@ router = APIRouter(prefix="/builder", tags=["builder-ai"])
 # Import emergent integrations
 from emergentintegrations.llm.chat import LlmChat, UserMessage
 
+# Import intelligent builder engine
+try:
+    from engines.intelligent_builder_engine import IntelligentBuilderEngine
+    INTELLIGENT_ENGINE_AVAILABLE = True
+except ImportError:
+    INTELLIGENT_ENGINE_AVAILABLE = False
+    print("[Builder AI] Intelligent engine not available, using basic mode")
+
 EMERGENT_LLM_KEY = os.environ.get("EMERGENT_LLM_KEY")
+
 
 class GenerateComponentsRequest(BaseModel):
     prompt: str
     current_screen: Optional[str] = None
     context: Optional[Dict[str, Any]] = None
+    mode: Optional[str] = "intelligent"  # "intelligent", "quick", "expand"
+    existing_components: Optional[List[Dict[str, Any]]] = None
+
 
 class GenerateComponentsResponse(BaseModel):
     success: bool
     components: List[Dict[str, Any]]
     message: str
+    thinking: Optional[List[Dict[str, Any]]] = None
+    suggestions: Optional[List[Any]] = None
+    errors_fixed: Optional[List[str]] = None
+    blueprint: Optional[Dict[str, Any]] = None
+
+
+class FixErrorsRequest(BaseModel):
+    components: List[Dict[str, Any]]
+    error_description: str
+
+
+class SuggestImprovementsRequest(BaseModel):
+    components: List[Dict[str, Any]]
+    user_goal: str
+
+
+class ExpandFeatureRequest(BaseModel):
+    existing_components: List[Dict[str, Any]]
+    feature_request: str
 
 SYSTEM_PROMPT = """You are a UI component generator for a no-code app builder. When the user describes what they want to build, you generate JSON components.
 
