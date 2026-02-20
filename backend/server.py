@@ -87,6 +87,7 @@ api_router.include_router(create_billing_routes(db))
 api_router.include_router(create_webhook_routes(db))
 api_router.include_router(create_admin_routes(db))
 api_router.include_router(create_builder_ai_routes())
+api_router.include_router(create_external_ai_routes())
 
 # Include the API router
 app.include_router(api_router)
