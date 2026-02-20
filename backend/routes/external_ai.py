@@ -60,7 +60,7 @@ PROVIDER_CONFIGS = {
     },
     AIProvider.ANTHROPIC: {
         "endpoint": "https://api.anthropic.com/v1/messages",
-        "models": ["claude-3-opus-20240229", "claude-3-sonnet-20240229", "claude-3-haiku-20240307"],
+        "models": ["claude-3-opus-latest", "claude-3-sonnet-latest", "claude-3-haiku-latest", "claude-sonnet-4-20250514"],
         "auth_header": "x-api-key",
         "auth_prefix": ""
     },
