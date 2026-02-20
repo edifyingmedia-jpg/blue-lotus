@@ -2,11 +2,10 @@ import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import Logo from '../components/Logo';
-import UserAgreementModal from '../components/UserAgreementModal';
 import { Button } from '../components/ui/button';
 import { Input } from '../components/ui/input';
 import { Label } from '../components/ui/label';
-import { Mail, Lock, User, Eye, EyeOff, ArrowRight } from 'lucide-react';
+import { Mail, Lock, User, Eye, EyeOff, ArrowRight, Loader2 } from 'lucide-react';
 
 const Signup = () => {
   const [name, setName] = useState('');
@@ -15,62 +14,41 @@ const Signup = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
-  const [showAgreementModal, setShowAgreementModal] = useState(false);
-  const [pendingAction, setPendingAction] = useState(null);
-  const { signup, loginWithGoogle } = useAuth();
+  const { signup } = useAuth();
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setError('');
     
-    if (password.length < 8) {
-      setError('Password must be at least 8 characters');
+    if (loading) return;
+    
+    if (password.length < 6) {
+      setError('Password must be at least 6 characters');
       return;
     }
     
-    // Show agreement modal before proceeding
-    setPendingAction('email');
-    setShowAgreementModal(true);
-  };
-
-  const handleGoogleSignup = async () => {
-    // Show agreement modal before proceeding
-    setPendingAction('google');
-    setShowAgreementModal(true);
-  };
-
-  const handleAgreementAccept = async () => {
-    setShowAgreementModal(false);
+    setError('');
     setLoading(true);
     
     try {
-      if (pendingAction === 'email') {
-        await signup(name, email, password);
-      } else if (pendingAction === 'google') {
-        await loginWithGoogle();
+      const user = await signup(name, email, password);
+      if (user) {
+        navigate('/dashboard');
       }
-      navigate('/dashboard');
     } catch (err) {
-      setError(err.message);
+      setError(err.message || 'Signup failed. Please try again.');
     } finally {
       setLoading(false);
-      setPendingAction(null);
     }
   };
 
-  const handleAgreementCancel = () => {
-    setShowAgreementModal(false);
-    setPendingAction(null);
-  };
-
   return (
-    <div className="min-h-screen bg-gray-950 flex">
+    <div className="min-h-screen bg-gray-950 flex" data-testid="signup-page">
       {/* Left side - Branding */}
       <div className="hidden lg:flex lg:w-1/2 bg-gradient-to-br from-gray-900 to-gray-950 p-12 flex-col justify-between relative overflow-hidden">
         <div className="absolute inset-0 overflow-hidden">
-          <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-blue-600/10 rounded-full blur-3xl" />
-          <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-blue-500/10 rounded-full blur-3xl" />
+          <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-blue-600/10 rounded-full blur-3xl animate-pulse" />
+          <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-blue-500/10 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }} />
         </div>
         
         <div className="relative z-10">
@@ -83,28 +61,13 @@ const Signup = () => {
           <h1 className="text-4xl font-bold text-white mb-4">
             Start building today
           </h1>
-          <p className="text-gray-400 text-lg mb-8">
-            Join thousands of creators who are building the future with AI-powered development.
+          <p className="text-gray-400 text-lg">
+            Join thousands of creators using AI to build their dream applications without writing code.
           </p>
-          <div className="flex items-center gap-4">
-            <div className="flex -space-x-2">
-              {[1, 2, 3, 4].map((i) => (
-                <img
-                  key={i}
-                  src={`https://i.pravatar.cc/40?img=${i + 10}`}
-                  alt="User"
-                  className="w-10 h-10 rounded-full border-2 border-gray-900"
-                />
-              ))}
-            </div>
-            <p className="text-gray-400 text-sm">
-              <span className="text-white font-semibold">50,000+</span> builders already joined
-            </p>
-          </div>
         </div>
         
         <div className="relative z-10 text-gray-500 text-sm">
-          © {new Date().getFullYear()} Blue Lotus. All rights reserved.
+          &copy; {new Date().getFullYear()} Blue Lotus. All rights reserved.
         </div>
       </div>
 
@@ -117,38 +80,19 @@ const Signup = () => {
             </Link>
           </div>
 
-          <h2 className="text-2xl font-bold text-white mb-2">Create your account</h2>
-          <p className="text-gray-400 mb-8">Get started with your free account</p>
+          <h2 className="text-2xl font-bold text-white mb-2" data-testid="signup-title">Create your account</h2>
+          <p className="text-gray-400 mb-8">Start your free trial - no credit card required</p>
 
           {error && (
-            <div className="mb-4 p-3 bg-red-500/10 border border-red-500/30 rounded-lg text-red-400 text-sm">
+            <div 
+              className="mb-4 p-3 bg-red-500/10 border border-red-500/30 rounded-lg text-red-400 text-sm"
+              data-testid="signup-error"
+            >
               {error}
             </div>
           )}
 
-          {/* Google Signup */}
-          <Button
-            type="button"
-            onClick={handleGoogleSignup}
-            disabled={loading}
-            className="w-full bg-white hover:bg-gray-100 text-gray-900 h-12 mb-6 font-medium"
-          >
-            <svg className="w-5 h-5 mr-3" viewBox="0 0 24 24">
-              <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
-              <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
-              <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
-              <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
-            </svg>
-            Continue with Google
-          </Button>
-
-          <div className="flex items-center gap-4 mb-6">
-            <div className="flex-1 h-px bg-gray-800" />
-            <span className="text-gray-500 text-sm">or continue with email</span>
-            <div className="flex-1 h-px bg-gray-800" />
-          </div>
-
-          <form onSubmit={handleSubmit} className="space-y-4">
+          <form onSubmit={handleSubmit} className="space-y-4" data-testid="signup-form">
             <div>
               <Label htmlFor="name" className="text-gray-300">Full Name</Label>
               <div className="relative mt-1">
@@ -161,6 +105,8 @@ const Signup = () => {
                   placeholder="John Doe"
                   className="pl-10 h-12 bg-gray-900 border-gray-800 text-white placeholder:text-gray-500 focus:border-blue-500"
                   required
+                  disabled={loading}
+                  data-testid="signup-name-input"
                 />
               </div>
             </div>
@@ -177,6 +123,8 @@ const Signup = () => {
                   placeholder="you@example.com"
                   className="pl-10 h-12 bg-gray-900 border-gray-800 text-white placeholder:text-gray-500 focus:border-blue-500"
                   required
+                  disabled={loading}
+                  data-testid="signup-email-input"
                 />
               </div>
             </div>
@@ -190,14 +138,17 @@ const Signup = () => {
                   type={showPassword ? 'text' : 'password'}
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  placeholder="Min. 8 characters"
+                  placeholder="At least 6 characters"
                   className="pl-10 pr-10 h-12 bg-gray-900 border-gray-800 text-white placeholder:text-gray-500 focus:border-blue-500"
                   required
+                  disabled={loading}
+                  data-testid="signup-password-input"
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
                   className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-300"
+                  tabIndex={-1}
                 >
                   {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
                 </button>
@@ -205,39 +156,48 @@ const Signup = () => {
             </div>
 
             <div className="flex items-start gap-2">
-              <p className="text-gray-400 text-sm">
-                By creating an account, you agree to our{' '}
+              <input 
+                type="checkbox" 
+                id="terms"
+                className="w-4 h-4 mt-1 rounded border-gray-700 bg-gray-900 text-blue-600 focus:ring-blue-500"
+                required
+              />
+              <label htmlFor="terms" className="text-gray-400 text-sm">
+                I agree to the{' '}
                 <Link to="/legal/terms" className="text-blue-400 hover:underline">Terms of Service</Link>
                 {' '}and{' '}
                 <Link to="/legal/privacy" className="text-blue-400 hover:underline">Privacy Policy</Link>
-              </p>
+              </label>
             </div>
 
             <Button
               type="submit"
               disabled={loading}
-              className="w-full h-12 bg-blue-600 hover:bg-blue-700 text-white font-medium"
+              className="w-full h-12 bg-blue-600 hover:bg-blue-700 text-white font-medium transition-all hover:shadow-lg hover:shadow-blue-600/25"
+              data-testid="signup-submit-button"
             >
-              {loading ? 'Creating account...' : 'Create Account'}
-              <ArrowRight className="w-5 h-5 ml-2" />
+              {loading ? (
+                <>
+                  <Loader2 className="w-5 h-5 mr-2 animate-spin" />
+                  Creating account...
+                </>
+              ) : (
+                <>
+                  Create Account
+                  <ArrowRight className="w-5 h-5 ml-2" />
+                </>
+              )}
             </Button>
           </form>
 
           <p className="text-center text-gray-400 mt-6">
             Already have an account?{' '}
-            <Link to="/login" className="text-blue-400 hover:underline font-medium">
+            <Link to="/login" className="text-blue-400 hover:underline font-medium" data-testid="login-link">
               Sign in
             </Link>
           </p>
         </div>
       </div>
-
-      {/* User Agreement Modal */}
-      <UserAgreementModal
-        isOpen={showAgreementModal}
-        onAccept={handleAgreementAccept}
-        onCancel={handleAgreementCancel}
-      />
     </div>
   );
 };

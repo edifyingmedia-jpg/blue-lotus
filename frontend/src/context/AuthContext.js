@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useState, useEffect, useRef, useCallback } from 'react';
 
 const API_URL = process.env.REACT_APP_BACKEND_URL;
 
@@ -8,178 +8,158 @@ export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const initRef = useRef(false);
 
-  // Fetch current user from token on mount
+  // Initialize auth state from stored token - runs only once
   useEffect(() => {
+    if (initRef.current) return;
+    initRef.current = true;
+
     const initAuth = async () => {
       const token = localStorage.getItem('bluelotus_token');
-      if (token) {
-        try {
-          const response = await fetch(`${API_URL}/api/auth/me`, {
-            headers: {
-              'Authorization': `Bearer ${token}`,
-            },
-          });
-          
-          if (response.ok) {
-            const text = await response.text();
-            if (text) {
-              const userData = JSON.parse(text);
-              setUser(userData);
-            }
-          } else {
-            localStorage.removeItem('bluelotus_token');
+      if (!token) {
+        setLoading(false);
+        return;
+      }
+
+      try {
+        const response = await fetch(`${API_URL}/api/auth/me`, {
+          method: 'GET',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
           }
-        } catch (err) {
-          console.error('Auth check failed:', err);
+        });
+
+        if (response.ok) {
+          const userData = await response.json();
+          setUser(userData);
+        } else {
           localStorage.removeItem('bluelotus_token');
         }
+      } catch (err) {
+        console.error('Auth init failed:', err);
+        localStorage.removeItem('bluelotus_token');
+      } finally {
+        setLoading(false);
       }
-      setLoading(false);
     };
-    
+
     initAuth();
   }, []);
 
-  const login = async (email, password) => {
+  const login = useCallback(async (email, password) => {
     setError(null);
-    
+
     const response = await fetch(`${API_URL}/api/auth/login`, {
       method: 'POST',
       headers: {
-        'Content-Type': 'application/json',
+        'Content-Type': 'application/json'
       },
-      body: JSON.stringify({ email, password }),
+      body: JSON.stringify({ email, password })
     });
 
-    // Read response as text first to avoid "body stream already read" error
-    const text = await response.text();
-    
-    if (!text) {
-      throw new Error('Empty response from server');
-    }
-    
-    let data;
-    try {
-      data = JSON.parse(text);
-    } catch (e) {
-      throw new Error('Invalid response from server');
-    }
+    const data = await response.json();
 
     if (!response.ok) {
-      const errorMessage = data.detail || 'Login failed';
-      setError(errorMessage);
-      throw new Error(errorMessage);
+      const errorMsg = data.detail || 'Login failed';
+      setError(errorMsg);
+      throw new Error(errorMsg);
     }
 
-    // Store token and user
     localStorage.setItem('bluelotus_token', data.access_token);
     setUser(data.user);
     return data.user;
-  };
+  }, []);
 
-  const signup = async (name, email, password) => {
+  const signup = useCallback(async (name, email, password) => {
     setError(null);
-    
+
     const response = await fetch(`${API_URL}/api/auth/signup`, {
       method: 'POST',
       headers: {
-        'Content-Type': 'application/json',
+        'Content-Type': 'application/json'
       },
-      body: JSON.stringify({ name, email, password }),
+      body: JSON.stringify({ name, email, password })
     });
 
-    // Read response as text first
-    const text = await response.text();
-    
-    if (!text) {
-      throw new Error('Empty response from server');
-    }
-    
-    let data;
-    try {
-      data = JSON.parse(text);
-    } catch (e) {
-      throw new Error('Invalid response from server');
-    }
+    const data = await response.json();
 
     if (!response.ok) {
-      const errorMessage = data.detail || 'Signup failed';
-      setError(errorMessage);
-      throw new Error(errorMessage);
+      const errorMsg = data.detail || 'Signup failed';
+      setError(errorMsg);
+      throw new Error(errorMsg);
     }
 
-    // Store token and user
     localStorage.setItem('bluelotus_token', data.access_token);
     setUser(data.user);
     return data.user;
-  };
+  }, []);
 
-  const loginWithGoogle = async () => {
+  const loginWithGoogle = useCallback(async () => {
     setError('Google login is not yet implemented');
     throw new Error('Google login is not yet implemented');
-  };
+  }, []);
 
-  const logout = () => {
+  const logout = useCallback(() => {
     setUser(null);
     localStorage.removeItem('bluelotus_token');
-  };
+  }, []);
 
-  const updateUser = async (updates) => {
+  const updateUser = useCallback(async (updates) => {
     const updatedUser = { ...user, ...updates };
     setUser(updatedUser);
     return updatedUser;
-  };
+  }, [user]);
 
-  const refreshUser = async () => {
+  const refreshUser = useCallback(async () => {
     const token = localStorage.getItem('bluelotus_token');
     if (!token) return null;
-    
+
     try {
       const response = await fetch(`${API_URL}/api/auth/me`, {
+        method: 'GET',
         headers: {
           'Authorization': `Bearer ${token}`,
-        },
-      });
-      
-      if (response.ok) {
-        const text = await response.text();
-        if (text) {
-          const userData = JSON.parse(text);
-          setUser(userData);
-          return userData;
+          'Content-Type': 'application/json'
         }
+      });
+
+      if (response.ok) {
+        const userData = await response.json();
+        setUser(userData);
+        return userData;
       }
     } catch (err) {
       console.error('Failed to refresh user:', err);
     }
     return null;
-  };
+  }, []);
 
-  const getAuthToken = () => {
+  const getAuthToken = useCallback(() => {
     return localStorage.getItem('bluelotus_token');
-  };
+  }, []);
 
-  const authFetch = async (url, options = {}) => {
+  const authFetch = useCallback(async (url, options = {}) => {
     const token = getAuthToken();
     const headers = {
       ...options.headers,
-      'Authorization': `Bearer ${token}`,
+      'Authorization': `Bearer ${token}`
     };
-    
+
     if (!(options.body instanceof FormData)) {
       headers['Content-Type'] = 'application/json';
     }
-    
+
     const response = await fetch(url, { ...options, headers });
-    
+
     if (response.status === 401) {
       logout();
       throw new Error('Session expired. Please login again.');
     }
-    
+
     return response;
-  };
+  }, [getAuthToken, logout]);
 
   return (
     <AuthContext.Provider
@@ -195,7 +175,7 @@ export const AuthProvider = ({ children }) => {
         refreshUser,
         getAuthToken,
         authFetch,
-        isAuthenticated: !!user,
+        isAuthenticated: !!user
       }}
     >
       {children}
