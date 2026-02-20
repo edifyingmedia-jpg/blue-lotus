@@ -19,8 +19,8 @@ DB_NAME = os.environ.get("DB_NAME", "bluelotus")
 client = AsyncIOMotorClient(MONGO_URL)
 db = client[DB_NAME]
 
-# Auth helper
-from utils.auth import get_current_user
+# Auth helper - import from auth route
+from routes.auth import get_current_user
 
 
 class AIProvider(str, Enum):
