@@ -483,7 +483,7 @@ Include realistic content, proper hierarchy, and comprehensive coverage.
                 if end > start:
                     try:
                         return json.loads(cleaned[start:end])
-                    except:
+                    except json.JSONDecodeError:
                         pass
         return None
     
