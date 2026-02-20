@@ -70,8 +70,8 @@ const BuilderNew = () => {
     setLoading(false);
   };
 
-  const addMessage = (type, content) => {
-    setMessages(prev => [...prev, { id: Date.now(), type, content, time: new Date() }]);
+  const addMessage = (type, content, extra = null) => {
+    setMessages(prev => [...prev, { id: Date.now(), type, content, time: new Date(), extra }]);
   };
 
   const handleSubmit = async (e) => {
@@ -84,7 +84,7 @@ const BuilderNew = () => {
     setGenerating(true);
 
     try {
-      addMessage('ai', 'Understanding your request...');
+      addMessage('ai', '🧠 Analyzing your request...');
       
       const token = getAuthToken();
       const response = await fetch(`${API_URL}/api/builder/generate-components`, {
@@ -93,15 +93,45 @@ const BuilderNew = () => {
           'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify({ prompt: userPrompt })
+        body: JSON.stringify({ 
+          prompt: userPrompt,
+          mode: 'intelligent',
+          existing_components: components
+        })
       });
 
       const data = await response.json();
       
+      // Show thinking process if available
+      if (data.thinking && data.thinking.length > 0) {
+        const thinkingMessages = data.thinking.map(t => t.message || t).filter(Boolean);
+        if (thinkingMessages.length > 0) {
+          addMessage('thinking', thinkingMessages.join(' → '));
+        }
+      }
+      
       if (data.success && data.components?.length > 0) {
         // Add components to canvas
         setComponents(prev => [...prev, ...data.components]);
-        addMessage('ai', `✅ Created ${data.components.length} component(s): ${data.components.map(c => c.name || c.type).join(', ')}`);
+        
+        // Show success message
+        const componentNames = data.components.slice(0, 5).map(c => c.name || c.type).join(', ');
+        const moreText = data.components.length > 5 ? ` and ${data.components.length - 5} more` : '';
+        addMessage('ai', `✅ Created ${data.components.length} component(s): ${componentNames}${moreText}`);
+        
+        // Show suggestions if available
+        if (data.suggestions && data.suggestions.length > 0) {
+          const suggestionsText = data.suggestions.slice(0, 3).map(s => 
+            typeof s === 'string' ? s : (s.description || s.title || JSON.stringify(s))
+          ).join(', ');
+          addMessage('suggestion', `💡 Ideas: ${suggestionsText}`);
+        }
+        
+        // Show errors fixed if any
+        if (data.errors_fixed && data.errors_fixed.length > 0) {
+          addMessage('system', `🔧 Auto-fixed: ${data.errors_fixed.join(', ')}`);
+        }
+        
         toast.success(`Added ${data.components.length} component(s)`);
         
         // Save to backend
