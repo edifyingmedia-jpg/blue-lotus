@@ -327,6 +327,13 @@ const BuilderNew = () => {
           </div>
         </div>
       </div>
+      
+      {/* Backend Connections Modal */}
+      <BackendConnections
+        isOpen={showBackendConnections}
+        onClose={() => setShowBackendConnections(false)}
+        projectId={id}
+      />
     </div>
   );
 };
