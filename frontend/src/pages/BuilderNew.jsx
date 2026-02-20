@@ -223,7 +223,11 @@ const BuilderNew = () => {
                   msg.type === 'user' 
                     ? 'bg-blue-600 text-white' 
                     : msg.type === 'system'
-                    ? 'bg-gray-800 text-gray-300'
+                    ? 'bg-gray-800 text-gray-400 text-sm'
+                    : msg.type === 'thinking'
+                    ? 'bg-purple-900/50 text-purple-300 text-sm border border-purple-700/50'
+                    : msg.type === 'suggestion'
+                    ? 'bg-yellow-900/30 text-yellow-200 text-sm border border-yellow-700/30'
                     : 'bg-gray-800 text-gray-200'
                 }`}>
                   {msg.content}
