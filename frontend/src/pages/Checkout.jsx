@@ -67,43 +67,99 @@ const steps = [
 const Checkout = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
+  const { getAuthToken, isAuthenticated } = useAuth();
   const preselectedPlan = searchParams.get('plan');
+  const sessionId = searchParams.get('session_id');
+  const paymentStatus = searchParams.get('payment');
   
   const [currentStep, setCurrentStep] = useState(0);
   const [selectedPlan, setSelectedPlan] = useState(preselectedPlan || 'pro');
-  const [paymentData, setPaymentData] = useState({
-    cardNumber: '',
-    expiry: '',
-    cvc: '',
-    name: '',
-    address: '',
-    city: '',
-    zip: '',
-  });
   const [isProcessing, setIsProcessing] = useState(false);
   const [isComplete, setIsComplete] = useState(false);
+  const [error, setError] = useState(null);
 
   const plan = plans.find(p => p.id === selectedPlan);
 
-  const handlePaymentChange = (e) => {
-    const { name, value } = e.target;
-    setPaymentData(prev => ({ ...prev, [name]: value }));
-  };
-
-  const formatCardNumber = (value) => {
-    const v = value.replace(/\s+/g, '').replace(/[^0-9]/gi, '');
-    const matches = v.match(/\d{4,16}/g);
-    const match = (matches && matches[0]) || '';
-    const parts = [];
-    for (let i = 0, len = match.length; i < len; i += 4) {
-      parts.push(match.substring(i, i + 4));
+  // Check for returning from Stripe checkout
+  useEffect(() => {
+    if (sessionId && paymentStatus === 'success') {
+      checkPaymentStatus(sessionId);
     }
-    return parts.length ? parts.join(' ') : value;
+  }, [sessionId, paymentStatus]);
+
+  // Redirect to login if not authenticated
+  useEffect(() => {
+    if (!isAuthenticated) {
+      toast.error('Please login to continue');
+      navigate('/login?redirect=/checkout?plan=' + selectedPlan);
+    }
+  }, [isAuthenticated, navigate, selectedPlan]);
+
+  const checkPaymentStatus = async (sid) => {
+    setIsProcessing(true);
+    try {
+      const token = getAuthToken();
+      const response = await fetch(`${API_URL}/api/billing/status/${sid}`, {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+      
+      if (response.ok) {
+        const data = await response.json();
+        if (data.status === 'paid') {
+          setIsComplete(true);
+          toast.success('Payment successful! Your plan has been upgraded.');
+        } else if (data.status === 'pending') {
+          toast.info('Payment is being processed...');
+          // Poll again in 3 seconds
+          setTimeout(() => checkPaymentStatus(sid), 3000);
+        } else {
+          setError('Payment was not completed. Please try again.');
+        }
+      } else {
+        setError('Failed to verify payment status');
+      }
+    } catch (err) {
+      setError('Error checking payment status: ' + err.message);
+    } finally {
+      setIsProcessing(false);
+    }
   };
 
-  const handleCardNumberChange = (e) => {
-    const formatted = formatCardNumber(e.target.value);
-    setPaymentData(prev => ({ ...prev, cardNumber: formatted }));
+  const handleStartCheckout = async () => {
+    setIsProcessing(true);
+    setError(null);
+    
+    try {
+      const token = getAuthToken();
+      const response = await fetch(`${API_URL}/api/billing/subscribe`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({
+          plan: selectedPlan,
+          origin_url: window.location.origin
+        })
+      });
+      
+      if (response.ok) {
+        const data = await response.json();
+        // Redirect to Stripe checkout
+        window.location.href = data.checkout_url;
+      } else {
+        const errorData = await response.json();
+        setError(errorData.detail || 'Failed to create checkout session');
+        toast.error(errorData.detail || 'Failed to start checkout');
+      }
+    } catch (err) {
+      setError('Error: ' + err.message);
+      toast.error('Failed to connect to payment server');
+    } finally {
+      setIsProcessing(false);
+    }
   };
 
   const handleNext = () => {
@@ -116,14 +172,6 @@ const Checkout = () => {
     if (currentStep > 0) {
       setCurrentStep(currentStep - 1);
     }
-  };
-
-  const handleCompletePurchase = async () => {
-    setIsProcessing(true);
-    // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 2000));
-    setIsProcessing(false);
-    setIsComplete(true);
   };
 
   const getNextBillingDate = () => {
