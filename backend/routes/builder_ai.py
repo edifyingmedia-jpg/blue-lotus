@@ -147,6 +147,127 @@ def generate_components_locally(prompt_lower: str, original_prompt: str) -> List
     
     components = []
     
+    # YouTube/Video streaming clone
+    if ('youtube' in prompt_lower or 'video' in prompt_lower and ('feed' in prompt_lower or 'stream' in prompt_lower or 'watch' in prompt_lower or 'clone' in prompt_lower)):
+        components = [
+            {"id": f"yt-{uuid.uuid4().hex[:8]}", "type": "nav", "name": "Top Navigation", "items": ["Home", "Trending", "Subscriptions", "Library"]},
+            {"id": f"yt-{uuid.uuid4().hex[:8]}", "type": "container", "name": "Search Bar", "title": "", "children": [
+                {"id": f"yt-{uuid.uuid4().hex[:8]}", "type": "input", "name": "Search", "placeholder": "Search videos...", "inputType": "text"},
+                {"id": f"yt-{uuid.uuid4().hex[:8]}", "type": "button", "name": "Search Button", "label": "🔍 Search", "variant": "primary"}
+            ]},
+            {"id": f"yt-{uuid.uuid4().hex[:8]}", "type": "grid", "name": "Main Content", "columns": 3, "children": [
+                {"id": f"yt-{uuid.uuid4().hex[:8]}", "type": "container", "name": "Video Player Section", "title": "", "children": [
+                    {"id": f"yt-{uuid.uuid4().hex[:8]}", "type": "video", "name": "Main Video Player", "src": "", "controls": True},
+                    {"id": f"yt-{uuid.uuid4().hex[:8]}", "type": "header", "name": "Video Title", "content": "Amazing Video Title - Watch Now!"},
+                    {"id": f"yt-{uuid.uuid4().hex[:8]}", "type": "stats", "name": "Video Stats", "items": [
+                        {"label": "Views", "value": "1.2M"},
+                        {"label": "Likes", "value": "45K"},
+                        {"label": "Date", "value": "2 days ago"}
+                    ]},
+                    {"id": f"yt-{uuid.uuid4().hex[:8]}", "type": "grid", "name": "Action Buttons", "columns": 5, "children": [
+                        {"id": f"yt-{uuid.uuid4().hex[:8]}", "type": "button", "name": "Like", "label": "👍 Like", "variant": "secondary"},
+                        {"id": f"yt-{uuid.uuid4().hex[:8]}", "type": "button", "name": "Dislike", "label": "👎 Dislike", "variant": "secondary"},
+                        {"id": f"yt-{uuid.uuid4().hex[:8]}", "type": "button", "name": "Share", "label": "↗️ Share", "variant": "secondary"},
+                        {"id": f"yt-{uuid.uuid4().hex[:8]}", "type": "button", "name": "Save", "label": "📥 Save", "variant": "secondary"},
+                        {"id": f"yt-{uuid.uuid4().hex[:8]}", "type": "button", "name": "Subscribe", "label": "Subscribe", "variant": "primary"}
+                    ]},
+                    {"id": f"yt-{uuid.uuid4().hex[:8]}", "type": "card", "name": "Channel Info", "title": "Channel Name", "content": "2.5M subscribers • 500 videos"},
+                    {"id": f"yt-{uuid.uuid4().hex[:8]}", "type": "text", "name": "Description", "content": "Video description goes here. This is an amazing video about interesting topics."},
+                    {"id": f"yt-{uuid.uuid4().hex[:8]}", "type": "header", "name": "Comments Header", "content": "Comments (1,234)"},
+                    {"id": f"yt-{uuid.uuid4().hex[:8]}", "type": "input", "name": "Add Comment", "placeholder": "Add a comment...", "inputType": "text"},
+                    {"id": f"yt-{uuid.uuid4().hex[:8]}", "type": "list", "name": "Comments List", "items": [
+                        {"text": "Great video! Very informative.", "id": 1},
+                        {"text": "Thanks for sharing this!", "id": 2},
+                        {"text": "Subscribed! Keep up the good work.", "id": 3}
+                    ]}
+                ]},
+                {"id": f"yt-{uuid.uuid4().hex[:8]}", "type": "container", "name": "Recommended Videos", "title": "Up Next", "children": [
+                    {"id": f"yt-{uuid.uuid4().hex[:8]}", "type": "card", "name": "Recommended 1", "title": "Related Video 1", "content": "200K views • 1 day ago"},
+                    {"id": f"yt-{uuid.uuid4().hex[:8]}", "type": "card", "name": "Recommended 2", "title": "Related Video 2", "content": "150K views • 3 days ago"},
+                    {"id": f"yt-{uuid.uuid4().hex[:8]}", "type": "card", "name": "Recommended 3", "title": "Related Video 3", "content": "300K views • 1 week ago"},
+                    {"id": f"yt-{uuid.uuid4().hex[:8]}", "type": "card", "name": "Recommended 4", "title": "Related Video 4", "content": "500K views • 2 weeks ago"}
+                ]}
+            ]}
+        ]
+        return components
+    
+    # E-commerce / Shopping app
+    if 'ecommerce' in prompt_lower or 'shop' in prompt_lower or 'store' in prompt_lower or 'cart' in prompt_lower or 'product' in prompt_lower:
+        components = [
+            {"id": f"shop-{uuid.uuid4().hex[:8]}", "type": "nav", "name": "Store Navigation", "items": ["Home", "Products", "Categories", "Cart", "Account"]},
+            {"id": f"shop-{uuid.uuid4().hex[:8]}", "type": "input", "name": "Search Products", "placeholder": "Search products...", "inputType": "text"},
+            {"id": f"shop-{uuid.uuid4().hex[:8]}", "type": "header", "name": "Featured Products", "content": "Featured Products"},
+            {"id": f"shop-{uuid.uuid4().hex[:8]}", "type": "grid", "name": "Product Grid", "columns": 4, "children": [
+                {"id": f"shop-{uuid.uuid4().hex[:8]}", "type": "card", "name": "Product 1", "title": "Product Name", "content": "$29.99 - ⭐⭐⭐⭐⭐"},
+                {"id": f"shop-{uuid.uuid4().hex[:8]}", "type": "card", "name": "Product 2", "title": "Product Name", "content": "$49.99 - ⭐⭐⭐⭐"},
+                {"id": f"shop-{uuid.uuid4().hex[:8]}", "type": "card", "name": "Product 3", "title": "Product Name", "content": "$19.99 - ⭐⭐⭐⭐⭐"},
+                {"id": f"shop-{uuid.uuid4().hex[:8]}", "type": "card", "name": "Product 4", "title": "Product Name", "content": "$39.99 - ⭐⭐⭐⭐"}
+            ]},
+            {"id": f"shop-{uuid.uuid4().hex[:8]}", "type": "container", "name": "Cart Summary", "title": "Shopping Cart", "children": [
+                {"id": f"shop-{uuid.uuid4().hex[:8]}", "type": "list", "name": "Cart Items", "items": [
+                    {"text": "Product 1 x 2 - $59.98", "id": 1},
+                    {"text": "Product 3 x 1 - $19.99", "id": 2}
+                ]},
+                {"id": f"shop-{uuid.uuid4().hex[:8]}", "type": "stats", "name": "Cart Total", "items": [
+                    {"label": "Subtotal", "value": "$79.97"},
+                    {"label": "Shipping", "value": "$5.00"},
+                    {"label": "Total", "value": "$84.97"}
+                ]},
+                {"id": f"shop-{uuid.uuid4().hex[:8]}", "type": "button", "name": "Checkout", "label": "Proceed to Checkout", "variant": "primary"}
+            ]}
+        ]
+        return components
+    
+    # Social Media / Twitter clone
+    if 'twitter' in prompt_lower or 'social' in prompt_lower or 'feed' in prompt_lower or 'post' in prompt_lower:
+        components = [
+            {"id": f"social-{uuid.uuid4().hex[:8]}", "type": "nav", "name": "Social Navigation", "items": ["Home", "Explore", "Notifications", "Messages", "Profile"]},
+            {"id": f"social-{uuid.uuid4().hex[:8]}", "type": "container", "name": "Compose Post", "title": "What's happening?", "children": [
+                {"id": f"social-{uuid.uuid4().hex[:8]}", "type": "input", "name": "Post Input", "placeholder": "What's on your mind?", "inputType": "text"},
+                {"id": f"social-{uuid.uuid4().hex[:8]}", "type": "grid", "name": "Post Actions", "columns": 4, "children": [
+                    {"id": f"social-{uuid.uuid4().hex[:8]}", "type": "button", "name": "Photo", "label": "📷 Photo", "variant": "secondary"},
+                    {"id": f"social-{uuid.uuid4().hex[:8]}", "type": "button", "name": "Video", "label": "🎥 Video", "variant": "secondary"},
+                    {"id": f"social-{uuid.uuid4().hex[:8]}", "type": "button", "name": "Poll", "label": "📊 Poll", "variant": "secondary"},
+                    {"id": f"social-{uuid.uuid4().hex[:8]}", "type": "button", "name": "Post Button", "label": "Post", "variant": "primary"}
+                ]}
+            ]},
+            {"id": f"social-{uuid.uuid4().hex[:8]}", "type": "header", "name": "Feed", "content": "Your Feed"},
+            {"id": f"social-{uuid.uuid4().hex[:8]}", "type": "list", "name": "Posts", "items": [
+                {"text": "@user1: Just posted something amazing! 🎉 (5 min ago)", "id": 1},
+                {"text": "@user2: Check out my new project! 🚀 (15 min ago)", "id": 2},
+                {"text": "@user3: Happy to announce... 📣 (1 hour ago)", "id": 3}
+            ]},
+            {"id": f"social-{uuid.uuid4().hex[:8]}", "type": "container", "name": "Trending", "title": "Trending Topics", "children": [
+                {"id": f"social-{uuid.uuid4().hex[:8]}", "type": "list", "name": "Trending List", "items": [
+                    {"text": "#Technology - 25K posts", "id": 1},
+                    {"text": "#Design - 18K posts", "id": 2},
+                    {"text": "#Startup - 12K posts", "id": 3}
+                ]}
+            ]}
+        ]
+        return components
+    
+    # Chat/Messaging app
+    if 'chat' in prompt_lower or 'messag' in prompt_lower or 'conversation' in prompt_lower:
+        components = [
+            {"id": f"chat-{uuid.uuid4().hex[:8]}", "type": "header", "name": "Chat Header", "content": "Messages"},
+            {"id": f"chat-{uuid.uuid4().hex[:8]}", "type": "list", "name": "Conversations", "items": [
+                {"text": "John Doe - Hey, how are you?", "id": 1},
+                {"text": "Jane Smith - Meeting at 3pm", "id": 2},
+                {"text": "Team Chat - New update available", "id": 3}
+            ]},
+            {"id": f"chat-{uuid.uuid4().hex[:8]}", "type": "container", "name": "Chat Window", "title": "John Doe", "children": [
+                {"id": f"chat-{uuid.uuid4().hex[:8]}", "type": "list", "name": "Messages", "items": [
+                    {"text": "John: Hey, how are you?", "id": 1},
+                    {"text": "You: I'm good, thanks!", "id": 2},
+                    {"text": "John: Great! Want to grab coffee?", "id": 3}
+                ]},
+                {"id": f"chat-{uuid.uuid4().hex[:8]}", "type": "input", "name": "Message Input", "placeholder": "Type a message...", "inputType": "text"},
+                {"id": f"chat-{uuid.uuid4().hex[:8]}", "type": "button", "name": "Send", "label": "Send", "variant": "primary"}
+            ]}
+        ]
+        return components
+    
     # Video creator/editor
     if 'video' in prompt_lower and ('creator' in prompt_lower or 'editor' in prompt_lower or 'maker' in prompt_lower):
         components = [
