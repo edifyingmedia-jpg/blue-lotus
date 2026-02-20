@@ -341,13 +341,20 @@ const Checkout = () => {
               </div>
             )}
 
-            {/* Step 2: Order Summary */}
+            {/* Step 2: Order Summary & Checkout */}
             {currentStep === 1 && plan && (
               <div data-testid="step-summary">
-                <h2 className="text-2xl font-bold text-white mb-2">Order Summary</h2>
-                <p className="text-gray-400 mb-8">Review your selection before continuing.</p>
+                <h2 className="text-2xl font-bold text-white mb-2">Review & Pay</h2>
+                <p className="text-gray-400 mb-8">Review your selection and proceed to secure checkout.</p>
                 
                 <div className="space-y-6">
+                  {error && (
+                    <div className="flex items-center gap-2 p-3 bg-red-500/10 border border-red-500/20 rounded-lg">
+                      <AlertCircle className="w-5 h-5 text-red-400" />
+                      <span className="text-red-400 text-sm">{error}</span>
+                    </div>
+                  )}
+                  
                   <div className="p-6 bg-gray-800/30 border border-gray-700 rounded-xl">
                     <div className="flex items-start justify-between mb-6">
                       <div className="flex items-center gap-4">
@@ -391,149 +398,25 @@ const Checkout = () => {
                       ))}
                     </ul>
                   </div>
-                </div>
-              </div>
-            )}
-
-            {/* Step 3: Payment */}
-            {currentStep === 2 && (
-              <div data-testid="step-payment">
-                <h2 className="text-2xl font-bold text-white mb-2">Payment Method</h2>
-                <p className="text-gray-400 mb-8">Enter your payment details securely.</p>
-                
-                <div className="space-y-6">
-                  <div className="flex items-center gap-2 p-3 bg-green-500/10 border border-green-500/20 rounded-lg">
-                    <Shield className="w-5 h-5 text-green-400" />
-                    <span className="text-green-400 text-sm">Your payment is secure and encrypted</span>
-                  </div>
-
-                  <div className="grid gap-4">
-                    <div>
-                      <Label className="text-gray-300">Card Number</Label>
-                      <div className="relative mt-1">
-                        <CreditCard className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-500" />
-                        <Input
-                          name="cardNumber"
-                          value={paymentData.cardNumber}
-                          onChange={handleCardNumberChange}
-                          placeholder="4242 4242 4242 4242"
-                          maxLength={19}
-                          className="pl-10 h-12 bg-gray-800 border-gray-700 text-white placeholder:text-gray-500"
-                          data-testid="card-number-input"
-                        />
-                      </div>
-                    </div>
-
-                    <div className="grid grid-cols-2 gap-4">
+                  
+                  <div className="p-4 bg-green-500/10 border border-green-500/30 rounded-xl">
+                    <div className="flex items-start gap-3">
+                      <Shield className="w-5 h-5 text-green-400 flex-shrink-0 mt-0.5" />
                       <div>
-                        <Label className="text-gray-300">Expiration Date</Label>
-                        <Input
-                          name="expiry"
-                          value={paymentData.expiry}
-                          onChange={handlePaymentChange}
-                          placeholder="MM/YY"
-                          maxLength={5}
-                          className="mt-1 h-12 bg-gray-800 border-gray-700 text-white placeholder:text-gray-500"
-                          data-testid="expiry-input"
-                        />
-                      </div>
-                      <div>
-                        <Label className="text-gray-300">CVC</Label>
-                        <Input
-                          name="cvc"
-                          value={paymentData.cvc}
-                          onChange={handlePaymentChange}
-                          placeholder="123"
-                          maxLength={4}
-                          className="mt-1 h-12 bg-gray-800 border-gray-700 text-white placeholder:text-gray-500"
-                          data-testid="cvc-input"
-                        />
-                      </div>
-                    </div>
-
-                    <div>
-                      <Label className="text-gray-300">Name on Card</Label>
-                      <Input
-                        name="name"
-                        value={paymentData.name}
-                        onChange={handlePaymentChange}
-                        placeholder="John Doe"
-                        className="mt-1 h-12 bg-gray-800 border-gray-700 text-white placeholder:text-gray-500"
-                        data-testid="cardholder-name-input"
-                      />
-                    </div>
-
-                    <div>
-                      <Label className="text-gray-300">Billing Address</Label>
-                      <Input
-                        name="address"
-                        value={paymentData.address}
-                        onChange={handlePaymentChange}
-                        placeholder="123 Main Street"
-                        className="mt-1 h-12 bg-gray-800 border-gray-700 text-white placeholder:text-gray-500"
-                      />
-                    </div>
-
-                    <div className="grid grid-cols-2 gap-4">
-                      <div>
-                        <Label className="text-gray-300">City</Label>
-                        <Input
-                          name="city"
-                          value={paymentData.city}
-                          onChange={handlePaymentChange}
-                          placeholder="San Francisco"
-                          className="mt-1 h-12 bg-gray-800 border-gray-700 text-white placeholder:text-gray-500"
-                        />
-                      </div>
-                      <div>
-                        <Label className="text-gray-300">ZIP Code</Label>
-                        <Input
-                          name="zip"
-                          value={paymentData.zip}
-                          onChange={handlePaymentChange}
-                          placeholder="94102"
-                          className="mt-1 h-12 bg-gray-800 border-gray-700 text-white placeholder:text-gray-500"
-                        />
+                        <p className="text-white font-medium">Secure Stripe Checkout</p>
+                        <p className="text-gray-400 text-sm">You'll be redirected to Stripe's secure payment page. Cancel anytime.</p>
                       </div>
                     </div>
                   </div>
-                </div>
-              </div>
-            )}
-
-            {/* Step 4: Confirmation */}
-            {currentStep === 3 && plan && (
-              <div data-testid="step-confirmation">
-                <h2 className="text-2xl font-bold text-white mb-2">Confirm Purchase</h2>
-                <p className="text-gray-400 mb-8">Review and confirm your order.</p>
-                
-                <div className="space-y-6">
+                  
                   <div className="p-6 bg-gray-800/30 border border-gray-700 rounded-xl">
                     <div className="flex items-center justify-between pb-4 border-b border-gray-700">
-                      <span className="text-gray-400">Plan</span>
-                      <span className="text-white font-medium">{plan.name}</span>
-                    </div>
-                    <div className="flex items-center justify-between py-4 border-b border-gray-700">
-                      <span className="text-gray-400">Price</span>
-                      <span className="text-white font-medium">${plan.price}/month</span>
-                    </div>
-                    <div className="flex items-center justify-between py-4 border-b border-gray-700">
                       <span className="text-gray-400">Next Billing Date</span>
                       <span className="text-white font-medium">{getNextBillingDate()}</span>
                     </div>
                     <div className="flex items-center justify-between pt-4">
                       <span className="text-white font-semibold">Total Due Today</span>
                       <span className="text-2xl font-bold text-white">${plan.price}</span>
-                    </div>
-                  </div>
-
-                  <div className="p-4 bg-blue-600/10 border border-blue-500/30 rounded-xl">
-                    <div className="flex items-start gap-3">
-                      <Lock className="w-5 h-5 text-blue-400 flex-shrink-0 mt-0.5" />
-                      <div>
-                        <p className="text-white font-medium">Cancel anytime</p>
-                        <p className="text-gray-400 text-sm">You can cancel or change your plan at any time from your billing settings.</p>
-                      </div>
                     </div>
                   </div>
                 </div>
