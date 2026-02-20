@@ -133,11 +133,19 @@ async def generate_components(
             )
             
             if result.success and result.components:
+                # Convert thinking to simple strings
+                thinking_strings = []
+                for t in result.thinking:
+                    if isinstance(t, dict):
+                        thinking_strings.append(t.get('message', str(t)))
+                    else:
+                        thinking_strings.append(str(t))
+                
                 return GenerateComponentsResponse(
                     success=True,
                     components=result.components,
                     message=result.message,
-                    thinking=[t if isinstance(t, dict) else {"message": str(t)} for t in result.thinking],
+                    thinking=thinking_strings,
                     suggestions=result.suggestions,
                     errors_fixed=result.errors_fixed,
                     blueprint=result.blueprint
