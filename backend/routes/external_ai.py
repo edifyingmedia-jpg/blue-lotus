@@ -309,7 +309,7 @@ async def call_external_ai(
                 headers={
                     "x-api-key": config.api_key,
                     "Content-Type": "application/json",
-                    "anthropic-version": "2024-10-22"
+                    "anthropic-version": "2023-06-01"
                 },
                 json={
                     "model": config.model,
