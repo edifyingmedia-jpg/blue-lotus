@@ -13,6 +13,17 @@ import {
 
 const API_URL = process.env.REACT_APP_BACKEND_URL;
 
+// Safe JSON parser to prevent body stream errors
+const safeJSON = async (response) => {
+  const text = await response.text();
+  if (!text) return null;
+  try {
+    return JSON.parse(text);
+  } catch {
+    return null;
+  }
+};
+
 const BuilderNew = () => {
   const { id } = useParams();
   const navigate = useNavigate();
