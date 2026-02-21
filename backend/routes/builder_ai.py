@@ -293,6 +293,219 @@ def generate_components_locally(prompt_lower: str, original_prompt: str) -> List
     
     components = []
     
+    # CLONING MODE - Detect clone requests for major platforms
+    is_clone = 'clone' in prompt_lower or 'like' in prompt_lower or 'copy' in prompt_lower or 'replicate' in prompt_lower
+    
+    # YouTube Clone
+    if is_clone and ('youtube' in prompt_lower or 'video platform' in prompt_lower or 'video streaming' in prompt_lower):
+        components = [
+            {"id": f"yt-{uuid.uuid4().hex[:8]}", "type": "nav", "name": "Top Navigation", "items": ["Home", "Trending", "Subscriptions", "Library", "History"]},
+            {"id": f"yt-{uuid.uuid4().hex[:8]}", "type": "container", "name": "Header", "title": "", "children": [
+                {"id": f"yt-{uuid.uuid4().hex[:8]}", "type": "image", "name": "Logo", "src": "", "alt": "Logo"},
+                {"id": f"yt-{uuid.uuid4().hex[:8]}", "type": "input", "name": "Search", "placeholder": "Search videos...", "inputType": "text"},
+                {"id": f"yt-{uuid.uuid4().hex[:8]}", "type": "grid", "name": "Header Actions", "columns": 3, "children": [
+                    {"id": f"yt-{uuid.uuid4().hex[:8]}", "type": "button", "name": "Upload", "label": "📹 Upload", "variant": "secondary"},
+                    {"id": f"yt-{uuid.uuid4().hex[:8]}", "type": "button", "name": "Notifications", "label": "🔔", "variant": "secondary"},
+                    {"id": f"yt-{uuid.uuid4().hex[:8]}", "type": "button", "name": "Profile", "label": "👤", "variant": "secondary"}
+                ]}
+            ]},
+            {"id": f"yt-{uuid.uuid4().hex[:8]}", "type": "grid", "name": "Main Layout", "columns": 2, "children": [
+                {"id": f"yt-{uuid.uuid4().hex[:8]}", "type": "container", "name": "Sidebar", "title": "", "children": [
+                    {"id": f"yt-{uuid.uuid4().hex[:8]}", "type": "list", "name": "Menu", "items": [
+                        {"text": "🏠 Home", "id": 1},
+                        {"text": "🔥 Trending", "id": 2},
+                        {"text": "📺 Subscriptions", "id": 3},
+                        {"text": "📚 Library", "id": 4},
+                        {"text": "⏰ History", "id": 5},
+                        {"text": "🎬 Your Videos", "id": 6},
+                        {"text": "⏱️ Watch Later", "id": 7},
+                        {"text": "👍 Liked Videos", "id": 8}
+                    ]}
+                ]},
+                {"id": f"yt-{uuid.uuid4().hex[:8]}", "type": "container", "name": "Main Content", "title": "", "children": [
+                    {"id": f"yt-{uuid.uuid4().hex[:8]}", "type": "container", "name": "Video Player Section", "title": "", "children": [
+                        {"id": f"yt-{uuid.uuid4().hex[:8]}", "type": "video", "name": "Video Player", "src": "", "controls": True},
+                        {"id": f"yt-{uuid.uuid4().hex[:8]}", "type": "header", "name": "Video Title", "content": "Video Title Goes Here"},
+                        {"id": f"yt-{uuid.uuid4().hex[:8]}", "type": "stats", "name": "Video Stats", "items": [
+                            {"label": "Views", "value": "1.2M"},
+                            {"label": "Likes", "value": "45K"},
+                            {"label": "Published", "value": "2 days ago"}
+                        ]},
+                        {"id": f"yt-{uuid.uuid4().hex[:8]}", "type": "grid", "name": "Action Buttons", "columns": 6, "children": [
+                            {"id": f"yt-{uuid.uuid4().hex[:8]}", "type": "button", "name": "Like", "label": "👍 Like", "variant": "secondary"},
+                            {"id": f"yt-{uuid.uuid4().hex[:8]}", "type": "button", "name": "Dislike", "label": "👎", "variant": "secondary"},
+                            {"id": f"yt-{uuid.uuid4().hex[:8]}", "type": "button", "name": "Share", "label": "↗️ Share", "variant": "secondary"},
+                            {"id": f"yt-{uuid.uuid4().hex[:8]}", "type": "button", "name": "Save", "label": "📥 Save", "variant": "secondary"},
+                            {"id": f"yt-{uuid.uuid4().hex[:8]}", "type": "button", "name": "Clip", "label": "✂️ Clip", "variant": "secondary"},
+                            {"id": f"yt-{uuid.uuid4().hex[:8]}", "type": "button", "name": "More", "label": "•••", "variant": "secondary"}
+                        ]},
+                        {"id": f"yt-{uuid.uuid4().hex[:8]}", "type": "container", "name": "Channel Info", "title": "", "children": [
+                            {"id": f"yt-{uuid.uuid4().hex[:8]}", "type": "card", "name": "Channel Card", "title": "Channel Name", "content": "2.5M subscribers"},
+                            {"id": f"yt-{uuid.uuid4().hex[:8]}", "type": "button", "name": "Subscribe", "label": "Subscribe", "variant": "primary"}
+                        ]},
+                        {"id": f"yt-{uuid.uuid4().hex[:8]}", "type": "text", "name": "Description", "content": "Video description with full details about the content..."},
+                        {"id": f"yt-{uuid.uuid4().hex[:8]}", "type": "container", "name": "Comments Section", "title": "Comments", "children": [
+                            {"id": f"yt-{uuid.uuid4().hex[:8]}", "type": "stats", "name": "Comment Count", "items": [{"label": "Comments", "value": "1,234"}]},
+                            {"id": f"yt-{uuid.uuid4().hex[:8]}", "type": "input", "name": "Add Comment", "placeholder": "Add a comment...", "inputType": "text"},
+                            {"id": f"yt-{uuid.uuid4().hex[:8]}", "type": "list", "name": "Comments", "items": [
+                                {"text": "Great video! Very informative.", "id": 1},
+                                {"text": "Thanks for sharing this!", "id": 2},
+                                {"text": "Subscribed! Keep up the good work.", "id": 3}
+                            ]}
+                        ]}
+                    ]},
+                    {"id": f"yt-{uuid.uuid4().hex[:8]}", "type": "container", "name": "Recommended", "title": "Up Next", "children": [
+                        {"id": f"yt-{uuid.uuid4().hex[:8]}", "type": "card", "name": "Rec 1", "title": "Related Video 1", "content": "200K views • 1 day ago"},
+                        {"id": f"yt-{uuid.uuid4().hex[:8]}", "type": "card", "name": "Rec 2", "title": "Related Video 2", "content": "150K views • 3 days ago"},
+                        {"id": f"yt-{uuid.uuid4().hex[:8]}", "type": "card", "name": "Rec 3", "title": "Related Video 3", "content": "300K views • 1 week ago"}
+                    ]}
+                ]}
+            ]}
+        ]
+        return components
+    
+    # Twitter/X Clone
+    if is_clone and ('twitter' in prompt_lower or 'x.com' in prompt_lower or 'social media' in prompt_lower or 'tweet' in prompt_lower):
+        components = [
+            {"id": f"tw-{uuid.uuid4().hex[:8]}", "type": "grid", "name": "Twitter Layout", "columns": 3, "children": [
+                {"id": f"tw-{uuid.uuid4().hex[:8]}", "type": "container", "name": "Left Sidebar", "title": "", "children": [
+                    {"id": f"tw-{uuid.uuid4().hex[:8]}", "type": "list", "name": "Navigation", "items": [
+                        {"text": "🏠 Home", "id": 1},
+                        {"text": "🔍 Explore", "id": 2},
+                        {"text": "🔔 Notifications", "id": 3},
+                        {"text": "✉️ Messages", "id": 4},
+                        {"text": "📝 Lists", "id": 5},
+                        {"text": "🔖 Bookmarks", "id": 6},
+                        {"text": "👤 Profile", "id": 7},
+                        {"text": "⚙️ Settings", "id": 8}
+                    ]},
+                    {"id": f"tw-{uuid.uuid4().hex[:8]}", "type": "button", "name": "Post", "label": "Post", "variant": "primary"}
+                ]},
+                {"id": f"tw-{uuid.uuid4().hex[:8]}", "type": "container", "name": "Main Feed", "title": "", "children": [
+                    {"id": f"tw-{uuid.uuid4().hex[:8]}", "type": "tabs", "name": "Feed Tabs", "tabs": ["For You", "Following"]},
+                    {"id": f"tw-{uuid.uuid4().hex[:8]}", "type": "container", "name": "Compose", "title": "", "children": [
+                        {"id": f"tw-{uuid.uuid4().hex[:8]}", "type": "textarea", "name": "Tweet Input", "placeholder": "What's happening?", "rows": 3},
+                        {"id": f"tw-{uuid.uuid4().hex[:8]}", "type": "grid", "name": "Compose Actions", "columns": 5, "children": [
+                            {"id": f"tw-{uuid.uuid4().hex[:8]}", "type": "button", "name": "Media", "label": "🖼️", "variant": "secondary"},
+                            {"id": f"tw-{uuid.uuid4().hex[:8]}", "type": "button", "name": "GIF", "label": "GIF", "variant": "secondary"},
+                            {"id": f"tw-{uuid.uuid4().hex[:8]}", "type": "button", "name": "Poll", "label": "📊", "variant": "secondary"},
+                            {"id": f"tw-{uuid.uuid4().hex[:8]}", "type": "button", "name": "Emoji", "label": "😀", "variant": "secondary"},
+                            {"id": f"tw-{uuid.uuid4().hex[:8]}", "type": "button", "name": "Post Tweet", "label": "Post", "variant": "primary"}
+                        ]}
+                    ]},
+                    {"id": f"tw-{uuid.uuid4().hex[:8]}", "type": "container", "name": "Tweet 1", "title": "", "children": [
+                        {"id": f"tw-{uuid.uuid4().hex[:8]}", "type": "card", "name": "Tweet Card", "title": "@username • 2h", "content": "This is a sample tweet with some content. #hashtag"},
+                        {"id": f"tw-{uuid.uuid4().hex[:8]}", "type": "grid", "name": "Tweet Actions", "columns": 4, "children": [
+                            {"id": f"tw-{uuid.uuid4().hex[:8]}", "type": "button", "name": "Reply", "label": "💬 12", "variant": "secondary"},
+                            {"id": f"tw-{uuid.uuid4().hex[:8]}", "type": "button", "name": "Retweet", "label": "🔁 45", "variant": "secondary"},
+                            {"id": f"tw-{uuid.uuid4().hex[:8]}", "type": "button", "name": "Like", "label": "❤️ 234", "variant": "secondary"},
+                            {"id": f"tw-{uuid.uuid4().hex[:8]}", "type": "button", "name": "Share", "label": "↗️", "variant": "secondary"}
+                        ]}
+                    ]}
+                ]},
+                {"id": f"tw-{uuid.uuid4().hex[:8]}", "type": "container", "name": "Right Sidebar", "title": "", "children": [
+                    {"id": f"tw-{uuid.uuid4().hex[:8]}", "type": "input", "name": "Search", "placeholder": "Search", "inputType": "text"},
+                    {"id": f"tw-{uuid.uuid4().hex[:8]}", "type": "container", "name": "Trends", "title": "Trends for you", "children": [
+                        {"id": f"tw-{uuid.uuid4().hex[:8]}", "type": "list", "name": "Trending", "items": [
+                            {"text": "#Trending1 • 50K posts", "id": 1},
+                            {"text": "#Trending2 • 30K posts", "id": 2},
+                            {"text": "#Trending3 • 20K posts", "id": 3}
+                        ]}
+                    ]},
+                    {"id": f"tw-{uuid.uuid4().hex[:8]}", "type": "container", "name": "Who to follow", "title": "Who to follow", "children": [
+                        {"id": f"tw-{uuid.uuid4().hex[:8]}", "type": "card", "name": "Suggestion 1", "title": "@suggested_user", "content": "Suggested for you"},
+                        {"id": f"tw-{uuid.uuid4().hex[:8]}", "type": "button", "name": "Follow", "label": "Follow", "variant": "outline"}
+                    ]}
+                ]}
+            ]}
+        ]
+        return components
+    
+    # Instagram Clone
+    if is_clone and ('instagram' in prompt_lower or 'photo sharing' in prompt_lower or 'ig' in prompt_lower):
+        components = [
+            {"id": f"ig-{uuid.uuid4().hex[:8]}", "type": "nav", "name": "Top Nav", "items": ["Instagram"]},
+            {"id": f"ig-{uuid.uuid4().hex[:8]}", "type": "grid", "name": "Header Actions", "columns": 3, "children": [
+                {"id": f"ig-{uuid.uuid4().hex[:8]}", "type": "button", "name": "New Post", "label": "➕", "variant": "secondary"},
+                {"id": f"ig-{uuid.uuid4().hex[:8]}", "type": "button", "name": "Activity", "label": "❤️", "variant": "secondary"},
+                {"id": f"ig-{uuid.uuid4().hex[:8]}", "type": "button", "name": "Messages", "label": "✉️", "variant": "secondary"}
+            ]},
+            {"id": f"ig-{uuid.uuid4().hex[:8]}", "type": "container", "name": "Stories", "title": "", "children": [
+                {"id": f"ig-{uuid.uuid4().hex[:8]}", "type": "grid", "name": "Story Circles", "columns": 6, "children": [
+                    {"id": f"ig-{uuid.uuid4().hex[:8]}", "type": "button", "name": "Your Story", "label": "➕ Your Story", "variant": "outline"},
+                    {"id": f"ig-{uuid.uuid4().hex[:8]}", "type": "button", "name": "Story 1", "label": "User 1", "variant": "outline"},
+                    {"id": f"ig-{uuid.uuid4().hex[:8]}", "type": "button", "name": "Story 2", "label": "User 2", "variant": "outline"},
+                    {"id": f"ig-{uuid.uuid4().hex[:8]}", "type": "button", "name": "Story 3", "label": "User 3", "variant": "outline"}
+                ]}
+            ]},
+            {"id": f"ig-{uuid.uuid4().hex[:8]}", "type": "container", "name": "Post", "title": "", "children": [
+                {"id": f"ig-{uuid.uuid4().hex[:8]}", "type": "card", "name": "Post Header", "title": "@username", "content": "Location"},
+                {"id": f"ig-{uuid.uuid4().hex[:8]}", "type": "image", "name": "Post Image", "src": "", "alt": "Post image"},
+                {"id": f"ig-{uuid.uuid4().hex[:8]}", "type": "grid", "name": "Post Actions", "columns": 4, "children": [
+                    {"id": f"ig-{uuid.uuid4().hex[:8]}", "type": "button", "name": "Like", "label": "❤️", "variant": "secondary"},
+                    {"id": f"ig-{uuid.uuid4().hex[:8]}", "type": "button", "name": "Comment", "label": "💬", "variant": "secondary"},
+                    {"id": f"ig-{uuid.uuid4().hex[:8]}", "type": "button", "name": "Share", "label": "↗️", "variant": "secondary"},
+                    {"id": f"ig-{uuid.uuid4().hex[:8]}", "type": "button", "name": "Save", "label": "🔖", "variant": "secondary"}
+                ]},
+                {"id": f"ig-{uuid.uuid4().hex[:8]}", "type": "text", "name": "Likes", "content": "1,234 likes"},
+                {"id": f"ig-{uuid.uuid4().hex[:8]}", "type": "text", "name": "Caption", "content": "@username Caption text goes here..."},
+                {"id": f"ig-{uuid.uuid4().hex[:8]}", "type": "input", "name": "Add Comment", "placeholder": "Add a comment...", "inputType": "text"}
+            ]},
+            {"id": f"ig-{uuid.uuid4().hex[:8]}", "type": "nav", "name": "Bottom Nav", "items": ["🏠 Home", "🔍 Search", "🎬 Reels", "🛍️ Shop", "👤 Profile"]}
+        ]
+        return components
+    
+    # Spotify Clone
+    if is_clone and ('spotify' in prompt_lower or 'music streaming' in prompt_lower or 'music app' in prompt_lower):
+        components = [
+            {"id": f"sp-{uuid.uuid4().hex[:8]}", "type": "grid", "name": "Spotify Layout", "columns": 3, "children": [
+                {"id": f"sp-{uuid.uuid4().hex[:8]}", "type": "container", "name": "Left Sidebar", "title": "", "children": [
+                    {"id": f"sp-{uuid.uuid4().hex[:8]}", "type": "list", "name": "Navigation", "items": [
+                        {"text": "🏠 Home", "id": 1},
+                        {"text": "🔍 Search", "id": 2},
+                        {"text": "📚 Your Library", "id": 3}
+                    ]},
+                    {"id": f"sp-{uuid.uuid4().hex[:8]}", "type": "button", "name": "Create Playlist", "label": "➕ Create Playlist", "variant": "secondary"},
+                    {"id": f"sp-{uuid.uuid4().hex[:8]}", "type": "container", "name": "Playlists", "title": "Playlists", "children": [
+                        {"id": f"sp-{uuid.uuid4().hex[:8]}", "type": "list", "name": "Playlist List", "items": [
+                            {"text": "Liked Songs", "id": 1},
+                            {"text": "My Playlist #1", "id": 2},
+                            {"text": "Chill Vibes", "id": 3}
+                        ]}
+                    ]}
+                ]},
+                {"id": f"sp-{uuid.uuid4().hex[:8]}", "type": "container", "name": "Main Content", "title": "", "children": [
+                    {"id": f"sp-{uuid.uuid4().hex[:8]}", "type": "header", "name": "Greeting", "content": "Good afternoon"},
+                    {"id": f"sp-{uuid.uuid4().hex[:8]}", "type": "grid", "name": "Recent", "columns": 3, "children": [
+                        {"id": f"sp-{uuid.uuid4().hex[:8]}", "type": "card", "name": "Recent 1", "title": "Daily Mix 1", "content": "Your favorites"},
+                        {"id": f"sp-{uuid.uuid4().hex[:8]}", "type": "card", "name": "Recent 2", "title": "Liked Songs", "content": "500 songs"},
+                        {"id": f"sp-{uuid.uuid4().hex[:8]}", "type": "card", "name": "Recent 3", "title": "Discover Weekly", "content": "New music for you"}
+                    ]},
+                    {"id": f"sp-{uuid.uuid4().hex[:8]}", "type": "container", "name": "Made For You", "title": "Made For You", "children": [
+                        {"id": f"sp-{uuid.uuid4().hex[:8]}", "type": "grid", "name": "Playlists Grid", "columns": 4, "children": [
+                            {"id": f"sp-{uuid.uuid4().hex[:8]}", "type": "card", "name": "Mix 1", "title": "Daily Mix 1", "content": "Artist 1, Artist 2, and more"},
+                            {"id": f"sp-{uuid.uuid4().hex[:8]}", "type": "card", "name": "Mix 2", "title": "Daily Mix 2", "content": "Artist 3, Artist 4, and more"}
+                        ]}
+                    ]}
+                ]}
+            ]},
+            {"id": f"sp-{uuid.uuid4().hex[:8]}", "type": "container", "name": "Now Playing Bar", "title": "", "children": [
+                {"id": f"sp-{uuid.uuid4().hex[:8]}", "type": "grid", "name": "Player", "columns": 3, "children": [
+                    {"id": f"sp-{uuid.uuid4().hex[:8]}", "type": "card", "name": "Current Track", "title": "Song Name", "content": "Artist Name"},
+                    {"id": f"sp-{uuid.uuid4().hex[:8]}", "type": "grid", "name": "Controls", "columns": 5, "children": [
+                        {"id": f"sp-{uuid.uuid4().hex[:8]}", "type": "button", "name": "Shuffle", "label": "🔀", "variant": "secondary"},
+                        {"id": f"sp-{uuid.uuid4().hex[:8]}", "type": "button", "name": "Previous", "label": "⏮️", "variant": "secondary"},
+                        {"id": f"sp-{uuid.uuid4().hex[:8]}", "type": "button", "name": "Play", "label": "▶️", "variant": "primary"},
+                        {"id": f"sp-{uuid.uuid4().hex[:8]}", "type": "button", "name": "Next", "label": "⏭️", "variant": "secondary"},
+                        {"id": f"sp-{uuid.uuid4().hex[:8]}", "type": "button", "name": "Repeat", "label": "🔁", "variant": "secondary"}
+                    ]},
+                    {"id": f"sp-{uuid.uuid4().hex[:8]}", "type": "slider", "name": "Volume", "min": 0, "max": 100, "value": 50}
+                ]},
+                {"id": f"sp-{uuid.uuid4().hex[:8]}", "type": "progress", "name": "Progress Bar", "value": 30, "max": 100}
+            ]}
+        ]
+        return components
+    
     # App Builder / No-Code Builder / Builder Platform - COMPREHENSIVE VERSION
     if ('app builder' in prompt_lower or 'no-code' in prompt_lower or 'nocode' in prompt_lower or 
         ('builder' in prompt_lower and ('create' in prompt_lower or 'build' in prompt_lower or 'make' in prompt_lower or 'platform' in prompt_lower))):
