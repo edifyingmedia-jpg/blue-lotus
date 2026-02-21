@@ -120,7 +120,14 @@ const BuilderNew = () => {
         })
       });
 
-      const data = await response.json();
+      const data = await safeJSON(response);
+      
+      if (!data) {
+        addMessage('ai', '❌ Invalid response from server');
+        toast.error('Invalid response');
+        setGenerating(false);
+        return;
+      }
       
       // Show thinking process if available
       if (data.thinking && data.thinking.length > 0) {
