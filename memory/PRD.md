@@ -11,8 +11,8 @@ Building a comprehensive no-code AI app builder named "Blue Lotus" where users c
 
 ## Core Requirements
 1. **Full-Stack Application:** React frontend + FastAPI backend + MongoDB
-2. **Powerful AI Builder:** AI system for generating complex, working applications
-3. **External AI Integration:** Allow users to connect their own AI models (OpenAI, Anthropic, Google)
+2. **Powerful AI Builder (TWIN-Builder Ultra):** Superior app-building intelligence
+3. **External AI Integration:** Allow users to connect their own AI models
 4. **Stripe Billing:** Subscriptions and credit purchases
 5. **Stability:** Robust authentication system
 
@@ -20,23 +20,54 @@ Building a comprehensive no-code AI app builder named "Blue Lotus" where users c
 
 ## What's Been Implemented
 
-### ✅ Completed (Feb 20, 2026)
-- **Authentication System Rebuilt:** Complete rewrite of Login/Signup with idempotent fetch patterns
-  - Login working: `owner@bluelotus.ai` / `owner123`
-  - Signup working for new users
-  - JWT-based session management
-- **User Dashboard:** Shows credits, plan status, quick actions
-- **Builder UI:** Functional BuilderNew.jsx with AI generation
-- **Intelligent AI Engine:** `intelligent_engine.py` with multi-step reasoning
-- **External AI Provider Integration:** Users can configure their own API keys
+### ✅ Completed (Feb 21, 2026)
+
+#### TWIN-Builder Ultra Integration
+- Full system prompt with superiority principles
+- Builder-of-builders mode
+- Cloning mode (safe + powerful)
+- Self-protection & platform-protection rules
+- Production-grade output format
+
+#### Cloning Templates Added
+- YouTube clone (video platform with player, comments, subscriptions)
+- Twitter/X clone (social media with feed, compose, trending)
+- Instagram clone (photo sharing with stories, posts)
+- Spotify clone (music streaming with playlists, player)
+
+#### Bug Fixes
+- Fixed "body stream already read" error across ALL frontend components
+- Fixed Claude model identifiers (claude-3-opus-latest, etc.)
+- Fixed self-protection regex to allow "Clone YouTube"
 
 ### ✅ Previously Completed
-- Full project scaffolding (React + FastAPI + MongoDB)
-- User roles and permissions (owner, admin, user)
-- Credit system with monthly/bonus/purchased credits
-- Plan types (Free, Pro, Elite) with different allocations
-- Builder UI with code generation capabilities
-- External AI settings component
+- Authentication system rebuilt (Login/Signup working)
+- User Dashboard with credits and plan status
+- Builder UI with AI generation
+- External AI Provider integration
+- Stripe billing endpoints
+
+---
+
+## TWIN-Builder Ultra System
+
+### Core Identity
+- High-performance, non-emotional, execution-focused builder AI
+- Outperforms all no-code builder AIs in speed, clarity, structure
+
+### Capabilities
+- Full screen definitions with component lists
+- Data models with fields and relationships
+- User flows with triggers, steps, outcomes
+- Logic rules and conditions
+- Navigation maps
+- API structures
+- Builder-of-builders architectures
+
+### Cloning Mode
+- Internal: Duplicate user components precisely
+- External: Reconstruct platforms from description
+- Protected: Blue Lotus, Emergent, TWIN-Builder blocked
 
 ---
 
@@ -45,15 +76,12 @@ Building a comprehensive no-code AI app builder named "Blue Lotus" where users c
 ```
 /app
 ├── backend
-│   ├── core/
-│   │   └── intelligent_engine.py  (Advanced AI logic)
-│   ├── engines/                   (Credit, Plan engines)
-│   ├── models/                    (Pydantic schemas)
 │   ├── routes/
-│   │   ├── auth.py               (Login/Signup/Me)
-│   │   ├── builder_ai.py
-│   │   ├── builder_intelligent_ai.py
-│   │   └── external_ai.py
+│   │   ├── auth.py
+│   │   ├── builder_ai.py (TWIN-Builder Ultra)
+│   │   ├── billing.py (Stripe)
+│   │   ├── external_ai.py
+│   │   └── ...
 │   ├── server.py
 │   └── requirements.txt
 └── frontend
@@ -62,12 +90,13 @@ Building a comprehensive no-code AI app builder named "Blue Lotus" where users c
         │   └── builder/
         │       └── ExternalAISettings.jsx
         ├── context/
-        │   └── AuthContext.js    (Rebuilt - clean implementation)
+        │   └── AuthContext.js
         ├── pages/
-        │   ├── Login.jsx         (Rebuilt)
-        │   ├── Signup.jsx        (Rebuilt)
+        │   ├── Login.jsx
+        │   ├── Signup.jsx
         │   ├── Dashboard.jsx
-        │   └── BuilderNew.jsx
+        │   ├── BuilderNew.jsx
+        │   └── Checkout.jsx
         └── App.js
 ```
 
@@ -76,26 +105,25 @@ Building a comprehensive no-code AI app builder named "Blue Lotus" where users c
 ## Prioritized Backlog
 
 ### P0 - Critical (Completed)
-- [x] Fix authentication "body stream already read" error
-- [x] Ensure owner account exists and is accessible
+- [x] Fix authentication errors
+- [x] Fix "body stream already read" errors
+- [x] Integrate TWIN-Builder Ultra
 
 ### P1 - High Priority
 - [ ] Implement async polling for AI generation (prevent timeouts)
-- [ ] Complete Stripe billing integration
-  - Backend checkout session creation
-  - Webhook handlers for payment events
-  - Credit allocation on successful payment
+- [ ] Test Stripe checkout flow end-to-end
+- [ ] Add more clone templates (Netflix, Airbnb, Uber)
 
 ### P2 - Medium Priority
 - [ ] Voice UI integration into Builder
-- [ ] Replace mocked logic in placeholder engines
+- [ ] Replace mocked engines with real logic
 - [ ] Account Settings UI
 - [ ] Team Management UI
 
-### P3 - Low Priority / Backlog
-- [ ] Logo redesign (user was previously dissatisfied)
-- [ ] Enhanced error handling throughout
+### P3 - Backlog
+- [ ] Logo redesign
 - [ ] Performance optimizations
+- [ ] Advanced error handling
 
 ---
 
@@ -103,12 +131,9 @@ Building a comprehensive no-code AI app builder named "Blue Lotus" where users c
 - `POST /api/auth/login` - User login
 - `POST /api/auth/signup` - User registration
 - `GET /api/auth/me` - Get current user
-- `POST /api/builder/generate/intelligent` - AI app generation
-- `GET/POST /api/external-ai/config` - External AI provider settings
-
-## Database Schema
-- **users**: {id, email, name, password_hash, role, plan, credits, created_at, updated_at}
-- **projects**: {id, user_id, name, description, screens, created_at}
+- `POST /api/builder/generate-components` - AI component generation
+- `POST /api/billing/subscribe` - Start Stripe checkout
+- `POST /api/billing/webhook` - Stripe webhook handler
 
 ## Test Credentials
 - Email: `owner@bluelotus.ai`
