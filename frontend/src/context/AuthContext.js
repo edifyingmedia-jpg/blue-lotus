@@ -44,13 +44,26 @@ export const AuthProvider = ({ children }) => {
 
         if (response.ok) {
           const userData = await safeParseJSON(response);
-          if (userData) setUser(userData);
-        } else {
+          if (userData) {
+            setUser(userData);
+          } else {
+            // Token valid but no user data - clear and redirect
+            console.warn('Auth: Token valid but no user data returned');
+            localStorage.removeItem('bluelotus_token');
+          }
+        } else if (response.status === 401) {
+          // Token expired or invalid
+          console.warn('Auth: Token expired or invalid');
           localStorage.removeItem('bluelotus_token');
+        } else {
+          // Other error - keep token but log
+          console.error('Auth: Unexpected response status:', response.status);
         }
       } catch (err) {
         console.error('Auth init failed:', err);
-        localStorage.removeItem('bluelotus_token');
+        // Network error - don't remove token, might be temporary
+        // But set user to null so they can re-login
+        setError('Connection error. Please refresh or login again.');
       } finally {
         setLoading(false);
       }
