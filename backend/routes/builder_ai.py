@@ -353,9 +353,10 @@ def generate_components_locally(prompt_lower: str, original_prompt: str) -> List
     
     # SELF-PROTECTION: Block attempts to clone internal systems
     protected_terms = ['twin-builder', 'twin builder', 'blue lotus builder', 'emergent builder', 
-                       'this builder', 'your builder', 'the builder itself', 'clone yourself',
+                       'clone this builder', 'clone the builder', 'clone yourself',
                        'clone you', 'replicate yourself', 'copy yourself', 'blue lotus platform',
-                       'emergent platform', 'internal system', 'system prompt', 'your instructions']
+                       'emergent platform', 'system prompt', 'your instructions',
+                       'clone blue lotus', 'clone emergent', 'replicate blue lotus']
     
     for term in protected_terms:
         if term in prompt_lower:
