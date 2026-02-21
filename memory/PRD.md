@@ -149,8 +149,17 @@ Building a comprehensive no-code AI app builder named "Blue Lotus" where users c
 - `POST /api/auth/signup` - User registration
 - `GET /api/auth/me` - Get current user
 - `POST /api/builder/generate-components` - AI component generation
-- `POST /api/billing/subscribe` - Start Stripe checkout
-- `POST /api/billing/webhook` - Stripe webhook handler
+- `POST /api/billing/subscribe` - Start Stripe checkout (VERIFIED WORKING)
+- `POST /api/billing/credits/purchase` - Credit pack purchase
+- `GET /api/billing/plans` - Get subscription plans
+- `GET /api/billing/credits/packages` - Get credit packages
+- `GET /api/billing/status/{session_id}` - Check payment status
+- `POST /api/webhook/stripe` - Stripe webhook handler
+
+## Test Reports
+- Latest: `/app/test_reports/iteration_11.json`
+- Backend: 20/20 tests passed (100%)
+- Frontend: 10/10 tests passed (100%)
 
 ## Test Credentials
 - Email: `owner@bluelotus.ai`
