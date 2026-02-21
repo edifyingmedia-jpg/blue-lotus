@@ -123,11 +123,13 @@ Building a comprehensive no-code AI app builder named "Blue Lotus" where users c
 - [x] Fix authentication errors
 - [x] Fix "body stream already read" errors
 - [x] Integrate TWIN-Builder Ultra
+- [x] Verify Stripe checkout end-to-end (VERIFIED - Real integration)
+- [x] Fix Checkout.jsx auth race condition
 
 ### P1 - High Priority
-- [ ] Implement async polling for AI generation (prevent timeouts)
-- [ ] Test Stripe checkout flow end-to-end
+- [ ] Implement async polling for AI generation (prevent timeouts on complex requests)
 - [ ] Add more clone templates (Netflix, Airbnb, Uber)
+- [ ] Add credit pack purchase UI on Pricing page
 
 ### P2 - Medium Priority
 - [ ] Voice UI integration into Builder
