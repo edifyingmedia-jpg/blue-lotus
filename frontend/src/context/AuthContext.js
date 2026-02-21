@@ -4,13 +4,24 @@ const API_URL = process.env.REACT_APP_BACKEND_URL;
 
 const AuthContext = createContext(null);
 
+// Safe JSON parse helper
+const safeParseJSON = async (response) => {
+  const text = await response.text();
+  if (!text) return null;
+  try {
+    return JSON.parse(text);
+  } catch {
+    return null;
+  }
+};
+
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const initRef = useRef(false);
+  const loginInProgress = useRef(false);
 
-  // Initialize auth state from stored token - runs only once
   useEffect(() => {
     if (initRef.current) return;
     initRef.current = true;
@@ -32,8 +43,8 @@ export const AuthProvider = ({ children }) => {
         });
 
         if (response.ok) {
-          const userData = await response.json();
-          setUser(userData);
+          const userData = await safeParseJSON(response);
+          if (userData) setUser(userData);
         } else {
           localStorage.removeItem('bluelotus_token');
         }
@@ -49,51 +60,67 @@ export const AuthProvider = ({ children }) => {
   }, []);
 
   const login = useCallback(async (email, password) => {
+    if (loginInProgress.current) {
+      return null;
+    }
+    loginInProgress.current = true;
     setError(null);
 
-    const response = await fetch(`${API_URL}/api/auth/login`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({ email, password })
-    });
+    try {
+      const response = await fetch(`${API_URL}/api/auth/login`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password })
+      });
 
-    const data = await response.json();
+      const data = await safeParseJSON(response);
 
-    if (!response.ok) {
-      const errorMsg = data.detail || 'Login failed';
-      setError(errorMsg);
-      throw new Error(errorMsg);
+      if (!response.ok) {
+        const errorMsg = data?.detail || 'Login failed';
+        setError(errorMsg);
+        throw new Error(errorMsg);
+      }
+
+      if (data?.access_token) {
+        localStorage.setItem('bluelotus_token', data.access_token);
+        setUser(data.user);
+        return data.user;
+      }
+      
+      throw new Error('Invalid response from server');
+    } finally {
+      loginInProgress.current = false;
     }
-
-    localStorage.setItem('bluelotus_token', data.access_token);
-    setUser(data.user);
-    return data.user;
   }, []);
 
   const signup = useCallback(async (name, email, password) => {
     setError(null);
 
-    const response = await fetch(`${API_URL}/api/auth/signup`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({ name, email, password })
-    });
+    try {
+      const response = await fetch(`${API_URL}/api/auth/signup`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name, email, password })
+      });
 
-    const data = await response.json();
+      const data = await safeParseJSON(response);
 
-    if (!response.ok) {
-      const errorMsg = data.detail || 'Signup failed';
-      setError(errorMsg);
-      throw new Error(errorMsg);
+      if (!response.ok) {
+        const errorMsg = data?.detail || 'Signup failed';
+        setError(errorMsg);
+        throw new Error(errorMsg);
+      }
+
+      if (data?.access_token) {
+        localStorage.setItem('bluelotus_token', data.access_token);
+        setUser(data.user);
+        return data.user;
+      }
+
+      throw new Error('Invalid response from server');
+    } catch (err) {
+      throw err;
     }
-
-    localStorage.setItem('bluelotus_token', data.access_token);
-    setUser(data.user);
-    return data.user;
   }, []);
 
   const loginWithGoogle = useCallback(async () => {
@@ -106,11 +133,9 @@ export const AuthProvider = ({ children }) => {
     localStorage.removeItem('bluelotus_token');
   }, []);
 
-  const updateUser = useCallback(async (updates) => {
-    const updatedUser = { ...user, ...updates };
-    setUser(updatedUser);
-    return updatedUser;
-  }, [user]);
+  const updateUser = useCallback((updates) => {
+    setUser(prev => prev ? { ...prev, ...updates } : null);
+  }, []);
 
   const refreshUser = useCallback(async () => {
     const token = localStorage.getItem('bluelotus_token');
@@ -126,9 +151,11 @@ export const AuthProvider = ({ children }) => {
       });
 
       if (response.ok) {
-        const userData = await response.json();
-        setUser(userData);
-        return userData;
+        const userData = await safeParseJSON(response);
+        if (userData) {
+          setUser(userData);
+          return userData;
+        }
       }
     } catch (err) {
       console.error('Failed to refresh user:', err);
