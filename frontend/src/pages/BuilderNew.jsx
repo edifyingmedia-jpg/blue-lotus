@@ -70,12 +70,14 @@ const BuilderNew = () => {
       });
       
       if (response.ok) {
-        const data = await response.json();
-        setProject(data);
-        // Load existing components from structure
-        const existingComponents = data.structure?.screens?.[0]?.components || [];
-        setComponents(existingComponents);
-        addMessage('system', `Project "${data.name}" loaded. Start building!`);
+        const data = await safeJSON(response);
+        if (data) {
+          setProject(data);
+          // Load existing components from structure
+          const existingComponents = data.structure?.screens?.[0]?.components || [];
+          setComponents(existingComponents);
+          addMessage('system', `Project "${data.name}" loaded. Start building!`);
+        }
       } else {
         setProject({ id, name: 'New Project' });
         addMessage('system', 'New project created. Describe what you want to build.');
