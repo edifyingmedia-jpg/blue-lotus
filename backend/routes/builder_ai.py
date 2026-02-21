@@ -732,6 +732,229 @@ def generate_components_locally(prompt_lower: str, original_prompt: str) -> List
         ]
         return components
     
+    # WEBSITE GENERATION MODE - Landing pages, multi-page sites
+    is_website = 'website' in prompt_lower or 'landing page' in prompt_lower or 'landing' in prompt_lower or 'homepage' in prompt_lower or 'web page' in prompt_lower
+    
+    # SaaS Landing Page
+    if is_website and ('saas' in prompt_lower or 'startup' in prompt_lower or 'product' in prompt_lower or 'software' in prompt_lower):
+        components = [
+            # Navigation
+            {"id": f"web-{uuid.uuid4().hex[:8]}", "type": "nav", "name": "Main Navigation", "items": ["Home", "Features", "Pricing", "About", "Contact", "Login"]},
+            
+            # Hero Section
+            {"id": f"web-{uuid.uuid4().hex[:8]}", "type": "container", "name": "Hero Section", "title": "", "children": [
+                {"id": f"web-{uuid.uuid4().hex[:8]}", "type": "header", "name": "Hero Title", "content": "Build Better Products Faster"},
+                {"id": f"web-{uuid.uuid4().hex[:8]}", "type": "text", "name": "Hero Subtitle", "content": "The all-in-one platform that helps teams ship products 10x faster. Trusted by 10,000+ companies worldwide."},
+                {"id": f"web-{uuid.uuid4().hex[:8]}", "type": "grid", "name": "Hero CTAs", "columns": 2, "children": [
+                    {"id": f"web-{uuid.uuid4().hex[:8]}", "type": "button", "name": "Primary CTA", "label": "Start Free Trial", "variant": "primary"},
+                    {"id": f"web-{uuid.uuid4().hex[:8]}", "type": "button", "name": "Secondary CTA", "label": "Watch Demo", "variant": "secondary"}
+                ]},
+                {"id": f"web-{uuid.uuid4().hex[:8]}", "type": "text", "name": "Social Proof", "content": "No credit card required • 14-day free trial • Cancel anytime"},
+                {"id": f"web-{uuid.uuid4().hex[:8]}", "type": "image", "name": "Hero Image", "src": "", "alt": "Product Screenshot"}
+            ]},
+            
+            # Logos Section
+            {"id": f"web-{uuid.uuid4().hex[:8]}", "type": "container", "name": "Trust Logos", "title": "Trusted by industry leaders", "children": [
+                {"id": f"web-{uuid.uuid4().hex[:8]}", "type": "grid", "name": "Logo Grid", "columns": 6, "children": [
+                    {"id": f"web-{uuid.uuid4().hex[:8]}", "type": "image", "name": "Logo 1", "src": "", "alt": "Company 1"},
+                    {"id": f"web-{uuid.uuid4().hex[:8]}", "type": "image", "name": "Logo 2", "src": "", "alt": "Company 2"},
+                    {"id": f"web-{uuid.uuid4().hex[:8]}", "type": "image", "name": "Logo 3", "src": "", "alt": "Company 3"},
+                    {"id": f"web-{uuid.uuid4().hex[:8]}", "type": "image", "name": "Logo 4", "src": "", "alt": "Company 4"},
+                    {"id": f"web-{uuid.uuid4().hex[:8]}", "type": "image", "name": "Logo 5", "src": "", "alt": "Company 5"},
+                    {"id": f"web-{uuid.uuid4().hex[:8]}", "type": "image", "name": "Logo 6", "src": "", "alt": "Company 6"}
+                ]}
+            ]},
+            
+            # Features Section
+            {"id": f"web-{uuid.uuid4().hex[:8]}", "type": "container", "name": "Features Section", "title": "Everything you need to succeed", "children": [
+                {"id": f"web-{uuid.uuid4().hex[:8]}", "type": "text", "name": "Features Intro", "content": "Powerful features designed to help your team work smarter, not harder."},
+                {"id": f"web-{uuid.uuid4().hex[:8]}", "type": "grid", "name": "Features Grid", "columns": 3, "children": [
+                    {"id": f"web-{uuid.uuid4().hex[:8]}", "type": "card", "name": "Feature 1", "title": "Lightning Fast", "content": "Built for speed. Our platform loads in milliseconds, not seconds."},
+                    {"id": f"web-{uuid.uuid4().hex[:8]}", "type": "card", "name": "Feature 2", "title": "Team Collaboration", "content": "Work together in real-time with your entire team."},
+                    {"id": f"web-{uuid.uuid4().hex[:8]}", "type": "card", "name": "Feature 3", "title": "Enterprise Security", "content": "Bank-level security with SOC2 compliance."},
+                    {"id": f"web-{uuid.uuid4().hex[:8]}", "type": "card", "name": "Feature 4", "title": "24/7 Support", "content": "Our support team is always here to help you succeed."},
+                    {"id": f"web-{uuid.uuid4().hex[:8]}", "type": "card", "name": "Feature 5", "title": "API Access", "content": "Full API access to integrate with your existing tools."},
+                    {"id": f"web-{uuid.uuid4().hex[:8]}", "type": "card", "name": "Feature 6", "title": "Analytics", "content": "Deep insights into your team's performance."}
+                ]}
+            ]},
+            
+            # Testimonials Section
+            {"id": f"web-{uuid.uuid4().hex[:8]}", "type": "container", "name": "Testimonials", "title": "What our customers say", "children": [
+                {"id": f"web-{uuid.uuid4().hex[:8]}", "type": "grid", "name": "Testimonial Grid", "columns": 3, "children": [
+                    {"id": f"web-{uuid.uuid4().hex[:8]}", "type": "card", "name": "Testimonial 1", "title": "Sarah J., CEO", "content": "This tool has transformed how our team works. We've cut our development time in half."},
+                    {"id": f"web-{uuid.uuid4().hex[:8]}", "type": "card", "name": "Testimonial 2", "title": "Mike R., CTO", "content": "The best investment we've made this year. Highly recommend to any growing team."},
+                    {"id": f"web-{uuid.uuid4().hex[:8]}", "type": "card", "name": "Testimonial 3", "title": "Lisa M., PM", "content": "Finally, a tool that actually delivers on its promises. Our productivity is through the roof."}
+                ]}
+            ]},
+            
+            # Pricing Section
+            {"id": f"web-{uuid.uuid4().hex[:8]}", "type": "container", "name": "Pricing Section", "title": "Simple, transparent pricing", "children": [
+                {"id": f"web-{uuid.uuid4().hex[:8]}", "type": "text", "name": "Pricing Intro", "content": "Choose the plan that's right for your team. All plans include a 14-day free trial."},
+                {"id": f"web-{uuid.uuid4().hex[:8]}", "type": "grid", "name": "Pricing Grid", "columns": 3, "children": [
+                    {"id": f"web-{uuid.uuid4().hex[:8]}", "type": "container", "name": "Starter Plan", "title": "Starter", "children": [
+                        {"id": f"web-{uuid.uuid4().hex[:8]}", "type": "header", "name": "Starter Price", "content": "$9/mo"},
+                        {"id": f"web-{uuid.uuid4().hex[:8]}", "type": "list", "name": "Starter Features", "items": [
+                            {"text": "Up to 5 users", "id": 1},
+                            {"text": "10GB storage", "id": 2},
+                            {"text": "Basic analytics", "id": 3},
+                            {"text": "Email support", "id": 4}
+                        ]},
+                        {"id": f"web-{uuid.uuid4().hex[:8]}", "type": "button", "name": "Starter CTA", "label": "Get Started", "variant": "secondary"}
+                    ]},
+                    {"id": f"web-{uuid.uuid4().hex[:8]}", "type": "container", "name": "Pro Plan", "title": "Pro (Most Popular)", "children": [
+                        {"id": f"web-{uuid.uuid4().hex[:8]}", "type": "header", "name": "Pro Price", "content": "$29/mo"},
+                        {"id": f"web-{uuid.uuid4().hex[:8]}", "type": "list", "name": "Pro Features", "items": [
+                            {"text": "Up to 25 users", "id": 1},
+                            {"text": "100GB storage", "id": 2},
+                            {"text": "Advanced analytics", "id": 3},
+                            {"text": "Priority support", "id": 4},
+                            {"text": "API access", "id": 5}
+                        ]},
+                        {"id": f"web-{uuid.uuid4().hex[:8]}", "type": "button", "name": "Pro CTA", "label": "Start Free Trial", "variant": "primary"}
+                    ]},
+                    {"id": f"web-{uuid.uuid4().hex[:8]}", "type": "container", "name": "Enterprise Plan", "title": "Enterprise", "children": [
+                        {"id": f"web-{uuid.uuid4().hex[:8]}", "type": "header", "name": "Enterprise Price", "content": "Custom"},
+                        {"id": f"web-{uuid.uuid4().hex[:8]}", "type": "list", "name": "Enterprise Features", "items": [
+                            {"text": "Unlimited users", "id": 1},
+                            {"text": "Unlimited storage", "id": 2},
+                            {"text": "Custom integrations", "id": 3},
+                            {"text": "Dedicated support", "id": 4},
+                            {"text": "SLA guarantee", "id": 5}
+                        ]},
+                        {"id": f"web-{uuid.uuid4().hex[:8]}", "type": "button", "name": "Enterprise CTA", "label": "Contact Sales", "variant": "secondary"}
+                    ]}
+                ]}
+            ]},
+            
+            # CTA Section
+            {"id": f"web-{uuid.uuid4().hex[:8]}", "type": "container", "name": "Final CTA", "title": "Ready to get started?", "children": [
+                {"id": f"web-{uuid.uuid4().hex[:8]}", "type": "text", "name": "CTA Text", "content": "Join thousands of teams already using our platform to build better products."},
+                {"id": f"web-{uuid.uuid4().hex[:8]}", "type": "grid", "name": "CTA Buttons", "columns": 2, "children": [
+                    {"id": f"web-{uuid.uuid4().hex[:8]}", "type": "button", "name": "CTA Primary", "label": "Start Your Free Trial", "variant": "primary"},
+                    {"id": f"web-{uuid.uuid4().hex[:8]}", "type": "button", "name": "CTA Secondary", "label": "Schedule a Demo", "variant": "secondary"}
+                ]}
+            ]},
+            
+            # Footer
+            {"id": f"web-{uuid.uuid4().hex[:8]}", "type": "container", "name": "Footer", "title": "", "children": [
+                {"id": f"web-{uuid.uuid4().hex[:8]}", "type": "grid", "name": "Footer Grid", "columns": 4, "children": [
+                    {"id": f"web-{uuid.uuid4().hex[:8]}", "type": "container", "name": "Footer About", "title": "Company", "children": [
+                        {"id": f"web-{uuid.uuid4().hex[:8]}", "type": "list", "name": "Company Links", "items": [
+                            {"text": "About Us", "id": 1},
+                            {"text": "Careers", "id": 2},
+                            {"text": "Press", "id": 3},
+                            {"text": "Blog", "id": 4}
+                        ]}
+                    ]},
+                    {"id": f"web-{uuid.uuid4().hex[:8]}", "type": "container", "name": "Footer Product", "title": "Product", "children": [
+                        {"id": f"web-{uuid.uuid4().hex[:8]}", "type": "list", "name": "Product Links", "items": [
+                            {"text": "Features", "id": 1},
+                            {"text": "Pricing", "id": 2},
+                            {"text": "Integrations", "id": 3},
+                            {"text": "Changelog", "id": 4}
+                        ]}
+                    ]},
+                    {"id": f"web-{uuid.uuid4().hex[:8]}", "type": "container", "name": "Footer Resources", "title": "Resources", "children": [
+                        {"id": f"web-{uuid.uuid4().hex[:8]}", "type": "list", "name": "Resource Links", "items": [
+                            {"text": "Documentation", "id": 1},
+                            {"text": "API Reference", "id": 2},
+                            {"text": "Community", "id": 3},
+                            {"text": "Support", "id": 4}
+                        ]}
+                    ]},
+                    {"id": f"web-{uuid.uuid4().hex[:8]}", "type": "container", "name": "Footer Legal", "title": "Legal", "children": [
+                        {"id": f"web-{uuid.uuid4().hex[:8]}", "type": "list", "name": "Legal Links", "items": [
+                            {"text": "Privacy Policy", "id": 1},
+                            {"text": "Terms of Service", "id": 2},
+                            {"text": "Cookie Policy", "id": 3},
+                            {"text": "GDPR", "id": 4}
+                        ]}
+                    ]}
+                ]},
+                {"id": f"web-{uuid.uuid4().hex[:8]}", "type": "text", "name": "Copyright", "content": "© 2026 Company Name. All rights reserved."}
+            ]}
+        ]
+        return components
+    
+    # Portfolio / Personal Website
+    if is_website and ('portfolio' in prompt_lower or 'personal' in prompt_lower or 'resume' in prompt_lower or 'cv' in prompt_lower):
+        components = [
+            {"id": f"web-{uuid.uuid4().hex[:8]}", "type": "nav", "name": "Navigation", "items": ["Home", "About", "Work", "Skills", "Contact"]},
+            {"id": f"web-{uuid.uuid4().hex[:8]}", "type": "container", "name": "Hero", "title": "", "children": [
+                {"id": f"web-{uuid.uuid4().hex[:8]}", "type": "header", "name": "Name", "content": "John Doe"},
+                {"id": f"web-{uuid.uuid4().hex[:8]}", "type": "text", "name": "Title", "content": "Full Stack Developer & Designer"},
+                {"id": f"web-{uuid.uuid4().hex[:8]}", "type": "text", "name": "Bio", "content": "I create beautiful, functional digital experiences that solve real problems."},
+                {"id": f"web-{uuid.uuid4().hex[:8]}", "type": "grid", "name": "Social Links", "columns": 4, "children": [
+                    {"id": f"web-{uuid.uuid4().hex[:8]}", "type": "button", "name": "GitHub", "label": "GitHub", "variant": "secondary"},
+                    {"id": f"web-{uuid.uuid4().hex[:8]}", "type": "button", "name": "LinkedIn", "label": "LinkedIn", "variant": "secondary"},
+                    {"id": f"web-{uuid.uuid4().hex[:8]}", "type": "button", "name": "Twitter", "label": "Twitter", "variant": "secondary"},
+                    {"id": f"web-{uuid.uuid4().hex[:8]}", "type": "button", "name": "Email", "label": "Email Me", "variant": "primary"}
+                ]}
+            ]},
+            {"id": f"web-{uuid.uuid4().hex[:8]}", "type": "container", "name": "About Section", "title": "About Me", "children": [
+                {"id": f"web-{uuid.uuid4().hex[:8]}", "type": "image", "name": "Profile Photo", "src": "", "alt": "Profile"},
+                {"id": f"web-{uuid.uuid4().hex[:8]}", "type": "text", "name": "About Text", "content": "With 5+ years of experience in web development, I specialize in creating modern, responsive applications. I'm passionate about clean code and great user experiences."}
+            ]},
+            {"id": f"web-{uuid.uuid4().hex[:8]}", "type": "container", "name": "Work Section", "title": "Featured Projects", "children": [
+                {"id": f"web-{uuid.uuid4().hex[:8]}", "type": "grid", "name": "Projects Grid", "columns": 2, "children": [
+                    {"id": f"web-{uuid.uuid4().hex[:8]}", "type": "card", "name": "Project 1", "title": "E-commerce Platform", "content": "A full-featured online store with React and Node.js"},
+                    {"id": f"web-{uuid.uuid4().hex[:8]}", "type": "card", "name": "Project 2", "title": "Mobile App", "content": "Cross-platform app built with React Native"},
+                    {"id": f"web-{uuid.uuid4().hex[:8]}", "type": "card", "name": "Project 3", "title": "Dashboard", "content": "Real-time analytics dashboard with data visualization"},
+                    {"id": f"web-{uuid.uuid4().hex[:8]}", "type": "card", "name": "Project 4", "title": "API Service", "content": "RESTful API serving 1M+ requests daily"}
+                ]}
+            ]},
+            {"id": f"web-{uuid.uuid4().hex[:8]}", "type": "container", "name": "Skills Section", "title": "Skills & Technologies", "children": [
+                {"id": f"web-{uuid.uuid4().hex[:8]}", "type": "grid", "name": "Skills Grid", "columns": 4, "children": [
+                    {"id": f"web-{uuid.uuid4().hex[:8]}", "type": "stats", "name": "Frontend", "items": [{"label": "React", "value": "Expert"}, {"label": "Vue", "value": "Advanced"}]},
+                    {"id": f"web-{uuid.uuid4().hex[:8]}", "type": "stats", "name": "Backend", "items": [{"label": "Node.js", "value": "Expert"}, {"label": "Python", "value": "Advanced"}]},
+                    {"id": f"web-{uuid.uuid4().hex[:8]}", "type": "stats", "name": "Database", "items": [{"label": "PostgreSQL", "value": "Expert"}, {"label": "MongoDB", "value": "Advanced"}]},
+                    {"id": f"web-{uuid.uuid4().hex[:8]}", "type": "stats", "name": "DevOps", "items": [{"label": "Docker", "value": "Advanced"}, {"label": "AWS", "value": "Advanced"}]}
+                ]}
+            ]},
+            {"id": f"web-{uuid.uuid4().hex[:8]}", "type": "container", "name": "Contact Section", "title": "Get In Touch", "children": [
+                {"id": f"web-{uuid.uuid4().hex[:8]}", "type": "text", "name": "Contact Intro", "content": "Have a project in mind? Let's work together."},
+                {"id": f"web-{uuid.uuid4().hex[:8]}", "type": "form", "name": "Contact Form", "fields": [
+                    {"label": "Name", "type": "text", "placeholder": "Your name"},
+                    {"label": "Email", "type": "email", "placeholder": "your@email.com"},
+                    {"label": "Message", "type": "textarea", "placeholder": "Tell me about your project"}
+                ], "submitLabel": "Send Message"}
+            ]},
+            {"id": f"web-{uuid.uuid4().hex[:8]}", "type": "text", "name": "Footer", "content": "© 2026 John Doe. Built with passion."}
+        ]
+        return components
+    
+    # Generic Landing Page
+    if is_website or 'landing' in prompt_lower:
+        components = [
+            {"id": f"web-{uuid.uuid4().hex[:8]}", "type": "nav", "name": "Navigation", "items": ["Home", "Features", "Pricing", "Contact"]},
+            {"id": f"web-{uuid.uuid4().hex[:8]}", "type": "container", "name": "Hero", "title": "", "children": [
+                {"id": f"web-{uuid.uuid4().hex[:8]}", "type": "header", "name": "Hero Title", "content": "Welcome to Our Platform"},
+                {"id": f"web-{uuid.uuid4().hex[:8]}", "type": "text", "name": "Hero Subtitle", "content": "The simplest way to achieve your goals. Get started in minutes."},
+                {"id": f"web-{uuid.uuid4().hex[:8]}", "type": "button", "name": "Hero CTA", "label": "Get Started Free", "variant": "primary"},
+                {"id": f"web-{uuid.uuid4().hex[:8]}", "type": "image", "name": "Hero Image", "src": "", "alt": "Hero"}
+            ]},
+            {"id": f"web-{uuid.uuid4().hex[:8]}", "type": "container", "name": "Features", "title": "Why Choose Us", "children": [
+                {"id": f"web-{uuid.uuid4().hex[:8]}", "type": "grid", "name": "Features Grid", "columns": 3, "children": [
+                    {"id": f"web-{uuid.uuid4().hex[:8]}", "type": "card", "name": "Feature 1", "title": "Easy to Use", "content": "Get up and running in minutes with our intuitive interface."},
+                    {"id": f"web-{uuid.uuid4().hex[:8]}", "type": "card", "name": "Feature 2", "title": "Powerful", "content": "All the tools you need to succeed in one place."},
+                    {"id": f"web-{uuid.uuid4().hex[:8]}", "type": "card", "name": "Feature 3", "title": "Affordable", "content": "Plans for every budget, starting free."}
+                ]}
+            ]},
+            {"id": f"web-{uuid.uuid4().hex[:8]}", "type": "container", "name": "CTA Section", "title": "Ready to Start?", "children": [
+                {"id": f"web-{uuid.uuid4().hex[:8]}", "type": "text", "name": "CTA Text", "content": "Join thousands of happy customers today."},
+                {"id": f"web-{uuid.uuid4().hex[:8]}", "type": "button", "name": "CTA Button", "label": "Sign Up Now", "variant": "primary"}
+            ]},
+            {"id": f"web-{uuid.uuid4().hex[:8]}", "type": "container", "name": "Footer", "title": "", "children": [
+                {"id": f"web-{uuid.uuid4().hex[:8]}", "type": "grid", "name": "Footer Links", "columns": 3, "children": [
+                    {"id": f"web-{uuid.uuid4().hex[:8]}", "type": "list", "name": "Product", "items": [{"text": "Features", "id": 1}, {"text": "Pricing", "id": 2}]},
+                    {"id": f"web-{uuid.uuid4().hex[:8]}", "type": "list", "name": "Company", "items": [{"text": "About", "id": 1}, {"text": "Blog", "id": 2}]},
+                    {"id": f"web-{uuid.uuid4().hex[:8]}", "type": "list", "name": "Legal", "items": [{"text": "Privacy", "id": 1}, {"text": "Terms", "id": 2}]}
+                ]},
+                {"id": f"web-{uuid.uuid4().hex[:8]}", "type": "text", "name": "Copyright", "content": "© 2026 Company. All rights reserved."}
+            ]}
+        ]
+        return components
+    
     # App Builder / No-Code Builder / Builder Platform - COMPREHENSIVE VERSION
     if ('app builder' in prompt_lower or 'no-code' in prompt_lower or 'nocode' in prompt_lower or 
         ('builder' in prompt_lower and ('create' in prompt_lower or 'build' in prompt_lower or 'make' in prompt_lower or 'platform' in prompt_lower))):
