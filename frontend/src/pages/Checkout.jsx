@@ -65,7 +65,7 @@ const steps = [
 const Checkout = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
-  const { getAuthToken, isAuthenticated } = useAuth();
+  const { getAuthToken, isAuthenticated, loading: authLoading } = useAuth();
   const preselectedPlan = searchParams.get('plan');
   const sessionId = searchParams.get('session_id');
   const paymentStatus = searchParams.get('payment');
