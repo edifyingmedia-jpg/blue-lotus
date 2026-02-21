@@ -228,6 +228,72 @@ def generate_components_locally(prompt_lower: str, original_prompt: str) -> List
     
     components = []
     
+    # App Builder / No-Code Builder / Builder Platform
+    if ('app builder' in prompt_lower or 'no-code' in prompt_lower or 'nocode' in prompt_lower or 
+        ('builder' in prompt_lower and ('create' in prompt_lower or 'build' in prompt_lower or 'make' in prompt_lower or 'platform' in prompt_lower))):
+        components = [
+            {"id": f"builder-{uuid.uuid4().hex[:8]}", "type": "nav", "name": "Builder Navigation", "items": ["Projects", "Templates", "Components", "Settings", "Deploy"]},
+            {"id": f"builder-{uuid.uuid4().hex[:8]}", "type": "container", "name": "Builder Header", "title": "", "children": [
+                {"id": f"builder-{uuid.uuid4().hex[:8]}", "type": "header", "name": "App Builder Title", "content": "AI App Builder"},
+                {"id": f"builder-{uuid.uuid4().hex[:8]}", "type": "text", "name": "Builder Subtitle", "content": "Build powerful apps with AI - No coding required"}
+            ]},
+            {"id": f"builder-{uuid.uuid4().hex[:8]}", "type": "grid", "name": "Builder Layout", "columns": 3, "children": [
+                {"id": f"builder-{uuid.uuid4().hex[:8]}", "type": "container", "name": "Component Sidebar", "title": "Components", "children": [
+                    {"id": f"builder-{uuid.uuid4().hex[:8]}", "type": "list", "name": "Component List", "items": [
+                        {"text": "📝 Text Block", "id": 1},
+                        {"text": "🔘 Button", "id": 2},
+                        {"text": "📋 Form", "id": 3},
+                        {"text": "🖼️ Image", "id": 4},
+                        {"text": "📊 Chart", "id": 5},
+                        {"text": "📑 Card", "id": 6},
+                        {"text": "📱 Container", "id": 7},
+                        {"text": "🔗 Navigation", "id": 8}
+                    ]},
+                    {"id": f"builder-{uuid.uuid4().hex[:8]}", "type": "button", "name": "Add Custom", "label": "+ Add Custom Component", "variant": "secondary"}
+                ]},
+                {"id": f"builder-{uuid.uuid4().hex[:8]}", "type": "container", "name": "Canvas Area", "title": "Canvas", "children": [
+                    {"id": f"builder-{uuid.uuid4().hex[:8]}", "type": "container", "name": "Device Preview", "title": "", "children": [
+                        {"id": f"builder-{uuid.uuid4().hex[:8]}", "type": "grid", "name": "Device Selector", "columns": 3, "children": [
+                            {"id": f"builder-{uuid.uuid4().hex[:8]}", "type": "button", "name": "Desktop", "label": "🖥️ Desktop", "variant": "primary"},
+                            {"id": f"builder-{uuid.uuid4().hex[:8]}", "type": "button", "name": "Tablet", "label": "📱 Tablet", "variant": "secondary"},
+                            {"id": f"builder-{uuid.uuid4().hex[:8]}", "type": "button", "name": "Mobile", "label": "📱 Mobile", "variant": "secondary"}
+                        ]},
+                        {"id": f"builder-{uuid.uuid4().hex[:8]}", "type": "container", "name": "Preview Frame", "title": "Preview", "children": [
+                            {"id": f"builder-{uuid.uuid4().hex[:8]}", "type": "text", "name": "Empty State", "content": "Drag components here or describe what you want to build"},
+                            {"id": f"builder-{uuid.uuid4().hex[:8]}", "type": "input", "name": "AI Prompt", "placeholder": "Describe your app: e.g., 'Create a todo list with categories'", "inputType": "text"},
+                            {"id": f"builder-{uuid.uuid4().hex[:8]}", "type": "button", "name": "Generate", "label": "✨ Generate with AI", "variant": "primary"}
+                        ]}
+                    ]}
+                ]},
+                {"id": f"builder-{uuid.uuid4().hex[:8]}", "type": "container", "name": "Properties Panel", "title": "Properties", "children": [
+                    {"id": f"builder-{uuid.uuid4().hex[:8]}", "type": "text", "name": "Select Prompt", "content": "Select a component to edit its properties"},
+                    {"id": f"builder-{uuid.uuid4().hex[:8]}", "type": "input", "name": "Component Name", "placeholder": "Component name", "inputType": "text"},
+                    {"id": f"builder-{uuid.uuid4().hex[:8]}", "type": "dropdown", "name": "Component Type", "options": ["Text", "Button", "Form", "Image", "Container"], "placeholder": "Select type"},
+                    {"id": f"builder-{uuid.uuid4().hex[:8]}", "type": "input", "name": "Width", "placeholder": "Width (px or %)", "inputType": "text"},
+                    {"id": f"builder-{uuid.uuid4().hex[:8]}", "type": "input", "name": "Height", "placeholder": "Height (px or %)", "inputType": "text"},
+                    {"id": f"builder-{uuid.uuid4().hex[:8]}", "type": "colorpicker", "name": "Background Color", "label": "Background Color"},
+                    {"id": f"builder-{uuid.uuid4().hex[:8]}", "type": "toggle", "name": "Visible", "label": "Visible", "checked": True}
+                ]}
+            ]},
+            {"id": f"builder-{uuid.uuid4().hex[:8]}", "type": "container", "name": "Builder Actions", "title": "", "children": [
+                {"id": f"builder-{uuid.uuid4().hex[:8]}", "type": "grid", "name": "Action Buttons", "columns": 4, "children": [
+                    {"id": f"builder-{uuid.uuid4().hex[:8]}", "type": "button", "name": "Save Project", "label": "💾 Save", "variant": "secondary"},
+                    {"id": f"builder-{uuid.uuid4().hex[:8]}", "type": "button", "name": "Preview", "label": "👁️ Preview", "variant": "secondary"},
+                    {"id": f"builder-{uuid.uuid4().hex[:8]}", "type": "button", "name": "Export Code", "label": "📤 Export Code", "variant": "secondary"},
+                    {"id": f"builder-{uuid.uuid4().hex[:8]}", "type": "button", "name": "Deploy", "label": "🚀 Deploy", "variant": "primary"}
+                ]}
+            ]},
+            {"id": f"builder-{uuid.uuid4().hex[:8]}", "type": "container", "name": "Recent Projects", "title": "Recent Projects", "children": [
+                {"id": f"builder-{uuid.uuid4().hex[:8]}", "type": "grid", "name": "Project Cards", "columns": 4, "children": [
+                    {"id": f"builder-{uuid.uuid4().hex[:8]}", "type": "card", "name": "Project 1", "title": "E-commerce Store", "content": "Last edited 2 hours ago"},
+                    {"id": f"builder-{uuid.uuid4().hex[:8]}", "type": "card", "name": "Project 2", "title": "Portfolio Site", "content": "Last edited yesterday"},
+                    {"id": f"builder-{uuid.uuid4().hex[:8]}", "type": "card", "name": "Project 3", "title": "Dashboard App", "content": "Last edited 3 days ago"},
+                    {"id": f"builder-{uuid.uuid4().hex[:8]}", "type": "card", "name": "New Project", "title": "+ New Project", "content": "Start from scratch or use a template"}
+                ]}
+            ]}
+        ]
+        return components
+    
     # YouTube/Video streaming clone
     if ('youtube' in prompt_lower or 'video' in prompt_lower and ('feed' in prompt_lower or 'stream' in prompt_lower or 'watch' in prompt_lower or 'clone' in prompt_lower)):
         components = [
