@@ -228,67 +228,194 @@ def generate_components_locally(prompt_lower: str, original_prompt: str) -> List
     
     components = []
     
-    # App Builder / No-Code Builder / Builder Platform
+    # App Builder / No-Code Builder / Builder Platform - COMPREHENSIVE VERSION
     if ('app builder' in prompt_lower or 'no-code' in prompt_lower or 'nocode' in prompt_lower or 
         ('builder' in prompt_lower and ('create' in prompt_lower or 'build' in prompt_lower or 'make' in prompt_lower or 'platform' in prompt_lower))):
         components = [
-            {"id": f"builder-{uuid.uuid4().hex[:8]}", "type": "nav", "name": "Builder Navigation", "items": ["Projects", "Templates", "Components", "Settings", "Deploy"]},
-            {"id": f"builder-{uuid.uuid4().hex[:8]}", "type": "container", "name": "Builder Header", "title": "", "children": [
-                {"id": f"builder-{uuid.uuid4().hex[:8]}", "type": "header", "name": "App Builder Title", "content": "AI App Builder"},
-                {"id": f"builder-{uuid.uuid4().hex[:8]}", "type": "text", "name": "Builder Subtitle", "content": "Build powerful apps with AI - No coding required"}
+            # Main Navigation Bar
+            {"id": f"builder-{uuid.uuid4().hex[:8]}", "type": "nav", "name": "Main Navigation", "items": ["Dashboard", "Projects", "Templates", "AI Studio", "Integrations", "Deploy", "Settings"]},
+            
+            # Top Action Bar
+            {"id": f"builder-{uuid.uuid4().hex[:8]}", "type": "container", "name": "Action Bar", "title": "", "children": [
+                {"id": f"builder-{uuid.uuid4().hex[:8]}", "type": "grid", "name": "Top Actions", "columns": 4, "children": [
+                    {"id": f"builder-{uuid.uuid4().hex[:8]}", "type": "button", "name": "New Project", "label": "+ New Project", "variant": "primary"},
+                    {"id": f"builder-{uuid.uuid4().hex[:8]}", "type": "input", "name": "Search", "placeholder": "Search projects, templates...", "inputType": "text"},
+                    {"id": f"builder-{uuid.uuid4().hex[:8]}", "type": "dropdown", "name": "Workspace", "options": ["Personal", "Team", "Enterprise"], "placeholder": "Workspace"},
+                    {"id": f"builder-{uuid.uuid4().hex[:8]}", "type": "button", "name": "Account", "label": "👤 Account", "variant": "secondary"}
+                ]}
             ]},
-            {"id": f"builder-{uuid.uuid4().hex[:8]}", "type": "grid", "name": "Builder Layout", "columns": 3, "children": [
-                {"id": f"builder-{uuid.uuid4().hex[:8]}", "type": "container", "name": "Component Sidebar", "title": "Components", "children": [
-                    {"id": f"builder-{uuid.uuid4().hex[:8]}", "type": "list", "name": "Component List", "items": [
-                        {"text": "📝 Text Block", "id": 1},
-                        {"text": "🔘 Button", "id": 2},
-                        {"text": "📋 Form", "id": 3},
-                        {"text": "🖼️ Image", "id": 4},
-                        {"text": "📊 Chart", "id": 5},
-                        {"text": "📑 Card", "id": 6},
-                        {"text": "📱 Container", "id": 7},
-                        {"text": "🔗 Navigation", "id": 8}
-                    ]},
-                    {"id": f"builder-{uuid.uuid4().hex[:8]}", "type": "button", "name": "Add Custom", "label": "+ Add Custom Component", "variant": "secondary"}
-                ]},
-                {"id": f"builder-{uuid.uuid4().hex[:8]}", "type": "container", "name": "Canvas Area", "title": "Canvas", "children": [
-                    {"id": f"builder-{uuid.uuid4().hex[:8]}", "type": "container", "name": "Device Preview", "title": "", "children": [
-                        {"id": f"builder-{uuid.uuid4().hex[:8]}", "type": "grid", "name": "Device Selector", "columns": 3, "children": [
-                            {"id": f"builder-{uuid.uuid4().hex[:8]}", "type": "button", "name": "Desktop", "label": "🖥️ Desktop", "variant": "primary"},
-                            {"id": f"builder-{uuid.uuid4().hex[:8]}", "type": "button", "name": "Tablet", "label": "📱 Tablet", "variant": "secondary"},
-                            {"id": f"builder-{uuid.uuid4().hex[:8]}", "type": "button", "name": "Mobile", "label": "📱 Mobile", "variant": "secondary"}
+            
+            # Main Builder Interface - 3 Column Layout
+            {"id": f"builder-{uuid.uuid4().hex[:8]}", "type": "grid", "name": "Builder Interface", "columns": 3, "children": [
+                
+                # LEFT SIDEBAR - Component Library & Layers
+                {"id": f"builder-{uuid.uuid4().hex[:8]}", "type": "container", "name": "Left Sidebar", "title": "", "children": [
+                    # AI Generation Section
+                    {"id": f"builder-{uuid.uuid4().hex[:8]}", "type": "container", "name": "AI Generation", "title": "🤖 AI Builder", "children": [
+                        {"id": f"builder-{uuid.uuid4().hex[:8]}", "type": "textarea", "name": "AI Prompt", "placeholder": "Describe what you want to build...\n\nExample: 'Create a todo app with categories, due dates, and dark mode'", "rows": 4},
+                        {"id": f"builder-{uuid.uuid4().hex[:8]}", "type": "grid", "name": "AI Actions", "columns": 2, "children": [
+                            {"id": f"builder-{uuid.uuid4().hex[:8]}", "type": "button", "name": "Generate", "label": "✨ Generate", "variant": "primary"},
+                            {"id": f"builder-{uuid.uuid4().hex[:8]}", "type": "button", "name": "Enhance", "label": "🔮 Enhance", "variant": "secondary"}
                         ]},
-                        {"id": f"builder-{uuid.uuid4().hex[:8]}", "type": "container", "name": "Preview Frame", "title": "Preview", "children": [
-                            {"id": f"builder-{uuid.uuid4().hex[:8]}", "type": "text", "name": "Empty State", "content": "Drag components here or describe what you want to build"},
-                            {"id": f"builder-{uuid.uuid4().hex[:8]}", "type": "input", "name": "AI Prompt", "placeholder": "Describe your app: e.g., 'Create a todo list with categories'", "inputType": "text"},
-                            {"id": f"builder-{uuid.uuid4().hex[:8]}", "type": "button", "name": "Generate", "label": "✨ Generate with AI", "variant": "primary"}
+                        {"id": f"builder-{uuid.uuid4().hex[:8]}", "type": "dropdown", "name": "AI Model", "options": ["GPT-4 (Powerful)", "GPT-3.5 (Fast)", "Claude 3", "Gemini Pro"], "placeholder": "Select AI Model"}
+                    ]},
+                    
+                    # Component Library
+                    {"id": f"builder-{uuid.uuid4().hex[:8]}", "type": "container", "name": "Components", "title": "📦 Components", "children": [
+                        {"id": f"builder-{uuid.uuid4().hex[:8]}", "type": "tabs", "name": "Component Tabs", "tabs": ["Basic", "Forms", "Data", "Layout", "Media"]},
+                        {"id": f"builder-{uuid.uuid4().hex[:8]}", "type": "grid", "name": "Basic Components", "columns": 2, "children": [
+                            {"id": f"builder-{uuid.uuid4().hex[:8]}", "type": "button", "name": "Add Text", "label": "📝 Text", "variant": "outline"},
+                            {"id": f"builder-{uuid.uuid4().hex[:8]}", "type": "button", "name": "Add Button", "label": "🔘 Button", "variant": "outline"},
+                            {"id": f"builder-{uuid.uuid4().hex[:8]}", "type": "button", "name": "Add Image", "label": "🖼️ Image", "variant": "outline"},
+                            {"id": f"builder-{uuid.uuid4().hex[:8]}", "type": "button", "name": "Add Icon", "label": "⭐ Icon", "variant": "outline"},
+                            {"id": f"builder-{uuid.uuid4().hex[:8]}", "type": "button", "name": "Add Link", "label": "🔗 Link", "variant": "outline"},
+                            {"id": f"builder-{uuid.uuid4().hex[:8]}", "type": "button", "name": "Add Video", "label": "🎬 Video", "variant": "outline"}
+                        ]},
+                        {"id": f"builder-{uuid.uuid4().hex[:8]}", "type": "grid", "name": "Form Components", "columns": 2, "children": [
+                            {"id": f"builder-{uuid.uuid4().hex[:8]}", "type": "button", "name": "Add Input", "label": "✏️ Input", "variant": "outline"},
+                            {"id": f"builder-{uuid.uuid4().hex[:8]}", "type": "button", "name": "Add Select", "label": "📋 Select", "variant": "outline"},
+                            {"id": f"builder-{uuid.uuid4().hex[:8]}", "type": "button", "name": "Add Checkbox", "label": "☑️ Checkbox", "variant": "outline"},
+                            {"id": f"builder-{uuid.uuid4().hex[:8]}", "type": "button", "name": "Add Radio", "label": "🔘 Radio", "variant": "outline"},
+                            {"id": f"builder-{uuid.uuid4().hex[:8]}", "type": "button", "name": "Add Textarea", "label": "📄 Textarea", "variant": "outline"},
+                            {"id": f"builder-{uuid.uuid4().hex[:8]}", "type": "button", "name": "Add Form", "label": "📑 Form", "variant": "outline"}
+                        ]},
+                        {"id": f"builder-{uuid.uuid4().hex[:8]}", "type": "grid", "name": "Layout Components", "columns": 2, "children": [
+                            {"id": f"builder-{uuid.uuid4().hex[:8]}", "type": "button", "name": "Add Container", "label": "📦 Container", "variant": "outline"},
+                            {"id": f"builder-{uuid.uuid4().hex[:8]}", "type": "button", "name": "Add Grid", "label": "🔲 Grid", "variant": "outline"},
+                            {"id": f"builder-{uuid.uuid4().hex[:8]}", "type": "button", "name": "Add Card", "label": "🃏 Card", "variant": "outline"},
+                            {"id": f"builder-{uuid.uuid4().hex[:8]}", "type": "button", "name": "Add Modal", "label": "💬 Modal", "variant": "outline"},
+                            {"id": f"builder-{uuid.uuid4().hex[:8]}", "type": "button", "name": "Add Tabs", "label": "📑 Tabs", "variant": "outline"},
+                            {"id": f"builder-{uuid.uuid4().hex[:8]}", "type": "button", "name": "Add Nav", "label": "🧭 Nav", "variant": "outline"}
+                        ]},
+                        {"id": f"builder-{uuid.uuid4().hex[:8]}", "type": "grid", "name": "Data Components", "columns": 2, "children": [
+                            {"id": f"builder-{uuid.uuid4().hex[:8]}", "type": "button", "name": "Add Table", "label": "📊 Table", "variant": "outline"},
+                            {"id": f"builder-{uuid.uuid4().hex[:8]}", "type": "button", "name": "Add Chart", "label": "📈 Chart", "variant": "outline"},
+                            {"id": f"builder-{uuid.uuid4().hex[:8]}", "type": "button", "name": "Add List", "label": "📋 List", "variant": "outline"},
+                            {"id": f"builder-{uuid.uuid4().hex[:8]}", "type": "button", "name": "Add Stats", "label": "📉 Stats", "variant": "outline"}
+                        ]}
+                    ]},
+                    
+                    # Layers Panel
+                    {"id": f"builder-{uuid.uuid4().hex[:8]}", "type": "container", "name": "Layers", "title": "🗂️ Layers", "children": [
+                        {"id": f"builder-{uuid.uuid4().hex[:8]}", "type": "tree", "name": "Layer Tree", "items": [
+                            {"text": "📱 App Root", "id": 1, "children": [
+                                {"text": "🧭 Navigation", "id": 2},
+                                {"text": "📄 Page: Home", "id": 3, "children": [
+                                    {"text": "📦 Header Section", "id": 4},
+                                    {"text": "📦 Content Section", "id": 5},
+                                    {"text": "📦 Footer Section", "id": 6}
+                                ]},
+                                {"text": "📄 Page: About", "id": 7},
+                                {"text": "📄 Page: Contact", "id": 8}
+                            ]}
                         ]}
                     ]}
                 ]},
-                {"id": f"builder-{uuid.uuid4().hex[:8]}", "type": "container", "name": "Properties Panel", "title": "Properties", "children": [
-                    {"id": f"builder-{uuid.uuid4().hex[:8]}", "type": "text", "name": "Select Prompt", "content": "Select a component to edit its properties"},
-                    {"id": f"builder-{uuid.uuid4().hex[:8]}", "type": "input", "name": "Component Name", "placeholder": "Component name", "inputType": "text"},
-                    {"id": f"builder-{uuid.uuid4().hex[:8]}", "type": "dropdown", "name": "Component Type", "options": ["Text", "Button", "Form", "Image", "Container"], "placeholder": "Select type"},
-                    {"id": f"builder-{uuid.uuid4().hex[:8]}", "type": "input", "name": "Width", "placeholder": "Width (px or %)", "inputType": "text"},
-                    {"id": f"builder-{uuid.uuid4().hex[:8]}", "type": "input", "name": "Height", "placeholder": "Height (px or %)", "inputType": "text"},
-                    {"id": f"builder-{uuid.uuid4().hex[:8]}", "type": "colorpicker", "name": "Background Color", "label": "Background Color"},
-                    {"id": f"builder-{uuid.uuid4().hex[:8]}", "type": "toggle", "name": "Visible", "label": "Visible", "checked": True}
+                
+                # CENTER - Canvas/Preview Area
+                {"id": f"builder-{uuid.uuid4().hex[:8]}", "type": "container", "name": "Canvas Area", "title": "", "children": [
+                    # Device & View Controls
+                    {"id": f"builder-{uuid.uuid4().hex[:8]}", "type": "grid", "name": "Canvas Controls", "columns": 6, "children": [
+                        {"id": f"builder-{uuid.uuid4().hex[:8]}", "type": "button", "name": "Desktop View", "label": "🖥️", "variant": "primary"},
+                        {"id": f"builder-{uuid.uuid4().hex[:8]}", "type": "button", "name": "Tablet View", "label": "📱", "variant": "secondary"},
+                        {"id": f"builder-{uuid.uuid4().hex[:8]}", "type": "button", "name": "Mobile View", "label": "📲", "variant": "secondary"},
+                        {"id": f"builder-{uuid.uuid4().hex[:8]}", "type": "dropdown", "name": "Zoom", "options": ["50%", "75%", "100%", "125%", "150%"], "placeholder": "100%"},
+                        {"id": f"builder-{uuid.uuid4().hex[:8]}", "type": "button", "name": "Undo", "label": "↩️", "variant": "secondary"},
+                        {"id": f"builder-{uuid.uuid4().hex[:8]}", "type": "button", "name": "Redo", "label": "↪️", "variant": "secondary"}
+                    ]},
+                    
+                    # Main Canvas
+                    {"id": f"builder-{uuid.uuid4().hex[:8]}", "type": "container", "name": "Canvas Frame", "title": "Canvas", "children": [
+                        {"id": f"builder-{uuid.uuid4().hex[:8]}", "type": "container", "name": "App Preview", "title": "", "children": [
+                            {"id": f"builder-{uuid.uuid4().hex[:8]}", "type": "nav", "name": "Preview Nav", "items": ["Home", "Features", "Pricing", "Contact"]},
+                            {"id": f"builder-{uuid.uuid4().hex[:8]}", "type": "header", "name": "Hero Title", "content": "Build Amazing Apps"},
+                            {"id": f"builder-{uuid.uuid4().hex[:8]}", "type": "text", "name": "Hero Subtitle", "content": "Create powerful applications with our AI-powered builder"},
+                            {"id": f"builder-{uuid.uuid4().hex[:8]}", "type": "grid", "name": "CTA Buttons", "columns": 2, "children": [
+                                {"id": f"builder-{uuid.uuid4().hex[:8]}", "type": "button", "name": "Get Started", "label": "Get Started Free", "variant": "primary"},
+                                {"id": f"builder-{uuid.uuid4().hex[:8]}", "type": "button", "name": "Watch Demo", "label": "Watch Demo", "variant": "secondary"}
+                            ]},
+                            {"id": f"builder-{uuid.uuid4().hex[:8]}", "type": "text", "name": "Drag Hint", "content": "👆 Click any element to select and edit"}
+                        ]}
+                    ]},
+                    
+                    # Page Tabs
+                    {"id": f"builder-{uuid.uuid4().hex[:8]}", "type": "tabs", "name": "Page Tabs", "tabs": ["Home", "Features", "Pricing", "Contact", "+ Add Page"]}
+                ]},
+                
+                # RIGHT SIDEBAR - Properties & Styling
+                {"id": f"builder-{uuid.uuid4().hex[:8]}", "type": "container", "name": "Right Sidebar", "title": "", "children": [
+                    # Properties Panel
+                    {"id": f"builder-{uuid.uuid4().hex[:8]}", "type": "container", "name": "Properties", "title": "⚙️ Properties", "children": [
+                        {"id": f"builder-{uuid.uuid4().hex[:8]}", "type": "input", "name": "Element ID", "placeholder": "Element ID", "inputType": "text"},
+                        {"id": f"builder-{uuid.uuid4().hex[:8]}", "type": "input", "name": "Element Name", "placeholder": "Element name", "inputType": "text"},
+                        {"id": f"builder-{uuid.uuid4().hex[:8]}", "type": "textarea", "name": "Content", "placeholder": "Content / Text", "rows": 3},
+                        {"id": f"builder-{uuid.uuid4().hex[:8]}", "type": "dropdown", "name": "Component Type", "options": ["Text", "Button", "Input", "Container", "Image", "Card", "Grid"], "placeholder": "Type"}
+                    ]},
+                    
+                    # Style Panel
+                    {"id": f"builder-{uuid.uuid4().hex[:8]}", "type": "container", "name": "Styling", "title": "🎨 Styling", "children": [
+                        {"id": f"builder-{uuid.uuid4().hex[:8]}", "type": "grid", "name": "Dimensions", "columns": 2, "children": [
+                            {"id": f"builder-{uuid.uuid4().hex[:8]}", "type": "input", "name": "Width", "placeholder": "Width", "inputType": "text"},
+                            {"id": f"builder-{uuid.uuid4().hex[:8]}", "type": "input", "name": "Height", "placeholder": "Height", "inputType": "text"}
+                        ]},
+                        {"id": f"builder-{uuid.uuid4().hex[:8]}", "type": "grid", "name": "Spacing", "columns": 4, "children": [
+                            {"id": f"builder-{uuid.uuid4().hex[:8]}", "type": "input", "name": "Margin Top", "placeholder": "MT", "inputType": "number"},
+                            {"id": f"builder-{uuid.uuid4().hex[:8]}", "type": "input", "name": "Margin Right", "placeholder": "MR", "inputType": "number"},
+                            {"id": f"builder-{uuid.uuid4().hex[:8]}", "type": "input", "name": "Margin Bottom", "placeholder": "MB", "inputType": "number"},
+                            {"id": f"builder-{uuid.uuid4().hex[:8]}", "type": "input", "name": "Margin Left", "placeholder": "ML", "inputType": "number"}
+                        ]},
+                        {"id": f"builder-{uuid.uuid4().hex[:8]}", "type": "colorpicker", "name": "Background", "label": "Background Color"},
+                        {"id": f"builder-{uuid.uuid4().hex[:8]}", "type": "colorpicker", "name": "Text Color", "label": "Text Color"},
+                        {"id": f"builder-{uuid.uuid4().hex[:8]}", "type": "dropdown", "name": "Font Size", "options": ["12px", "14px", "16px", "18px", "24px", "32px", "48px"], "placeholder": "Font Size"},
+                        {"id": f"builder-{uuid.uuid4().hex[:8]}", "type": "dropdown", "name": "Font Weight", "options": ["Normal", "Medium", "Semi-Bold", "Bold"], "placeholder": "Font Weight"}
+                    ]},
+                    
+                    # Actions Panel
+                    {"id": f"builder-{uuid.uuid4().hex[:8]}", "type": "container", "name": "Actions", "title": "⚡ Actions", "children": [
+                        {"id": f"builder-{uuid.uuid4().hex[:8]}", "type": "dropdown", "name": "On Click", "options": ["None", "Navigate to Page", "Open Modal", "Submit Form", "Call API", "Run Custom Code"], "placeholder": "On Click Action"},
+                        {"id": f"builder-{uuid.uuid4().hex[:8]}", "type": "input", "name": "Action Value", "placeholder": "Action value / URL", "inputType": "text"},
+                        {"id": f"builder-{uuid.uuid4().hex[:8]}", "type": "toggle", "name": "Visible", "label": "Visible", "checked": True},
+                        {"id": f"builder-{uuid.uuid4().hex[:8]}", "type": "toggle", "name": "Enabled", "label": "Enabled", "checked": True}
+                    ]},
+                    
+                    # Data Binding
+                    {"id": f"builder-{uuid.uuid4().hex[:8]}", "type": "container", "name": "Data Binding", "title": "🔗 Data Binding", "children": [
+                        {"id": f"builder-{uuid.uuid4().hex[:8]}", "type": "dropdown", "name": "Data Source", "options": ["None", "API Endpoint", "Database", "Local State", "URL Params"], "placeholder": "Data Source"},
+                        {"id": f"builder-{uuid.uuid4().hex[:8]}", "type": "input", "name": "Data Path", "placeholder": "data.items[0].name", "inputType": "text"}
+                    ]}
                 ]}
             ]},
-            {"id": f"builder-{uuid.uuid4().hex[:8]}", "type": "container", "name": "Builder Actions", "title": "", "children": [
-                {"id": f"builder-{uuid.uuid4().hex[:8]}", "type": "grid", "name": "Action Buttons", "columns": 4, "children": [
-                    {"id": f"builder-{uuid.uuid4().hex[:8]}", "type": "button", "name": "Save Project", "label": "💾 Save", "variant": "secondary"},
+            
+            # Bottom Action Bar
+            {"id": f"builder-{uuid.uuid4().hex[:8]}", "type": "container", "name": "Bottom Actions", "title": "", "children": [
+                {"id": f"builder-{uuid.uuid4().hex[:8]}", "type": "grid", "name": "Project Actions", "columns": 6, "children": [
+                    {"id": f"builder-{uuid.uuid4().hex[:8]}", "type": "button", "name": "Save", "label": "💾 Save", "variant": "secondary"},
                     {"id": f"builder-{uuid.uuid4().hex[:8]}", "type": "button", "name": "Preview", "label": "👁️ Preview", "variant": "secondary"},
-                    {"id": f"builder-{uuid.uuid4().hex[:8]}", "type": "button", "name": "Export Code", "label": "📤 Export Code", "variant": "secondary"},
-                    {"id": f"builder-{uuid.uuid4().hex[:8]}", "type": "button", "name": "Deploy", "label": "🚀 Deploy", "variant": "primary"}
+                    {"id": f"builder-{uuid.uuid4().hex[:8]}", "type": "button", "name": "Export HTML", "label": "📄 Export HTML", "variant": "secondary"},
+                    {"id": f"builder-{uuid.uuid4().hex[:8]}", "type": "button", "name": "Export React", "label": "⚛️ Export React", "variant": "secondary"},
+                    {"id": f"builder-{uuid.uuid4().hex[:8]}", "type": "button", "name": "Connect API", "label": "🔌 Connect API", "variant": "secondary"},
+                    {"id": f"builder-{uuid.uuid4().hex[:8]}", "type": "button", "name": "Deploy", "label": "🚀 Deploy Live", "variant": "primary"}
                 ]}
             ]},
-            {"id": f"builder-{uuid.uuid4().hex[:8]}", "type": "container", "name": "Recent Projects", "title": "Recent Projects", "children": [
-                {"id": f"builder-{uuid.uuid4().hex[:8]}", "type": "grid", "name": "Project Cards", "columns": 4, "children": [
-                    {"id": f"builder-{uuid.uuid4().hex[:8]}", "type": "card", "name": "Project 1", "title": "E-commerce Store", "content": "Last edited 2 hours ago"},
-                    {"id": f"builder-{uuid.uuid4().hex[:8]}", "type": "card", "name": "Project 2", "title": "Portfolio Site", "content": "Last edited yesterday"},
-                    {"id": f"builder-{uuid.uuid4().hex[:8]}", "type": "card", "name": "Project 3", "title": "Dashboard App", "content": "Last edited 3 days ago"},
-                    {"id": f"builder-{uuid.uuid4().hex[:8]}", "type": "card", "name": "New Project", "title": "+ New Project", "content": "Start from scratch or use a template"}
+            
+            # Backend & Database Section
+            {"id": f"builder-{uuid.uuid4().hex[:8]}", "type": "container", "name": "Backend Section", "title": "🔧 Backend & Database", "children": [
+                {"id": f"builder-{uuid.uuid4().hex[:8]}", "type": "grid", "name": "Backend Options", "columns": 4, "children": [
+                    {"id": f"builder-{uuid.uuid4().hex[:8]}", "type": "card", "name": "API Builder", "title": "API Builder", "content": "Create REST APIs with visual editor"},
+                    {"id": f"builder-{uuid.uuid4().hex[:8]}", "type": "card", "name": "Database", "title": "Database", "content": "Connect to MongoDB, PostgreSQL, MySQL"},
+                    {"id": f"builder-{uuid.uuid4().hex[:8]}", "type": "card", "name": "Authentication", "title": "Auth", "content": "Add login, signup, OAuth"},
+                    {"id": f"builder-{uuid.uuid4().hex[:8]}", "type": "card", "name": "Storage", "title": "File Storage", "content": "Upload and manage files"}
+                ]}
+            ]},
+            
+            # Templates Gallery
+            {"id": f"builder-{uuid.uuid4().hex[:8]}", "type": "container", "name": "Templates", "title": "📚 Templates", "children": [
+                {"id": f"builder-{uuid.uuid4().hex[:8]}", "type": "grid", "name": "Template Cards", "columns": 5, "children": [
+                    {"id": f"builder-{uuid.uuid4().hex[:8]}", "type": "card", "name": "Blank", "title": "Blank Project", "content": "Start from scratch"},
+                    {"id": f"builder-{uuid.uuid4().hex[:8]}", "type": "card", "name": "Landing Page", "title": "Landing Page", "content": "Marketing landing page"},
+                    {"id": f"builder-{uuid.uuid4().hex[:8]}", "type": "card", "name": "Dashboard", "title": "Dashboard", "content": "Admin dashboard"},
+                    {"id": f"builder-{uuid.uuid4().hex[:8]}", "type": "card", "name": "E-commerce", "title": "E-commerce", "content": "Online store"},
+                    {"id": f"builder-{uuid.uuid4().hex[:8]}", "type": "card", "name": "Blog", "title": "Blog", "content": "Blog platform"}
                 ]}
             ]}
         ]
