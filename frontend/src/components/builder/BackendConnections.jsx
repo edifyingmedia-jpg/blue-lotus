@@ -122,7 +122,7 @@ const BackendConnections = ({ isOpen, onClose, projectId }) => {
         headers: { 'Authorization': `Bearer ${token}` }
       });
       if (response.ok) {
-        const data = await response.json();
+        const data = await response.text().then(t => t ? JSON.parse(t) : null);
         setConnections(data.connections || []);
       }
     } catch (err) {
@@ -166,7 +166,7 @@ const BackendConnections = ({ isOpen, onClose, projectId }) => {
         })
       });
 
-      const data = await response.json();
+      const data = await response.text().then(t => t ? JSON.parse(t) : null);
       const success = response.ok && data.success;
       
       setTestResult({
@@ -234,7 +234,7 @@ const BackendConnections = ({ isOpen, onClose, projectId }) => {
         })
       });
 
-      const data = await response.json();
+      const data = await response.text().then(t => t ? JSON.parse(t) : null);
 
       if (response.ok) {
         toast.success('Connection created successfully!');

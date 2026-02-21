@@ -108,7 +108,7 @@ const OwnerDashboard = () => {
       }
       throw new Error('Request failed');
     }
-    return response.json();
+    return response.text().then(t => t ? JSON.parse(t) : null);
   }, [getAuthToken]);
 
   const postWithAuth = useCallback(async (endpoint, body) => {
@@ -122,7 +122,7 @@ const OwnerDashboard = () => {
       body: JSON.stringify(body)
     });
     if (!response.ok) throw new Error('Request failed');
-    return response.json();
+    return response.text().then(t => t ? JSON.parse(t) : null);
   }, [getAuthToken]);
 
   const putWithAuth = useCallback(async (endpoint, body) => {
@@ -136,7 +136,7 @@ const OwnerDashboard = () => {
       body: JSON.stringify(body)
     });
     if (!response.ok) throw new Error('Request failed');
-    return response.json();
+    return response.text().then(t => t ? JSON.parse(t) : null);
   }, [getAuthToken]);
 
   // Fetch functions

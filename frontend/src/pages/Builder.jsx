@@ -140,7 +140,7 @@ const Builder = () => {
       });
       
       if (response.ok) {
-        const data = await response.json();
+        const data = await response.text().then(t => t ? JSON.parse(t) : null);
         setProject(data);
         
         // Transform structure - convert string arrays to object arrays
@@ -319,7 +319,7 @@ const Builder = () => {
       
       let data;
       try {
-        data = await response.json();
+        data = await response.text().then(t => t ? JSON.parse(t) : null);
         console.log('GPT response data:', data);
       } catch (jsonErr) {
         console.error('Failed to parse JSON:', jsonErr);

@@ -104,7 +104,7 @@ const Checkout = () => {
       });
       
       if (response.ok) {
-        const data = await response.json();
+        const data = await response.text().then(t => t ? JSON.parse(t) : null);
         if (data.status === 'paid') {
           setIsComplete(true);
           toast.success('Payment successful! Your plan has been upgraded.');
@@ -144,11 +144,11 @@ const Checkout = () => {
       });
       
       if (response.ok) {
-        const data = await response.json();
+        const data = await response.text().then(t => t ? JSON.parse(t) : null);
         // Redirect to Stripe checkout
         window.location.href = data.checkout_url;
       } else {
-        const errorData = await response.json();
+        const errorData = await response.text().then(t => t ? JSON.parse(t) : null);
         setError(errorData.detail || 'Failed to create checkout session');
         toast.error(errorData.detail || 'Failed to start checkout');
       }

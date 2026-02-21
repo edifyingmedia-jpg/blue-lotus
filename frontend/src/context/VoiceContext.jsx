@@ -65,7 +65,7 @@ export const VoiceProvider = ({ children }) => {
         headers: { 'Authorization': `Bearer ${token}` }
       });
       if (response.ok) {
-        const data = await response.json();
+        const data = await response.text().then(t => t ? JSON.parse(t) : null);
         setSettings(data.settings);
       }
     } catch (err) {
@@ -84,7 +84,7 @@ export const VoiceProvider = ({ children }) => {
         body: JSON.stringify({ settings: newSettings })
       });
       if (response.ok) {
-        const data = await response.json();
+        const data = await response.text().then(t => t ? JSON.parse(t) : null);
         setSettings(data.settings);
         return { success: true };
       }
@@ -101,7 +101,7 @@ export const VoiceProvider = ({ children }) => {
         headers: { 'Authorization': `Bearer ${token}` }
       });
       if (response.ok) {
-        const data = await response.json();
+        const data = await response.text().then(t => t ? JSON.parse(t) : null);
         setSettings(prev => ({
           ...prev,
           voice_mode: data.voice_mode,
@@ -129,7 +129,7 @@ export const VoiceProvider = ({ children }) => {
         }
       );
       if (response.ok) {
-        const data = await response.json();
+        const data = await response.text().then(t => t ? JSON.parse(t) : null);
         setSessionId(data.session_id);
         return data.session_id;
       }
@@ -299,7 +299,7 @@ export const VoiceProvider = ({ children }) => {
         throw new Error('Transcription failed');
       }
       
-      const transcribeData = await transcribeResponse.json();
+      const transcribeData = await transcribeResponse.text().then(t => t ? JSON.parse(t) : null);
       
       if (!transcribeData.success || !transcribeData.text) {
         setError('Could not understand speech');
@@ -341,7 +341,7 @@ export const VoiceProvider = ({ children }) => {
         throw new Error('Command processing failed');
       }
       
-      const data = await response.json();
+      const data = await response.text().then(t => t ? JSON.parse(t) : null);
       setLastResponse(data);
       
       // Handle confirmation required
@@ -393,7 +393,7 @@ export const VoiceProvider = ({ children }) => {
         throw new Error('TTS failed');
       }
       
-      const data = await response.json();
+      const data = await response.text().then(t => t ? JSON.parse(t) : null);
       
       if (data.audio_base64) {
         // Play the audio

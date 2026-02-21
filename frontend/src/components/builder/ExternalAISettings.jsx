@@ -94,7 +94,7 @@ const ExternalAISettings = ({ isOpen, onClose }) => {
       });
       
       if (response.ok) {
-        const data = await response.json();
+        const data = await response.text().then(t => t ? JSON.parse(t) : null);
         if (data.config) {
           setConfig(prev => ({ ...prev, ...data.config, api_key: '' }));
           setHasExisting(data.config.has_api_key);

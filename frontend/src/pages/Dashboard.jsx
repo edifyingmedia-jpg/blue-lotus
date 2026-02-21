@@ -70,7 +70,7 @@ const Dashboard = () => {
       });
       
       if (response.ok) {
-        const data = await response.json();
+        const data = await response.text().then(t => t ? JSON.parse(t) : null);
         setProjects(data);
       } else {
         setError('Failed to load projects');
