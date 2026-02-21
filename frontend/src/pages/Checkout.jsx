@@ -85,13 +85,13 @@ const Checkout = () => {
     }
   }, [sessionId, paymentStatus]);
 
-  // Redirect to login if not authenticated
+  // Redirect to login if not authenticated (after auth check completes)
   useEffect(() => {
-    if (!isAuthenticated) {
+    if (!authLoading && !isAuthenticated) {
       toast.error('Please login to continue');
       navigate('/login?redirect=/checkout?plan=' + selectedPlan);
     }
-  }, [isAuthenticated, navigate, selectedPlan]);
+  }, [isAuthenticated, authLoading, navigate, selectedPlan]);
 
   const checkPaymentStatus = async (sid) => {
     setIsProcessing(true);
