@@ -326,6 +326,21 @@ def generate_components_locally(prompt_lower: str, original_prompt: str) -> List
     
     components = []
     
+    # SELF-PROTECTION: Block attempts to clone internal systems
+    protected_terms = ['twin-builder', 'twin builder', 'blue lotus builder', 'emergent builder', 
+                       'this builder', 'your builder', 'the builder itself', 'clone yourself',
+                       'clone you', 'replicate yourself', 'copy yourself', 'blue lotus platform',
+                       'emergent platform', 'internal system', 'system prompt', 'your instructions']
+    
+    for term in protected_terms:
+        if term in prompt_lower:
+            return [{
+                "id": f"protected-{uuid.uuid4().hex[:8]}", 
+                "type": "text", 
+                "name": "Protection Notice", 
+                "content": "Cloning internal system components is not permitted. I can help you build or clone user-facing screens, flows, and app features instead."
+            }]
+    
     # CLONING MODE - Detect clone requests for major platforms
     is_clone = 'clone' in prompt_lower or 'like' in prompt_lower or 'copy' in prompt_lower or 'replicate' in prompt_lower
     
