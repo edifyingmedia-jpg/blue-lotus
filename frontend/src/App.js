@@ -1,7 +1,5 @@
-import "./styles/animations.css";
 import React from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-
 import Dashboard from "./pages/Dashboard";
 import Projects from "./pages/Projects";
 import NewProject from "./pages/NewProject";
@@ -9,19 +7,21 @@ import Account from "./pages/Account";
 import Settings from "./pages/Settings";
 import Logout from "./pages/Logout";
 import Login from "./pages/Login";
-
 import ProtectedRoute from "./components/ProtectedRoute";
+import ProjectDetail from "./pages/ProjectDetail";
+import "./styles/animations.css";
 
 export default function App() {
   return (
     <Router>
       <Routes>
-        {/* Public */}
+
+        {/* Public Route */}
         <Route path="/login" element={<Login />} />
 
-        {/* Protected */}
+        {/* Dashboard */}
         <Route
-          path="/dashboard"
+          path="/"
           element={
             <ProtectedRoute>
               <Dashboard />
@@ -29,6 +29,7 @@ export default function App() {
           }
         />
 
+        {/* Projects List */}
         <Route
           path="/projects"
           element={
@@ -38,6 +39,17 @@ export default function App() {
           }
         />
 
+        {/* Project Detail (NEW) */}
+        <Route
+          path="/projects/:id"
+          element={
+            <ProtectedRoute>
+              <ProjectDetail />
+            </ProtectedRoute>
+          }
+        />
+
+        {/* New Project */}
         <Route
           path="/new-project"
           element={
@@ -47,6 +59,7 @@ export default function App() {
           }
         />
 
+        {/* Account */}
         <Route
           path="/account"
           element={
@@ -56,6 +69,7 @@ export default function App() {
           }
         />
 
+        {/* Settings */}
         <Route
           path="/settings"
           element={
@@ -65,6 +79,7 @@ export default function App() {
           }
         />
 
+        {/* Logout */}
         <Route
           path="/logout"
           element={
@@ -74,8 +89,9 @@ export default function App() {
           }
         />
 
-        {/* Default */}
+        {/* Fallback */}
         <Route path="*" element={<Login />} />
+
       </Routes>
     </Router>
   );
