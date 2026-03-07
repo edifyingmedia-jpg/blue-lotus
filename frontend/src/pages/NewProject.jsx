@@ -1,56 +1,22 @@
-import React, { useState } from "react";
-import { supabase } from "../lib/supabase";
-import { useNavigate } from "react-router-dom";
+import React from "react";
 
 export default function NewProject() {
-  const [name, setName] = useState("");
-  const [loading, setLoading] = useState(false);
-  const navigate = useNavigate();
-
-  async function createProject(e) {
-    e.preventDefault();
-    setLoading(true);
-
-    const { data: { user } } = await supabase.auth.getUser();
-
-    if (!user) {
-      setLoading(false);
-      return;
-    }
-
-    const { error } = await supabase.from("projects").insert([
-      {
-        name,
-        user_id: user.id,
-      },
-    ]);
-
-    setLoading(false);
-
-    if (!error) {
-      navigate("/projects");
-    }
-  }
-
   return (
-    <div style={styles.container}>
-      <h1 style={styles.heading}>Create New Project</h1>
-      <p style={styles.subtext}>Start something new and cinematic.</p>
+    <div className="page-fade" style={styles.container}>
+      <h1 style={styles.heading} className="neon-hover">
+        Create New Project
+      </h1>
 
-      <form onSubmit={createProject} style={styles.form}>
-        <input
-          type="text"
-          placeholder="Project name"
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-          style={styles.input}
-          required
-        />
+      <p style={styles.subtext}>
+        Start a new cinematic creation in Blue Lotus.
+      </p>
 
-        <button type="submit" style={styles.button} disabled={loading}>
-          {loading ? "Creating..." : "Create Project"}
-        </button>
-      </form>
+      <div className="neon-card" style={styles.card}>
+        <h3 style={styles.cardTitle}>Project Setup</h3>
+        <p style={styles.cardText}>
+          Project creation tools will appear here.
+        </p>
+      </div>
     </div>
   );
 }
@@ -80,32 +46,20 @@ const styles = {
     marginBottom: "30px",
   },
 
-  form: {
-    display: "flex",
-    flexDirection: "column",
-    gap: "20px",
-    maxWidth: "400px",
-  },
-
-  input: {
-    padding: "14px",
-    borderRadius: "8px",
-    border: "1px solid rgba(0,255,255,0.3)",
+  card: {
     backgroundColor: "#11182f",
-    color: "white",
-    fontSize: "16px",
+    padding: "25px",
+    borderRadius: "12px",
+    marginTop: "20px",
   },
 
-  button: {
-    padding: "14px",
-    borderRadius: "8px",
-    backgroundColor: "#00eaff",
-    color: "#0a0f1f",
-    fontWeight: "700",
-    fontSize: "16px",
-    cursor: "pointer",
-    border: "none",
-    boxShadow: "0 0 12px rgba(0,255,255,0.5)",
-    transition: "0.2s",
+  cardTitle: {
+    fontSize: "20px",
+    color: "#00eaff",
+    marginBottom: "8px",
+  },
+
+  cardText: {
+    opacity: 0.8,
   },
 };
