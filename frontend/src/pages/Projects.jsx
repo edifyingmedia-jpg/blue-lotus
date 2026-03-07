@@ -2,6 +2,12 @@ import React from "react";
 import { Link } from "react-router-dom";
 
 export default function Projects() {
+  const sampleProjects = [
+    { id: "101", name: "Cinematic Short Film" },
+    { id: "202", name: "Emotional AI Actor Demo" },
+    { id: "303", name: "Blue Lotus Prototype" },
+  ];
+
   return (
     <div className="page-fade" style={styles.container}>
       <h1 style={styles.heading} className="neon-hover">
@@ -12,14 +18,20 @@ export default function Projects() {
         Manage your active and archived Blue Lotus projects.
       </p>
 
-      <Link to="/projects/123" style={{ textDecoration: "none" }}>
-        <div className="neon-card" style={styles.card}>
-          <h3 style={styles.cardTitle}>Sample Project</h3>
-          <p style={styles.cardText}>
-            Click to view this project’s details.
-          </p>
-        </div>
-      </Link>
+      {sampleProjects.map((project) => (
+        <Link
+          key={project.id}
+          to={`/projects/${project.id}`}
+          style={{ textDecoration: "none" }}
+        >
+          <div className="neon-card" style={styles.card}>
+            <h3 style={styles.cardTitle}>{project.name}</h3>
+            <p style={styles.cardText}>
+              Click to view this project’s details.
+            </p>
+          </div>
+        </Link>
+      ))}
     </div>
   );
 }
