@@ -1,6 +1,6 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { supabase } from "../lib/supabase";
-import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 
 export default function Dashboard() {
   const [user, setUser] = useState(null);
@@ -16,21 +16,21 @@ export default function Dashboard() {
   return (
     <div style={styles.container}>
       {/* SIDEBAR */}
-      <div style={styles.sidebar}>
+      <aside style={styles.sidebar}>
         <h2 style={styles.logo}>Blue Lotus</h2>
 
         <nav style={styles.nav}>
-          <a style={styles.navItem}>Dashboard</a>
-          <a style={styles.navItem}>My Projects</a>
-          <a style={styles.navItem}>Create New Project</a>
-          <a style={styles.navItem}>Account</a>
-          <a style={styles.navItem}>Settings</a>
-          <a style={styles.navItem}>Logout</a>
+          <Link to="/dashboard" style={styles.navItem}>Dashboard</Link>
+          <Link to="/projects" style={styles.navItem}>My Projects</Link>
+          <Link to="/new-project" style={styles.navItem}>Create New Project</Link>
+          <Link to="/account" style={styles.navItem}>Account</Link>
+          <Link to="/settings" style={styles.navItem}>Settings</Link>
+          <Link to="/logout" style={styles.navItem}>Logout</Link>
         </nav>
-      </div>
+      </aside>
 
       {/* MAIN CONTENT */}
-      <div style={styles.main}>
+      <main style={styles.main}>
         <h1 style={styles.heading}>Dashboard</h1>
         <p style={styles.subtext}>Welcome to your Blue Lotus dashboard.</p>
 
@@ -40,7 +40,7 @@ export default function Dashboard() {
           </p>
         )}
 
-        {/* Example Cinematic Cards */}
+        {/* DASHBOARD CARDS */}
         <div style={styles.cardGrid}>
           <div style={styles.card}>
             <h3 style={styles.cardTitle}>My Projects</h3>
@@ -49,15 +49,20 @@ export default function Dashboard() {
 
           <div style={styles.card}>
             <h3 style={styles.cardTitle}>Create New Project</h3>
-            <p style={styles.cardText}>Start building something new.</p>
+            <p style={styles.cardText}>Start something new and cinematic.</p>
           </div>
 
           <div style={styles.card}>
-            <h3 style={styles.cardTitle}>Account Settings</h3>
+            <h3 style={styles.cardTitle}>Account</h3>
             <p style={styles.cardText}>Manage your profile and preferences.</p>
           </div>
+
+          <div style={styles.card}>
+            <h3 style={styles.cardTitle}>Settings</h3>
+            <p style={styles.cardText}>Customize your Blue Lotus experience.</p>
+          </div>
         </div>
-      </div>
+      </main>
     </div>
   );
 }
@@ -69,18 +74,17 @@ const styles = {
   container: {
     display: "flex",
     height: "100vh",
-    backgroundColor: "#0a0f14",
+    backgroundColor: "#0a0f1f",
     color: "white",
     fontFamily: "Inter, sans-serif",
   },
 
-  /* SIDEBAR */
   sidebar: {
     width: "260px",
-    backgroundColor: "#0d141b",
-    borderRight: "1px solid rgba(0,255,255,0.2)",
+    backgroundColor: "#0d1228",
+    borderRight: "1px solid rgba(0, 255, 255, 0.2)",
     padding: "30px 20px",
-    boxShadow: "0 0 20px rgba(0,255,255,0.15)",
+    boxShadow: "0 0 20px rgba(0, 255, 255, 0.15)",
   },
 
   logo: {
@@ -88,7 +92,7 @@ const styles = {
     fontWeight: "700",
     marginBottom: "40px",
     color: "#00eaff",
-    textShadow: "0 0 10px rgba(0,255,255,0.6)",
+    textShadow: "0 0 10px rgba(0, 255, 255, 0.6)",
   },
 
   nav: {
@@ -98,21 +102,14 @@ const styles = {
   },
 
   navItem: {
+    color: "#b8c6ff",
     fontSize: "16px",
     cursor: "pointer",
-    padding: "8px 0",
-    color: "#c8d4e0",
     transition: "0.2s",
+    padding: "8px 0",
     textDecoration: "none",
-    borderLeft: "3px solid transparent",
   },
 
-  navItemHover: {
-    color: "#00eaff",
-    borderLeft: "3px solid #00eaff",
-  },
-
-  /* MAIN CONTENT */
   main: {
     flex: 1,
     padding: "50px",
@@ -122,7 +119,7 @@ const styles = {
     fontSize: "36px",
     marginBottom: "10px",
     color: "#00eaff",
-    textShadow: "0 0 12px rgba(0,255,255,0.5)",
+    textShadow: "0 0 12px rgba(0, 255, 255, 0.5)",
   },
 
   subtext: {
@@ -133,24 +130,21 @@ const styles = {
 
   userEmail: {
     marginBottom: "40px",
-    fontSize: "16px",
     opacity: 0.9,
   },
 
-  /* CARDS */
   cardGrid: {
     display: "grid",
-    gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))",
-    gap: "25px",
-    marginTop: "20px",
+    gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))",
+    gap: "30px",
   },
 
   card: {
-    backgroundColor: "#111820",
+    backgroundColor: "#11182f",
     padding: "25px",
     borderRadius: "12px",
-    border: "1px solid rgba(0,255,255,0.15)",
-    boxShadow: "0 0 15px rgba(0,255,255,0.1)",
+    border: "1px solid rgba(0, 255, 255, 0.15)",
+    boxShadow: "0 0 15px rgba(0, 255, 255, 0.1)",
     transition: "0.25s",
   },
 
@@ -161,7 +155,6 @@ const styles = {
   },
 
   cardText: {
-    fontSize: "15px",
     opacity: 0.8,
   },
 };
