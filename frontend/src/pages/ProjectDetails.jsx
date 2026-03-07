@@ -1,122 +1,3 @@
-import React, { useState } from "react";
-import { useParams } from "react-router-dom";
-
-export default function ProjectDetails() {
-  const { id } = useParams();
-  const [activeSection, setActiveSection] = useState("overview");
-
-  return (
-    <div style={styles.wrapper} className="page-fade">
-
-      {/* LEFT AI PANEL */}
-      <div style={styles.aiPanel}>
-
-        {/* SECTION NAVIGATION */}
-        <div style={styles.navGroup}>
-          <h2 style={styles.projectTitle}>Project {id}</h2>
-
-          <button
-            style={{
-              ...styles.navButton,
-              ...(activeSection === "overview" ? styles.navActive : {})
-            }}
-            onClick={() => setActiveSection("overview")}
-          >
-            Overview
-          </button>
-
-          <button
-            style={{
-              ...styles.navButton,
-              ...(activeSection === "files" ? styles.navActive : {})
-            }}
-            onClick={() => setActiveSection("files")}
-          >
-            Files
-          </button>
-
-          <button
-            style={{
-              ...styles.navButton,
-              ...(activeSection === "timeline" ? styles.navActive : {})
-            }}
-            onClick={() => setActiveSection("timeline")}
-          >
-            Timeline
-          </button>
-
-          <button
-            style={{
-              ...styles.navButton,
-              ...(activeSection === "builder" ? styles.navActive : {})
-            }}
-            onClick={() => setActiveSection("builder")}
-          >
-            Builder
-          </button>
-        </div>
-
-        {/* AI MESSAGE AREA (EMPTY, SCROLLABLE) */}
-        <div style={styles.aiMessages}>
-          {/* Intentionally empty — ready for future AI integration */}
-        </div>
-
-        {/* AI INPUT AREA */}
-        <div style={styles.aiInputContainer}>
-          <input
-            style={styles.aiInput}
-            placeholder="Ask Blue Lotus AI..."
-          />
-        </div>
-      </div>
-
-      {/* RIGHT WORKSPACE */}
-      <div style={styles.workspace}>
-        {activeSection === "overview" && (
-          <div style={styles.sectionBlock}>
-            <h1 style={styles.sectionHeading}>Overview</h1>
-            <p style={styles.sectionText}>
-              This is your cinematic project overview.  
-              Future dynamic data will appear here.
-            </p>
-          </div>
-        )}
-
-        {activeSection === "files" && (
-          <div style={styles.sectionBlock}>
-            <h1 style={styles.sectionHeading}>Files</h1>
-            <p style={styles.sectionText}>
-              File management and previews will appear here.
-            </p>
-          </div>
-        )}
-
-        {activeSection === "timeline" && (
-          <div style={styles.sectionBlock}>
-            <h1 style={styles.sectionHeading}>Timeline</h1>
-            <p style={styles.sectionText}>
-              Project history and milestones will appear here.
-            </p>
-          </div>
-        )}
-
-        {activeSection === "builder" && (
-          <div style={styles.sectionBlock}>
-            <h1 style={styles.sectionHeading}>Builder</h1>
-            <p style={styles.sectionText}>
-              Your future Blue Lotus builder engine will live here.
-            </p>
-          </div>
-        )}
-      </div>
-
-    </div>
-  );
-}
-
-/* ---------------------------
-   BLUE LOTUS × EMERGENT STYLES
----------------------------- */
 const styles = {
   wrapper: {
     display: "flex",
@@ -169,6 +50,18 @@ const styles = {
     flex: 1,
     overflowY: "auto",
     padding: "20px",
+  },
+
+  /* AI MESSAGE BLOCK (Emergent × Blue Lotus hybrid) */
+  aiMessage: {
+    backgroundColor: "rgba(255,255,255,0.03)", // subtle Emergent-style shade
+    padding: "10px 14px",
+    marginBottom: "12px",
+    borderRadius: "6px", // NOT a bubble — just a soft panel
+    border: "1px solid rgba(0,255,255,0.06)", // Blue Lotus neon clarity
+    marginLeft: "6px", // slight indent (Option B)
+    maxWidth: "92%", // keeps messages elegant and readable
+    lineHeight: "1.5",
   },
 
   /* AI INPUT */
