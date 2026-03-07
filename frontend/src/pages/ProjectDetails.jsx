@@ -1,53 +1,113 @@
-import React from "react";
+import React, { useState } from "react";
 import { useParams } from "react-router-dom";
 
-export default function ProjectDetail() {
+export default function ProjectDetails() {
   const { id } = useParams();
+  const [activeSection, setActiveSection] = useState("overview");
 
   return (
     <div style={styles.wrapper} className="page-fade">
 
-      {/* LEFT SIDEBAR */}
-      <div style={styles.sidebar}>
-        <h2 style={styles.projectTitle} className="neon-hover">
-          Project {id}
-        </h2>
+      {/* LEFT AI PANEL */}
+      <div style={styles.aiPanel}>
 
-        <div style={styles.sectionGroup}>
-          <p style={styles.sectionLabel}>Navigation</p>
+        {/* SECTION NAVIGATION */}
+        <div style={styles.navGroup}>
+          <h2 style={styles.projectTitle}>Project {id}</h2>
 
-          <button style={styles.navButton}>Overview</button>
-          <button style={styles.navButton}>Files</button>
-          <button style={styles.navButton}>Timeline</button>
-          <button style={styles.navButton}>Builder</button>
+          <button
+            style={{
+              ...styles.navButton,
+              ...(activeSection === "overview" ? styles.navActive : {})
+            }}
+            onClick={() => setActiveSection("overview")}
+          >
+            Overview
+          </button>
+
+          <button
+            style={{
+              ...styles.navButton,
+              ...(activeSection === "files" ? styles.navActive : {})
+            }}
+            onClick={() => setActiveSection("files")}
+          >
+            Files
+          </button>
+
+          <button
+            style={{
+              ...styles.navButton,
+              ...(activeSection === "timeline" ? styles.navActive : {})
+            }}
+            onClick={() => setActiveSection("timeline")}
+          >
+            Timeline
+          </button>
+
+          <button
+            style={{
+              ...styles.navButton,
+              ...(activeSection === "builder" ? styles.navActive : {})
+            }}
+            onClick={() => setActiveSection("builder")}
+          >
+            Builder
+          </button>
         </div>
 
-        <div style={styles.sectionGroup}>
-          <p style={styles.sectionLabel}>Actions</p>
+        {/* AI MESSAGE AREA (EMPTY, SCROLLABLE) */}
+        <div style={styles.aiMessages}>
+          {/* Intentionally empty — ready for future AI integration */}
+        </div>
 
-          <button style={styles.actionButton}>Rename Project</button>
-          <button style={styles.actionButton}>Duplicate</button>
-          <button style={styles.actionButton}>Archive</button>
+        {/* AI INPUT AREA */}
+        <div style={styles.aiInputContainer}>
+          <input
+            style={styles.aiInput}
+            placeholder="Ask Blue Lotus AI..."
+          />
         </div>
       </div>
 
-      {/* MAIN WORKSPACE */}
+      {/* RIGHT WORKSPACE */}
       <div style={styles.workspace}>
-        <h1 style={styles.workspaceHeading} className="neon-hover">
-          Workspace
-        </h1>
+        {activeSection === "overview" && (
+          <div style={styles.sectionBlock}>
+            <h1 style={styles.sectionHeading}>Overview</h1>
+            <p style={styles.sectionText}>
+              This is your cinematic project overview.  
+              Future dynamic data will appear here.
+            </p>
+          </div>
+        )}
 
-        <p style={styles.workspaceSubtext}>
-          This is your cinematic, full‑width project canvas.  
-          Future builder tools, previews, and editors will appear here.
-        </p>
+        {activeSection === "files" && (
+          <div style={styles.sectionBlock}>
+            <h1 style={styles.sectionHeading}>Files</h1>
+            <p style={styles.sectionText}>
+              File management and previews will appear here.
+            </p>
+          </div>
+        )}
 
-        <div style={styles.workspaceCard} className="neon-card">
-          <h3 style={styles.cardTitle}>Project Overview</h3>
-          <p style={styles.cardText}>
-            This section will display dynamic project data once Supabase is connected.
-          </p>
-        </div>
+        {activeSection === "timeline" && (
+          <div style={styles.sectionBlock}>
+            <h1 style={styles.sectionHeading}>Timeline</h1>
+            <p style={styles.sectionText}>
+              Project history and milestones will appear here.
+            </p>
+          </div>
+        )}
+
+        {activeSection === "builder" && (
+          <div style={styles.sectionBlock}>
+            <h1 style={styles.sectionHeading}>Builder</h1>
+            <p style={styles.sectionText}>
+              Your future Blue Lotus builder engine will live here.
+            </p>
+          </div>
+        )}
       </div>
 
     </div>
@@ -55,101 +115,98 @@ export default function ProjectDetail() {
 }
 
 /* ---------------------------
-   CINEMATIC TWO-PANEL STYLES
+   BLUE LOTUS × EMERGENT STYLES
 ---------------------------- */
 const styles = {
   wrapper: {
     display: "flex",
-    minHeight: "100vh",
+    height: "100vh",
     backgroundColor: "#0a0f1f",
     color: "white",
     fontFamily: "Inter, sans-serif",
   },
 
-  /* LEFT SIDEBAR */
-  sidebar: {
-    width: "260px",
+  /* LEFT AI PANEL */
+  aiPanel: {
+    width: "340px",
+    display: "flex",
+    flexDirection: "column",
+    borderRight: "1px solid rgba(0,255,255,0.08)",
     backgroundColor: "#0d1326",
-    padding: "30px",
-    borderRight: "1px solid rgba(0,255,255,0.1)",
+  },
+
+  navGroup: {
+    padding: "25px",
+    borderBottom: "1px solid rgba(0,255,255,0.08)",
   },
 
   projectTitle: {
-    fontSize: "26px",
-    marginBottom: "25px",
+    fontSize: "22px",
+    marginBottom: "20px",
     color: "#00eaff",
-    textShadow: "0 0 12px rgba(0,255,255,0.5)",
-  },
-
-  sectionGroup: {
-    marginBottom: "40px",
-  },
-
-  sectionLabel: {
-    fontSize: "14px",
-    opacity: 0.6,
-    marginBottom: "10px",
-    textTransform: "uppercase",
-    letterSpacing: "1px",
+    textShadow: "0 0 8px rgba(0,255,255,0.4)",
   },
 
   navButton: {
     width: "100%",
     padding: "10px 12px",
     marginBottom: "10px",
-    backgroundColor: "#11182f",
-    border: "none",
+    backgroundColor: "transparent",
+    border: "1px solid rgba(0,255,255,0.15)",
     borderRadius: "6px",
     color: "#00eaff",
     cursor: "pointer",
     textAlign: "left",
+    fontSize: "14px",
   },
 
-  actionButton: {
+  navActive: {
+    backgroundColor: "rgba(0,255,255,0.08)",
+    borderColor: "rgba(0,255,255,0.4)",
+  },
+
+  aiMessages: {
+    flex: 1,
+    overflowY: "auto",
+    padding: "20px",
+  },
+
+  /* AI INPUT */
+  aiInputContainer: {
+    padding: "20px",
+    borderTop: "1px solid rgba(0,255,255,0.08)",
+  },
+
+  aiInput: {
     width: "100%",
-    padding: "10px 12px",
-    marginBottom: "10px",
-    backgroundColor: "#1a2342",
-    border: "none",
+    padding: "12px 14px",
+    backgroundColor: "#11182f",
+    border: "1px solid rgba(0,255,255,0.2)",
     borderRadius: "6px",
     color: "white",
-    cursor: "pointer",
-    textAlign: "left",
+    outline: "none",
   },
 
-  /* MAIN WORKSPACE */
+  /* WORKSPACE */
   workspace: {
     flex: 1,
     padding: "50px",
+    overflowY: "auto",
   },
 
-  workspaceHeading: {
+  sectionBlock: {
+    maxWidth: "900px",
+  },
+
+  sectionHeading: {
     fontSize: "36px",
     marginBottom: "10px",
     color: "#00eaff",
     textShadow: "0 0 12px rgba(0,255,255,0.5)",
   },
 
-  workspaceSubtext: {
+  sectionText: {
     fontSize: "18px",
-    opacity: 0.8,
-    marginBottom: "30px",
-  },
-
-  workspaceCard: {
-    backgroundColor: "#11182f",
-    padding: "25px",
-    borderRadius: "12px",
-    marginTop: "20px",
-  },
-
-  cardTitle: {
-    fontSize: "20px",
-    color: "#00eaff",
-    marginBottom: "8px",
-  },
-
-  cardText: {
     opacity: 0.8,
   },
 };
