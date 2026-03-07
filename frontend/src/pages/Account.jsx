@@ -1,33 +1,22 @@
-import React, { useEffect, useState } from "react";
-import { supabase } from "../lib/supabase";
+import React from "react";
 
 export default function Account() {
-  const [user, setUser] = useState(null);
-
-  useEffect(() => {
-    async function loadUser() {
-      const { data } = await supabase.auth.getUser();
-      setUser(data?.user || null);
-    }
-    loadUser();
-  }, []);
-
   return (
-    <div style={styles.container}>
-      <h1 style={styles.heading}>Account</h1>
-      <p style={styles.subtext}>Your profile information.</p>
+    <div className="page-fade" style={styles.container}>
+      <h1 style={styles.heading} className="neon-hover">
+        Account
+      </h1>
 
-      {!user && <p style={styles.loading}>Loading...</p>}
+      <p style={styles.subtext}>
+        Manage your Blue Lotus account details.
+      </p>
 
-      {user && (
-        <div style={styles.card}>
-          <h3 style={styles.label}>Email</h3>
-          <p style={styles.value}>{user.email}</p>
-
-          <h3 style={styles.label}>User ID</h3>
-          <p style={styles.value}>{user.id}</p>
-        </div>
-      )}
+      <div className="neon-card" style={styles.card}>
+        <h3 style={styles.cardTitle}>Profile Information</h3>
+        <p style={styles.cardText}>
+          Your account settings and profile tools will appear here.
+        </p>
+      </div>
     </div>
   );
 }
@@ -57,28 +46,20 @@ const styles = {
     marginBottom: "30px",
   },
 
-  loading: {
-    opacity: 0.7,
-  },
-
   card: {
     backgroundColor: "#11182f",
     padding: "25px",
     borderRadius: "12px",
-    border: "1px solid rgba(0,255,255,0.15)",
-    boxShadow: "0 0 15px rgba(0,255,255,0.1)",
-    maxWidth: "500px",
+    marginTop: "20px",
   },
 
-  label: {
-    fontSize: "16px",
+  cardTitle: {
+    fontSize: "20px",
     color: "#00eaff",
-    marginTop: "15px",
-    marginBottom: "5px",
+    marginBottom: "8px",
   },
 
-  value: {
-    opacity: 0.85,
-    fontSize: "15px",
+  cardText: {
+    opacity: 0.8,
   },
 };
