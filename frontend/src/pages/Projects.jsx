@@ -1,56 +1,21 @@
-import React, { useEffect, useState } from "react";
-import { supabase } from "../lib/supabase";
+import React from "react";
 
 export default function Projects() {
-  const [projects, setProjects] = useState([]);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    async function loadProjects() {
-      const { data: { user } } = await supabase.auth.getUser();
-
-      if (!user) {
-        setProjects([]);
-        setLoading(false);
-        return;
-      }
-
-      const { data, error } = await supabase
-        .from("projects")
-        .select("*")
-        .eq("user_id", user.id)
-        .order("created_at", { ascending: false });
-
-      if (!error) {
-        setProjects(data || []);
-      }
-
-      setLoading(false);
-    }
-
-    loadProjects();
-  }, []);
-
   return (
-    <div style={styles.container}>
-      <h1 style={styles.heading}>My Projects</h1>
-      <p style={styles.subtext}>Your cinematic creations.</p>
+    <div className="page-fade" style={styles.container}>
+      <h1 style={styles.heading} className="neon-hover">
+        Projects
+      </h1>
 
-      {loading && <p style={styles.loading}>Loading projects...</p>}
+      <p style={styles.subtext}>
+        Manage your active and archived Blue Lotus projects.
+      </p>
 
-      {!loading && projects.length === 0 && (
-        <p style={styles.empty}>You have no projects yet.</p>
-      )}
-
-      <div style={styles.grid}>
-        {projects.map((project) => (
-          <div key={project.id} style={styles.card}>
-            <h3 style={styles.cardTitle}>{project.name}</h3>
-            <p style={styles.cardText}>
-              Created: {new Date(project.created_at).toLocaleDateString()}
-            </p>
-          </div>
-        ))}
+      <div className="neon-card" style={styles.card}>
+        <h3 style={styles.cardTitle}>Your Project List</h3>
+        <p style={styles.cardText}>
+          Project listings and management tools will appear here.
+        </p>
       </div>
     </div>
   );
@@ -81,34 +46,17 @@ const styles = {
     marginBottom: "30px",
   },
 
-  loading: {
-    opacity: 0.8,
-  },
-
-  empty: {
-    opacity: 0.7,
-    fontSize: "16px",
-  },
-
-  grid: {
-    display: "grid",
-    gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))",
-    gap: "25px",
-    marginTop: "20px",
-  },
-
   card: {
     backgroundColor: "#11182f",
     padding: "25px",
     borderRadius: "12px",
-    border: "1px solid rgba(0,255,255,0.15)",
-    boxShadow: "0 0 15px rgba(0,255,255,0.1)",
+    marginTop: "20px",
   },
 
   cardTitle: {
     fontSize: "20px",
-    marginBottom: "10px",
     color: "#00eaff",
+    marginBottom: "8px",
   },
 
   cardText: {
