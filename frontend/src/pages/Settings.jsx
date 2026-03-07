@@ -2,11 +2,16 @@ import React from "react";
 
 export default function Settings() {
   return (
-    <div style={styles.container}>
-      <h1 style={styles.heading}>Settings</h1>
-      <p style={styles.subtext}>Customize your Blue Lotus experience.</p>
+    <div className="page-fade" style={styles.container}>
+      <h1 style={styles.heading} className="neon-hover">
+        Settings
+      </h1>
 
-      <div style={styles.card}>
+      <p style={styles.subtext}>
+        Customize your Blue Lotus experience.
+      </p>
+
+      <div className="neon-card" style={styles.card}>
         <h3 style={styles.sectionTitle}>Appearance</h3>
         <p style={styles.placeholder}>Theme options coming soon.</p>
 
@@ -49,9 +54,7 @@ const styles = {
     backgroundColor: "#11182f",
     padding: "25px",
     borderRadius: "12px",
-    border: "1px solid rgba(0,255,255,0.15)",
-    boxShadow: "0 0 15px rgba(0,255,255,0.1)",
-    maxWidth: "600px",
+    marginTop: "20px",
   },
 
   sectionTitle: {
