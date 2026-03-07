@@ -1,4 +1,5 @@
 import React from "react";
+import { Link } from "react-router-dom";
 
 export default function Projects() {
   return (
@@ -11,12 +12,14 @@ export default function Projects() {
         Manage your active and archived Blue Lotus projects.
       </p>
 
-      <div className="neon-card" style={styles.card}>
-        <h3 style={styles.cardTitle}>Your Project List</h3>
-        <p style={styles.cardText}>
-          Project listings and management tools will appear here.
-        </p>
-      </div>
+      <Link to="/projects/123" style={{ textDecoration: "none" }}>
+        <div className="neon-card" style={styles.card}>
+          <h3 style={styles.cardTitle}>Sample Project</h3>
+          <p style={styles.cardText}>
+            Click to view this project’s details.
+          </p>
+        </div>
+      </Link>
     </div>
   );
 }
@@ -51,6 +54,7 @@ const styles = {
     padding: "25px",
     borderRadius: "12px",
     marginTop: "20px",
+    cursor: "pointer",
   },
 
   cardTitle: {
