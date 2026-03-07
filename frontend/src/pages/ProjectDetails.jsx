@@ -1,3 +1,18 @@
+// Global keyframes for typing shimmer
+const typingKeyframes = `
+@keyframes typingPulse {
+  0% { opacity: 0.25; }
+  50% { opacity: 1; }
+  100% { opacity: 0.25; }
+}
+`;
+
+if (typeof document !== "undefined") {
+  const styleTag = document.createElement("style");
+  styleTag.innerHTML = typingKeyframes;
+  document.head.appendChild(styleTag);
+}
+
 const styles = {
   wrapper: {
     display: "flex",
@@ -74,6 +89,16 @@ const styles = {
     lineHeight: "1.5",
     color: "#b8faff", // softer cyan tone for user text
   },
+    typingIndicator: {
+    height: "8px",
+    width: "60px",
+    background: "linear-gradient(90deg, rgba(0,255,255,0.15), rgba(0,255,255,0.35), rgba(0,255,255,0.15))",
+    borderRadius: "4px",
+    marginLeft: "6px",
+    marginBottom: "14px",
+    animation: "typingPulse 1.8s ease-in-out infinite",
+  },
+
 
 
   /* AI INPUT */
