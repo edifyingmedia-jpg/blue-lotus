@@ -63,6 +63,18 @@ const styles = {
     maxWidth: "92%", // keeps messages elegant and readable
     lineHeight: "1.5",
   },
+    userMessage: {
+    backgroundColor: "rgba(0,255,255,0.06)", // slightly brighter than AI messages
+    padding: "10px 14px",
+    marginBottom: "12px",
+    borderRadius: "6px",
+    border: "1px solid rgba(0,255,255,0.18)", // stronger Blue Lotus neon edge
+    marginLeft: "18px", // deeper indent to distinguish user vs AI
+    maxWidth: "92%",
+    lineHeight: "1.5",
+    color: "#b8faff", // softer cyan tone for user text
+  },
+
 
   /* AI INPUT */
   aiInputContainer: {
