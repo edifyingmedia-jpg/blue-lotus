@@ -1,5 +1,6 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
+import { supabase } from "../lib/supabase";
 
 export default function Onboarding() {
   const navigate = useNavigate();
