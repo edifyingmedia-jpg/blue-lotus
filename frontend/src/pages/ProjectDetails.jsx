@@ -1,3 +1,5 @@
+import React from "react";
+
 // Global keyframes for typing shimmer
 const typingKeyframes = `
 @keyframes typingPulse {
@@ -20,123 +22,52 @@ const styles = {
     backgroundColor: "#0a0f1f",
     color: "white",
     fontFamily: "Inter, sans-serif",
+    justifyContent: "center",
+    alignItems: "center",
   },
 
-  /* LEFT AI PANEL */
-  aiPanel: {
-    width: "340px",
-    display: "flex",
-    flexDirection: "column",
-    borderRight: "1px solid rgba(0,255,255,0.08)",
-    backgroundColor: "#0d1326",
+  card: {
+    backgroundColor: "rgba(255,255,255,0.05)",
+    padding: "40px",
+    borderRadius: "10px",
+    border: "1px solid rgba(0,255,255,0.15)",
+    width: "500px",
+    textAlign: "center",
+    boxShadow: "0 0 20px rgba(0,255,255,0.15)",
   },
 
-  navGroup: {
-    padding: "25px",
-    borderBottom: "1px solid rgba(0,255,255,0.08)",
-  },
-
-  projectTitle: {
-    fontSize: "22px",
+  title: {
+    fontSize: "32px",
     marginBottom: "20px",
     color: "#00eaff",
-    textShadow: "0 0 8px rgba(0,255,255,0.4)",
+    textShadow: "0 0 10px rgba(0,255,255,0.5)",
   },
 
-  navButton: {
-    width: "100%",
-    padding: "10px 12px",
-    marginBottom: "10px",
-    backgroundColor: "transparent",
-    border: "1px solid rgba(0,255,255,0.15)",
-    borderRadius: "6px",
-    color: "#00eaff",
-    cursor: "pointer",
-    textAlign: "left",
-    fontSize: "14px",
-  },
-
-  navActive: {
-    backgroundColor: "rgba(0,255,255,0.08)",
-    borderColor: "rgba(0,255,255,0.4)",
-  },
-
-  aiMessages: {
-    flex: 1,
-    overflowY: "auto",
-    padding: "20px",
-  },
-
-  /* AI MESSAGE BLOCK (Emergent × Blue Lotus hybrid) */
-  aiMessage: {
-    backgroundColor: "rgba(255,255,255,0.03)", // subtle Emergent-style shade
-    padding: "10px 14px",
-    marginBottom: "12px",
-    borderRadius: "6px", // NOT a bubble — just a soft panel
-    border: "1px solid rgba(0,255,255,0.06)", // Blue Lotus neon clarity
-    marginLeft: "6px", // slight indent (Option B)
-    maxWidth: "92%", // keeps messages elegant and readable
-    lineHeight: "1.5",
-  },
-    userMessage: {
-    backgroundColor: "rgba(0,255,255,0.06)", // slightly brighter than AI messages
-    padding: "10px 14px",
-    marginBottom: "12px",
-    borderRadius: "6px",
-    border: "1px solid rgba(0,255,255,0.18)", // stronger Blue Lotus neon edge
-    marginLeft: "18px", // deeper indent to distinguish user vs AI
-    maxWidth: "92%",
-    lineHeight: "1.5",
-    color: "#b8faff", // softer cyan tone for user text
-  },
-    typingIndicator: {
-    height: "8px",
-    width: "60px",
-    background: "linear-gradient(90deg, rgba(0,255,255,0.15), rgba(0,255,255,0.35), rgba(0,255,255,0.15))",
-    borderRadius: "4px",
-    marginLeft: "6px",
-    marginBottom: "14px",
-    animation: "typingPulse 1.8s ease-in-out infinite",
-  },
-
-
-
-  /* AI INPUT */
-  aiInputContainer: {
-    padding: "20px",
-    borderTop: "1px solid rgba(0,255,255,0.08)",
-  },
-
-  aiInput: {
-    width: "100%",
-    padding: "12px 14px",
-    backgroundColor: "#11182f",
-    border: "1px solid rgba(0,255,255,0.2)",
-    borderRadius: "6px",
-    color: "white",
-    outline: "none",
-  },
-
-  /* WORKSPACE */
-  workspace: {
-    flex: 1,
-    padding: "50px",
-    overflowY: "auto",
-  },
-
-  sectionBlock: {
-    maxWidth: "900px",
-  },
-
-  sectionHeading: {
-    fontSize: "36px",
-    marginBottom: "10px",
-    color: "#00eaff",
-    textShadow: "0 0 12px rgba(0,255,255,0.5)",
-  },
-
-  sectionText: {
+  text: {
     fontSize: "18px",
-    opacity: 0.8,
+    opacity: 0.85,
+    lineHeight: "1.6",
   },
 };
+
+export default function ProjectDetails() {
+  return (
+    <div style={styles.wrapper}>
+      <div style={styles.card}>
+        <div style={styles.title}>Project Details</div>
+        <div style={styles.text}>
+          This is a simple placeholder page for your project details.
+          <br />
+          <br />
+          You can expand this later with:
+          <br />• Project title  
+          <br />• Description  
+          <br />• Tasks  
+          <br />• Notes  
+          <br />• Files  
+          <br />• And eventually the full cinematic workspace  
+        </div>
+      </div>
+    </div>
+  );
+}
