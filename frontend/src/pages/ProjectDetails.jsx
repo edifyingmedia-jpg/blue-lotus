@@ -8,17 +8,29 @@ const supabase = createClient(
   import.meta.env.VITE_SUPABASE_ANON_KEY
 );
 
-// ---------------------- BUILDER PAGE -------------------------
+// ---------------------- FOUNDER OVERRIDE ----------------------
+const FOUNDER_EMAIL = "Verbtalk@yahoo.com";
+
+// ---------------------- PROTECTED BUILDER PAGE -------------------------
 export default function ProjectDetails() {
   const { id } = useParams();
   const [project, setProject] = React.useState(null);
   const [description, setDescription] = React.useState("");
   const [blueprint, setBlueprint] = React.useState(null);
+  const [generatedCode, setGeneratedCode] = React.useState(null);
+  const [previewPage, setPreviewPage] = React.useState("Home");
   const [loading, setLoading] = React.useState(false);
+  const [user, setUser] = React.useState(null);
+  const [warning, setWarning] = React.useState(null);
 
-  // Load project on mount
+  // ---------------------- LOAD USER + PROJECT ----------------------
   React.useEffect(() => {
     async function load() {
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+      setUser(user);
+
       const { data } = await supabase
         .from("projects")
         .select("*")
@@ -29,20 +41,90 @@ export default function ProjectDetails() {
         setProject(data);
         setDescription(data.description || "");
         setBlueprint(data.blueprint || null);
+        setGeneratedCode(data.generated_code || null);
       }
     }
     load();
   }, [id]);
 
+  const isFounder = user?.email === FOUNDER_EMAIL;
+
+  // ---------------------- PROTECTION LAYER ----------------------
+  function detectCompetingBuilder(text) {
+    const forbidden = [
+      "ai app builder",
+      "ai app generator",
+      "generate apps",
+      "app generator",
+      "platform that generates apps",
+      "no code app generator",
+      "clone blue lotus",
+      "clone your builder",
+      "competing builder",
+      "build a builder like blue lotus",
+      "app builder like lovable",
+      "app builder like bubble",
+      "app builder like webflow",
+      "meta builder",
+    ];
+
+    const lower = text.toLowerCase();
+    return forbidden.some((k) => lower.includes(k));
+  }
+
+  function generateFounderWarning() {
+    return `
+Founder to founder — I want to level with you.
+
+Building an AI app generator is one of the most expensive, unstable, and emotionally draining paths in tech. 
+I’ve spent thousands learning the truth behind these platforms. 
+They promise the world and deliver nothing but burnout.
+
+You’re absolutely entitled to build anything here that aligns with your vision — 
+but I won’t let you walk into the same trap I barely crawled out of.
+
+If you still want to continue, I can help you build a simplified version — 
+but not a full AI app generator.
+    `;
+  }
+
   // ---------------------- BLUEPRINT GENERATOR ----------------------
   function generateBlueprintFromDescription(text) {
-    // Basic NLP-ish parsing (deterministic)
     const lower = text.toLowerCase();
 
+    // If user is NOT founder and tries to build a competing builder
+    if (!isFounder && detectCompetingBuilder(lower)) {
+      setWarning(generateFounderWarning());
+
+      // SAFE FALLBACK BLUEPRINT
+      return {
+        appName: project?.name || "Generated App",
+        pages: [
+          {
+            name: "Home",
+            components: ["Header", "Hero", "Footer"],
+          },
+          {
+            name: "Dashboard",
+            components: ["Header", "StatsGrid", "QuickActions"],
+          },
+        ],
+        dataModels: [
+          {
+            name: "Item",
+            fields: ["title", "description", "created_at"],
+          },
+        ],
+        fallback: true,
+        reason:
+          "Competing AI app builders are not allowed, but a simplified app has been generated.",
+      };
+    }
+
+    // NORMAL BLUEPRINT GENERATION
     const pages = [];
     const dataModels = [];
 
-    // Detect common pages
     if (lower.includes("login") || lower.includes("auth")) {
       pages.push({
         name: "Login",
@@ -81,7 +163,6 @@ export default function ProjectDetails() {
       });
     }
 
-    // Default fallback if no keywords detected
     if (pages.length === 0) {
       pages.push({
         name: "Home",
@@ -97,7 +178,7 @@ export default function ProjectDetails() {
     };
   }
 
-  // ---------------------- GENERATE + SAVE ----------------------
+  // ---------------------- GENERATE BLUEPRINT ----------------------
   async function generateBlueprint() {
     setLoading(true);
 
@@ -115,12 +196,39 @@ export default function ProjectDetails() {
     setLoading(false);
   }
 
+  // ---------------------- PREVIEW RENDERER ----------------------
+  function renderPreview() {
+    if (!blueprint) return <p>No preview available.</p>;
+
+    const page = blueprint.pages.find((p) => p.name === previewPage);
+    if (!page) return <p>Page not found.</p>;
+
+    return (
+      <div style={styles.phoneFrame}>
+        <div style={styles.phoneScreen}>
+          <h2 style={{ textAlign: "center" }}>{page.name}</h2>
+          <ul>
+            {page.components.map((c) => (
+              <li key={c}>{c}</li>
+            ))}
+          </ul>
+        </div>
+      </div>
+    );
+  }
+
   if (!project)
     return <p style={{ color: "white", padding: "40px" }}>Loading...</p>;
 
   return (
     <div style={styles.container}>
       <h1 style={styles.heading}>{project.name}</h1>
+
+      {warning && (
+        <div style={styles.warningBox}>
+          <pre style={{ whiteSpace: "pre-wrap" }}>{warning}</pre>
+        </div>
+      )}
 
       <div style={styles.studio}>
         {/* LEFT PANEL — DESCRIPTION */}
@@ -143,8 +251,8 @@ export default function ProjectDetails() {
           </button>
         </div>
 
-        {/* RIGHT PANEL — BLUEPRINT OUTPUT */}
-        <div style={styles.rightPanel}>
+        {/* MIDDLE PANEL — BLUEPRINT */}
+        <div style={styles.middlePanel}>
           <h2 style={styles.panelTitle}>Generated Blueprint</h2>
 
           {!blueprint ? (
@@ -154,6 +262,25 @@ export default function ProjectDetails() {
               {JSON.stringify(blueprint, null, 2)}
             </pre>
           )}
+        </div>
+
+        {/* RIGHT PANEL — PREVIEW */}
+        <div style={styles.rightPanel}>
+          <h2 style={styles.panelTitle}>Live Preview</h2>
+
+          {blueprint && (
+            <select
+              value={previewPage}
+              onChange={(e) => setPreviewPage(e.target.value)}
+              style={styles.dropdown}
+            >
+              {blueprint.pages.map((p) => (
+                <option key={p.name}>{p.name}</option>
+              ))}
+            </select>
+          )}
+
+          <div style={{ marginTop: "20px" }}>{renderPreview()}</div>
         </div>
       </div>
     </div>
@@ -189,12 +316,20 @@ const styles = {
     boxShadow: "0 0 15px rgba(0, 238, 255, 0.2)",
   },
 
-  rightPanel: {
+  middlePanel: {
     flex: 1,
     background: "#11182f",
     padding: "20px",
     borderRadius: "12px",
     boxShadow: "0 0 15px rgba(255, 0, 255, 0.2)",
+  },
+
+  rightPanel: {
+    flex: 1,
+    background: "#11182f",
+    padding: "20px",
+    borderRadius: "12px",
+    boxShadow: "0 0 15px rgba(0, 238, 255, 0.2)",
   },
 
   panelTitle: {
@@ -237,5 +372,46 @@ const styles = {
     boxShadow: "0 0 12px rgba(255, 0, 255, 0.2)",
     whiteSpace: "pre-wrap",
     fontSize: "14px",
+  },
+
+  dropdown: {
+    width: "100%",
+    padding: "10px",
+    background: "#0d1326",
+    color: "white",
+    border: "1px solid #00eaff",
+    borderRadius: "8px",
+  },
+
+  phoneFrame: {
+    width: "260px",
+    height: "520px",
+    margin: "0 auto",
+    borderRadius: "30px",
+    background: "#000",
+    border: "4px solid #00eaff",
+    boxShadow: "0 0 20px rgba(0, 238, 255, 0.4)",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+
+  phoneScreen: {
+    width: "230px",
+    height: "490px",
+    background: "#0d1326",
+    borderRadius: "24px",
+    padding: "20px",
+    overflowY: "auto",
+    color: "white",
+  },
+
+  warningBox: {
+    background: "rgba(255, 0, 0, 0.15)",
+    border: "1px solid rgba(255, 0, 0, 0.4)",
+    padding: "20px",
+    borderRadius: "12px",
+    marginBottom: "20px",
+    whiteSpace: "pre-wrap",
   },
 };
