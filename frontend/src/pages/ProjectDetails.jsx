@@ -1,73 +1,186 @@
 import React from "react";
+import { useParams } from "react-router-dom";
+import { createClient } from "@supabase/supabase-js";
 
-// Global keyframes for typing shimmer
-const typingKeyframes = `
-@keyframes typingPulse {
-  0% { opacity: 0.25; }
-  50% { opacity: 1; }
-  100% { opacity: 0.25; }
-}
-`;
+// ---------------------- SUPABASE CLIENT ----------------------
+const supabase = createClient(
+  import.meta.env.VITE_SUPABASE_URL,
+  import.meta.env.VITE_SUPABASE_ANON_KEY
+);
 
-if (typeof document !== "undefined") {
-  const styleTag = document.createElement("style");
-  styleTag.innerHTML = typingKeyframes;
-  document.head.appendChild(styleTag);
-}
-
-const styles = {
-  wrapper: {
-    display: "flex",
-    height: "100vh",
-    backgroundColor: "#0a0f1f",
-    color: "white",
-    fontFamily: "Inter, sans-serif",
-    justifyContent: "center",
-    alignItems: "center",
-  },
-
-  card: {
-    backgroundColor: "rgba(255,255,255,0.05)",
-    padding: "40px",
-    borderRadius: "10px",
-    border: "1px solid rgba(0,255,255,0.15)",
-    width: "500px",
-    textAlign: "center",
-    boxShadow: "0 0 20px rgba(0,255,255,0.15)",
-  },
-
-  title: {
-    fontSize: "32px",
-    marginBottom: "20px",
-    color: "#00eaff",
-    textShadow: "0 0 10px rgba(0,255,255,0.5)",
-  },
-
-  text: {
-    fontSize: "18px",
-    opacity: 0.85,
-    lineHeight: "1.6",
-  },
-};
-
+// ---------------------- BUILDER PAGE -------------------------
 export default function ProjectDetails() {
+  const { id } = useParams();
+  const [project, setProject] = React.useState(null);
+  const [description, setDescription] = React.useState("");
+  const [structure, setStructure] = React.useState(null);
+  const [loading, setLoading] = React.useState(false);
+
+  // Load project on mount
+  React.useEffect(() => {
+    async function load() {
+      const { data } = await supabase
+        .from("projects")
+        .select("*")
+        .eq("id", id)
+        .single();
+
+      if (data) {
+        setProject(data);
+        setDescription(data.description || "");
+        setStructure(data.structure || null);
+      }
+    }
+    load();
+  }, [id]);
+
+  // Save description + generate structure
+  async function generateStructure() {
+    setLoading(true);
+
+    // Placeholder generator — will be replaced with real engine
+    const generated = {
+      pages: [
+        { name: "Home", components: ["Header", "Hero", "Footer"] },
+        { name: "About", components: ["Header", "TextBlock", "Footer"] },
+      ],
+      notes: "This is placeholder structure. Real generator coming next.",
+    };
+
+    // Save to Supabase
+    await supabase
+      .from("projects")
+      .update({
+        description,
+        structure: generated,
+      })
+      .eq("id", id);
+
+    setStructure(generated);
+    setLoading(false);
+  }
+
+  if (!project)
+    return <p style={{ color: "white", padding: "40px" }}>Loading...</p>;
+
   return (
-    <div style={styles.wrapper}>
-      <div style={styles.card}>
-        <div style={styles.title}>Project Details</div>
-        <div style={styles.text}>
-          This is a simple placeholder page for your project details.
-          <br />
-          <br />
-          You can expand this later with:
-          <br />• Project title  
-          <br />• Description  
-          <br />• Tasks  
-          <br />• Notes  
-          <br />• Files  
-          <br />• And eventually the full cinematic workspace  
+    <div style={styles.container}>
+      <h1 style={styles.heading}>{project.name}</h1>
+
+      <div style={styles.studio}>
+        {/* LEFT PANEL — DESCRIPTION */}
+        <div style={styles.leftPanel}>
+          <h2 style={styles.panelTitle}>App Description</h2>
+
+          <textarea
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
+            placeholder="Describe the app your client wants to generate..."
+            style={styles.textarea}
+          />
+
+          <button
+            onClick={generateStructure}
+            disabled={loading}
+            style={styles.generateButton}
+          >
+            {loading ? "Generating..." : "Generate App Structure"}
+          </button>
+        </div>
+
+        {/* RIGHT PANEL — STRUCTURE OUTPUT */}
+        <div style={styles.rightPanel}>
+          <h2 style={styles.panelTitle}>Generated Structure</h2>
+
+          {!structure ? (
+            <p style={{ opacity: 0.7 }}>No structure generated yet.</p>
+          ) : (
+            <pre style={styles.outputBox}>
+              {JSON.stringify(structure, null, 2)}
+            </pre>
+          )}
         </div>
       </div>
     </div>
   );
 }
+
+/* --------------------------- TRI-NEON STUDIO STYLES ---------------------------- */
+const styles = {
+  container: {
+    padding: "40px",
+    color: "white",
+    backgroundColor: "#0a0f1f",
+    minHeight: "100vh",
+    fontFamily: "Inter, sans-serif",
+  },
+
+  heading: {
+    fontSize: "32px",
+    marginBottom: "20px",
+    textShadow: "0 0 10px #00eaff",
+  },
+
+  studio: {
+    display: "flex",
+    gap: "30px",
+  },
+
+  leftPanel: {
+    flex: 1,
+    background: "#11182f",
+    padding: "20px",
+    borderRadius: "12px",
+    boxShadow: "0 0 15px rgba(0, 238, 255, 0.2)",
+  },
+
+  rightPanel: {
+    flex: 1,
+    background: "#11182f",
+    padding: "20px",
+    borderRadius: "12px",
+    boxShadow: "0 0 15px rgba(255, 0, 255, 0.2)",
+  },
+
+  panelTitle: {
+    fontSize: "20px",
+    marginBottom: "10px",
+    textShadow: "0 0 8px #00eaff",
+  },
+
+  textarea: {
+    width: "100%",
+    height: "200px",
+    background: "#0d1326",
+    color: "white",
+    border: "1px solid #00eaff",
+    borderRadius: "8px",
+    padding: "12px",
+    fontSize: "14px",
+    resize: "vertical",
+    boxShadow: "0 0 10px rgba(0, 238, 255, 0.2)",
+  },
+
+  generateButton: {
+    marginTop: "20px",
+    padding: "12px 20px",
+    background: "rgba(0, 238, 255, 0.15)",
+    border: "1px solid #00eaff",
+    borderRadius: "8px",
+    color: "#00eaff",
+    cursor: "pointer",
+    fontSize: "16px",
+    textShadow: "0 0 8px #00eaff",
+    boxShadow: "0 0 12px rgba(0, 238, 255, 0.4)",
+  },
+
+  outputBox: {
+    background: "#0d1326",
+    padding: "15px",
+    borderRadius: "8px",
+    border: "1px solid rgba(255, 0, 255, 0.3)",
+    boxShadow: "0 0 12px rgba(255, 0, 255, 0.2)",
+    whiteSpace: "pre-wrap",
+    fontSize: "14px",
+  },
+};
