@@ -13,7 +13,7 @@ export default function ProjectDetails() {
   const { id } = useParams();
   const [project, setProject] = React.useState(null);
   const [description, setDescription] = React.useState("");
-  const [structure, setStructure] = React.useState(null);
+  const [blueprint, setBlueprint] = React.useState(null);
   const [loading, setLoading] = React.useState(false);
 
   // Load project on mount
@@ -28,35 +28,90 @@ export default function ProjectDetails() {
       if (data) {
         setProject(data);
         setDescription(data.description || "");
-        setStructure(data.structure || null);
+        setBlueprint(data.blueprint || null);
       }
     }
     load();
   }, [id]);
 
-  // Save description + generate structure
-  async function generateStructure() {
+  // ---------------------- BLUEPRINT GENERATOR ----------------------
+  function generateBlueprintFromDescription(text) {
+    // Basic NLP-ish parsing (deterministic)
+    const lower = text.toLowerCase();
+
+    const pages = [];
+    const dataModels = [];
+
+    // Detect common pages
+    if (lower.includes("login") || lower.includes("auth")) {
+      pages.push({
+        name: "Login",
+        components: ["Logo", "LoginForm", "Footer"],
+      });
+    }
+
+    if (lower.includes("dashboard")) {
+      pages.push({
+        name: "Dashboard",
+        components: ["Header", "StatsGrid", "QuickActions"],
+      });
+    }
+
+    if (lower.includes("profile") || lower.includes("user")) {
+      pages.push({
+        name: "Profile",
+        components: ["Header", "UserCard", "EditProfileForm"],
+      });
+
+      dataModels.push({
+        name: "User",
+        fields: ["name", "email", "avatar", "created_at"],
+      });
+    }
+
+    if (lower.includes("tasks") || lower.includes("todo")) {
+      pages.push({
+        name: "Tasks",
+        components: ["Header", "TaskList", "AddTaskButton"],
+      });
+
+      dataModels.push({
+        name: "Task",
+        fields: ["title", "completed", "created_at"],
+      });
+    }
+
+    // Default fallback if no keywords detected
+    if (pages.length === 0) {
+      pages.push({
+        name: "Home",
+        components: ["Header", "Hero", "Footer"],
+      });
+    }
+
+    return {
+      appName: project?.name || "Generated App",
+      pages,
+      dataModels,
+      generatedAt: new Date().toISOString(),
+    };
+  }
+
+  // ---------------------- GENERATE + SAVE ----------------------
+  async function generateBlueprint() {
     setLoading(true);
 
-    // Placeholder generator — will be replaced with real engine
-    const generated = {
-      pages: [
-        { name: "Home", components: ["Header", "Hero", "Footer"] },
-        { name: "About", components: ["Header", "TextBlock", "Footer"] },
-      ],
-      notes: "This is placeholder structure. Real generator coming next.",
-    };
+    const generated = generateBlueprintFromDescription(description);
 
-    // Save to Supabase
     await supabase
       .from("projects")
       .update({
         description,
-        structure: generated,
+        blueprint: generated,
       })
       .eq("id", id);
 
-    setStructure(generated);
+    setBlueprint(generated);
     setLoading(false);
   }
 
@@ -80,23 +135,23 @@ export default function ProjectDetails() {
           />
 
           <button
-            onClick={generateStructure}
+            onClick={generateBlueprint}
             disabled={loading}
             style={styles.generateButton}
           >
-            {loading ? "Generating..." : "Generate App Structure"}
+            {loading ? "Generating..." : "Generate App Blueprint"}
           </button>
         </div>
 
-        {/* RIGHT PANEL — STRUCTURE OUTPUT */}
+        {/* RIGHT PANEL — BLUEPRINT OUTPUT */}
         <div style={styles.rightPanel}>
-          <h2 style={styles.panelTitle}>Generated Structure</h2>
+          <h2 style={styles.panelTitle}>Generated Blueprint</h2>
 
-          {!structure ? (
-            <p style={{ opacity: 0.7 }}>No structure generated yet.</p>
+          {!blueprint ? (
+            <p style={{ opacity: 0.7 }}>No blueprint generated yet.</p>
           ) : (
             <pre style={styles.outputBox}>
-              {JSON.stringify(structure, null, 2)}
+              {JSON.stringify(blueprint, null, 2)}
             </pre>
           )}
         </div>
