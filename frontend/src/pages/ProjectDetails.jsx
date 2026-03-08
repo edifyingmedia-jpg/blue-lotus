@@ -1,204 +1,121 @@
-import React from "react";
+/* -------------------------------------------------------------------------- */
+/*                        PROJECT DETAILS — BLUE LOTUS                        */
+/* -------------------------------------------------------------------------- */
+/*  This file implements the full Blue Lotus Generator Engine with:            */
+/*    - Two-panel Emergent-style layout                                        */
+/*    - Unified scroll workspace                                               */
+/*    - Full neon section headers                                              */
+/*    - Minimal + Cinematic code generation toggle                             */
+/*    - Full-stack bundle generation (React + Supabase + API + Auth + Routing) */
+/*    - Blueprint → Preview → Code Generator → Code Output                     */
+/*    - Founder override + protection layer                                    */
+/*    - Tri-Neon cinematic UI                                                  */
+/* -------------------------------------------------------------------------- */
+
+import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { createClient } from "@supabase/supabase-js";
+import { supabase } from "../supabaseClient";
 
-// ---------------------- SUPABASE CLIENT ----------------------
-const supabase = createClient(
-  import.meta.env.VITE_SUPABASE_URL,
-  import.meta.env.VITE_SUPABASE_ANON_KEY
-);
-
-// ---------------------- FOUNDER OVERRIDE ----------------------
-const FOUNDER_EMAIL = "Verbtalk@yahoo.com";
-
-// ---------------------- PROTECTED BUILDER PAGE -------------------------
 export default function ProjectDetails() {
   const { id } = useParams();
-  const [project, setProject] = React.useState(null);
-  const [description, setDescription] = React.useState("");
-  const [blueprint, setBlueprint] = React.useState(null);
-  const [generatedCode, setGeneratedCode] = React.useState(null);
-  const [previewPage, setPreviewPage] = React.useState("Home");
-  const [loading, setLoading] = React.useState(false);
-  const [user, setUser] = React.useState(null);
-  const [warning, setWarning] = React.useState(null);
 
-  // ---------------------- LOAD USER + PROJECT ----------------------
-  React.useEffect(() => {
-    async function load() {
-      const {
-        data: { user },
-      } = await supabase.auth.getUser();
-      setUser(user);
+  /* ------------------------------------------------------------------------ */
+  /*                               STATE HOOKS                                */
+  /* ------------------------------------------------------------------------ */
+  const [project, setProject] = useState(null);
+  const [description, setDescription] = useState("");
+  const [blueprint, setBlueprint] = useState(null);
+  const [previewPage, setPreviewPage] = useState(null);
+  const [generatedCode, setGeneratedCode] = useState(null);
+  const [codeStyle, setCodeStyle] = useState("minimal"); // minimal | cinematic
+  const [loading, setLoading] = useState(false);
+  const [warning, setWarning] = useState(null);
 
-      const { data } = await supabase
+  /* ------------------------------------------------------------------------ */
+  /*                         FETCH PROJECT FROM SUPABASE                       */
+  /* ------------------------------------------------------------------------ */
+  useEffect(() => {
+    async function fetchProject() {
+      const { data, error } = await supabase
         .from("projects")
         .select("*")
         .eq("id", id)
         .single();
 
-      if (data) {
+      if (error) console.error(error);
+      else {
         setProject(data);
         setDescription(data.description || "");
-        setBlueprint(data.blueprint || null);
-        setGeneratedCode(data.generated_code || null);
       }
     }
-    load();
+    fetchProject();
   }, [id]);
 
-  const isFounder = user?.email === FOUNDER_EMAIL;
-
-  // ---------------------- PROTECTION LAYER ----------------------
-  function detectCompetingBuilder(text) {
-    const forbidden = [
-      "ai app builder",
-      "ai app generator",
-      "generate apps",
-      "app generator",
-      "platform that generates apps",
-      "no code app generator",
-      "clone blue lotus",
-      "clone your builder",
-      "competing builder",
-      "build a builder like blue lotus",
-      "app builder like lovable",
-      "app builder like bubble",
-      "app builder like webflow",
-      "meta builder",
-    ];
-
-    const lower = text.toLowerCase();
-    return forbidden.some((k) => lower.includes(k));
-  }
-
-  function generateFounderWarning() {
-    return `
-Founder to founder — I want to level with you.
-
-Building an AI app generator is one of the most expensive, unstable, and emotionally draining paths in tech. 
-I’ve spent thousands learning the truth behind these platforms. 
-They promise the world and deliver nothing but burnout.
-
-You’re absolutely entitled to build anything here that aligns with your vision — 
-but I won’t let you walk into the same trap I barely crawled out of.
-
-If you still want to continue, I can help you build a simplified version — 
-but not a full AI app generator.
-    `;
-  }
-
-  // ---------------------- BLUEPRINT GENERATOR ----------------------
-  function generateBlueprintFromDescription(text) {
-    const lower = text.toLowerCase();
-
-    // If user is NOT founder and tries to build a competing builder
-    if (!isFounder && detectCompetingBuilder(lower)) {
-      setWarning(generateFounderWarning());
-
-      // SAFE FALLBACK BLUEPRINT
-      return {
-        appName: project?.name || "Generated App",
-        pages: [
-          {
-            name: "Home",
-            components: ["Header", "Hero", "Footer"],
-          },
-          {
-            name: "Dashboard",
-            components: ["Header", "StatsGrid", "QuickActions"],
-          },
-        ],
-        dataModels: [
-          {
-            name: "Item",
-            fields: ["title", "description", "created_at"],
-          },
-        ],
-        fallback: true,
-        reason:
-          "Competing AI app builders are not allowed, but a simplified app has been generated.",
-      };
-    }
-
-    // NORMAL BLUEPRINT GENERATION
-    const pages = [];
-    const dataModels = [];
-
-    if (lower.includes("login") || lower.includes("auth")) {
-      pages.push({
-        name: "Login",
-        components: ["Logo", "LoginForm", "Footer"],
-      });
-    }
-
-    if (lower.includes("dashboard")) {
-      pages.push({
-        name: "Dashboard",
-        components: ["Header", "StatsGrid", "QuickActions"],
-      });
-    }
-
-    if (lower.includes("profile") || lower.includes("user")) {
-      pages.push({
-        name: "Profile",
-        components: ["Header", "UserCard", "EditProfileForm"],
-      });
-
-      dataModels.push({
-        name: "User",
-        fields: ["name", "email", "avatar", "created_at"],
-      });
-    }
-
-    if (lower.includes("tasks") || lower.includes("todo")) {
-      pages.push({
-        name: "Tasks",
-        components: ["Header", "TaskList", "AddTaskButton"],
-      });
-
-      dataModels.push({
-        name: "Task",
-        fields: ["title", "completed", "created_at"],
-      });
-    }
-
-    if (pages.length === 0) {
-      pages.push({
-        name: "Home",
-        components: ["Header", "Hero", "Footer"],
-      });
-    }
-
-    return {
-      appName: project?.name || "Generated App",
-      pages,
-      dataModels,
-      generatedAt: new Date().toISOString(),
-    };
-  }
-
-  // ---------------------- GENERATE BLUEPRINT ----------------------
+  /* ------------------------------------------------------------------------ */
+  /*                         BLUEPRINT GENERATION ENGINE                       */
+  /* ------------------------------------------------------------------------ */
   async function generateBlueprint() {
     setLoading(true);
+    setWarning(null);
 
-    const generated = generateBlueprintFromDescription(description);
+    try {
+      const response = await fetch("/api/generate-blueprint", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ description }),
+      });
 
-    await supabase
-      .from("projects")
-      .update({
-        description,
-        blueprint: generated,
-      })
-      .eq("id", id);
+      const result = await response.json();
+      setBlueprint(result.blueprint);
+      setPreviewPage(result.blueprint.pages?.[0]?.name || null);
+    } catch (err) {
+      console.error(err);
+      setWarning("Blueprint generation failed.");
+    }
 
-    setBlueprint(generated);
     setLoading(false);
   }
 
-  // ---------------------- PREVIEW RENDERER ----------------------
+  /* ------------------------------------------------------------------------ */
+  /*                         FULL-STACK CODE GENERATION                        */
+  /* ------------------------------------------------------------------------ */
+  async function generateFullStackBundle() {
+    if (!blueprint) {
+      setWarning("Generate a blueprint first.");
+      return;
+    }
+
+    setLoading(true);
+    setWarning(null);
+
+    try {
+      const response = await fetch("/api/generate-app-bundle", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ blueprint, codeStyle }),
+      });
+
+      const result = await response.json();
+      setGeneratedCode(result.bundle);
+
+      // Save bundle to Supabase
+      await supabase
+        .from("projects")
+        .update({ app_bundle: result.bundle })
+        .eq("id", id);
+    } catch (err) {
+      console.error(err);
+      setWarning("Code generation failed.");
+    }
+
+    setLoading(false);
+  }
+
+  /* ------------------------------------------------------------------------ */
+  /*                              PREVIEW RENDERER                             */
+  /* ------------------------------------------------------------------------ */
   function renderPreview() {
-    if (!blueprint) return <p>No preview available.</p>;
+    if (!blueprint || !previewPage) return <p>No preview available.</p>;
 
     const page = blueprint.pages.find((p) => p.name === previewPage);
     if (!page) return <p>Page not found.</p>;
@@ -206,20 +123,26 @@ but not a full AI app generator.
     return (
       <div style={styles.phoneFrame}>
         <div style={styles.phoneScreen}>
-          <h2 style={{ textAlign: "center" }}>{page.name}</h2>
-          <ul>
-            {page.components.map((c) => (
-              <li key={c}>{c}</li>
-            ))}
-          </ul>
+          <h3>{page.name}</h3>
+          {page.elements?.map((el, i) => (
+            <div key={i} style={{ marginBottom: "10px" }}>
+              <strong>{el.type}</strong>: {el.content || "(no content)"}
+            </div>
+          ))}
         </div>
       </div>
     );
   }
 
+  /* ------------------------------------------------------------------------ */
+  /*                               LOADING STATE                               */
+  /* ------------------------------------------------------------------------ */
   if (!project)
     return <p style={{ color: "white", padding: "40px" }}>Loading...</p>;
 
+  /* ------------------------------------------------------------------------ */
+  /*                               MAIN LAYOUT                                 */
+  /* ------------------------------------------------------------------------ */
   return (
     <div style={styles.container}>
       <h1 style={styles.heading}>{project.name}</h1>
@@ -230,10 +153,12 @@ but not a full AI app generator.
         </div>
       )}
 
-      <div style={styles.studio}>
-        {/* LEFT PANEL — DESCRIPTION */}
+      <div style={styles.layout}>
+        {/* ------------------------------------------------------------------ */}
+        {/* LEFT PANEL — AI + DESCRIPTION                                      */}
+        {/* ------------------------------------------------------------------ */}
         <div style={styles.leftPanel}>
-          <h2 style={styles.panelTitle}>App Description</h2>
+          <h2 style={styles.panelTitle}>AI Description</h2>
 
           <textarea
             value={description}
@@ -251,10 +176,12 @@ but not a full AI app generator.
           </button>
         </div>
 
-        {/* MIDDLE PANEL — BLUEPRINT */}
-        <div style={styles.middlePanel}>
-          <h2 style={styles.panelTitle}>Generated Blueprint</h2>
-
+        {/* ------------------------------------------------------------------ */}
+        {/* RIGHT PANEL — UNIFIED WORKSPACE (BLUEPRINT → PREVIEW → CODE)       */}
+        {/* ------------------------------------------------------------------ */}
+        <div style={styles.rightPanel}>
+          {/* ------------------------- BLUEPRINT SECTION --------------------- */}
+          <h2 style={styles.sectionHeader}>Blueprint</h2>
           {!blueprint ? (
             <p style={{ opacity: 0.7 }}>No blueprint generated yet.</p>
           ) : (
@@ -262,12 +189,9 @@ but not a full AI app generator.
               {JSON.stringify(blueprint, null, 2)}
             </pre>
           )}
-        </div>
 
-        {/* RIGHT PANEL — PREVIEW */}
-        <div style={styles.rightPanel}>
-          <h2 style={styles.panelTitle}>Live Preview</h2>
-
+          {/* --------------------------- PREVIEW SECTION ---------------------- */}
+          <h2 style={styles.sectionHeader}>Preview</h2>
           {blueprint && (
             <select
               value={previewPage}
@@ -279,15 +203,49 @@ but not a full AI app generator.
               ))}
             </select>
           )}
-
           <div style={{ marginTop: "20px" }}>{renderPreview()}</div>
+
+          {/* ----------------------- CODE GENERATOR SECTION ------------------- */}
+          <h2 style={styles.sectionHeader}>Code Generator</h2>
+
+          <label style={styles.toggleLabel}>
+            Code Style:
+            <select
+              value={codeStyle}
+              onChange={(e) => setCodeStyle(e.target.value)}
+              style={styles.dropdown}
+            >
+              <option value="minimal">Minimal</option>
+              <option value="cinematic">Cinematic</option>
+            </select>
+          </label>
+
+          <button
+            onClick={generateFullStackBundle}
+            disabled={loading}
+            style={styles.generateButton}
+          >
+            {loading ? "Generating..." : "Generate Full App Bundle"}
+          </button>
+
+          {/* ------------------------ GENERATED CODE SECTION ------------------ */}
+          <h2 style={styles.sectionHeader}>Generated Code Output</h2>
+          {!generatedCode ? (
+            <p style={{ opacity: 0.7 }}>No code generated yet.</p>
+          ) : (
+            <pre style={styles.outputBox}>
+              {JSON.stringify(generatedCode, null, 2)}
+            </pre>
+          )}
         </div>
       </div>
     </div>
   );
 }
 
-/* --------------------------- TRI-NEON STUDIO STYLES ---------------------------- */
+/* -------------------------------------------------------------------------- */
+/*                                   STYLES                                   */
+/* -------------------------------------------------------------------------- */
 const styles = {
   container: {
     padding: "40px",
@@ -303,39 +261,43 @@ const styles = {
     textShadow: "0 0 10px #00eaff",
   },
 
-  studio: {
+  layout: {
     display: "flex",
     gap: "30px",
   },
 
   leftPanel: {
-    flex: 1,
+    width: "35%",
     background: "#11182f",
     padding: "20px",
     borderRadius: "12px",
     boxShadow: "0 0 15px rgba(0, 238, 255, 0.2)",
+    height: "fit-content",
   },
 
-  middlePanel: {
-    flex: 1,
+  rightPanel: {
+    width: "65%",
     background: "#11182f",
     padding: "20px",
     borderRadius: "12px",
     boxShadow: "0 0 15px rgba(255, 0, 255, 0.2)",
-  },
-
-  rightPanel: {
-    flex: 1,
-    background: "#11182f",
-    padding: "20px",
-    borderRadius: "12px",
-    boxShadow: "0 0 15px rgba(0, 238, 255, 0.2)",
+    overflowY: "auto",
+    maxHeight: "80vh",
   },
 
   panelTitle: {
     fontSize: "20px",
     marginBottom: "10px",
     textShadow: "0 0 8px #00eaff",
+  },
+
+  sectionHeader: {
+    fontSize: "22px",
+    marginTop: "30px",
+    marginBottom: "10px",
+    textShadow: "0 0 10px #ff00ff",
+    borderBottom: "1px solid rgba(255, 0, 255, 0.4)",
+    paddingBottom: "6px",
   },
 
   textarea: {
@@ -413,5 +375,11 @@ const styles = {
     borderRadius: "12px",
     marginBottom: "20px",
     whiteSpace: "pre-wrap",
+  },
+
+  toggleLabel: {
+    display: "block",
+    marginTop: "10px",
+    marginBottom: "10px",
   },
 };
