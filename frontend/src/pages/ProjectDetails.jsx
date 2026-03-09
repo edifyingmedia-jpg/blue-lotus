@@ -41,6 +41,42 @@ function NeonLoader({ mode }) {
   );
 }
 
+/* -------------------------------------------------------------------------- */
+/* STATUS BADGE COMPONENT                                                     */
+/* -------------------------------------------------------------------------- */
+function StatusBadge({ label, status, color }) {
+  const glow = color === "cyan" ? "#00eaff" : "#ff00ff";
+
+  const text =
+    status === "ready"
+      ? "Ready"
+      : status === "generating"
+      ? "Generating…"
+      : "Not Ready";
+
+  return (
+    <div
+      style={{
+        padding: "6px 10px",
+        borderRadius: "6px",
+        border: `1px solid ${glow}`,
+        color: glow,
+        fontSize: "12px",
+        marginBottom: "10px",
+        width: "fit-content",
+        textShadow: `0 0 8px ${glow}`,
+        opacity: status === "not_ready" ? 0.5 : 1,
+        animation:
+          status === "generating"
+            ? "pulse 1.4s ease-in-out infinite"
+            : "none",
+      }}
+    >
+      {label}: {text}
+    </div>
+  );
+}
+
 export default function ProjectDetails() {
   const { id } = useParams();
 
@@ -52,6 +88,21 @@ export default function ProjectDetails() {
   const [blueprint, setBlueprint] = useState(null);
   const [bundle, setBundle] = useState(null);
   const [loading, setLoading] = useState(false);
+
+  /* ---------------------------------------------------------------------- */
+  /* STATUS LOGIC                                                           */
+  /* ---------------------------------------------------------------------- */
+  const blueprintStatus = loading && !blueprint
+    ? "generating"
+    : blueprint
+    ? "ready"
+    : "not_ready";
+
+  const bundleStatus = loading && blueprint && !bundle
+    ? "generating"
+    : bundle
+    ? "ready"
+    : "not_ready";
 
   /* ---------------------------------------------------------------------- */
   /* LOAD PROJECT                                                           */
@@ -179,6 +230,10 @@ export default function ProjectDetails() {
         >
           {project.name}
         </h2>
+
+        {/* STATUS INDICATORS */}
+        <StatusBadge label="Blueprint" status={blueprintStatus} color="cyan" />
+        <StatusBadge label="Bundle" status={bundleStatus} color="magenta" />
 
         {/* DESCRIPTION INPUT */}
         <textarea
