@@ -1,5 +1,5 @@
 /* -------------------------------------------------------------------------- */
-/* PROJECT DETAILS — BLUE LOTUS (CINEMATIC TWO-PANEL BUILDER STUDIO)          */
+/* PROJECT DETAILS — BLUE LOTUS (CINEMATIC BUILDER STUDIO + PREVIEW MODE)     */
 /* -------------------------------------------------------------------------- */
 
 import React, { useEffect, useState } from "react";
@@ -15,7 +15,7 @@ const supabase = createClient(
 );
 
 /* -------------------------------------------------------------------------- */
-/* NEON LOADER COMPONENT                                                      */
+/* NEON LOADER                                                                */
 /* -------------------------------------------------------------------------- */
 function NeonLoader({ mode }) {
   const color = mode === "blueprint" ? "#00eaff" : "#ff00ff";
@@ -42,7 +42,7 @@ function NeonLoader({ mode }) {
 }
 
 /* -------------------------------------------------------------------------- */
-/* STATUS BADGE COMPONENT                                                     */
+/* STATUS BADGE                                                               */
 /* -------------------------------------------------------------------------- */
 function StatusBadge({ label, status, color }) {
   const glow = color === "cyan" ? "#00eaff" : "#ff00ff";
@@ -77,21 +77,113 @@ function StatusBadge({ label, status, color }) {
   );
 }
 
+/* -------------------------------------------------------------------------- */
+/* UNIVERSAL SCREEN EXTRACTOR                                                 */
+/* -------------------------------------------------------------------------- */
+function extractScreens(bundle) {
+  if (!bundle) return [];
+
+  // Case 1: bundle.screens = { Home: {...}, Login: {...} }
+  if (bundle.screens && typeof bundle.screens === "object") {
+    return Object.keys(bundle.screens).map((name) => ({
+      name,
+      data: bundle.screens[name],
+    }));
+  }
+
+  // Case 2: bundle.pages = [ { name, components }, ... ]
+  if (Array.isArray(bundle.pages)) {
+    return bundle.pages.map((p) => ({
+      name: p.name || "Untitled",
+      data: p,
+    }));
+  }
+
+  // Case 3: bundle.app.screens
+  if (bundle.app?.screens) {
+    return Object.keys(bundle.app.screens).map((name) => ({
+      name,
+      data: bundle.app.screens[name],
+    }));
+  }
+
+  // Case 4: bundle.routes (fallback)
+  if (Array.isArray(bundle.routes)) {
+    return bundle.routes.map((r, i) => ({
+      name: r.name || `Route ${i + 1}`,
+      data: r,
+    }));
+  }
+
+  // Fallback: treat entire bundle as one screen
+  return [
+    {
+      name: "Preview",
+      data: bundle,
+    },
+  ];
+}
+
+/* -------------------------------------------------------------------------- */
+/* SIMPLE VISUAL PREVIEW RENDERER                                             */
+/* -------------------------------------------------------------------------- */
+function ScreenPreview({ screen }) {
+  if (!screen) {
+    return (
+      <div style={{ opacity: 0.6 }}>Select a screen to preview.</div>
+    );
+  }
+
+  return (
+    <div
+      style={{
+        padding: "20px",
+        border: "1px solid rgba(255,255,255,0.1)",
+        borderRadius: "8px",
+        background: "rgba(255,255,255,0.03)",
+      }}
+    >
+      <h3
+        style={{
+          color: "#00eaff",
+          marginBottom: "10px",
+          textShadow: "0 0 8px rgba(0,238,255,0.7)",
+        }}
+      >
+        {screen.name}
+      </h3>
+
+      <pre
+        style={{
+          whiteSpace: "pre-wrap",
+          fontSize: "13px",
+          opacity: 0.9,
+        }}
+      >
+        {JSON.stringify(screen.data, null, 2)}
+      </pre>
+    </div>
+  );
+}
+
+/* -------------------------------------------------------------------------- */
+/* MAIN COMPONENT                                                             */
+/* -------------------------------------------------------------------------- */
 export default function ProjectDetails() {
   const { id } = useParams();
 
-  /* ---------------------------------------------------------------------- */
-  /* STATE                                                                  */
-  /* ---------------------------------------------------------------------- */
+  /* STATE */
   const [project, setProject] = useState(null);
   const [description, setDescription] = useState("");
   const [blueprint, setBlueprint] = useState(null);
   const [bundle, setBundle] = useState(null);
   const [loading, setLoading] = useState(false);
 
-  /* ---------------------------------------------------------------------- */
-  /* STATUS LOGIC                                                           */
-  /* ---------------------------------------------------------------------- */
+  /* TABS */
+  const [activeTab, setActiveTab] = useState("preview");
+  const [activeScreen, setActiveScreen] = useState(null);
+
+  /* STATUS LOGIC */
   const blueprintStatus = loading && !blueprint
     ? "generating"
     : blueprint
@@ -104,18 +196,16 @@ export default function ProjectDetails() {
     ? "ready"
     : "not_ready";
 
-  /* ---------------------------------------------------------------------- */
-  /* LOAD PROJECT                                                           */
-  /* ---------------------------------------------------------------------- */
+  /* LOAD PROJECT */
   useEffect(() => {
     async function loadProject() {
-      const { data, error } = await supabase
+      const { data } = await supabase
         .from("projects")
         .select("*")
         .eq("id", id)
         .single();
 
-      if (!error && data) {
+      if (data) {
         setProject(data);
         setDescription(data.description || "");
         setBlueprint(data.blueprint || null);
@@ -125,9 +215,7 @@ export default function ProjectDetails() {
     loadProject();
   }, [id]);
 
-  /* ---------------------------------------------------------------------- */
-  /* GENERATE BLUEPRINT                                                     */
-  /* ---------------------------------------------------------------------- */
+  /* GENERATE BLUEPRINT */
   async function generateBlueprint() {
     setLoading(true);
 
@@ -150,9 +238,7 @@ export default function ProjectDetails() {
     }
   }
 
-  /* ---------------------------------------------------------------------- */
-  /* GENERATE APP BUNDLE                                                    */
-  /* ---------------------------------------------------------------------- */
+  /* GENERATE BUNDLE */
   async function generateBundle() {
     if (!blueprint) return;
 
@@ -185,8 +271,11 @@ export default function ProjectDetails() {
     );
   }
 
+  /* EXTRACT SCREENS FOR PREVIEW */
+  const screens = extractScreens(bundle);
+
   /* ---------------------------------------------------------------------- */
-  /* UI — CINEMATIC TWO-PANEL LAYOUT                                        */
+  /* UI                                                                     */
   /* ---------------------------------------------------------------------- */
   return (
     <div
@@ -197,7 +286,7 @@ export default function ProjectDetails() {
         color: "white",
       }}
     >
-      {/* GLOBAL ANIMATION STYLE */}
+      {/* GLOBAL ANIMATION */}
       <style>
         {`
           @keyframes pulse {
@@ -208,9 +297,7 @@ export default function ProjectDetails() {
         `}
       </style>
 
-      {/* ------------------------------------------------------------------ */}
-      {/* LEFT PANEL — AI ACTIONS                                           */}
-      {/* ------------------------------------------------------------------ */}
+      {/* LEFT PANEL */}
       <div
         style={{
           width: "320px",
@@ -231,11 +318,11 @@ export default function ProjectDetails() {
           {project.name}
         </h2>
 
-        {/* STATUS INDICATORS */}
+        {/* STATUS */}
         <StatusBadge label="Blueprint" status={blueprintStatus} color="cyan" />
         <StatusBadge label="Bundle" status={bundleStatus} color="magenta" />
 
-        {/* DESCRIPTION INPUT */}
+        {/* DESCRIPTION */}
         <textarea
           value={description}
           onChange={(e) => setDescription(e.target.value)}
@@ -252,7 +339,7 @@ export default function ProjectDetails() {
           }}
         />
 
-        {/* GENERATE BLUEPRINT */}
+        {/* BUTTONS */}
         <button
           onClick={generateBlueprint}
           disabled={loading}
@@ -266,13 +353,11 @@ export default function ProjectDetails() {
             borderRadius: "6px",
             cursor: "pointer",
             textShadow: "0 0 8px rgba(0,238,255,0.7)",
-            transition: "0.2s",
           }}
         >
           Generate Blueprint
         </button>
 
-        {/* GENERATE BUNDLE */}
         <button
           onClick={generateBundle}
           disabled={loading || !blueprint}
@@ -284,23 +369,19 @@ export default function ProjectDetails() {
             color: "#ff00ff",
             borderRadius: "6px",
             cursor: blueprint ? "pointer" : "not-allowed",
-            textShadow: "0 0 8px rgba(255,0,255,0.7)",
-            transition: "0.2s",
             opacity: blueprint ? 1 : 0.4,
+            textShadow: "0 0 8px rgba(255,0,255,0.7)",
           }}
         >
           Generate App Bundle
         </button>
 
-        {/* NEON LOADER */}
         {loading && (
           <NeonLoader mode={blueprint ? "bundle" : "blueprint"} />
         )}
       </div>
 
-      {/* ------------------------------------------------------------------ */}
-      {/* RIGHT PANEL — MASSIVE WORKSPACE                                   */}
-      {/* ------------------------------------------------------------------ */}
+      {/* RIGHT PANEL */}
       <div
         style={{
           flex: 1,
@@ -308,78 +389,100 @@ export default function ProjectDetails() {
           overflowY: "scroll",
         }}
       >
-        <h2
+        {/* TABS */}
+        <div
           style={{
-            fontSize: "26px",
+            display: "flex",
+            gap: "30px",
             marginBottom: "20px",
-            color: "#ff00ff",
-            textShadow: "0 0 12px rgba(255,0,255,0.7)",
+            borderBottom: "1px solid rgba(255,255,255,0.1)",
+            paddingBottom: "10px",
           }}
         >
-          Workspace
-        </h2>
+          {["preview", "blueprint", "bundle"].map((tab) => (
+            <div
+              key={tab}
+              onClick={() => setActiveTab(tab)}
+              style={{
+                cursor: "pointer",
+                paddingBottom: "6px",
+                borderBottom:
+                  activeTab === tab
+                    ? "2px solid #ff00ff"
+                    : "2px solid transparent",
+                color: activeTab === tab ? "#ff00ff" : "white",
+                textShadow:
+                  activeTab === tab
+                    ? "0 0 8px rgba(255,0,255,0.7)"
+                    : "none",
+                transition: "0.2s",
+              }}
+            >
+              {tab.toUpperCase()}
+            </div>
+          ))}
+        </div>
 
-        {/* BLUEPRINT VIEW */}
-        {blueprint && (
-          <div
-            style={{
-              marginBottom: "40px",
-              padding: "20px",
-              background: "rgba(255,255,255,0.05)",
-              border: "1px solid rgba(0,238,255,0.3)",
-              borderRadius: "8px",
-            }}
-          >
-            <h3
-              style={{
-                color: "#00eaff",
-                marginBottom: "10px",
-                textShadow: "0 0 8px rgba(0,238,255,0.7)",
-              }}
-            >
-              Blueprint
-            </h3>
-            <pre
-              style={{
-                whiteSpace: "pre-wrap",
-                fontSize: "13px",
-                opacity: 0.9,
-              }}
-            >
-              {JSON.stringify(blueprint, null, 2)}
-            </pre>
+        {/* TAB CONTENT */}
+        {activeTab === "preview" && (
+          <div>
+            {/* SCREEN LIST */}
+            <div style={{ marginBottom: "20px" }}>
+              {screens.map((s) => (
+                <div
+                  key={s.name}
+                  onClick={() => setActiveScreen(s)}
+                  style={{
+                    padding: "8px 12px",
+                    marginBottom: "6px",
+                    borderRadius: "6px",
+                    border:
+                      activeScreen?.name === s.name
+                        ? "1px solid #ff00ff"
+                        : "1px solid rgba(255,255,255,0.1)",
+                    cursor: "pointer",
+                    color:
+                      activeScreen?.name === s.name
+                        ? "#ff00ff"
+                        : "white",
+                    textShadow:
+                      activeScreen?.name === s.name
+                        ? "0 0 8px rgba(255,0,255,0.7)"
+                        : "none",
+                  }}
+                >
+                  {s.name}
+                </div>
+              ))}
+            </div>
+
+            {/* SCREEN PREVIEW */}
+            <ScreenPreview screen={activeScreen} />
           </div>
         )}
 
-        {/* BUNDLE VIEW */}
-        {bundle && (
-          <div
+        {activeTab === "blueprint" && (
+          <pre
             style={{
-              padding: "20px",
-              background: "rgba(255,255,255,0.05)",
-              border: "1px solid rgba(255,0,255,0.3)",
-              borderRadius: "8px",
+              whiteSpace: "pre-wrap",
+              fontSize: "13px",
+              opacity: 0.9,
             }}
           >
-            <h3
-              style={{
-                color: "#ff00ff",
-                marginBottom: "10px",
-                textShadow: "0 0 8px rgba(255,0,255,0.7)",
-              }}
-            >
-              App Bundle
-            </h3>
-            <pre
-              style={{
-                whiteSpace: "pre-wrap",
-                fontSize: "13px",
-                opacity: 0.9,
-              }}
-            >
-              {JSON.stringify(bundle, null, 2)}
-            </pre>
-          </div>
+            {JSON.stringify(blueprint, null, 2)}
+          </pre>
+        )}
+
+        {activeTab === "bundle" && (
+          <pre
+            style={{
+              whiteSpace: "pre-wrap",
+              fontSize: "13px",
+              opacity: 0.9,
+            }}
+          >
+            {JSON.stringify(bundle, null, 2)}
+          </pre>
         )}
       </div>
     </div>
