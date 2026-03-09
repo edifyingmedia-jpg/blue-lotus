@@ -14,6 +14,33 @@ const supabase = createClient(
   import.meta.env.VITE_SUPABASE_ANON_KEY
 );
 
+/* -------------------------------------------------------------------------- */
+/* NEON LOADER COMPONENT                                                      */
+/* -------------------------------------------------------------------------- */
+function NeonLoader({ mode }) {
+  const color = mode === "blueprint" ? "#00eaff" : "#ff00ff";
+
+  return (
+    <div
+      style={{
+        marginTop: "20px",
+        padding: "14px 18px",
+        borderRadius: "8px",
+        border: `1px solid ${color}`,
+        color,
+        textShadow: `0 0 10px ${color}`,
+        boxShadow: `0 0 18px ${color}55`,
+        animation: "pulse 1.4s ease-in-out infinite",
+        width: "fit-content",
+      }}
+    >
+      {mode === "blueprint"
+        ? "Generating Blueprint…"
+        : "Generating App Bundle…"}
+    </div>
+  );
+}
+
 export default function ProjectDetails() {
   const { id } = useParams();
 
@@ -65,7 +92,6 @@ export default function ProjectDetails() {
     if (json.blueprint) {
       setBlueprint(json.blueprint);
 
-      // Save to Supabase
       await supabase
         .from("projects")
         .update({ blueprint: json.blueprint })
@@ -120,6 +146,17 @@ export default function ProjectDetails() {
         color: "white",
       }}
     >
+      {/* GLOBAL ANIMATION STYLE */}
+      <style>
+        {`
+          @keyframes pulse {
+            0% { opacity: 0.4; transform: scale(0.98); }
+            50% { opacity: 1; transform: scale(1); }
+            100% { opacity: 0.4; transform: scale(0.98); }
+          }
+        `}
+      </style>
+
       {/* ------------------------------------------------------------------ */}
       {/* LEFT PANEL — AI ACTIONS                                           */}
       {/* ------------------------------------------------------------------ */}
@@ -200,10 +237,9 @@ export default function ProjectDetails() {
           Generate App Bundle
         </button>
 
+        {/* NEON LOADER */}
         {loading && (
-          <p style={{ marginTop: "20px", opacity: 0.7 }}>
-            Working…
-          </p>
+          <NeonLoader mode={blueprint ? "bundle" : "blueprint"} />
         )}
       </div>
 
