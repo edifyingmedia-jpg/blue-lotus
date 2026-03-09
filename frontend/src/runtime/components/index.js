@@ -1,15 +1,12 @@
 // frontend/src/runtime/components/index.js
 
-// This is the minimal component registry.
-// As you add real components, you will register them here.
+import Text from "./UI/Text";
 
 const ComponentRegistry = {
-  // Example:
-  // Button: (props) => <button {...props}>{props.label}</button>,
+  Text,
 
   templates: {
-    // Example:
-    // LoginScreen: LoginScreenTemplate,
+    // templates will go here later
   },
 };
 
