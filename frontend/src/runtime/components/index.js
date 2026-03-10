@@ -11,6 +11,7 @@ import Container from "./UI/Container";
 import Column from "./UI/Column";
 import Row from "./Row";
 import Spacer from "./Spacer";
+import TextBlock from "./TextBlock";
 
 const ComponentRegistry = {
   // Text component
@@ -24,6 +25,7 @@ const ComponentRegistry = {
  Column,
  Row,
  Spacer,
+ TextBlock,
 
   // Button variants
   PrimaryButton: Buttons.PrimaryButton,
