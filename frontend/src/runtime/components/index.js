@@ -7,6 +7,7 @@ import Input from "./UI/Input";
 const ComponentRegistry = {
   // Text component
   Text,
+ Input,
 
   // Button variants
   PrimaryButton: Buttons.PrimaryButton,
