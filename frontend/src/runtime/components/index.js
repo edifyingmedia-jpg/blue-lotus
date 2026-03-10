@@ -9,6 +9,7 @@ import Heading from "./UI/Heading";
 import Divider from "./UI/Divider";
 import Container from "./UI/Container";
 import Column from "./UI/Column";
+import Row from "./Row";
 
 const ComponentRegistry = {
   // Text component
@@ -20,6 +21,7 @@ const ComponentRegistry = {
  Divider,
  Container,
  Column,
+ Row,
 
   // Button variants
   PrimaryButton: Buttons.PrimaryButton,
