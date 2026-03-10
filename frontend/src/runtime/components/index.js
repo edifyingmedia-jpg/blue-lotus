@@ -30,6 +30,7 @@ import Accordion from "./Accordion";
 import Tabs from "./Tabs";
 import Stepper from "./Stepper";
 import Toggle from "./Toggle";
+import SearchBar from "./SearchBar";
 
 const ComponentRegistry = {
   // Text component
@@ -62,6 +63,7 @@ const ComponentRegistry = {
  Tabs,
  Stepper,
  Toggle,
+ SearchBar,
 
   // Button variants
   PrimaryButton: Buttons.PrimaryButton,
