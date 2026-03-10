@@ -35,6 +35,7 @@ import Breadcrumbs from "./Breadcrumbs";
 import SegmentedControl from "./SegmentedControl";
 import Chip from "./Chip";
 import Slider from "./Slider";
+import Menu from "./Menu";
 
 const ComponentRegistry = {
   // Text component
@@ -72,6 +73,7 @@ const ComponentRegistry = {
  SegmentedControl,
  Chip,
  Slider,
+ Menu,
 
   // Button variants
   PrimaryButton: Buttons.PrimaryButton,
