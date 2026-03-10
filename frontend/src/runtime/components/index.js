@@ -39,6 +39,7 @@ import Menu from "./Menu";
 import Tooltip from "./Tooltip";
 import Popover from "./Popover";
 import ProgressBar from "./ProgressBar";
+import SegmentedControl from "./SegmentedControl";
 
 const ComponentRegistry = {
   // Text component
@@ -80,6 +81,7 @@ const ComponentRegistry = {
  Tooltip,
  Popover,
  ProgressBar,
+ SegmentedControl,
 
   // Button variants
   PrimaryButton: Buttons.PrimaryButton,
