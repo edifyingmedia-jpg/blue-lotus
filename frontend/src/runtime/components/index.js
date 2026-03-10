@@ -12,6 +12,7 @@ import Column from "./UI/Column";
 import Row from "./Row";
 import Spacer from "./Spacer";
 import TextBlock from "./TextBlock";
+import CardSection from "./CardSection";
 
 const ComponentRegistry = {
   // Text component
@@ -26,7 +27,8 @@ const ComponentRegistry = {
  Row,
  Spacer,
  TextBlock,
-
+ CardSection,
+ 
   // Button variants
   PrimaryButton: Buttons.PrimaryButton,
   SecondaryButton: Buttons.SecondaryButton,
