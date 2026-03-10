@@ -37,6 +37,7 @@ import Chip from "./Chip";
 import Slider from "./Slider";
 import Menu from "./Menu";
 import Tooltip from "./Tooltip";
+import Popover from "./Popover";
 
 const ComponentRegistry = {
   // Text component
@@ -76,6 +77,7 @@ const ComponentRegistry = {
  Slider,
  Menu,
  Tooltip,
+ Popover,
 
   // Button variants
   PrimaryButton: Buttons.PrimaryButton,
