@@ -38,6 +38,7 @@ import Slider from "./Slider";
 import Menu from "./Menu";
 import Tooltip from "./Tooltip";
 import Popover from "./Popover";
+import ProgressBar from "./ProgressBar";
 
 const ComponentRegistry = {
   // Text component
@@ -78,6 +79,7 @@ const ComponentRegistry = {
  Menu,
  Tooltip,
  Popover,
+ ProgressBar,
 
   // Button variants
   PrimaryButton: Buttons.PrimaryButton,
