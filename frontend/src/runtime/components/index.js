@@ -29,6 +29,7 @@ import ListItem from "./ListItem";
 import Accordion from "./Accordion";
 import Tabs from "./Tabs";
 import Stepper from "./Stepper";
+import Toggle from "./Toggle";
 
 const ComponentRegistry = {
   // Text component
@@ -60,6 +61,7 @@ const ComponentRegistry = {
  Accordion,
  Tabs,
  Stepper,
+ Toggle,
 
   // Button variants
   PrimaryButton: Buttons.PrimaryButton,
