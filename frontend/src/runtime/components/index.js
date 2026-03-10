@@ -33,6 +33,7 @@ import Toggle from "./Toggle";
 import SearchBar from "./SearchBar";
 import Breadcrumbs from "./Breadcrumbs";
 import SegmentedControl from "./SegmentedControl";
+import Chip from "./Chip";
 
 const ComponentRegistry = {
   // Text component
@@ -68,6 +69,7 @@ const ComponentRegistry = {
  SearchBar,
  Breadcrumbs,
  SegmentedControl,
+ Chip,
 
   // Button variants
   PrimaryButton: Buttons.PrimaryButton,
