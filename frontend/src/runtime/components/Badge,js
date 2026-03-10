@@ -1,0 +1,32 @@
+import React from "react";
+
+const Badge = ({
+  text = "",
+  color = "cyan",
+  background = "rgba(0, 0, 0, 0.4)",
+  radius = 12,
+  padding = "4px 8px",
+  style = {},
+  ...props
+}) => {
+  const baseStyle = {
+    display: "inline-block",
+    padding: padding,
+    borderRadius: radius,
+    border: `1px solid ${color}`,
+    color: color,
+    background: background,
+    fontSize: 12,
+    fontWeight: "bold",
+    width: "fit-content",
+    ...style,
+  };
+
+  return (
+    <span style={baseStyle} {...props}>
+      {text}
+    </span>
+  );
+};
+
+export default Badge;
