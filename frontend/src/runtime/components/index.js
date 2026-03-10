@@ -14,6 +14,7 @@ import Spacer from "./Spacer";
 import TextBlock from "./TextBlock";
 import CardSection from "./CardSection";
 import Grid from "./Grid";
+import Overlay from "./Overlay";
 
 const ComponentRegistry = {
   // Text component
@@ -30,6 +31,7 @@ const ComponentRegistry = {
  TextBlock,
  CardSection,
  Grid,
+ Overlay,
 
   // Button variants
   PrimaryButton: Buttons.PrimaryButton,
