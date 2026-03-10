@@ -19,6 +19,7 @@ import NeonFrame from "./NeonFrame";
 import Avatar from "./Avatar";
 import Badge from "./Badge";
 import CardMedia from "./CardMedia";
+import CardActions from "./CardActions";
 
 const ComponentRegistry = {
   // Text component
@@ -40,6 +41,7 @@ const ComponentRegistry = {
  Avatar,
  Badge,
  CardMedia,
+ CardActions,
 
   // Button variants
   PrimaryButton: Buttons.PrimaryButton,
