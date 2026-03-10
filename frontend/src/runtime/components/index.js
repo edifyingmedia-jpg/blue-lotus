@@ -32,6 +32,7 @@ import Stepper from "./Stepper";
 import Toggle from "./Toggle";
 import SearchBar from "./SearchBar";
 import Breadcrumbs from "./Breadcrumbs";
+import SegmentedControl from "./SegmentedControl";
 
 const ComponentRegistry = {
   // Text component
@@ -66,6 +67,7 @@ const ComponentRegistry = {
  Toggle,
  SearchBar,
  Breadcrumbs,
+ SegmentedControl,
 
   // Button variants
   PrimaryButton: Buttons.PrimaryButton,
