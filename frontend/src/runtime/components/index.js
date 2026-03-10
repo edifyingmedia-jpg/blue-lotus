@@ -20,6 +20,7 @@ import Avatar from "./Avatar";
 import Badge from "./Badge";
 import CardMedia from "./CardMedia";
 import CardActions from "./CardActions";
+import Modal from "./Modal";
 
 const ComponentRegistry = {
   // Text component
@@ -42,6 +43,7 @@ const ComponentRegistry = {
  Badge,
  CardMedia,
  CardActions,
+ Modal,
 
   // Button variants
   PrimaryButton: Buttons.PrimaryButton,
