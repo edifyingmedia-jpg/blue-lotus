@@ -23,6 +23,7 @@ import CardActions from "./CardActions";
 import Modal from "./Modal";
 import OverlayPanel from "./OverlayPanel";
 import ProgressBar from "./ProgressBar";
+import Icon from "./Icon";
 
 const ComponentRegistry = {
   // Text component
@@ -48,6 +49,7 @@ const ComponentRegistry = {
  Modal,
  OverlayPanel,
  ProgressBar,
+ Icon,
 
   // Button variants
   PrimaryButton: Buttons.PrimaryButton,
