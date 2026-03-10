@@ -7,8 +7,9 @@ import Card from "./UI/Card";
 
 const ComponentRegistry = {
   // Text component
-  Text,
+ Text,
  Input,
+ Card,
 
   // Button variants
   PrimaryButton: Buttons.PrimaryButton,
