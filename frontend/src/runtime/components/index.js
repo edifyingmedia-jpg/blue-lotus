@@ -42,6 +42,7 @@ import ProgressBar from "./ProgressBar";
 import SegmentedControl from "./SegmentedControl";
 import Select from "./Select";
 import Spinner from "./Spinner";
+import Switch from "./Switch";
 
 const ComponentRegistry = {
   // Text component
@@ -86,6 +87,7 @@ const ComponentRegistry = {
  SegmentedControl,
  Select,
  Spinner,
+ Switch,
 
   // Button variants
   PrimaryButton: Buttons.PrimaryButton,
