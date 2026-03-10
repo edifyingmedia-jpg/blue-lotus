@@ -2,6 +2,7 @@
 
 import Text from "./UI/Text";
 import Buttons from "./UI/Buttons";
+import Input from "./UI/Input";
 
 const ComponentRegistry = {
   // Text component
