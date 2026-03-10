@@ -27,6 +27,7 @@ import Icon from "./Icon";
 import TagList from "./TagList";
 import ListItem from "./ListItem";
 import Accordion from "./Accordion";
+import Tabs from "./Tabs";
 
 const ComponentRegistry = {
   // Text component
@@ -56,6 +57,7 @@ const ComponentRegistry = {
  TagList,
  ListItem,
  Accordion,
+ Tabs,
 
   // Button variants
   PrimaryButton: Buttons.PrimaryButton,
