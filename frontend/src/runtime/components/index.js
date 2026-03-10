@@ -28,6 +28,7 @@ import TagList from "./TagList";
 import ListItem from "./ListItem";
 import Accordion from "./Accordion";
 import Tabs from "./Tabs";
+import Stepper from "./Stepper";
 
 const ComponentRegistry = {
   // Text component
@@ -58,6 +59,7 @@ const ComponentRegistry = {
  ListItem,
  Accordion,
  Tabs,
+ Stepper,
 
   // Button variants
   PrimaryButton: Buttons.PrimaryButton,
