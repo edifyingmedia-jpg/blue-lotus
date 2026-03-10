@@ -25,6 +25,7 @@ import OverlayPanel from "./OverlayPanel";
 import ProgressBar from "./ProgressBar";
 import Icon from "./Icon";
 import TagList from "./TagList";
+import ListItem from "./ListItem";
 
 const ComponentRegistry = {
   // Text component
@@ -52,6 +53,7 @@ const ComponentRegistry = {
  ProgressBar,
  Icon,
  TagList,
+ ListItem,
 
   // Button variants
   PrimaryButton: Buttons.PrimaryButton,
