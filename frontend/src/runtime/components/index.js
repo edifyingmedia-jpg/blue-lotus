@@ -8,6 +8,7 @@ import Image from "./UI/Image";
 import Heading from "./UI/Heading";
 import Divider from "./UI/Divider";
 import Container from "./UI/Container";
+import Column from "./UI/Column";
 
 const ComponentRegistry = {
   // Text component
@@ -18,6 +19,7 @@ const ComponentRegistry = {
  Heading,
  Divider,
  Container,
+ Column,
 
   // Button variants
   PrimaryButton: Buttons.PrimaryButton,
