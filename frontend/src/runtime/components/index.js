@@ -15,6 +15,7 @@ import TextBlock from "./TextBlock";
 import CardSection from "./CardSection";
 import Grid from "./Grid";
 import Overlay from "./Overlay";
+import NeonFrame from "./NeonFrame";
 
 const ComponentRegistry = {
   // Text component
@@ -32,6 +33,7 @@ const ComponentRegistry = {
  CardSection,
  Grid,
  Overlay,
+ NeonFrame,
 
   // Button variants
   PrimaryButton: Buttons.PrimaryButton,
