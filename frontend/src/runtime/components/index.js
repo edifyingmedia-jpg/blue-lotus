@@ -7,6 +7,7 @@ import Card from "./UI/Card";
 import Image from "./UI/Image";
 import Heading from "./UI/Heading";
 import Divider from "./UI/Divider";
+import Container from "./UI/Container";
 
 const ComponentRegistry = {
   // Text component
@@ -16,6 +17,7 @@ const ComponentRegistry = {
  Image,
  Heading,
  Divider,
+ Container,
 
   // Button variants
   PrimaryButton: Buttons.PrimaryButton,
