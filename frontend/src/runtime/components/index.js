@@ -44,6 +44,7 @@ import Select from "./Select";
 import Spinner from "./Spinner";
 import Switch from "./Switch";
 import Tag from "./Tag";
+import Text from "./Text";
 
 const ComponentRegistry = {
   // Text component
@@ -90,6 +91,7 @@ const ComponentRegistry = {
  Spinner,
  Switch,
  Tag,
+ Text,
 
   // Button variants
   PrimaryButton: Buttons.PrimaryButton,
