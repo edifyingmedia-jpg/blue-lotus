@@ -1,0 +1,50 @@
+import React from "react";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+
+import ScreenRoute from "./pages/ScreenRoute";
+import ScreenPage from "./pages/ScreenPage";
+
+/**
+ * AppRouter
+ * ---------
+ * Central routing layer for the Blue Lotus runtime.
+ *
+ * Handles:
+ *  - Static routes (Home, About, etc.) if you add them later
+ *  - Dynamic screen routes: /screen/:name
+ *  - Fallback route for unknown paths
+ */
+
+export default function AppRouter() {
+  return (
+    <Router>
+      <Routes>
+
+        {/* Dynamic screen renderer */}
+        <Route path="/screen/:name" element={<ScreenRoute />} />
+
+        {/* Optional: default route */}
+        <Route
+          path="/"
+          element={
+            <div style={{ padding: 20 }}>
+              <h2>Blue Lotus Runtime</h2>
+              <p>Select a screen to begin.</p>
+            </div>
+          }
+        />
+
+        {/* 404 fallback */}
+        <Route
+          path="*"
+          element={
+            <div style={{ padding: 20, color: "red" }}>
+              <strong>404 — Page Not Found</strong>
+            </div>
+          }
+        />
+
+      </Routes>
+    </Router>
+  );
+}
