@@ -43,6 +43,7 @@ import SegmentedControl from "./SegmentedControl";
 import Select from "./Select";
 import Spinner from "./Spinner";
 import Switch from "./Switch";
+import Tag from "./Tag";
 
 const ComponentRegistry = {
   // Text component
@@ -88,6 +89,7 @@ const ComponentRegistry = {
  Select,
  Spinner,
  Switch,
+ Tag,
 
   // Button variants
   PrimaryButton: Buttons.PrimaryButton,
