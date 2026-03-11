@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 
 import ScreenRoute from "./pages/ScreenRoute";
 import ScreenPage from "./pages/ScreenPage";
+import ProtectedRoute from './pages/ProtectedRoute';
 
 /**
  * AppRouter
@@ -22,6 +23,7 @@ export default function AppRouter() {
 
         {/* Dynamic screen renderer */}
         <Route path="/screen/:name" element={<ScreenRoute />} />
+      <Route path='/screen/dashboard' element={<ProtectedRoute><div>Dashboard</div></ProtectedRoute>} />
 
         {/* Optional: default route */}
         <Route
