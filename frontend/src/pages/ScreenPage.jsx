@@ -1,30 +1,31 @@
 import React from "react";
 import RenderScreen from "../runtime/RenderScreen";
+import Layout from "../runtime/Layout";
 
 /**
  * ScreenPage
  * ----------
  * A universal wrapper that renders any screen JSON using the runtime engine.
- *
- * Usage:
- * <ScreenPage screen={myScreenJson} />
- *
- * This allows your router or builder to dynamically load screens
- * without needing separate React components for each page.
+ * Now wrapped in the global Layout component for consistent styling.
  */
 
 export default function ScreenPage({ screen }) {
   if (!screen) {
     return (
-      <div style={{ padding: 20, color: "red" }}>
-        <strong>No screen data provided.</strong>
-      </div>
+      <Layout>
+        <div style={{ padding: 20, color: "red" }}>
+          <strong>No screen data provided.</strong>
+        </div>
+      </Layout>
     );
   }
 
   return (
-    <div style={{ width: "100%", height: "100%" }}>
+    <Layout
+      showNav={screen.layout?.showNav ?? true}
+      navProps={screen.layout?.navProps ?? {}}
+    >
       <RenderScreen screen={screen} />
-    </div>
+    </Layout>
   );
 }
