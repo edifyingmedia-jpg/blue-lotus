@@ -1,5 +1,5 @@
 // frontend/src/pages/api/twin.js
-// Temporary backend route for TWIN — replace with real model later
+import { GoogleGenerativeAI } from "@google/generative-ai";
 
 export default async function handler(req, res) {
   if (req.method !== "POST") {
@@ -12,10 +12,18 @@ export default async function handler(req, res) {
     return res.status(400).json({ error: "Message is required." });
   }
 
-  // Placeholder response — replace with real AI call later
-  const fakeResponse = `TWIN received: "${message}"\n\nThis is a placeholder response until your model is connected.`;
+  try {
+    const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
+    const model = genAI.getGenerativeModel({ model: "gemini-1.5-pro" });
 
-  return res.status(200).json({
-    output: fakeResponse,
-  });
+    const result = await model.generateContent(message);
+    const text = result.response.text();
+
+    return res.status(200).json({ output: text });
+  } catch (error) {
+    console.error("TWIN Gemini error:", error);
+    return res.status(500).json({
+      error: "TWIN could not process your request.",
+    });
+  }
 }
