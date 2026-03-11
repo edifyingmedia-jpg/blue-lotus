@@ -1,112 +1,128 @@
-// frontend/src/runtime/components/index.js
+/* frontend/src/runtime/components/index.js */
 
-import Text from "./UI/Text";
-import Buttons from "./UI/Buttons";
-import Input from "./UI/Input";
-import Card from "./UI/Card";
-import Image from "./UI/Image";
-import Heading from "./UI/Heading";
-import Divider from "./UI/Divider";
-import Container from "./UI/Container";
-import Column from "./UI/Column";
-import Row from "./Row";
-import Spacer from "./Spacer";
-import TextBlock from "./TextBlock";
-import CardSection from "./CardSection";
-import Grid from "./Grid";
-import Overlay from "./Overlay";
-import NeonFrame from "./NeonFrame";
+/* ----------------------------- Imports ----------------------------- */
+
+import Accordion from "./Accordion";
 import Avatar from "./Avatar";
 import Badge from "./Badge";
-import CardMedia from "./CardMedia";
-import CardActions from "./CardActions";
-import Modal from "./Modal";
-import OverlayPanel from "./OverlayPanel";
-import ProgressBar from "./ProgressBar";
-import Icon from "./Icon";
-import TagList from "./TagList";
-import ListItem from "./ListItem";
-import Accordion from "./Accordion";
-import Tabs from "./Tabs";
-import Stepper from "./Stepper";
-import Toggle from "./Toggle";
-import SearchBar from "./SearchBar";
 import Breadcrumbs from "./Breadcrumbs";
-import SegmentedControl from "./SegmentedControl";
+import Button from "./Buttons"; // main button export
+import { 
+  PrimaryButton, 
+  SecondaryButton, 
+  GhostButton, 
+  DangerButton 
+} from "./Buttons";
+
+import Card from "./Card";
+import CardActions from "./CardActions";
+import CardMedia from "./CardMedia";
+import CardSection from "./CardSection";
+
 import Chip from "./Chip";
-import Slider from "./Slider";
+import Column from "./Column";
+import Container from "./Container";
+import Divider from "./Divider";
+
+import Grid from "./Grid";
+import Heading from "./Heading";
+import Icon from "./Icon";
+import Image from "./Image";
+import Input from "./Input";
+
+import ListItem from "./ListItem";
 import Menu from "./Menu";
-import Tooltip from "./Tooltip";
+import Modal from "./Modal";
+
+import NeonFrame from "./NeonFrame";
+import Overlay from "./Overlay";
+import OverlayPanel from "./OverlayPanel";
 import Popover from "./Popover";
+
 import ProgressBar from "./ProgressBar";
+import Row from "./Row";
+import SearchBar from "./SearchBar";
 import SegmentedControl from "./SegmentedControl";
 import Select from "./Select";
+import Slider from "./Slider";
+import Spacer from "./Spacer";
 import Spinner from "./Spinner";
+import Stepper from "./Stepper";
 import Switch from "./Switch";
+
+import Tabs from "./Tabs";
 import Tag from "./Tag";
+import TagList from "./TagList";
 import Text from "./Text";
 import TextArea from "./TextArea";
+import TextBlock from "./TextBlock";
 import TextInput from "./TextInput";
+
+import Toggle from "./Toggle";
+import Tooltip from "./Tooltip";
 import View from "./View";
 
+/* ----------------------------- Registry ----------------------------- */
+
 const ComponentRegistry = {
-  // Text component
- Text,
- Input,
- Card,
- Image,
- Heading,
- Divider,
- Container,
- Column,
- Row,
- Spacer,
- TextBlock,
- CardSection,
- Grid,
- Overlay,
- NeonFrame,
- Avatar,
- Badge,
- CardMedia,
- CardActions,
- Modal,
- OverlayPanel,
- ProgressBar,
- Icon,
- TagList,
- ListItem,
- Accordion,
- Tabs,
- Stepper,
- Toggle,
- SearchBar,
- Breadcrumbs,
- SegmentedControl,
- Chip,
- Slider,
- Menu,
- Tooltip,
- Popover,
- ProgressBar,
- SegmentedControl,
- Select,
- Spinner,
- Switch,
- Tag,
- Text,
- TextArea,
- TextInput,
- View,
+  Accordion,
+  Avatar,
+  Badge,
+  Breadcrumbs,
 
-  // Button variants
-  PrimaryButton: Buttons.PrimaryButton,
-  SecondaryButton: Buttons.SecondaryButton,
-  GhostButton: Buttons.GhostButton,
-  DangerButton: Buttons.DangerButton,
+  Button,
+  PrimaryButton,
+  SecondaryButton,
+  GhostButton,
+  DangerButton,
 
-  // Screen templates (empty for now)
-  templates: {},
+  Card,
+  CardActions,
+  CardMedia,
+  CardSection,
+
+  Chip,
+  Column,
+  Container,
+  Divider,
+
+  Grid,
+  Heading,
+  Icon,
+  Image,
+  Input,
+
+  ListItem,
+  Menu,
+  Modal,
+
+  NeonFrame,
+  Overlay,
+  OverlayPanel,
+  Popover,
+
+  ProgressBar,
+  Row,
+  SearchBar,
+  SegmentedControl,
+  Select,
+  Slider,
+  Spacer,
+  Spinner,
+  Stepper,
+  Switch,
+
+  Tabs,
+  Tag,
+  TagList,
+  Text,
+  TextArea,
+  TextBlock,
+  TextInput,
+
+  Toggle,
+  Tooltip,
+  View,
 };
 
 export default ComponentRegistry;
