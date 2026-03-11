@@ -1,71 +1,113 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { signIn } from "../runtime/auth";
 
 export default function Login() {
   const navigate = useNavigate();
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
 
-  const handleLogin = (e) => {
+  async function handleLogin(e) {
     e.preventDefault();
+    setError("");
 
-    // TEMPORARY: Replace with real auth later in rebuild Phase 2
-    if (email && password) {
-      navigate("/dashboard");
+    const { data, error } = await signIn({ email, password });
+
+    if (error) {
+      setError(error.message);
+      return;
     }
-  };
+
+    navigate("/screen/dashboard");
+  }
 
   return (
-    <div className="min-h-screen w-full bg-[#05050a] text-white flex items-center justify-center px-6">
-      <div className="absolute inset-0 bg-gradient-to-br from-cyan-500/10 via-purple-500/10 to-pink-500/10 blur-3xl" />
+    <div style={styles.container}>
+      <h1 style={styles.title}>Login</h1>
 
-      <div className="relative w-full max-w-md bg-[#0a0a12]/60 backdrop-blur-xl p-10 rounded-2xl border border-white/10 shadow-xl">
-        <h1 className="text-3xl font-bold text-center mb-8">Welcome Back</h1>
+      <form onSubmit={handleLogin} style={styles.form}>
+        <input
+          type="email"
+          placeholder="Email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          style={styles.input}
+          required
+        />
 
-        <form onSubmit={handleLogin} className="flex flex-col gap-6">
-          <div>
-            <label className="block text-sm mb-2 text-gray-300">Email</label>
-            <input
-              type="email"
-              className="w-full px-4 py-3 rounded-lg bg-black/40 border border-white/10 focus:border-cyan-400 outline-none"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              placeholder="you@example.com"
-              required
-            />
-          </div>
+        <input
+          type="password"
+          placeholder="Password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          style={styles.input}
+          required
+        />
 
-          <div>
-            <label className="block text-sm mb-2 text-gray-300">Password</label>
-            <input
-              type="password"
-              className="w-full px-4 py-3 rounded-lg bg-black/40 border border-white/10 focus:border-purple-400 outline-none"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              placeholder="••••••••"
-              required
-            />
-          </div>
+        {error && <p style={styles.error}>{error}</p>}
 
-          <button
-            type="submit"
-            className="w-full py-3 rounded-lg bg-cyan-500 hover:bg-cyan-400 text-black font-semibold transition"
-          >
-            Log In
-          </button>
-        </form>
+        <button type="submit" style={styles.button}>
+          Sign In
+        </button>
+      </form>
 
-        <div className="text-center mt-6 text-gray-400">
-          Don’t have an account?{" "}
-          <button
-            onClick={() => navigate("/signup")}
-            className="text-pink-400 hover:text-pink-300 font-medium"
-          >
-            Sign up
-          </button>
-        </div>
-      </div>
+      <p style={styles.linkText}>
+        Don’t have an account?{" "}
+        <span
+          style={styles.link}
+          onClick={() => navigate("/screen/register")}
+        >
+          Register
+        </span>
+      </p>
     </div>
   );
 }
+
+const styles = {
+  container: {
+    maxWidth: "400px",
+    margin: "80px auto",
+    padding: "20px",
+    textAlign: "center",
+  },
+  title: {
+    fontSize: "28px",
+    marginBottom: "20px",
+  },
+  form: {
+    display: "flex",
+    flexDirection: "column",
+    gap: "12px",
+  },
+  input: {
+    padding: "12px",
+    fontSize: "16px",
+    borderRadius: "6px",
+    border: "1px solid #ccc",
+  },
+  button: {
+    padding: "12px",
+    fontSize: "16px",
+    backgroundColor: "#6C5CE7",
+    color: "white",
+    border: "none",
+    borderRadius: "6px",
+    cursor: "pointer",
+  },
+  error: {
+    color: "red",
+    fontSize: "14px",
+  },
+  linkText: {
+    marginTop: "16px",
+    fontSize: "14px",
+  },
+  link: {
+    color: "#6C5CE7",
+    cursor: "pointer",
+    textDecoration: "underline",
+  },
+};
