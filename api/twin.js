@@ -1,4 +1,3 @@
-// frontend/src/pages/api/twin.js
 import { GoogleGenerativeAI } from "@google/generative-ai";
 
 export default async function handler(req, res) {
@@ -16,13 +15,14 @@ export default async function handler(req, res) {
     const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
     const model = genAI.getGenerativeModel({ model: "gemini-1.5-pro" });
 
+    // --- SYSTEM PROMPT + USER MESSAGE ---
     const result = await model.generateContent({
-  contents: [
-    {
-      role: "system",
-      parts: [
+      contents: [
         {
-          text: `
+          role: "system",
+          parts: [
+            {
+              text: `
 You are TWIN — Tiffany’s Work Intelligence Nexus.
 
 Your purpose:
@@ -53,16 +53,16 @@ Your output rules:
 - Never include imports that don’t exist.
 - Never generate broken JSX.
 - Never generate placeholder text like “Lorem ipsum”.
-        `,
+              `,
+            },
+          ],
+        },
+        {
+          role: "user",
+          parts: [{ text: message }],
         },
       ],
-    },
-    {
-      role: "user",
-      parts: [{ text: message }],
-    },
-  ],
-});
+    });
 
     const text = result.response.text();
 
