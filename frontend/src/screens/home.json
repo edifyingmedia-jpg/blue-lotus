@@ -1,0 +1,18 @@
+{
+  "type": "View",
+  "props": {},
+  "children": [
+    {
+      "type": "Heading",
+      "props": {
+        "text": "Welcome"
+      }
+    },
+    {
+      "type": "PrimaryButton",
+      "props": {
+        "text": "Get Started"
+      }
+    }
+  ]
+}
