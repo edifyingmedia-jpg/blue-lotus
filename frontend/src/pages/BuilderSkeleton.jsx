@@ -1,46 +1,79 @@
 import React from 'react';
 
 const BuilderSkeleton = () => {
-  const containerStyle = {
-    display: 'flex',
-    width: '100%',
-    height: '100vh',
-  };
-
-  const sidebarStyle = {
-    width: '20%',
-    borderRight: '1px solid #ccc',
-    padding: '1rem',
-    boxSizing: 'border-box',
-  };
-
-  const canvasStyle = {
-    flexGrow: 1,
-    padding: '1rem',
-    boxSizing: 'border-box',
-    textAlign: 'center',
-  };
-
-  const rightSidebarStyle = {
-    width: '20%',
-    borderLeft: '1px solid #ccc',
-    padding: '1rem',
-    boxSizing: 'border-box',
-  };
-
   return (
-    <div style={containerStyle}>
-      <div style={sidebarStyle}>
+    <div style={{ display: 'flex', height: '100vh' }}>
+      {/* Left sidebar */}
+      <div
+        style={{
+          width: '20%',
+          borderRight: '1px solid #ccc',
+          padding: '1rem',
+          boxSizing: 'border-box',
+          display: 'flex',
+          flexDirection: 'column',
+        }}
+      >
         <h2>Components</h2>
+        <div
+          style={{
+            flex: 1,
+            overflowY: 'auto',
+            border: '1px solid #eee',
+            padding: '0.5rem',
+          }}
+        >
+          {/* Scrollable list container */}
+        </div>
       </div>
-      <div style={canvasStyle}>
+      {/* Center canvas area */}
+      <div
+        style={{
+          flex: 1,
+          padding: '1rem',
+          boxSizing: 'border-box',
+          display: 'flex',
+          flexDirection: 'column',
+        }}
+      >
         <h2>Canvas</h2>
+        <div
+          style={{
+            flex: 1,
+            border: '1px dashed #aaa',
+            marginTop: '0.5rem',
+            padding: '1rem',
+          }}
+        >
+          {/* Canvas preview region */}
+        </div>
       </div>
-      <div style={rightSidebarStyle}>
+      {/* Right sidebar */}
+      <div
+        style={{
+          width: '25%',
+          borderLeft: '1px solid #ccc',
+          padding: '1rem',
+          boxSizing: 'border-box',
+          display: 'flex',
+          flexDirection: 'column',
+        }}
+      >
         <h2>Properties</h2>
+        <div
+          style={{
+            flex: 1,
+            overflowY: 'auto',
+            border: '1px solid #eee',
+            padding: '0.5rem',
+          }}
+        >
+          {/* Scrollable properties panel */}
+        </div>
       </div>
     </div>
   );
 };
 
 export default BuilderSkeleton;
+
