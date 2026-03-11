@@ -1,25 +1,20 @@
-// frontend/src/runtime/navigation.js
+export function navigateTo(navigate, target) {
+  if (!navigate || !target) return;
 
-// Handles navigation events inside the runtime.
-// This is intentionally simple and safe.
-
-export function handleNavigation(target, screens, navigation) {
-  if (!target) return;
-
-  // If the target is a path ("/login", "/home", etc.)
-  if (typeof target === "string" && target.startsWith("/")) {
-    window.location.href = target;
+  if (typeof target === "string") {
+    navigate(`/screen/${target}`);
     return;
   }
 
-  // If the target is a screen ID
-  const screen = screens.find((s) => s.id === target);
-
-  if (screen) {
-    const path = screen.path || `/${screen.id}`;
-    window.location.href = path;
+  if (target?.screen) {
+    navigate(`/screen/${target.screen}`);
     return;
   }
 
-  console.warn("Navigation target not found:", target);
+  console.warn("Invalid navigation target", target);
+}
+
+export function goBack(navigate) {
+  if (!navigate) return;
+  navigate(-1);
 }
