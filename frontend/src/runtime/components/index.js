@@ -47,6 +47,7 @@ import Tag from "./Tag";
 import Text from "./Text";
 import TextArea from "./TextArea";
 import TextInput from "./TextInput";
+import View from "./View";
 
 const ComponentRegistry = {
   // Text component
@@ -96,6 +97,7 @@ const ComponentRegistry = {
  Text,
  TextArea,
  TextInput,
+ View,
 
   // Button variants
   PrimaryButton: Buttons.PrimaryButton,
