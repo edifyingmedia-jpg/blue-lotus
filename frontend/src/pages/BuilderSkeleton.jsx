@@ -1,11 +1,9 @@
-// BuilderSkeleton.jsx
-// Unified Tri-Neon Builder Layout with TWIN placeholder
-// Clean, stable, self-contained
-
-import React from "react";
-import NavBar from "./NavBar";
+// --- TWIN Integration ---
+import { useTWIN } from "../runtime/twin/useTWIN";
 
 const BuilderSkeleton = () => {
+  const { input, setInput, output, loading, sendMessage } = useTWIN();
+
   return (
     <div
       style={{
@@ -18,10 +16,8 @@ const BuilderSkeleton = () => {
         overflow: "hidden",
       }}
     >
-      {/* Top Navigation */}
       <NavBar />
 
-      {/* Main Builder Layout */}
       <div
         style={{
           display: "flex",
@@ -65,7 +61,7 @@ const BuilderSkeleton = () => {
           Canvas Area (Your App Preview Will Render Here)
         </div>
 
-        {/* Right Panel — TWIN Placeholder */}
+        {/* Right Panel — TWIN Assistant */}
         <div
           style={{
             width: "320px",
@@ -81,6 +77,7 @@ const BuilderSkeleton = () => {
         >
           <div style={sectionTitle}>TWIN Assistant</div>
 
+          {/* Output Panel */}
           <div
             style={{
               flex: 1,
@@ -90,13 +87,17 @@ const BuilderSkeleton = () => {
               padding: "12px",
               overflowY: "auto",
               color: "rgba(255,255,255,0.8)",
+              whiteSpace: "pre-wrap",
             }}
           >
-            TWIN output will appear here.
+            {loading ? "TWIN is thinking..." : output || "TWIN output will appear here."}
           </div>
 
+          {/* Textarea */}
           <textarea
             placeholder="Ask TWIN to generate screens, components, flows..."
+            value={input}
+            onChange={(e) => setInput(e.target.value)}
             style={{
               width: "100%",
               height: "80px",
@@ -109,7 +110,10 @@ const BuilderSkeleton = () => {
             }}
           />
 
+          {/* Send Button */}
           <button
+            onClick={sendMessage}
+            disabled={loading}
             style={{
               padding: "10px",
               borderRadius: "8px",
@@ -118,31 +122,15 @@ const BuilderSkeleton = () => {
               border: "none",
               color: "white",
               fontWeight: "600",
-              cursor: "pointer",
+              cursor: loading ? "not-allowed" : "pointer",
+              opacity: loading ? 0.6 : 1,
               boxShadow: "0 0 12px rgba(255,0,150,0.4)",
             }}
           >
-            Send to TWIN
+            {loading ? "Sending..." : "Send to TWIN"}
           </button>
         </div>
       </div>
     </div>
   );
 };
-
-const sectionTitle = {
-  fontSize: "16px",
-  fontWeight: "600",
-  marginBottom: "12px",
-  color: "cyan",
-  textShadow: "0 0 6px rgba(0,255,255,0.5)",
-};
-
-const navItem = {
-  padding: "8px 0",
-  fontSize: "14px",
-  cursor: "pointer",
-  color: "rgba(255,255,255,0.8)",
-};
-
-export default BuilderSkeleton;
