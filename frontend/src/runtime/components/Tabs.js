@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import useActionHandler from "../engine/useActionHandler";
 
 const Tabs = ({
   tabs = [], // [{ label: "Tab 1", content: <div/> }]
@@ -7,9 +8,11 @@ const Tabs = ({
   gap = 16,
   padding = 12,
   style = {},
+  action,
   ...props
 }) => {
   const [active, setActive] = useState(initial);
+  const handleAction = useActionHandler(action);
 
   const containerStyle = {
     width: "100%",
@@ -21,36 +24,43 @@ const Tabs = ({
   const headerStyle = {
     display: "flex",
     flexDirection: "row",
-    gap: gap,
+    gap,
     borderBottom: "1px solid rgba(255, 255, 255, 0.1)",
     paddingBottom: 8,
     marginBottom: 12,
   };
 
   const tabStyle = (isActive) => ({
-    padding: padding,
+    padding,
     cursor: "pointer",
     color: "white",
-    borderBottom: isActive ? `2px solid ${underlineColor}` : "2px solid transparent",
+    borderBottom: isActive
+      ? `2px solid ${underlineColor}`
+      : "2px solid transparent",
     fontWeight: isActive ? "bold" : "normal",
     transition: "all 0.2s ease",
   });
 
+  const handleTabClick = (index) => {
+    setActive(index);
+    handleAction();
+  };
+
   return (
     <div style={containerStyle} {...props}>
       <div style={headerStyle}>
-        {tabs.map((t, i) => (
+        {tabs.map((tab, index) => (
           <div
-            key={i}
-            style={tabStyle(i === active)}
-            onClick={() => setActive(i)}
+            key={index}
+            style={tabStyle(index === active)}
+            onClick={() => handleTabClick(index)}
           >
-            {t.label}
+            {tab.label}
           </div>
         ))}
       </div>
 
-      <div>
+      <div style={{ width: "100%" }}>
         {tabs[active] && tabs[active].content}
       </div>
     </div>
