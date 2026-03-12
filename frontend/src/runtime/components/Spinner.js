@@ -1,4 +1,5 @@
-import React from "react";
+import React, { useEffect } from "react";
+import useActionHandler from "../engine/useActionHandler";
 
 const Spinner = ({
   size = "32px",
@@ -7,7 +8,15 @@ const Spinner = ({
   speed = "0.8s",
   className = "",
   style = {},
+  action,
 }) => {
+  const handleAction = useActionHandler(action);
+
+  // Trigger action when spinner mounts (loading started)
+  useEffect(() => {
+    if (action) handleAction();
+  }, []);
+
   return (
     <div
       className={className}
