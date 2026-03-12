@@ -1,45 +1,25 @@
 import React from "react";
 import { NavigationProvider, useNavigation } from "./engine/NavigationEngine";
-import Screen from "./engine/Screen";
-import ToastContainer from "./components/ToastContainer";
-import ModalHost from "./components/ModalHost";
-import DrawerHost from "./components/DrawerHost";
-import { AppDefinitionProvider, useAppDefinition } from "./engine/AppDefinitionContext";
+import Renderer from "./engine/Renderer";
 
-/**
- * Renders the current screen based on navigation state.
- */
-function RuntimeScreen() {
-  const { currentScreen } = useNavigation();
-  const { screens } = useAppDefinition();
+function ScreenHost({ appDefinition }) {
+  const { current } = useNavigation();
+  const screen = appDefinition.screens[current];
 
-  const screenDef = screens[currentScreen];
-
-  if (!screenDef) {
-    return (
-      <div style={{ padding: 20 }}>
-        <h2>Screen not found</h2>
-        <p>No screen definition for: {currentScreen}</p>
-      </div>
-    );
+  if (!screen) {
+    console.warn(`Screen "${current}" not found in appDefinition`);
+    return null;
   }
 
-  return <Screen screen={screenDef} />;
+  return <Renderer tree={screen} />;
 }
 
-/**
- * Root runtime shell.
- * Wraps the entire app in providers and renders the active screen.
- */
-export default function App() {
+export default function App({ appDefinition }) {
+  const initialScreen = appDefinition?.initial || "Home";
+
   return (
-    <AppDefinitionProvider>
-      <NavigationProvider initialScreen="home">
-        <ToastContainer />
-        <ModalHost />
-        <DrawerHost />
-        <RuntimeScreen />
-      </NavigationProvider>
-    </AppDefinitionProvider>
+    <NavigationProvider initialScreen={initialScreen}>
+      <ScreenHost appDefinition={appDefinition} />
+    </NavigationProvider>
   );
 }
