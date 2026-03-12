@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import useActionHandler from "../engine/useActionHandler";
 
 const Accordion = ({
   title = "",
@@ -7,9 +8,16 @@ const Accordion = ({
   radius = 8,
   style = {},
   children,
+  action,
   ...props
 }) => {
   const [isOpen, setIsOpen] = useState(open);
+  const handleAction = useActionHandler(action);
+
+  const toggle = () => {
+    setIsOpen(!isOpen);
+    handleAction();
+  };
 
   const containerStyle = {
     width: "100%",
@@ -20,7 +28,7 @@ const Accordion = ({
   };
 
   const headerStyle = {
-    padding: padding,
+    padding,
     cursor: "pointer",
     background: "rgba(255, 255, 255, 0.05)",
     fontWeight: "bold",
@@ -28,19 +36,24 @@ const Accordion = ({
   };
 
   const contentStyle = {
-    padding: padding,
-    display: isOpen ? "block" : "none",
+    padding,
     background: "rgba(255, 255, 255, 0.02)",
     color: "white",
+    maxHeight: isOpen ? "500px" : "0px",
+    opacity: isOpen ? 1 : 0,
+    overflow: "hidden",
+    transition: "all 0.25s ease",
   };
 
   return (
     <div style={containerStyle} {...props}>
-      <div style={headerStyle} onClick={() => setIsOpen(!isOpen)}>
+      <div style={headerStyle} onClick={toggle}>
         {title}
       </div>
 
-      <div style={contentStyle}>{children}</div>
+      <div style={contentStyle}>
+        {children}
+      </div>
     </div>
   );
 };
