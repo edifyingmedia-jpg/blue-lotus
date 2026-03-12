@@ -44,10 +44,11 @@ export default function Input({
     width: "100%",
     padding,
     borderRadius: radius,
+    border: `1px solid ${neonColor}`,
     background,
-    color,
-    border: `1px solid ${theme.colors.primary}`,
+    color: neonColor,
     outline: "none",
+    fontSize: 16,
     transition: "all 0.18s ease-out",
     ...glowStyle,
     ...style,
@@ -57,11 +58,11 @@ export default function Input({
     <input
       value={value}
       placeholder={placeholder}
-      style={combinedStyle}
-      onChange={(e) => onChangeAction && handleChange(e.target.value)}
+      onChange={(e) => handleChange?.(e.target.value)}
       onKeyDown={(e) => {
-        if (e.key === "Enter" && action) handleSubmit();
+        if (e.key === "Enter") handleSubmit?.(value);
       }}
+      style={combinedStyle}
       {...props}
     />
   );
