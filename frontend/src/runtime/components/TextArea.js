@@ -1,4 +1,5 @@
 import React from "react";
+import useActionHandler from "../engine/useActionHandler";
 
 const TextArea = ({
   value = "",
@@ -13,11 +14,16 @@ const TextArea = ({
   resize = "vertical",
   className = "",
   style = {},
+  action,
+  ...props
 }) => {
+  const handleAction = useActionHandler(action);
+
   return (
     <textarea
       value={value}
       onChange={(e) => onChange(e.target.value)}
+      onBlur={handleAction}
       placeholder={placeholder}
       rows={rows}
       className={className}
@@ -35,6 +41,7 @@ const TextArea = ({
         fontFamily: "inherit",
         ...style,
       }}
+      {...props}
     />
   );
 };
