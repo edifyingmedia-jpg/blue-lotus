@@ -1,3 +1,5 @@
+// frontend/src/runtime/components/Button.js
+
 import React from "react";
 import useActionHandler from "../engine/useActionHandler";
 import { theme } from "../../theme";
@@ -41,13 +43,16 @@ export default function Button({
     },
     ghost: {
       background: "transparent",
-      color: theme.colors.primary,
-      border: `1px solid ${theme.colors.primary}`,
+      color: theme.colors.white,
+      border: `1px solid ${theme.colors.white}`,
     },
     neon: {
       background: theme.colors.black,
-      color: theme.colors.cyan,
-      boxShadow: glow ? `0 0 12px ${theme.colors.cyan}` : "none",
+      color: theme.colors.neonPink,
+      border: `1px solid ${theme.colors.neonPink}`,
+      boxShadow: glow
+        ? `0 0 12px ${theme.colors.neonPink}, 0 0 24px ${theme.colors.neonCyan}`
+        : "none",
     },
   };
 
@@ -59,15 +64,15 @@ export default function Button({
   };
 
   const combinedStyle = {
-    display: "flex",
+    display: "inline-flex",
     alignItems: "center",
     justifyContent: "center",
     gap: 8,
-    borderRadius: 8,
-    border: "none",
-    cursor: disabled ? "not-allowed" : "pointer",
-    opacity: disabled ? 0.6 : 1,
     width: fullWidth ? "100%" : "auto",
+    borderRadius: 8,
+    opacity: disabled ? 0.5 : 1,
+    cursor: disabled ? "not-allowed" : "pointer",
+    transition: "all 0.2s ease",
     ...variants[variant],
     ...sizes[size],
     ...style,
@@ -76,10 +81,13 @@ export default function Button({
   return (
     <button
       style={combinedStyle}
+      disabled={disabled}
       onClick={() => !disabled && !loading && handleAction()}
       {...props}
     >
-      {loading ? "Loading..." : icon ? <>{icon} {text || children}</> : (text || children)}
+      {loading ? "Loading..." : null}
+      {!loading && icon ? <span>{icon}</span> : null}
+      {!loading ? (text || children) : null}
     </button>
   );
 }
