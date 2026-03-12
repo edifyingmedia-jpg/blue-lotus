@@ -1,4 +1,5 @@
 import React from "react";
+import useActionHandler from "../engine/useActionHandler";
 
 const Switch = ({
   checked = false,
@@ -11,10 +12,22 @@ const Switch = ({
   thumbColor = "#fff",
   className = "",
   style = {},
+  action,
+  ...props
 }) => {
+  const handleAction = useActionHandler(action);
+
+  const toggle = () => {
+    onChange(!checked);
+    handleAction();
+  };
+
   return (
     <div
-      onClick={() => onChange(!checked)}
+      onClick={toggle}
+      role="switch"
+      aria-checked={checked}
+      tabIndex={0}
       className={className}
       style={{
         width,
@@ -26,6 +39,7 @@ const Switch = ({
         transition: "background 0.25s ease",
         ...style,
       }}
+      {...props}
     >
       <div
         style={{
@@ -35,8 +49,9 @@ const Switch = ({
           borderRadius: "50%",
           position: "absolute",
           top: "2px",
-          left: checked ? `calc(${width} - 20px)` : "2px",
+          left: checked ? "22px" : "2px",
           transition: "left 0.25s ease",
+          cursor: "pointer",
         }}
       />
     </div>
