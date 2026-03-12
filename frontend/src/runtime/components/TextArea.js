@@ -7,8 +7,8 @@ import { theme } from "../../theme";
 /**
  * Blue Lotus Tri‑Neon TextArea Component
  * - Cinematic neon glow
+ * - Multi-line input
  * - Supports change + submit actions
- * - Works with your Action Engine
  */
 
 export default function TextArea({
@@ -45,10 +45,11 @@ export default function TextArea({
     width: "100%",
     padding,
     borderRadius: radius,
+    border: `1px solid ${neonColor}`,
     background,
-    color,
-    border: `1px solid ${theme.colors.primary}`,
+    color: neonColor,
     outline: "none",
+    fontSize: 16,
     resize: "vertical",
     transition: "all 0.18s ease-out",
     ...glowStyle,
@@ -60,14 +61,13 @@ export default function TextArea({
       value={value}
       placeholder={placeholder}
       rows={rows}
-      style={combinedStyle}
-      onChange={(e) => onChangeAction && handleChange(e.target.value)}
+      onChange={(e) => handleChange?.(e.target.value)}
       onKeyDown={(e) => {
-        if (e.key === "Enter" && action) {
-          e.preventDefault();
-          handleSubmit();
+        if (e.key === "Enter" && e.metaKey) {
+          handleSubmit?.(value);
         }
       }}
+      style={combinedStyle}
       {...props}
     />
   );
