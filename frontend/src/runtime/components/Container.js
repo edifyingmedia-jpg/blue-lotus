@@ -1,3 +1,5 @@
+// frontend/src/runtime/components/Container.js
+
 import React from "react";
 import useActionHandler from "../engine/useActionHandler";
 
@@ -34,7 +36,7 @@ export default function Container({
   return (
     <div
       style={combinedStyle}
-      onClick={() => action && handleAction()}
+      onClick={action ? handleAction : undefined}
       {...props}
     >
       {children}
