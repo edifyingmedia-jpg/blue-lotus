@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import useActionHandler from "../engine/useActionHandler";
 
 const Slider = ({
   value = 0,
@@ -12,77 +13,60 @@ const Slider = ({
   thumbColor = "white",
   radius = 4,
   style = {},
+  action,
   ...props
 }) => {
   const [internal, setInternal] = useState(value);
+  const handleAction = useActionHandler(action);
 
   const handleChange = (e) => {
     const newValue = Number(e.target.value);
     setInternal(newValue);
     onChange(newValue);
-  };
-
-  const containerStyle = {
-    width: "100%",
-    display: "flex",
-    alignItems: "center",
-    ...style,
-  };
-
-  const trackStyle = {
-    width: "100%",
-    height,
-    borderRadius: radius,
-    background: trackColor,
-    position: "relative",
-  };
-
-  const fillStyle = {
-    position: "absolute",
-    top: 0,
-    left: 0,
-    height,
-    width: `${((internal - min) / (max - min)) * 100}%`,
-    background: fillColor,
-    borderRadius: radius,
-    pointerEvents: "none",
-  };
-
-  const inputStyle = {
-    position: "absolute",
-    width: "100%",
-    height,
-    opacity: 0,
-    cursor: "pointer",
-  };
-
-  const thumbStyle = {
-    position: "absolute",
-    top: -6,
-    left: `calc(${((internal - min) / (max - min)) * 100}% - 8px)`,
-    width: 16,
-    height: 16,
-    borderRadius: "50%",
-    background: thumbColor,
-    pointerEvents: "none",
-    transition: "left 0.1s ease",
+    handleAction();
   };
 
   return (
-    <div style={containerStyle} {...props}>
-      <div style={trackStyle}>
-        <div style={fillStyle} />
-        <div style={thumbStyle} />
-        <input
-          type="range"
-          min={min}
-          max={max}
-          step={step}
-          value={internal}
-          onChange={handleChange}
-          style={inputStyle}
-        />
-      </div>
+    <div style={{ width: "100%", ...style }} {...props}>
+      <input
+        type="range"
+        min={min}
+        max={max}
+        step={step}
+        value={internal}
+        onChange={handleChange}
+        style={{
+          width: "100%",
+          appearance: "none",
+          height,
+          borderRadius: radius,
+          background: trackColor,
+          outline: "none",
+          cursor: "pointer",
+        }}
+      />
+
+      <style>{`
+        input[type="range"]::-webkit-slider-thumb {
+          appearance: none;
+          width: 18px;
+          height: 18px;
+          border-radius: 50%;
+          background: ${thumbColor};
+          cursor: pointer;
+          margin-top: -6px;
+        }
+
+        input[type="range"]::-webkit-slider-runnable-track {
+          height: ${height}px;
+          border-radius: ${radius}px;
+          background: linear-gradient(
+            to right,
+            ${fillColor} ${(internal - min) / (max - min) * 100}%,
+            ${trackColor} ${(internal - min) / (max - min) * 100}%
+          );
+        }
+      `}</style>
     </div>
   );
 };
