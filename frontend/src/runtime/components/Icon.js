@@ -24,8 +24,8 @@ export default function Icon({
 }) {
   const handleAction = useActionHandler(action);
 
-  // Neon glow logic
   const neonColor = color;
+
   const glowStyle = glow
     ? {
         textShadow: `
@@ -37,24 +37,23 @@ export default function Icon({
       }
     : {};
 
-  const combinedStyle = {
-    fontSize: size,
-    color: neonColor,
-    cursor: action ? "pointer" : "default",
-    display: "inline-flex",
-    alignItems: "center",
-    justifyContent: "center",
-    transition: "all 0.18s ease-out",
-    ...glowStyle,
-    ...style,
-  };
-
   return (
-    <i
-      className={`icon-${name}`}
-      style={combinedStyle}
+    <span
       onClick={handleAction}
+      style={{
+        fontSize: size,
+        color: neonColor,
+        cursor: action ? "pointer" : "default",
+        transition: "all 0.25s ease",
+        display: "inline-flex",
+        alignItems: "center",
+        justifyContent: "center",
+        ...glowStyle,
+        ...style,
+      }}
       {...props}
-    />
+    >
+      {name}
+    </span>
   );
 }
