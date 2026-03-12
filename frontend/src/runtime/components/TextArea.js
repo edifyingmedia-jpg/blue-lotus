@@ -36,9 +36,7 @@ const TextArea = ({
         padding,
         resize,
         outline: "none",
-        fontSize: "1rem",
-        lineHeight: "1.4",
-        fontFamily: "inherit",
+        fontSize: "16px",
         ...style,
       }}
       {...props}
