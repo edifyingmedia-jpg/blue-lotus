@@ -1,6 +1,6 @@
 // frontend/src/runtime/components/Button.js
 
-import React from "react";
+import React, { useState } from "react";
 import useActionHandler from "../engine/useActionHandler";
 import { theme } from "../../theme";
 import Icon from "./Icon";
@@ -28,6 +28,7 @@ export default function Button({
   ...props
 }) {
   const handleAction = useActionHandler(action);
+  const [pressed, setPressed] = useState(false);
 
   // Size presets
   const sizeMap = {
@@ -36,47 +37,47 @@ export default function Button({
     large: { padding: "16px 26px", fontSize: 18 },
   };
 
-  const { padding, fontSize } = sizeMap[size] || sizeMap.medium;
-
-  // Neon glow logic
   const neonColor = color;
-  const glowStyle = glow
-    ? {
-        boxShadow: `
-          0 0 ${2 * intensity}px ${neonColor},
-          0 0 ${4 * intensity}px ${neonColor},
-          0 0 ${6 * intensity}px ${neonColor},
-          inset 0 0 ${2 * intensity}px ${neonColor}
-        `,
-      }
-    : {};
 
-  const combinedStyle = {
-    display: "inline-flex",
-    alignItems: "center",
-    justifyContent: "center",
-    gap: 8,
-    padding,
-    borderRadius: radius,
-    background,
-    color: neonColor,
-    border: `1px solid ${theme.colors.primary}`,
-    cursor: action ? "pointer" : "default",
-    transition: "all 0.18s ease-out",
-    fontSize,
-    userSelect: "none",
-    ...glowStyle,
-    ...style,
-  };
+  const glowStyle =
+    glow && !pressed
+      ? {
+          boxShadow: `
+            0 0 ${2 * intensity}px ${neonColor},
+            0 0 ${4 * intensity}px ${neonColor},
+            0 0 ${6 * intensity}px ${neonColor}
+          `,
+        }
+      : {};
 
   return (
     <button
-      style={combinedStyle}
-      onClick={action ? handleAction : undefined}
+      onClick={() => {
+        setPressed(true);
+        setTimeout(() => setPressed(false), 120);
+        handleAction();
+      }}
+      style={{
+        background,
+        color,
+        padding: sizeMap[size].padding,
+        borderRadius: radius,
+        border: "none",
+        fontSize: sizeMap[size].fontSize,
+        cursor: "pointer",
+        display: "inline-flex",
+        alignItems: "center",
+        justifyContent: "center",
+        gap: 8,
+        transform: pressed ? "scale(0.96)" : "scale(1)",
+        transition: "all 0.2s ease",
+        ...glowStyle,
+        ...style,
+      }}
       {...props}
     >
-      {icon && <Icon name={icon} size={fontSize + 2} color={color} glow={glow} />}
-      {label && <Text text={label} size={fontSize} color={color} glow={glow} />}
+      {icon && <Icon name={icon} size={sizeMap[size].fontSize + 2} />}
+      {label && <Text>{label}</Text>}
     </button>
   );
 }
