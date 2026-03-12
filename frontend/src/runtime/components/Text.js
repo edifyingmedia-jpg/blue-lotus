@@ -1,43 +1,42 @@
 import React from "react";
+import useActionHandler from "../engine/useActionHandler";
+import { theme } from "../../theme";
 
-const Text = ({
+/**
+ * Blue Lotus Text Component
+ * - Supports click actions
+ * - Supports size, weight, color
+ * - Works with your Action Engine
+ */
+
+export default function Text({
+  text,
   children,
-  color = "#ffffff",
-  size = "1rem",
-  weight = "400",
-  align = "left",
-  lineHeight = "1.4",
-  maxLines = null,
-  selectable = true,
-  className = "",
+  action = null,
+  size = 16,
+  weight = "normal",
+  color = theme.colors.white,
   style = {},
-}) => {
-  const clampStyles = maxLines != null
-    ? {
-        display: "-webkit-box",
-        WebkitLineClamp: maxLines,
-        WebkitBoxOrient: "vertical",
-        overflow: "hidden",
-      }
-    : {};
+  ...props
+}) {
+  const handleAction = useActionHandler(action);
+
+  const combinedStyle = {
+    fontSize: size,
+    fontWeight: weight,
+    color,
+    cursor: action ? "pointer" : "default",
+    display: "inline-block",
+    ...style,
+  };
 
   return (
     <span
-      className={className}
-      style={{
-        color,
-        fontSize: size,
-        fontWeight: weight,
-        textAlign: align,
-        lineHeight,
-        userSelect: selectable ? "text" : "none",
-        ...clampStyles,
-        ...style,
-      }}
+      style={combinedStyle}
+      onClick={() => action && handleAction()}
+      {...props}
     >
-      {children}
+      {text || children}
     </span>
   );
-};
-
-export default Text;
+}
