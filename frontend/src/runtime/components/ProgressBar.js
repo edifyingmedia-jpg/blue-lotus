@@ -1,4 +1,5 @@
 import React from "react";
+import useActionHandler from "../engine/useActionHandler";
 
 const ProgressBar = ({
   value = 0,
@@ -10,8 +11,16 @@ const ProgressBar = ({
   showLabel = false,
   className = "",
   style = {},
+  action,
 }) => {
+  const handleAction = useActionHandler(action);
+
   const percentage = Math.min(Math.max((value / max) * 100, 0), 100);
+
+  // Trigger action when progress completes
+  if (percentage === 100 && action) {
+    handleAction();
+  }
 
   return (
     <div
@@ -42,8 +51,8 @@ const ProgressBar = ({
             top: "50%",
             left: "50%",
             transform: "translate(-50%, -50%)",
+            color: "white",
             fontSize: "0.75rem",
-            color: "#fff",
             pointerEvents: "none",
           }}
         >
