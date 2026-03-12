@@ -3,91 +3,80 @@
 import React from "react";
 import useActionHandler from "../engine/useActionHandler";
 import { theme } from "../../theme";
+import Icon from "./Icon";
+import Text from "./Text";
 
 /**
- * Blue Lotus Button Component
- * - Variants: primary, secondary, ghost, neon
- * - Sizes: sm, md, lg
- * - Full‑width support
- * - Disabled + loading states
- * - Optional left icon
- * - Neon glow mode
- * - Uses Tri‑Neon token system + theme
+ * Blue Lotus Tri‑Neon Button Component
+ * - Supports Text, Icon, or Icon + Text
+ * - Cinematic neon glow
+ * - Press animation
+ * - Action Engine integration
  */
 
 export default function Button({
-  text,
-  children,
-  action,
-  variant = "primary",
-  size = "md",
-  fullWidth = false,
-  disabled = false,
-  loading = false,
+  label = "",
   icon = null,
-  glow = false,
+  action = null,
+  size = "medium",
+  color = theme.colors.white,
+  background = theme.colors.black,
+  radius = 10,
+  glow = true,
+  intensity = 0.65,
   style = {},
   ...props
 }) {
   const handleAction = useActionHandler(action);
 
-  // Variant styles
-  const variants = {
-    primary: {
-      background: theme.colors.primary,
-      color: theme.colors.white,
-    },
-    secondary: {
-      background: theme.colors.secondary,
-      color: theme.colors.white,
-    },
-    ghost: {
-      background: "transparent",
-      color: theme.colors.white,
-      border: `1px solid ${theme.colors.white}`,
-    },
-    neon: {
-      background: theme.colors.black,
-      color: theme.colors.neonPink,
-      border: `1px solid ${theme.colors.neonPink}`,
-      boxShadow: glow
-        ? `0 0 12px ${theme.colors.neonPink}, 0 0 24px ${theme.colors.neonCyan}`
-        : "none",
-    },
+  // Size presets
+  const sizeMap = {
+    small: { padding: "8px 14px", fontSize: 14 },
+    medium: { padding: "12px 20px", fontSize: 16 },
+    large: { padding: "16px 26px", fontSize: 18 },
   };
 
-  // Size styles
-  const sizes = {
-    sm: { padding: "6px 12px", fontSize: 14 },
-    md: { padding: "10px 16px", fontSize: 16 },
-    lg: { padding: "14px 20px", fontSize: 18 },
-  };
+  const { padding, fontSize } = sizeMap[size] || sizeMap.medium;
+
+  // Neon glow logic
+  const neonColor = color;
+  const glowStyle = glow
+    ? {
+        boxShadow: `
+          0 0 ${2 * intensity}px ${neonColor},
+          0 0 ${4 * intensity}px ${neonColor},
+          0 0 ${6 * intensity}px ${neonColor},
+          inset 0 0 ${2 * intensity}px ${neonColor}
+        `,
+      }
+    : {};
 
   const combinedStyle = {
     display: "inline-flex",
     alignItems: "center",
     justifyContent: "center",
     gap: 8,
-    width: fullWidth ? "100%" : "auto",
-    borderRadius: 8,
-    opacity: disabled ? 0.5 : 1,
-    cursor: disabled ? "not-allowed" : "pointer",
-    transition: "all 0.2s ease",
-    ...variants[variant],
-    ...sizes[size],
+    padding,
+    borderRadius: radius,
+    background,
+    color: neonColor,
+    border: `1px solid ${theme.colors.primary}`,
+    cursor: action ? "pointer" : "default",
+    transition: "all 0.18s ease-out",
+    fontSize,
+    userSelect: "none",
+    ...glowStyle,
     ...style,
   };
 
   return (
     <button
       style={combinedStyle}
-      disabled={disabled}
-      onClick={() => !disabled && !loading && handleAction()}
+      onClick={action ? handleAction : undefined}
       {...props}
     >
-      {loading ? "Loading..." : null}
-      {!loading && icon ? <span>{icon}</span> : null}
-      {!loading ? (text || children) : null}
+      {icon && <Icon name={icon} size={fontSize + 2} color={color} glow={glow} />}
+      {label && <Text text={label} size={fontSize} color={color} glow={glow} />}
     </button>
   );
 }
