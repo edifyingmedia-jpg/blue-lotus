@@ -34,92 +34,52 @@ export default function Button({
     primary: {
       background: theme.colors.primary,
       color: theme.colors.white,
-      border: "none",
     },
     secondary: {
-      background: theme.colors.surface2,
-      color: theme.colors.text,
-      border: `1px solid ${theme.colors.border}`,
+      background: theme.colors.secondary,
+      color: theme.colors.white,
     },
     ghost: {
       background: "transparent",
-      color: theme.colors.text,
-      border: `1px solid ${theme.colors.border}`,
+      color: theme.colors.primary,
+      border: `1px solid ${theme.colors.primary}`,
     },
     neon: {
-      background: theme.colors.neonPink,
-      color: theme.colors.black,
-      border: "none",
-      boxShadow: glow
-        ? `0 0 12px ${theme.colors.neonPink}, 0 0 24px ${theme.colors.neonPink}`
-        : "none",
+      background: theme.colors.black,
+      color: theme.colors.cyan,
+      boxShadow: glow ? `0 0 12px ${theme.colors.cyan}` : "none",
     },
   };
 
   // Size styles
   const sizes = {
-    sm: {
-      padding: "8px 14px",
-      fontSize: theme.fontSizes.sm,
-    },
-    md: {
-      padding: "10px 18px",
-      fontSize: theme.fontSizes.md,
-    },
-    lg: {
-      padding: "14px 22px",
-      fontSize: theme.fontSizes.lg,
-    },
+    sm: { padding: "6px 12px", fontSize: 14 },
+    md: { padding: "10px 16px", fontSize: 16 },
+    lg: { padding: "14px 20px", fontSize: 18 },
   };
 
-  const base = {
-    display: "inline-flex",
+  const combinedStyle = {
+    display: "flex",
     alignItems: "center",
     justifyContent: "center",
-    gap: "8px",
-    borderRadius: theme.radii.md,
-    cursor: disabled || loading ? "not-allowed" : "pointer",
+    gap: 8,
+    borderRadius: 8,
+    border: "none",
+    cursor: disabled ? "not-allowed" : "pointer",
     opacity: disabled ? 0.6 : 1,
     width: fullWidth ? "100%" : "auto",
-    transition: "all 0.18s ease-out",
-    fontFamily: theme.fonts.body,
-    fontWeight: 500,
-    userSelect: "none",
+    ...variants[variant],
+    ...sizes[size],
+    ...style,
   };
-
-  const loadingSpinner = (
-    <span
-      style={{
-        width: "14px",
-        height: "14px",
-        border: `2px solid ${theme.colors.white}`,
-        borderTopColor: "transparent",
-        borderRadius: "50%",
-        display: "inline-block",
-        animation: "spin 0.8s linear infinite",
-      }}
-    />
-  );
 
   return (
     <button
-      onClick={!disabled && !loading ? handleAction : undefined}
-      style={{
-        ...base,
-        ...variants[variant],
-        ...sizes[size],
-        ...style,
-      }}
+      style={combinedStyle}
+      onClick={() => !disabled && !loading && handleAction()}
       {...props}
     >
-      {loading ? (
-        loadingSpinner
-      ) : (
-        <>
-          {icon && <span style={{ display: "flex" }}>{icon}</span>}
-          {text || children}
-        </>
-      )}
+      {loading ? "Loading..." : icon ? <>{icon} {text || children}</> : (text || children)}
     </button>
   );
 }
