@@ -12,15 +12,14 @@ const Text = ({
   className = "",
   style = {},
 }) => {
-  const clampStyles =
-    maxLines != null
-      ? {
-          display: "-webkit-box",
-          WebkitLineClamp: maxLines,
-          WebkitBoxOrient: "vertical",
-          overflow: "hidden",
-        }
-      : {};
+  const clampStyles = maxLines != null
+    ? {
+        display: "-webkit-box",
+        WebkitLineClamp: maxLines,
+        WebkitBoxOrient: "vertical",
+        overflow: "hidden",
+      }
+    : {};
 
   return (
     <span
