@@ -1,25 +1,29 @@
-import React from "react";
-import { NavigationProvider, useNavigation } from "./engine/NavigationEngine";
-import Renderer from "./engine/Renderer";
+// frontend/src/runtime/engine/ActionEngine.js
 
-function ScreenHost({ appDefinition }) {
-  const { current } = useNavigation();
-  const screen = appDefinition.screens[current];
+import { useNavigation } from "./NavigationEngine";
 
-  if (!screen) {
-    console.warn(`Screen "${current}" not found in appDefinition`);
-    return null;
+export function useActionEngine() {
+  const { navigate } = useNavigation();
+
+  function runAction(action) {
+    if (!action || !action.type) {
+      console.warn("Invalid action:", action);
+      return;
+    }
+
+    switch (action.type) {
+      case "navigate":
+        if (action.target) navigate(action.target);
+        break;
+
+      case "log":
+        console.log("LOG ACTION:", action.message);
+        break;
+
+      default:
+        console.warn("Unknown action type:", action.type);
+    }
   }
 
-  return <Renderer tree={screen} />;
-}
-
-export default function App({ appDefinition }) {
-  const initialScreen = appDefinition?.initial || "Home";
-
-  return (
-    <NavigationProvider initialScreen={initialScreen}>
-      <ScreenHost appDefinition={appDefinition} />
-    </NavigationProvider>
-  );
+  return { runAction };
 }
