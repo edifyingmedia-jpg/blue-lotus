@@ -1,3 +1,5 @@
+// frontend/src/runtime/components/Icon.js
+
 import React from "react";
 import useActionHandler from "../engine/useActionHandler";
 import { theme } from "../../theme";
