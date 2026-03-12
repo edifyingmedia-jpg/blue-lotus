@@ -1,47 +1,55 @@
 import React from "react";
 import useActionHandler from "../engine/useActionHandler";
+import { theme } from "../../theme";
 
-const TextArea = ({
+/**
+ * Blue Lotus TextArea Component
+ * - Supports change + submit actions
+ * - Works with your Action Engine
+ */
+
+export default function TextArea({
   value = "",
-  onChange = () => {},
   placeholder = "",
-  color = "#ffffff",
-  background = "rgba(255,255,255,0.08)",
-  border = "1px solid rgba(255,255,255,0.15)",
-  radius = "8px",
-  padding = "10px",
+  action = null,
+  onChangeAction = null,
+  color = theme.colors.white,
+  background = theme.colors.black,
+  radius = 8,
+  padding = 10,
   rows = 4,
-  resize = "vertical",
-  className = "",
   style = {},
-  action,
   ...props
-}) => {
-  const handleAction = useActionHandler(action);
+}) {
+  const handleSubmit = useActionHandler(action);
+  const handleChange = useActionHandler(onChangeAction);
+
+  const combinedStyle = {
+    width: "100%",
+    padding,
+    borderRadius: radius,
+    background,
+    color,
+    border: `1px solid ${theme.colors.primary}`,
+    outline: "none",
+    resize: "vertical",
+    ...style,
+  };
 
   return (
     <textarea
-      value={value}
-      onChange={(e) => onChange(e.target.value)}
-      onBlur={handleAction}
+      style={combinedStyle}
+      defaultValue={value}
       placeholder={placeholder}
       rows={rows}
-      className={className}
-      style={{
-        width: "100%",
-        color,
-        background,
-        border,
-        borderRadius: radius,
-        padding,
-        resize,
-        outline: "none",
-        fontSize: "16px",
-        ...style,
+      onChange={(e) => onChangeAction && handleChange(e.target.value)}
+      onKeyDown={(e) => {
+        if (e.key === "Enter" && action) {
+          e.preventDefault();
+          handleSubmit();
+        }
       }}
       {...props}
     />
   );
-};
-
-export default TextArea;
+}
