@@ -1,26 +1,18 @@
-import { useActions } from "./ActionEngine";
+import { useCallback } from "react";
+import { useActionEngine } from "./ActionEngine";
+
+/**
+ * Hook: useActionHandler
+ * - Wraps the Action Engine
+ * - Normalizes null/undefined actions
+ * - Returns a stable callback for components
+ */
 
 export default function useActionHandler(action) {
-  const actions = useActions();
+  const { runAction } = useActionEngine();
 
-  if (!action) return () => {};
-
-  return () => {
-    switch (action.type) {
-      case "navigate":
-        actions.navigate(action.to);
-        break;
-
-      case "alert":
-        actions.alert(action.message);
-        break;
-
-      case "log":
-        actions.log(action.message);
-        break;
-
-      default:
-        console.warn("Unknown action:", action);
-    }
-  };
+  return useCallback(() => {
+    if (!action) return;
+    runAction(action);
+  }, [action, runAction]);
 }
