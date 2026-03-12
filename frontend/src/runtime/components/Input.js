@@ -32,7 +32,7 @@ export default function Input({
         color: "#FFFFFF",
         fontSize: "16px",
         outline: "none",
-        ...style
+        ...style,
       }}
       {...props}
     />
