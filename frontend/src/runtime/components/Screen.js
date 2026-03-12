@@ -1,53 +1,38 @@
-import React, { useEffect } from "react";
-import ScreenContainer from "./components/ScreenContainer";
-import useActionHandler from "./engine/useActionHandler";
-import resolveComponent from "./engine/resolveComponent";
+import React from "react";
+import Container from "./Container";
+import { theme } from "../../theme";
 
-const Screen = ({
-  screen,
-  data = {},
-  onEvent = () => {},
+/**
+ * Blue Lotus Screen Component
+ * - Root wrapper for every user-created screen
+ * - Provides safe padding, scroll behavior, and background
+ * - Wraps children in a Container for consistent layout
+ */
+
+export default function Screen({
+  children,
+  padding = 20,
+  background = theme.colors.background,
+  scroll = true,
   style = {},
   ...props
-}) => {
-  if (!screen) return null;
+}) {
+  const Wrapper = scroll ? "div" : "div";
 
-  const handleAction = useActionHandler(screen.action);
-
-  // Run screen-level action on mount
-  useEffect(() => {
-    if (screen.action) handleAction();
-  }, [screen]);
-
-  const renderComponent = (component, index) => {
-    const Resolved = resolveComponent(component.type);
-    if (!Resolved) {
-      console.warn("Unknown component type:", component.type);
-      return null;
-    }
-
-    return (
-      <Resolved
-        key={index}
-        {...component.props}
-        data={data}
-        onEvent={onEvent}
-      />
-    );
+  const screenStyle = {
+    width: "100%",
+    minHeight: "100vh",
+    background,
+    overflowY: scroll ? "auto" : "visible",
+    boxSizing: "border-box",
+    ...style,
   };
 
   return (
-    <ScreenContainer
-      padding={screen.padding ?? 20}
-      scroll={screen.scroll ?? true}
-      background={screen.background ?? "transparent"}
-      style={style}
-      {...props}
-    >
-      {Array.isArray(screen.components) &&
-        screen.components.map(renderComponent)}
-    </ScreenContainer>
+    <Wrapper style={screenStyle} {...props}>
+      <Container padding={padding}>
+        {children}
+      </Container>
+    </Wrapper>
   );
-};
-
-export default Screen;
+}
