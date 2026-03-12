@@ -1,48 +1,42 @@
 import React from "react";
-import { theme } from "../../theme";
+import useActionHandler from "../engine/useActionHandler";
 
 /**
  * Blue Lotus Container Component
- * - Core layout wrapper for all screens and components
- * - Flexbox-based layout system
- * - Supports direction, alignment, spacing, padding, margin, and background
- * - Fully theme-aware (Tri‑Neon token system)
+ * - Wraps children
+ * - Supports click actions
+ * - Supports padding, margin, radius, background
+ * - Works with your Action Engine
  */
 
 export default function Container({
   children,
-  direction = "column",
-  align = "flex-start",
-  justify = "flex-start",
-  gap = 0,
+  action = null,
   padding = 0,
   margin = 0,
-  width = "100%",
-  height = "auto",
+  radius = 0,
   background = "transparent",
-  borderRadius = theme.radii.md,
   style = {},
   ...props
 }) {
-  const containerStyle = {
-    display: "flex",
-    flexDirection: direction,
-    alignItems: align,
-    justifyContent: justify,
-    gap,
+  const handleAction = useActionHandler(action);
+
+  const combinedStyle = {
     padding,
     margin,
-    width,
-    height,
+    borderRadius: radius,
     background,
-    borderRadius,
-    fontFamily: theme.fonts.body,
-    boxSizing: "border-box",
+    cursor: action ? "pointer" : "default",
+    display: "block",
     ...style,
   };
 
   return (
-    <div style={containerStyle} {...props}>
+    <div
+      style={combinedStyle}
+      onClick={() => action && handleAction()}
+      {...props}
+    >
       {children}
     </div>
   );
