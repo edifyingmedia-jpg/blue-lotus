@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import useActionHandler from "../engine/useActionHandler";
 
 const SearchBar = ({
   placeholder = "Search...",
@@ -9,9 +10,11 @@ const SearchBar = ({
   background = "rgba(255, 255, 255, 0.08)",
   color = "white",
   style = {},
+  action,
   ...props
 }) => {
   const [internal, setInternal] = useState(value);
+  const handleAction = useActionHandler(action);
 
   const handleChange = (e) => {
     const newValue = e.target.value;
@@ -34,12 +37,11 @@ const SearchBar = ({
 
   const inputStyle = {
     flex: 1,
-    height: "100%",
     background: "transparent",
     border: "none",
     outline: "none",
     color,
-    fontSize: 14,
+    fontSize: "1rem",
   };
 
   return (
@@ -48,6 +50,7 @@ const SearchBar = ({
         type="text"
         value={internal}
         onChange={handleChange}
+        onBlur={handleAction}
         placeholder={placeholder}
         style={inputStyle}
       />
