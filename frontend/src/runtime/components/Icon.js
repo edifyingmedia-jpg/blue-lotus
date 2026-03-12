@@ -1,55 +1,79 @@
 import React from "react";
+import useActionHandler from "../engine/useActionHandler";
 
 const Icon = ({
   src = "",
   size = 20,
   color = "white",
   style = {},
+  action,
   ...props
 }) => {
+  const handleAction = useActionHandler(action);
+
   const isEmoji = src.length === 1 || src.length === 2;
+  const isUrl = src.startsWith("http");
+  const isSvg = src.trim().startsWith("<svg");
 
   // Emoji icon
   if (isEmoji) {
-    const emojiStyle = {
-      fontSize: size,
-      lineHeight: 1,
-      display: "inline-block",
-      ...style,
-    };
     return (
-      <span style={emojiStyle} {...props}>
+      <span
+        onClick={handleAction}
+        style={{
+          fontSize: size,
+          lineHeight: 1,
+          display: "inline-block",
+          cursor: action ? "pointer" : "default",
+          color,
+          ...style
+        }}
+        {...props}
+      >
         {src}
       </span>
     );
   }
 
-  // URL-based icon (PNG/SVG)
-  if (src.startsWith("http")) {
-    const imgStyle = {
-      width: size,
-      height: size,
-      objectFit: "contain",
-      display: "inline-block",
-      ...style,
-    };
-    return <img src={src} style={imgStyle} {...props} />;
+  // Inline SVG string
+  if (isSvg) {
+    return (
+      <span
+        onClick={handleAction}
+        style={{
+          width: size,
+          height: size,
+          display: "inline-block",
+          cursor: action ? "pointer" : "default",
+          ...style
+        }}
+        dangerouslySetInnerHTML={{ __html: src }}
+        {...props}
+      />
+    );
   }
 
-  // Inline SVG path
-  const svgStyle = {
-    width: size,
-    height: size,
-    fill: color,
-    display: "inline-block",
-    ...style,
-  };
+  // URL-based icon (PNG/SVG)
+  if (isUrl) {
+    return (
+      <img
+        src={src}
+        onClick={handleAction}
+        style={{
+          width: size,
+          height: size,
+          objectFit: "contain",
+          display: "inline-block",
+          cursor: action ? "pointer" : "default",
+          ...style
+        }}
+        {...props}
+      />
+    );
+  }
 
-  return (
-    <svg viewBox="0 0 24 24" style={svgStyle} {...props}>
-      <path d={src} />
-    </svg>
-  );
+  // Fallback: render nothing
+  return null;
 };
 
 export default Icon;
