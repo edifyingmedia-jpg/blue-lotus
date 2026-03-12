@@ -1,38 +1,47 @@
 import React from "react";
 import useActionHandler from "../engine/useActionHandler";
+import { theme } from "../../theme";
+
+/**
+ * Blue Lotus Input Component
+ * - Supports change + submit actions
+ * - Works with your Action Engine
+ */
 
 export default function Input({
   value = "",
   placeholder = "",
-  action,
+  action = null,
+  onChangeAction = null,
+  color = theme.colors.white,
+  background = theme.colors.black,
+  radius = 8,
+  padding = 10,
   style = {},
-  onChange,
   ...props
 }) {
-  const handleAction = useActionHandler(action);
+  const handleSubmit = useActionHandler(action);
+  const handleChange = useActionHandler(onChangeAction);
 
-  const handleChange = (e) => {
-    if (onChange) {
-      onChange(e.target.value);
-    }
+  const combinedStyle = {
+    width: "100%",
+    padding,
+    borderRadius: radius,
+    background,
+    color,
+    border: `1px solid ${theme.colors.primary}`,
+    outline: "none",
+    ...style,
   };
 
   return (
     <input
-      value={value}
+      style={combinedStyle}
+      defaultValue={value}
       placeholder={placeholder}
-      onChange={handleChange}
-      onBlur={handleAction}
-      style={{
-        width: "100%",
-        padding: "12px",
-        borderRadius: "8px",
-        border: "1px solid #444",
-        background: "#1A1A1A",
-        color: "#FFFFFF",
-        fontSize: "16px",
-        outline: "none",
-        ...style,
+      onChange={(e) => onChangeAction && handleChange(e.target.value)}
+      onKeyDown={(e) => {
+        if (e.key === "Enter" && action) handleSubmit();
       }}
       {...props}
     />
