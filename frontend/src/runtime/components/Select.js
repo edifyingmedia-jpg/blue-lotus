@@ -1,4 +1,5 @@
 import React from "react";
+import useActionHandler from "../engine/useActionHandler";
 
 const Select = ({
   options = [],
@@ -11,11 +12,21 @@ const Select = ({
   border = "1px solid rgba(255,255,255,0.15)",
   className = "",
   style = {},
+  action,
+  ...props
 }) => {
+  const handleAction = useActionHandler(action);
+
+  const handleChange = (e) => {
+    const newValue = e.target.value;
+    onChange(newValue);
+  };
+
   return (
     <select
       value={value}
-      onChange={(e) => onChange(e.target.value)}
+      onChange={handleChange}
+      onBlur={handleAction}
       className={className}
       style={{
         width: "100%",
@@ -29,6 +40,7 @@ const Select = ({
         fontSize: "0.9rem",
         ...style,
       }}
+      {...props}
     >
       {placeholder && (
         <option value="" disabled hidden>
