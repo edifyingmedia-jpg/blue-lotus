@@ -1,0 +1,46 @@
+{
+  "components": [
+    {
+      "type": "Text",
+      "value": "Create a New Project",
+      "size": 28,
+      "weight": "bold",
+      "align": "center",
+      "marginBottom": 24
+    },
+    {
+      "type": "Input",
+      "label": "Project Name",
+      "placeholder": "Enter a name for your project",
+      "field": "projectName",
+      "marginBottom": 16
+    },
+    {
+      "type": "TextArea",
+      "label": "Description",
+      "placeholder": "What is this project about?",
+      "field": "projectDescription",
+      "marginBottom": 24
+    },
+    {
+      "type": "Button",
+      "label": "Create Project",
+      "action": {
+        "type": "submit",
+        "endpoint": "create-project"
+      },
+      "style": "primary",
+      "marginBottom": 16
+    },
+    {
+      "type": "Button",
+      "label": "Back to Projects",
+      "action": {
+        "type": "navigate",
+        "screen": "Projects"
+      },
+      "style": "secondary",
+      "marginTop": 20
+    }
+  ]
+}
