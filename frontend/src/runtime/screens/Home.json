@@ -1,0 +1,38 @@
+{
+  "components": [
+    {
+      "type": "Text",
+      "value": "Welcome to Blue Lotus",
+      "size": 32,
+      "weight": "bold",
+      "align": "center",
+      "marginBottom": 20
+    },
+    {
+      "type": "Text",
+      "value": "Your AI‑powered builder starts here.",
+      "size": 18,
+      "align": "center",
+      "marginBottom": 40
+    },
+    {
+      "type": "Button",
+      "label": "Start Building",
+      "action": {
+        "type": "navigate",
+        "screen": "Dashboard"
+      },
+      "style": "primary"
+    },
+    {
+      "type": "Button",
+      "label": "Login",
+      "action": {
+        "type": "navigate",
+        "screen": "Login"
+      },
+      "style": "secondary",
+      "marginTop": 12
+    }
+  ]
+}
