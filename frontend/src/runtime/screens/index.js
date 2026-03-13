@@ -1,5 +1,5 @@
 // frontend/src/runtime/screens/index.js
-
+import Projects from "./Projects.json";
 import Studio from "./Studio.json";
 import Home from "./Home.json";
 import Dashboard from "./Dashboard.json";
@@ -15,6 +15,7 @@ const screens = {
   Home,
   Dashboard,
  Studio,
+ Projects,
 
   // Temporary navigation test screen
   Next: {
