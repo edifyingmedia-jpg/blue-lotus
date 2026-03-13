@@ -1,0 +1,35 @@
+{
+  "id": "Projects",
+  "type": "screen",
+  "title": "Your Projects",
+  "components": [
+    {
+      "type": "text",
+      "value": "Project List"
+    },
+    {
+      "type": "button",
+      "label": "Open Project",
+      "action": {
+        "type": "goTo",
+        "target": "ProjectDetail"
+      }
+    },
+    {
+      "type": "button",
+      "label": "Create New Project",
+      "action": {
+        "type": "goTo",
+        "target": "CreateNew"
+      }
+    },
+    {
+      "type": "button",
+      "label": "Back to Dashboard",
+      "action": {
+        "type": "goTo",
+        "target": "Dashboard"
+      }
+    }
+  ]
+}
