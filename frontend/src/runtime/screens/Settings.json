@@ -36,20 +36,9 @@
     },
     {
       "type": "Button",
-      "label": "Notifications",
+      "label": "Log Out",
       "action": {
-        "type": "navigate",
-        "screen": "Notifications"
-      },
-      "style": "secondary",
-      "marginBottom": 16
-    },
-    {
-      "type": "Button",
-      "label": "Back to Dashboard",
-      "action": {
-        "type": "navigate",
-        "screen": "Dashboard"
+        "type": "auth.logout"
       },
       "style": "secondary",
       "marginTop": 20
