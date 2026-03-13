@@ -1,0 +1,59 @@
+{
+  "components": [
+    {
+      "type": "Text",
+      "value": "Notifications",
+      "size": 28,
+      "weight": "bold",
+      "align": "center",
+      "marginBottom": 24
+    },
+    {
+      "type": "Text",
+      "value": "Manage your notification preferences.",
+      "size": 16,
+      "align": "center",
+      "marginBottom": 40
+    },
+    {
+      "type": "Button",
+      "label": "App Reminders",
+      "action": {
+        "type": "toggle",
+        "field": "notifications.appReminders"
+      },
+      "style": "secondary",
+      "marginBottom": 16
+    },
+    {
+      "type": "Button",
+      "label": "Message Alerts",
+      "action": {
+        "type": "toggle",
+        "field": "notifications.messageAlerts"
+      },
+      "style": "secondary",
+      "marginBottom": 16
+    },
+    {
+      "type": "Button",
+      "label": "Activity Updates",
+      "action": {
+        "type": "toggle",
+        "field": "notifications.activityUpdates"
+      },
+      "style": "secondary",
+      "marginBottom": 16
+    },
+    {
+      "type": "Button",
+      "label": "Back to Settings",
+      "action": {
+        "type": "navigate",
+        "screen": "Settings"
+      },
+      "style": "secondary",
+      "marginTop": 20
+    }
+  ]
+}
