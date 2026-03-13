@@ -1,4 +1,5 @@
 // frontend/src/runtime/screens/index.js
+import Settings from "./Settings.json";
 import NewProject from "./NewProject.json";
 import Projects from "./Projects.json";
 import Studio from "./Studio.json";
@@ -18,6 +19,7 @@ const screens = {
  Studio,
  Projects,
  NewProject,
+ Settings,
 
   // Temporary navigation test screen
   Next: {
