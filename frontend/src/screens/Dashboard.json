@@ -1,0 +1,35 @@
+{
+  "id": "Dashboard",
+  "type": "screen",
+  "title": "Dashboard",
+  "components": [
+    {
+      "type": "text",
+      "value": "Welcome to your Dashboard"
+    },
+    {
+      "type": "button",
+      "label": "View Projects",
+      "action": {
+        "type": "goTo",
+        "target": "Projects"
+      }
+    },
+    {
+      "type": "button",
+      "label": "Create New",
+      "action": {
+        "type": "goTo",
+        "target": "CreateNew"
+      }
+    },
+    {
+      "type": "button",
+      "label": "Settings",
+      "action": {
+        "type": "goTo",
+        "target": "Settings"
+      }
+    }
+  ]
+}
