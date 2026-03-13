@@ -1,6 +1,7 @@
 // frontend/src/runtime/screens/index.js
 
 import Home from "./Home.json";
+import Dashboard from "./Dashboard.json";
 
 /**
  * Screen Registry
@@ -11,7 +12,9 @@ import Home from "./Home.json";
 
 const screens = {
   Home,
+  Dashboard,
 
+  // Temporary navigation test screen
   Next: {
     components: [
       {
