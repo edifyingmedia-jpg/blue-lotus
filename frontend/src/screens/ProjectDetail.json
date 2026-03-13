@@ -1,0 +1,27 @@
+{
+  "id": "ProjectDetail",
+  "type": "screen",
+  "title": "Project Detail",
+  "components": [
+    {
+      "type": "text",
+      "value": "Project Details"
+    },
+    {
+      "type": "button",
+      "label": "Edit Project",
+      "action": {
+        "type": "goTo",
+        "target": "Editor"
+      }
+    },
+    {
+      "type": "button",
+      "label": "Back to Projects",
+      "action": {
+        "type": "goTo",
+        "target": "Projects"
+      }
+    }
+  ]
+}
