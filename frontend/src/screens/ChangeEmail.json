@@ -1,0 +1,31 @@
+{
+  "id": "ChangeEmail",
+  "type": "screen",
+  "title": "Change Email",
+  "components": [
+    {
+      "type": "text",
+      "value": "Update your email address"
+    },
+    {
+      "type": "input",
+      "placeholder": "New Email"
+    },
+    {
+      "type": "button",
+      "label": "Save",
+      "action": {
+        "type": "goTo",
+        "target": "Account"
+      }
+    },
+    {
+      "type": "button",
+      "label": "Back",
+      "action": {
+        "type": "goTo",
+        "target": "Account"
+      }
+    }
+  ]
+}
