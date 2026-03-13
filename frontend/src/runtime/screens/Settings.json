@@ -1,0 +1,58 @@
+{
+  "components": [
+    {
+      "type": "Text",
+      "value": "Settings",
+      "size": 28,
+      "weight": "bold",
+      "align": "center",
+      "marginBottom": 24
+    },
+    {
+      "type": "Text",
+      "value": "Manage your account and preferences.",
+      "size": 16,
+      "align": "center",
+      "marginBottom": 40
+    },
+    {
+      "type": "Button",
+      "label": "Account Information",
+      "action": {
+        "type": "navigate",
+        "screen": "Account"
+      },
+      "style": "secondary",
+      "marginBottom": 16
+    },
+    {
+      "type": "Button",
+      "label": "Theme: Dark / Light",
+      "action": {
+        "type": "toggleTheme"
+      },
+      "style": "secondary",
+      "marginBottom": 16
+    },
+    {
+      "type": "Button",
+      "label": "Notifications",
+      "action": {
+        "type": "navigate",
+        "screen": "Notifications"
+      },
+      "style": "secondary",
+      "marginBottom": 16
+    },
+    {
+      "type": "Button",
+      "label": "Back to Dashboard",
+      "action": {
+        "type": "navigate",
+        "screen": "Dashboard"
+      },
+      "style": "secondary",
+      "marginTop": 20
+    }
+  ]
+}
