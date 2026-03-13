@@ -1,4 +1,5 @@
 // frontend/src/runtime/screens/index.js
+import Notifications from "./Notifications.json";
 import Account from "./Account.json";
 import Settings from "./Settings.json";
 import NewProject from "./NewProject.json";
@@ -22,6 +23,7 @@ const screens = {
  NewProject,
  Settings,
  Account,
+ Notifications,
 
   // Temporary navigation test screen
   Next: {
