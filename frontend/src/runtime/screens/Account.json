@@ -1,0 +1,43 @@
+{
+  "components": [
+    {
+      "type": "Text",
+      "value": "Account Information",
+      "size": 28,
+      "weight": "bold",
+      "align": "center",
+      "marginBottom": 24
+    },
+    {
+      "type": "Text",
+      "value": "Your email and user ID are shown below.",
+      "size": 16,
+      "align": "center",
+      "marginBottom": 40
+    },
+    {
+      "type": "Text",
+      "field": "user.email",
+      "label": "Email",
+      "size": 16,
+      "marginBottom": 16
+    },
+    {
+      "type": "Text",
+      "field": "user.id",
+      "label": "User ID",
+      "size": 14,
+      "marginBottom": 24
+    },
+    {
+      "type": "Button",
+      "label": "Back to Settings",
+      "action": {
+        "type": "navigate",
+        "screen": "Settings"
+      },
+      "style": "secondary",
+      "marginTop": 20
+    }
+  ]
+}
