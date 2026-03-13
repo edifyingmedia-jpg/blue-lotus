@@ -1,0 +1,19 @@
+{
+  "id": "Editor",
+  "type": "screen",
+  "title": "Editor",
+  "components": [
+    {
+      "type": "text",
+      "value": "Editor Placeholder"
+    },
+    {
+      "type": "button",
+      "label": "Back to Project",
+      "action": {
+        "type": "goTo",
+        "target": "ProjectDetail"
+      }
+    }
+  ]
+}
