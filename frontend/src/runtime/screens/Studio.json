@@ -1,0 +1,49 @@
+{
+  "components": [
+    {
+      "type": "Text",
+      "value": "Builder Studio",
+      "size": 28,
+      "weight": "bold",
+      "align": "center",
+      "marginBottom": 24
+    },
+    {
+      "type": "Text",
+      "value": "Your creative workspace is ready. Choose a tool to begin.",
+      "size": 16,
+      "align": "center",
+      "marginBottom": 40
+    },
+    {
+      "type": "Button",
+      "label": "Create New Project",
+      "action": {
+        "type": "navigate",
+        "screen": "NewProject"
+      },
+      "style": "primary",
+      "marginBottom": 16
+    },
+    {
+      "type": "Button",
+      "label": "Open Existing Project",
+      "action": {
+        "type": "navigate",
+        "screen": "Projects"
+      },
+      "style": "secondary",
+      "marginBottom": 16
+    },
+    {
+      "type": "Button",
+      "label": "Return to Dashboard",
+      "action": {
+        "type": "navigate",
+        "screen": "Dashboard"
+      },
+      "style": "secondary",
+      "marginTop": 20
+    }
+  ]
+}
