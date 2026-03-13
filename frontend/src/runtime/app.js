@@ -1,29 +1,23 @@
-// frontend/src/runtime/engine/ActionEngine.js
+// frontend/src/runtime/App.js
 
-import { useNavigation } from "./NavigationEngine";
+import React from "react";
+import { NavigationProvider } from "./engine/NavigationEngine";
+import ScreenEngine from "./engine/ScreenEngine";
+import screens from "./screens";
 
-export function useActionEngine() {
-  const { navigate } = useNavigation();
+/**
+ * App
+ * ---------------------------------------------------------
+ * Root of the runtime.
+ * - Initializes navigation
+ * - Loads screen registry
+ * - Renders the active screen
+ */
 
-  function runAction(action) {
-    if (!action || !action.type) {
-      console.warn("Invalid action:", action);
-      return;
-    }
-
-    switch (action.type) {
-      case "navigate":
-        if (action.target) navigate(action.target);
-        break;
-
-      case "log":
-        console.log("LOG ACTION:", action.message);
-        break;
-
-      default:
-        console.warn("Unknown action type:", action.type);
-    }
-  }
-
-  return { runAction };
+export default function App() {
+  return (
+    <NavigationProvider>
+      <ScreenEngine screens={screens} />
+    </NavigationProvider>
+  );
 }
