@@ -1,0 +1,31 @@
+{
+  "id": "CreateNew",
+  "type": "screen",
+  "title": "Create New",
+  "components": [
+    {
+      "type": "text",
+      "value": "Start a New Project"
+    },
+    {
+      "type": "input",
+      "placeholder": "Project Name"
+    },
+    {
+      "type": "button",
+      "label": "Create",
+      "action": {
+        "type": "goTo",
+        "target": "ProjectDetail"
+      }
+    },
+    {
+      "type": "button",
+      "label": "Back to Dashboard",
+      "action": {
+        "type": "goTo",
+        "target": "Dashboard"
+      }
+    }
+  ]
+}
