@@ -1,17 +1,25 @@
 {
-  "type": "View",
-  "props": {},
-  "children": [
+  "id": "Home",
+  "type": "screen",
+  "title": "Home",
+  "components": [
     {
-      "type": "Heading",
-      "props": {
-        "text": "Welcome"
+      "type": "text",
+      "value": "You are now on the Home screen."
+    },
+    {
+      "type": "button",
+      "label": "Go to Settings",
+      "action": {
+        "type": "goTo",
+        "target": "Settings"
       }
     },
     {
-      "type": "PrimaryButton",
-      "props": {
-        "text": "Get Started"
+      "type": "button",
+      "label": "Logout",
+      "action": {
+        "type": "logout"
       }
     }
   ]
