@@ -1,0 +1,27 @@
+{
+  "id": "Settings",
+  "type": "screen",
+  "title": "Settings",
+  "components": [
+    {
+      "type": "text",
+      "value": "Settings"
+    },
+    {
+      "type": "button",
+      "label": "Account",
+      "action": {
+        "type": "goTo",
+        "target": "Account"
+      }
+    },
+    {
+      "type": "button",
+      "label": "Back to Home",
+      "action": {
+        "type": "goTo",
+        "target": "Home"
+      }
+    }
+  ]
+}
