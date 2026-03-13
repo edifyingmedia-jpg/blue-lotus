@@ -1,0 +1,58 @@
+{
+  "components": [
+    {
+      "type": "Text",
+      "value": "Your Projects",
+      "size": 28,
+      "weight": "bold",
+      "align": "center",
+      "marginBottom": 24
+    },
+    {
+      "type": "Text",
+      "value": "Select a project to open, or create a new one.",
+      "size": 16,
+      "align": "center",
+      "marginBottom": 40"
+    },
+    {
+      "type": "Button",
+      "label": "Create New Project",
+      "action": {
+        "type": "navigate",
+        "screen": "NewProject"
+      },
+      "style": "primary",
+      "marginBottom": 24
+    },
+    {
+      "type": "List",
+      "items": [
+        {
+          "label": "Sample Project 1",
+          "action": {
+            "type": "navigate",
+            "screen": "Studio"
+          }
+        },
+        {
+          "label": "Sample Project 2",
+          "action": {
+            "type": "navigate",
+            "screen": "Studio"
+          }
+        }
+      ]
+    },
+    {
+      "type": "Button",
+      "label": "Back to Dashboard",
+      "action": {
+        "type": "navigate",
+        "screen": "Dashboard"
+      },
+      "style": "secondary",
+      "marginTop": 20
+    }
+  ]
+}
