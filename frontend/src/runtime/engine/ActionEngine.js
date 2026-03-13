@@ -1,44 +1,52 @@
 // frontend/src/runtime/engine/ActionEngine.js
 
-import { useNavigation } from "./NavigationEngine";
-
 /**
- * Action Engine
- * - Supports single actions
- * - Supports multiple actions (arrays)
- * - Easily extendable for API, state, conditions, etc.
+ * ActionEngine
+ * ---------------------------------------------------------
+ * Central dispatcher for all actions triggered by components.
+ * Supports:
+ * - navigation actions
+ * - state updates
+ * - async operations
+ * - custom user-defined actions
  */
 
-export function useActionEngine() {
-  const { navigate } = useNavigation();
+import { useNavigation } from "./NavigationEngine";
 
-  function runAction(action) {
+export default function ActionEngine() {
+  const navigation = useNavigation();
+
+  const run = async (action, value) => {
     if (!action) return;
 
-    // If it's an array, run each action in order
-    if (Array.isArray(action)) {
-      action.forEach(a => runAction(a));
-      return;
-    }
+    const { type, params = {} } = action;
 
-    if (!action.type) {
-      console.warn("Invalid action:", action);
-      return;
-    }
-
-    switch (action.type) {
+    switch (type) {
       case "navigate":
-        if (action.target) navigate(action.target);
+        navigation.push(params.screen, params);
+        break;
+
+      case "replace":
+        navigation.replace(params.screen, params);
+        break;
+
+      case "back":
+        navigation.goBack();
         break;
 
       case "log":
-        console.log("LOG ACTION:", action.message);
+        console.log("ActionEngine log:", value);
+        break;
+
+      case "alert":
+        alert(params.message || "Action triggered");
         break;
 
       default:
-        console.warn("Unknown action type:", action.type);
+        console.warn("Unknown action type:", type, action);
+        break;
     }
-  }
+  };
 
-  return { runAction };
+  return { run };
 }
