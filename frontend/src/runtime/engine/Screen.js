@@ -1,63 +1,28 @@
+// frontend/src/runtime/engine/Screen.js
+
 import React from "react";
-import { useNavigation } from "./NavigationEngine";
-import { useAppDefinition } from "./AppDefinitionContext";
-import resolveComponent from "../components/resolveComponent";
+import DynamicScreen from "./DynamicScreen";
 
 /**
  * Screen
- *
- * Renders a screen definition from the app definition.
- * A screen contains:
- * - id
- * - name
- * - layout (array of component definitions)
+ * ---------------------------------------------------------
+ * Wraps a screen definition and renders its components
+ * using DynamicScreen.
  */
 
-export default function Screen({ screen }) {
-  const { navigate } = useNavigation();
-  const { components } = useAppDefinition();
-
-  if (!screen) {
-    return (
-      <div style={{ padding: 20 }}>
-        <h2>Screen missing</h2>
-        <p>No screen definition was provided.</p>
-      </div>
-    );
-  }
-
-  const { layout = [] } = screen;
-
+export default function Screen({ name, components = [], params = {} }) {
   return (
     <div style={screenStyle}>
-      {layout.map((node, index) => {
-        const Component = resolveComponent(node.type);
-
-        if (!Component) {
-          return (
-            <div key={index} style={{ padding: 10, color: "red" }}>
-              Unknown component type: {node.type}
-            </div>
-          );
-        }
-
-        return (
-          <Component
-            key={index}
-            {...node.props}
-            navigate={navigate}
-            components={components}
-          />
-        );
-      })}
+      <DynamicScreen components={components} params={params} />
     </div>
   );
 }
 
 const screenStyle = {
+  width: "100%",
+  minHeight: "100vh",
   display: "flex",
   flexDirection: "column",
-  width: "100%",
-  height: "100%",
-  overflow: "auto",
+  padding: 20,
+  boxSizing: "border-box",
 };
