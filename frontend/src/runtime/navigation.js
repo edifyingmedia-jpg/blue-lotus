@@ -1,20 +1,13 @@
-export function navigateTo(navigate, target) {
-  if (!navigate || !target) return;
+// navigation.js
+// UI-friendly wrapper around NavigationEngine for Blue Lotus
 
-  if (typeof target === "string") {
-    navigate(`/screen/${target}`);
-    return;
-  }
-
-  if (target?.screen) {
-    navigate(`/screen/${target.screen}`);
-    return;
-  }
-
-  console.warn("Invalid navigation target", target);
-}
-
-export function goBack(navigate) {
-  if (!navigate) return;
-  navigate(-1);
+export default function navigation(engine) {
+  return {
+    goTo: (screenId) => engine.push(screenId),
+    replace: (screenId) => engine.replace(screenId),
+    back: () => engine.pop(),
+    reset: (screenId = "Login") => engine.reset(screenId),
+    logout: () => engine.handleLogout(),
+    current: () => engine.current
+  };
 }
