@@ -1,0 +1,28 @@
+{
+  "id": "Login",
+  "type": "screen",
+  "title": "Welcome Back",
+  "components": [
+    {
+      "type": "text",
+      "value": "Welcome to Blue Lotus"
+    },
+    {
+      "type": "input",
+      "placeholder": "Email"
+    },
+    {
+      "type": "input",
+      "placeholder": "Password",
+      "secure": true
+    },
+    {
+      "type": "button",
+      "label": "Continue",
+      "action": {
+        "type": "goTo",
+        "target": "Home"
+      }
+    }
+  ]
+}
