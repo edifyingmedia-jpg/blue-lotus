@@ -1,0 +1,35 @@
+{
+  "id": "Account",
+  "type": "screen",
+  "title": "My Account",
+  "components": [
+    {
+      "type": "text",
+      "value": "Account Details"
+    },
+    {
+      "type": "button",
+      "label": "Change Email",
+      "action": {
+        "type": "goTo",
+        "target": "ChangeEmail"
+      }
+    },
+    {
+      "type": "button",
+      "label": "Change Password",
+      "action": {
+        "type": "goTo",
+        "target": "ChangePassword"
+      }
+    },
+    {
+      "type": "button",
+      "label": "Back to Settings",
+      "action": {
+        "type": "goTo",
+        "target": "Settings"
+      }
+    }
+  ]
+}
