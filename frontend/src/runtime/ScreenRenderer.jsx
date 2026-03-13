@@ -1,79 +1,51 @@
-// frontend/src/runtime/ScreenRenderer.jsx
+// ScreenRenderer.jsx
+// Renders a screen by ID using your JSON-defined screens and component resolver
 
 import React from "react";
-import ComponentRegistry from "./components";
-import { handleNavigation } from "./navigation";
+import screens from "./screens";
+import resolveComponent from "./components/resolveComponent";
 
-const ScreenRenderer = ({ screen, screens, navigation, bundle, blueprint }) => {
+export default function ScreenRenderer({ screenId, navigation, engine }) {
+  const screen = screens[screenId];
+
   if (!screen) {
     return (
-      <div className="w-full h-full flex items-center justify-center text-slate-300">
-        Screen not found.
+      <div style={styles.error}>
+        <h2>Screen not found</h2>
+        <p>{screenId}</p>
       </div>
     );
   }
 
-  // If the screen uses a template, render that template component
-  if (screen.template) {
-    const Template = ComponentRegistry.templates[screen.template];
-
-    if (!Template) {
-      return (
-        <div className="w-full h-full flex items-center justify-center text-slate-300">
-          Template "{screen.template}" not found.
-        </div>
-      );
-    }
-
-    return (
-      <Template
-        screen={screen}
-        screens={screens}
-        navigation={navigation}
-        bundle={bundle}
-        blueprint={blueprint}
-        onNavigate={(target) =>
-          handleNavigation(target, screens, navigation)
-        }
-      />
-    );
-  }
-
-  // Otherwise, render components from the registry
   return (
-    <div className="w-full h-full p-4 text-slate-200">
-      {Array.isArray(screen.components) && screen.components.length > 0 ? (
-        screen.components.map((node, index) => {
-          const Component = ComponentRegistry[node.type];
+    <div style={styles.container}>
+      {screen.components?.map((component, index) => {
+        const Component = resolveComponent(component.type);
+        if (!Component) return null;
 
-          if (!Component) {
-            return (
-              <div
-                key={index}
-                className="text-red-300 text-sm border border-red-500/40 p-2 rounded-md mb-2"
-              >
-                Unknown component type: <strong>{node.type}</strong>
-              </div>
-            );
-          }
-
-          return (
-            <Component
-              key={index}
-              {...node.props}
-              onNavigate={(target) =>
-                handleNavigation(target, screens, navigation)
-              }
-            />
-          );
-        })
-      ) : (
-        <div className="text-slate-400 text-sm">
-          This screen has no components yet.
-        </div>
-      )}
+        return (
+          <Component
+            key={index}
+            {...component}
+            navigation={navigation}
+            engine={engine}
+          />
+        );
+      })}
     </div>
   );
-};
+}
 
-export default ScreenRenderer;
+const styles = {
+  container: {
+    width: "100%",
+    height: "100%",
+    overflowY: "auto",
+    boxSizing: "border-box",
+  },
+  error: {
+    padding: 20,
+    color: "white",
+    background: "red",
+  },
+};
