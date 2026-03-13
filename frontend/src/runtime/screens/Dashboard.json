@@ -1,0 +1,58 @@
+{
+  "components": [
+    {
+      "type": "Text",
+      "value": "Dashboard",
+      "size": 28,
+      "weight": "bold",
+      "align": "center",
+      "marginBottom": 24
+    },
+    {
+      "type": "Text",
+      "value": "Welcome back. Choose what you want to build today.",
+      "size": 16,
+      "align": "center",
+      "marginBottom": 40
+    },
+    {
+      "type": "Button",
+      "label": "Open Builder Studio",
+      "action": {
+        "type": "navigate",
+        "screen": "Studio"
+      },
+      "style": "primary",
+      "marginBottom": 16
+    },
+    {
+      "type": "Button",
+      "label": "View Projects",
+      "action": {
+        "type": "navigate",
+        "screen": "Projects"
+      },
+      "style": "secondary",
+      "marginBottom": 16
+    },
+    {
+      "type": "Button",
+      "label": "Account Settings",
+      "action": {
+        "type": "navigate",
+        "screen": "Settings"
+      },
+      "style": "secondary",
+      "marginBottom": 16
+    },
+    {
+      "type": "Button",
+      "label": "Logout",
+      "action": {
+        "type": "logout"
+      },
+      "style": "danger",
+      "marginTop": 20
+    }
+  ]
+}
