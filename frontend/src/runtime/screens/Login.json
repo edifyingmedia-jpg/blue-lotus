@@ -1,0 +1,58 @@
+{
+  "components": [
+    {
+      "type": "Text",
+      "value": "Welcome Back",
+      "size": 28,
+      "weight": "bold",
+      "align": "center",
+      "marginBottom": 24
+    },
+    {
+      "type": "Input",
+      "label": "Email",
+      "field": "email",
+      "placeholder": "you@example.com",
+      "marginBottom": 16
+    },
+    {
+      "type": "Input",
+      "label": "Password",
+      "field": "password",
+      "placeholder": "Enter your password",
+      "secure": true,
+      "marginBottom": 24
+    },
+    {
+      "type": "Button",
+      "label": "Log In",
+      "action": {
+        "type": "auth.login",
+        "emailField": "email",
+        "passwordField": "password"
+      },
+      "style": "primary",
+      "marginBottom": 16
+    },
+    {
+      "type": "Button",
+      "label": "Create an Account",
+      "action": {
+        "type": "navigate",
+        "screen": "Register"
+      },
+      "style": "secondary",
+      "marginBottom": 16
+    },
+    {
+      "type": "Button",
+      "label": "Back to Home",
+      "action": {
+        "type": "navigate",
+        "screen": "Home"
+      },
+      "style": "secondary",
+      "marginTop": 20
+    }
+  ]
+}
