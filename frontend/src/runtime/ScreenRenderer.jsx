@@ -5,6 +5,9 @@ import React from "react";
 import screens from "./screens";
 import resolveComponent from "./components/resolveComponent";
 
+// Import the Editor context wrapper
+import { EditorProvider } from "./editor/EditorContext";
+
 export default function ScreenRenderer({ screenId, navigation, engine }) {
   const screen = screens[screenId];
 
@@ -17,7 +20,7 @@ export default function ScreenRenderer({ screenId, navigation, engine }) {
     );
   }
 
-  return (
+  const content = (
     <div style={styles.container}>
       {screen.components?.map((component, index) => {
         const Component = resolveComponent(component.type);
@@ -34,6 +37,13 @@ export default function ScreenRenderer({ screenId, navigation, engine }) {
       })}
     </div>
   );
+
+  // Wrap the Editor screen in the EditorProvider
+  if (screenId === "Editor") {
+    return <EditorProvider>{content}</EditorProvider>;
+  }
+
+  return content;
 }
 
 const styles = {
