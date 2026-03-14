@@ -1,22 +1,22 @@
 // frontend/src/runtime/editor/TWIN/TWINLotus.jsx
-// Visual lotus component controlled entirely by TWINManager
+// Pure visual lotus avatar for TWIN — controlled entirely by TWINManager
 
 import React, { forwardRef } from "react";
 import "./twinAnimations.css";
 
 /**
- * TWINLotus
- * Pure visual component.
- * All logic (state, bloom, pulses, movement) is controlled by TWINManager.
- *
  * Props:
- * - isBlooming: boolean
  * - animationTier: 0 | 1 | 2 | 3
- * - forwardedRef: ref passed from TWINManager
+ * - isBlooming: boolean
+ *
+ * Tiers:
+ * 0 = idle micro‑pulse
+ * 1 = pulse
+ * 2 = mini‑expand
+ * 3 = full bloom (requires isBlooming = true)
  */
 
-const TWINLotus = forwardRef(({ isBlooming, animationTier }, ref) => {
-  // Determine animation class based on tier
+const TWINLotus = forwardRef(({ animationTier = 0, isBlooming = false }, ref) => {
   let animationClass = "";
 
   if (animationTier === 1) animationClass = "lotus-pulse";
@@ -27,6 +27,15 @@ const TWINLotus = forwardRef(({ isBlooming, animationTier }, ref) => {
     <div
       ref={ref}
       className={`twin-lotus ${animationClass}`}
+      style={{
+        width: "64px",
+        height: "64px",
+        borderRadius: "50%",
+        background: "radial-gradient(circle, #00eaff, #7b2bff, #ff2bc8)",
+        boxShadow: "0 0 18px rgba(0,255,255,0.6)",
+        transition: "transform 0.25s ease, opacity 0.25s ease",
+        pointerEvents: "none" // never blocks the editor
+      }}
     />
   );
 });
