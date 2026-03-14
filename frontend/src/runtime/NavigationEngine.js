@@ -1,59 +1,74 @@
-// NavigationEngine.js
-// Clean, modern, stack-based navigation engine for Blue Lotus Runtime
+// NavigationEngine.js (Upgraded Standard Version)
 
-export default class NavigationEngine {
-  constructor(initialScreen = "Login") {
-    this.stack = [initialScreen];
-    this.listeners = new Set();
+class NavigationEngine {
+  constructor(initialScreen) {
+    this.stack = [initialScreen];       // main navigation stack
+    this.modal = null;                  // holds modal screen id if open
+    this.listeners = new Set();         // subscribers for navigation changes
   }
 
-  // --- Core Stack Operations ---
-
-  get current() {
-    return this.stack[this.stack.length - 1];
-  }
+  // --- Core Stack Navigation ---
 
   push(screenId) {
-    if (!screenId) return;
     this.stack.push(screenId);
-    this._emit();
+    this._notify();
   }
 
   replace(screenId) {
-    if (!screenId) return;
     this.stack[this.stack.length - 1] = screenId;
-    this._emit();
+    this._notify();
   }
 
   pop() {
     if (this.stack.length > 1) {
       this.stack.pop();
-      this._emit();
+      this._notify();
     }
   }
 
-  reset(screenId = "Login") {
+  reset(screenId) {
     this.stack = [screenId];
-    this._emit();
+    this._notify();
   }
 
-  // --- Auth Integration ---
+  // --- Modal Navigation ---
 
-  handleLogout() {
-    // Clear stack and return to Login
-    this.reset("Login");
+  openModal(screenId) {
+    this.modal = screenId;
+    this._notify();
+  }
+
+  closeModal() {
+    this.modal = null;
+    this._notify();
+  }
+
+  // --- Getters ---
+
+  getCurrentScreen() {
+    return this.modal || this.stack[this.stack.length - 1];
+  }
+
+  getModalScreen() {
+    return this.modal;
+  }
+
+  getStack() {
+    return [...this.stack];
   }
 
   // --- Listener System ---
 
-  onChange(callback) {
+  subscribe(callback) {
     this.listeners.add(callback);
     return () => this.listeners.delete(callback);
   }
 
-  _emit() {
-    for (const cb of this.listeners) {
-      cb(this.current, [...this.stack]);
+  _notify() {
+    for (const callback of this.listeners) {
+      callback(this.getCurrentScreen(), this.getStack(), this.modal);
     }
   }
 }
+
+export default NavigationEngine;
