@@ -1,0 +1,43 @@
+// ToolRegistry.js
+// Central registry for editor tools (move, frame, text, etc.)
+
+export default class ToolRegistry {
+  constructor() {
+    this.tools = {};
+    this.activeTool = null;
+  }
+
+  // Register a tool with a unique name
+  registerTool(name, toolObject) {
+    if (!name || !toolObject) {
+      console.error("ToolRegistry: registerTool requires a name and toolObject");
+      return;
+    }
+    this.tools[name] = toolObject;
+  }
+
+  // Retrieve a tool by name
+  getTool(name) {
+    return this.tools[name] || null;
+  }
+
+  // Set the active tool
+  setActiveTool(name) {
+    if (!this.tools[name]) {
+      console.warn(`ToolRegistry: Tool "${name}" not found`);
+      return;
+    }
+    this.activeTool = name;
+  }
+
+  // Get the currently active tool object
+  getActiveTool() {
+    if (!this.activeTool) return null;
+    return this.tools[this.activeTool] || null;
+  }
+
+  // List all registered tools
+  listTools() {
+    return Object.keys(this.tools);
+  }
+}
