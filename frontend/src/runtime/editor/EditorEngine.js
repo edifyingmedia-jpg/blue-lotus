@@ -1,91 +1,85 @@
-// EditorEngine.js (Structured Base Version)
+import { EventBus } from "./engine/EventBus.js";
+import { ToolRegistry } from "./engine/ToolRegistry.js";
+import { PanelRegistry } from "./engine/PanelRegistry.js";
+import { UndoManager } from "./engine/UndoManager.js";
+import { CommandManager } from "./engine/CommandManager.js";
+
+import { Canvas } from "./canvas/Canvas.js";
+import { NodeTree } from "./canvas/NodeTree.js";
+import { SelectionManager } from "./canvas/SelectionManager.js";
+import { TransformManager } from "./canvas/TransformManager.js";
+import { HitTest } from "./canvas/HitTest.js";
 
 class EditorEngine {
   constructor() {
-    // --- Core Editor State ---
-    this.project = null;          // active project data
-    this.mode = "design";         // design | preview | inspect
-    this.activeTool = null;       // current tool id
-    this.activePanel = null;      // current panel id
+    // Core systems
+    this.eventBus = new EventBus();
+    this.undoManager = new UndoManager();
+    this.commandManager = new CommandManager(this.undoManager);
 
-    // --- Registries (will expand later) ---
-    this.tools = {};              // tool registry
-    this.panels = {};             // panel registry
+    // Registries
+    this.toolRegistry = new ToolRegistry(this.eventBus);
+    this.panelRegistry = new PanelRegistry(this.eventBus);
 
-    // --- Undo / Redo ---
-    this.history = [];
-    this.future = [];
+    // Canvas systems
+    this.nodeTree = new NodeTree();
+    this.selectionManager = new SelectionManager(this.eventBus, this.nodeTree);
+    this.transformManager = new TransformManager(
+      this.eventBus,
+      this.nodeTree,
+      this.selectionManager
+    );
+    this.hitTest = new HitTest(this.nodeTree);
 
-    // --- Event Listeners ---
-    this.listeners = new Set();
+    this.canvas = null;
+
+    // Editor state
+    this.mode = "design"; // design | preview | inspect
   }
 
-  // --- Project Loading ---
-  loadProject(projectData) {
-    this.project = projectData;
-    this._notify();
+  mountCanvas(domElement) {
+    this.canvas = new Canvas(
+      this.eventBus,
+      this.toolRegistry,
+      this.nodeTree
+    );
+
+    this.canvas.mount(domElement);
+
+    this._bindPointerEvents(domElement);
   }
 
-  // --- Mode Switching ---
+  _bindPointerEvents(domElement) {
+    domElement.addEventListener("pointerdown", (e) => {
+      const node = this.hitTest.findNodeAt(e.offsetX, e.offsetY);
+
+      if (node) {
+        this.selectionManager.selectNode(node.id);
+        this.transformManager.beginTransform(node.id, e.offsetX, e.offsetY);
+      }
+    });
+
+    domElement.addEventListener("pointermove", (e) => {
+      this.transformManager.updateTransform(e.offsetX, e.offsetY);
+    });
+
+    domElement.addEventListener("pointerup", () => {
+      this.transformManager.endTransform();
+    });
+  }
+
+  // Mode switching
   setMode(mode) {
     this.mode = mode;
-    this._notify();
+    this.eventBus.emit("mode:changed", { mode });
   }
 
-  // --- Tool Selection ---
-  selectTool(toolId) {
-    this.activeTool = toolId;
-    this._notify();
-  }
-
-  // --- Panel Control ---
-  openPanel(panelId) {
-    this.activePanel = panelId;
-    this._notify();
-  }
-
-  closePanel() {
-    this.activePanel = null;
-    this._notify();
-  }
-
-  // --- Undo / Redo (basic for now) ---
-  commit(state) {
-    this.history.push(state);
-    this.future = [];
-  }
-
-  undo() {
-    if (this.history.length > 0) {
-      const prev = this.history.pop();
-      this.future.push(prev);
-      this._notify();
+  // Project loading
+  loadProject(projectData) {
+    if (projectData?.tree) {
+      this.nodeTree = NodeTree.deserialize(projectData.tree);
     }
-  }
-
-  redo() {
-    if (this.future.length > 0) {
-      const next = this.future.pop();
-      this.history.push(next);
-      this._notify();
-    }
-  }
-
-  // --- Event System ---
-  subscribe(callback) {
-    this.listeners.add(callback);
-    return () => this.listeners.delete(callback);
-  }
-
-  _notify() {
-    for (const callback of this.listeners) {
-      callback({
-        project: this.project,
-        mode: this.mode,
-        activeTool: this.activeTool,
-        activePanel: this.activePanel
-      });
-    }
+    this.eventBus.emit("project:loaded", projectData);
   }
 }
 
