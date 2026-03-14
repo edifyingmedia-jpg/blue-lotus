@@ -1,0 +1,30 @@
+// frontend/src/runtime/editor/TWIN/TWINBuildMode.jsx
+// Cinematic full-screen bloom mode overlay for deep builds
+
+import React from "react";
+import "./twinAnimations.css";
+
+/**
+ * TWINBuildMode
+ * Displays:
+ * - Full-screen dim overlay
+ * - Blooming lotus (large)
+ * - Build message text
+ *
+ * Props:
+ * - active: boolean (whether bloom mode is active)
+ * - message: string (what TWIN is building)
+ */
+
+export default function TWINBuildMode({ active, message }) {
+  if (!active) return null;
+
+  return (
+    <div className="twin-buildmode-overlay">
+      <div className="twin-buildmode-center">
+        <div className="twin-buildmode-lotus" />
+        <div className="twin-buildmode-text">{message}</div>
+      </div>
+    </div>
+  );
+}
