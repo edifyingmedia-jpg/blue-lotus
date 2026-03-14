@@ -1,56 +1,57 @@
-export class SelectionManager {
-  constructor(eventBus, nodeTree) {
+export class TransformManager {
+  constructor(eventBus, nodeTree, selectionManager) {
     this.eventBus = eventBus;
     this.nodeTree = nodeTree;
+    this.selectionManager = selectionManager;
 
-    this.selectedNodes = new Set();
-    this.lastSelected = null;
+    this.activeTransform = null;
+    this.startX = 0;
+    this.startY = 0;
   }
 
-  selectNode(nodeId, additive = false) {
+  beginTransform(nodeId, pointerX, pointerY) {
     const node = this.nodeTree.findNodeById(nodeId);
     if (!node) return;
 
-    if (!additive) {
-      this.clearSelection();
-    }
+    this.activeTransform = {
+      nodeId,
+      startX: node.x,
+      startY: node.y,
+      pointerStartX: pointerX,
+      pointerStartY: pointerY
+    };
 
-    this.selectedNodes.add(nodeId);
-    this.lastSelected = nodeId;
+    this.eventBus.emit("transform:start", { nodeId });
+  }
 
-    this.eventBus.emit("selection:changed", {
-      selected: Array.from(this.selectedNodes)
+  updateTransform(pointerX, pointerY) {
+    if (!this.activeTransform) return;
+
+    const { nodeId, startX, startY, pointerStartX, pointerStartY } =
+      this.activeTransform;
+
+    const node = this.nodeTree.findNodeById(nodeId);
+    if (!node) return;
+
+    const dx = pointerX - pointerStartX;
+    const dy = pointerY - pointerStartY;
+
+    node.setPosition(startX + dx, startY + dy);
+
+    this.eventBus.emit("transform:move", {
+      nodeId,
+      x: node.x,
+      y: node.y
     });
   }
 
-  deselectNode(nodeId) {
-    if (this.selectedNodes.has(nodeId)) {
-      this.selectedNodes.delete(nodeId);
+  endTransform() {
+    if (!this.activeTransform) return;
 
-      this.eventBus.emit("selection:changed", {
-        selected: Array.from(this.selectedNodes)
-      });
-    }
-  }
+    const { nodeId } = this.activeTransform;
 
-  clearSelection() {
-    if (this.selectedNodes.size === 0) return;
+    this.activeTransform = null;
 
-    this.selectedNodes.clear();
-    this.lastSelected = null;
-
-    this.eventBus.emit("selection:changed", {
-      selected: []
-    });
-  }
-
-  isSelected(nodeId) {
-    return this.selectedNodes.has(nodeId);
-  }
-
-  getSelectedNodes() {
-    return Array.from(this.selectedNodes).map((id) =>
-      this.nodeTree.findNodeById(id)
-    );
+    this.eventBus.emit("transform:end", { nodeId });
   }
 }
