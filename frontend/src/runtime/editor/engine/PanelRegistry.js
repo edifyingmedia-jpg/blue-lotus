@@ -1,43 +1,44 @@
-// PanelRegistry.js
-// Registry for managing editor panels (properties panel, layers panel, etc.)
-
-export default class PanelRegistry {
-  constructor() {
-    this.panels = {};
+export class PanelRegistry {
+  constructor(eventBus) {
+    this.eventBus = eventBus;
+    this.panels = new Map();
     this.activePanel = null;
   }
 
-  // Register a panel with a unique name
-  registerPanel(name, panelObject) {
-    if (!name || !panelObject) {
-      console.error("PanelRegistry: registerPanel requires a name and panelObject");
+  registerPanel(name, panelInstance) {
+    this.panels.set(name, panelInstance);
+  }
+
+  activatePanel(name) {
+    const panel = this.panels.get(name);
+    if (!panel) {
+      console.warn(`Panel not found: ${name}`);
       return;
     }
-    this.panels[name] = panelObject;
-  }
 
-  // Retrieve a panel by name
-  getPanel(name) {
-    return this.panels[name] || null;
-  }
+    this.activePanel = panel;
 
-  // Set the active panel
-  setActivePanel(name) {
-    if (!this.panels[name]) {
-      console.warn(`PanelRegistry: Panel "${name}" not found`);
-      return;
+    if (panel.onActivate) {
+      panel.onActivate();
     }
-    this.activePanel = name;
+
+    this.eventBus.emit("panel:activated", { name });
   }
 
-  // Get the currently active panel object
-  getActivePanel() {
-    if (!this.activePanel) return null;
-    return this.panels[this.activePanel] || null;
+  deactivatePanel() {
+    if (this.activePanel && this.activePanel.onDeactivate) {
+      this.activePanel.onDeactivate();
+    }
+
+    this.activePanel = null;
+    this.eventBus.emit("panel:deactivated", {});
   }
 
-  // List all registered panels
-  listPanels() {
-    return Object.keys(this.panels);
+  updatePanel(name, data) {
+    const panel = this.panels.get(name);
+    if (!panel || !panel.update) return;
+
+    panel.update(data);
+    this.eventBus.emit("panel:updated", { name, data });
   }
 }
