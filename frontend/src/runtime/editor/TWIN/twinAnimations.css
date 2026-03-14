@@ -1,0 +1,64 @@
+/* Lotus Base */
+.twin-lotus {
+  position: fixed;
+  bottom: 40px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 70px;
+  height: 70px;
+  background: url('/images/lotus-small.svg') no-repeat center/contain;
+  transition: opacity 0.3s ease, transform 0.3s ease;
+  z-index: 9999;
+}
+
+/* Tier 1: Micro Pulse */
+.lotus-pulse {
+  animation: lotusPulse 0.4s ease;
+}
+
+@keyframes lotusPulse {
+  0% { transform: translateX(-50%) scale(1); }
+  50% { transform: translateX(-50%) scale(1.15); }
+  100% { transform: translateX(-50%) scale(1); }
+}
+
+/* Tier 2: Mini Expand */
+.lotus-mini-expand {
+  animation: lotusMiniExpand 0.8s ease;
+}
+
+@keyframes lotusMiniExpand {
+  0% { transform: translateX(-50%) scale(1); }
+  50% { transform: translateX(-50%) scale(1.3); }
+  100% { transform: translateX(-50%) scale(1); }
+}
+
+/* Tier 3: Full Bloom */
+.lotus-bloom {
+  background: url('/images/lotus-bloom.svg') no-repeat center/contain;
+  animation: lotusBloom 1.2s ease forwards;
+}
+
+@keyframes lotusBloom {
+  0% { transform: translateX(-50%) scale(1); }
+  100% { transform: translateX(-50%) scale(3); }
+}
+
+/* Bloom Overlay */
+.twin-bloom-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.55);
+  backdrop-filter: blur(4px);
+  z-index: 9998;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.twin-bloom-text {
+  color: white;
+  font-size: 2rem;
+  font-weight: 600;
+  text-shadow: 0 0 10px #00cfff;
+}
