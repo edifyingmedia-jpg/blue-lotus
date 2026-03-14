@@ -1,43 +1,43 @@
-// ToolRegistry.js
-// Central registry for editor tools (move, frame, text, etc.)
-
-export default class ToolRegistry {
-  constructor() {
-    this.tools = {};
+export class ToolRegistry {
+  constructor(eventBus, commandManager) {
+    this.eventBus = eventBus;
+    this.commandManager = commandManager;
+    this.tools = new Map();
     this.activeTool = null;
   }
 
-  // Register a tool with a unique name
-  registerTool(name, toolObject) {
-    if (!name || !toolObject) {
-      console.error("ToolRegistry: registerTool requires a name and toolObject");
+  registerTool(name, toolInstance) {
+    this.tools.set(name, toolInstance);
+  }
+
+  activateTool(name) {
+    const tool = this.tools.get(name);
+    if (!tool) {
+      console.warn(`Tool not found: ${name}`);
       return;
     }
-    this.tools[name] = toolObject;
-  }
 
-  // Retrieve a tool by name
-  getTool(name) {
-    return this.tools[name] || null;
-  }
+    this.activeTool = tool;
 
-  // Set the active tool
-  setActiveTool(name) {
-    if (!this.tools[name]) {
-      console.warn(`ToolRegistry: Tool "${name}" not found`);
-      return;
+    if (tool.onActivate) {
+      tool.onActivate();
     }
-    this.activeTool = name;
+
+    this.eventBus.emit("tool:activated", { name });
   }
 
-  // Get the currently active tool object
-  getActiveTool() {
-    if (!this.activeTool) return null;
-    return this.tools[this.activeTool] || null;
+  deactivateTool() {
+    if (this.activeTool && this.activeTool.onDeactivate) {
+      this.activeTool.onDeactivate();
+    }
+
+    this.activeTool = null;
+    this.eventBus.emit("tool:deactivated", {});
   }
 
-  // List all registered tools
-  listTools() {
-    return Object.keys(this.tools);
+  handlePointerEvent(event) {
+    if (this.activeTool && this.activeTool.handlePointerEvent) {
+      this.activeTool.handlePointerEvent(event, this.commandManager);
+    }
   }
 }
