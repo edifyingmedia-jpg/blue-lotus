@@ -1,168 +1,180 @@
-// frontend/src/runtime/editor/TWIN/TWINManager.js
-// Full implementation — React + CSS animations + SpeechSynthesis + EventBus
-
-import { useEffect, useRef, useState } from "react";
-import EventBus from "../EventBus";
-import "../TWIN/twinAnimations.css"; // You will create this file next
+import React, { useEffect, useRef, useState } from "react";
+import EventBus from "../engine/EventBus";
 
 /**
  * TWINManager
- * Controls:
- * - Lotus animations (3 tiers)
- * - Deep build bloom mode
- * - Reveal sequence
- * - Voice output
- * - Auto-avoidance
- * - EventBus communication
+ * Floating lotus AI assistant for Blue Lotus
+ * - Pulse → Mini-expand → Bloom animation chain
+ * - Auto-avoidance (never blocks workspace center)
+ * - Working / Done states
+ * - Voice output (speechSynthesis)
+ * - EventBus integration
  */
 
-export default function TWINManager({ children }) {
-  const [state, setState] = useState("idle");
-  const [animationTier, setAnimationTier] = useState(0);
-  const [isBlooming, setIsBlooming] = useState(false);
-  const [buildMessage, setBuildMessage] = useState("");
+const TWINManager = () => {
   const lotusRef = useRef(null);
+  const [state, setState] = useState("idle"); 
+  const [position, setPosition] = useState({ x: 40, y: 40 });
+  const eventBusRef = useRef(null);
 
   // -----------------------------
-  // EVENTBUS LISTENERS
+  // 1. Initialize EventBus
   // -----------------------------
   useEffect(() => {
-    EventBus.on("TWIN:microAdjust", handleMicroAdjust);
-    EventBus.on("TWIN:miniBuild", handleMiniBuild);
-    EventBus.on("TWIN:deepBuild", handleDeepBuild);
-    EventBus.on("TWIN:completeBuild", handleCompleteBuild);
+    eventBusRef.current = new EventBus();
+
+    // Listen for TWIN actions
+    eventBusRef.current.on("TWIN:speak", handleSpeak);
+    eventBusRef.current.on("TWIN:working", () => setState("working"));
+    eventBusRef.current.on("TWIN:done", () => setState("done"));
 
     return () => {
-      EventBus.off("TWIN:microAdjust", handleMicroAdjust);
-      EventBus.off("TWIN:miniBuild", handleMiniBuild);
-      EventBus.off("TWIN:deepBuild", handleDeepBuild);
-      EventBus.off("TWIN:completeBuild", handleCompleteBuild);
+      eventBusRef.current.off("TWIN:speak", handleSpeak);
+      eventBusRef.current.off("TWIN:working");
+      eventBusRef.current.off("TWIN:done");
     };
   }, []);
 
   // -----------------------------
-  // ANIMATION TIER HANDLERS
+  // 2. Voice Output
   // -----------------------------
-  function handleMicroAdjust() {
-    setAnimationTier(1);
-    setState("microAdjust");
-    triggerPulse();
-  }
+  const handleSpeak = (text) => {
+    if (!text) return;
 
-  function handleMiniBuild(message) {
-    setAnimationTier(2);
-    setState("miniBuild");
-    setBuildMessage(message || "Building...");
-    triggerMiniExpand();
-  }
-
-  function handleDeepBuild(message) {
-    setAnimationTier(3);
-    setState("deepBuild");
-    setBuildMessage(message || "Building...");
-    triggerBloom();
-  }
-
-  function handleCompleteBuild(message) {
-    setState("revealing");
-    setBuildMessage(message || "Completed.");
-    triggerReveal();
-  }
-
-  // -----------------------------
-  // ANIMATION LOGIC
-  // -----------------------------
-  function triggerPulse() {
-    const lotus = lotusRef.current;
-    if (!lotus) return;
-    lotus.classList.add("lotus-pulse");
-    setTimeout(() => lotus.classList.remove("lotus-pulse"), 400);
-  }
-
-  function triggerMiniExpand() {
-    const lotus = lotusRef.current;
-    if (!lotus) return;
-    lotus.classList.add("lotus-mini-expand");
-    setTimeout(() => lotus.classList.remove("lotus-mini-expand"), 800);
-  }
-
-  function triggerBloom() {
-    setIsBlooming(true);
-    speak(`Starting build. ${buildMessage}`);
-  }
-
-  function triggerReveal() {
-    setTimeout(() => {
-      setIsBlooming(false);
-      playChime();
-      speak(buildMessage);
-      setState("idle");
-    }, 1200);
-  }
-
-  // -----------------------------
-  // VOICE SYSTEM
-  // -----------------------------
-  function speak(text) {
     const utter = new SpeechSynthesisUtterance(text);
     utter.rate = 1;
     utter.pitch = 1;
     utter.volume = 1;
+
+    // Soft, warm, neutral voice
+    const voices = speechSynthesis.getVoices();
+    const preferred = voices.find(v =>
+      v.name.toLowerCase().includes("female") ||
+      v.name.toLowerCase().includes("soft") ||
+      v.name.toLowerCase().includes("warm")
+    );
+    if (preferred) utter.voice = preferred;
+
     speechSynthesis.speak(utter);
-  }
+  };
 
   // -----------------------------
-  // COMPLETION CHIME
-  // -----------------------------
-  function playChime() {
-    const audio = new Audio("/sounds/twing-ting.mp3"); // Add this file later
-    audio.volume = 0.6;
-    audio.play();
-  }
-
-  // -----------------------------
-  // AUTO-AVOIDANCE (simple version)
+  // 3. Auto-Avoidance Logic
   // -----------------------------
   useEffect(() => {
-    function handleMouseMove(e) {
+    const handleMouseMove = (e) => {
       const lotus = lotusRef.current;
       if (!lotus) return;
 
       const rect = lotus.getBoundingClientRect();
-      const distance = Math.abs(e.clientY - rect.top);
+      const dx = e.clientX - (rect.left + rect.width / 2);
+      const dy = e.clientY - (rect.top + rect.height / 2);
+      const distance = Math.sqrt(dx * dx + dy * dy);
 
-      if (distance < 80) {
-        lotus.style.opacity = "0.4";
-        lotus.style.transform = "translateY(10px)";
-      } else {
-        lotus.style.opacity = "1";
-        lotus.style.transform = "translateY(0)";
+      // If cursor gets too close, move TWIN away
+      if (distance < 120) {
+        const angle = Math.atan2(dy, dx);
+        const newX = position.x - Math.cos(angle) * 40;
+        const newY = position.y - Math.sin(angle) * 40;
+
+        setPosition({
+          x: Math.min(window.innerWidth - 120, Math.max(20, newX)),
+          y: Math.min(window.innerHeight - 120, Math.max(20, newY)),
+        });
       }
-    }
+    };
 
     window.addEventListener("mousemove", handleMouseMove);
     return () => window.removeEventListener("mousemove", handleMouseMove);
-  }, []);
+  }, [position]);
 
   // -----------------------------
-  // RENDER
+  // 4. Animation State Classes
+  // -----------------------------
+  const getAnimationClass = () => {
+    switch (state) {
+      case "working":
+        return "twin-working";
+      case "done":
+        return "twin-done";
+      default:
+        return "twin-idle";
+    }
+  };
+
+  // -----------------------------
+  // 5. Render
   // -----------------------------
   return (
-    <>
-      {/* Lotus Icon */}
-      <div
-        ref={lotusRef}
-        className={`twin-lotus ${isBlooming ? "lotus-bloom" : ""}`}
-      ></div>
-
-      {/* Bloom Overlay */}
-      {isBlooming && (
-        <div className="twin-bloom-overlay">
-          <div className="twin-bloom-text">{buildMessage}</div>
-        </div>
-      )}
-
-      {children}
-    </>
+    <div
+      ref={lotusRef}
+      className={`twin-lotus ${getAnimationClass()}`}
+      style={{
+        position: "fixed",
+        left: position.x,
+        top: position.y,
+        width: 90,
+        height: 90,
+        zIndex: 9999,
+        pointerEvents: "none",
+        transition: "left 0.25s ease, top 0.25s ease",
+      }}
+    >
+      {/* Lotus Visual */}
+      <div className="twin-lotus-core" />
+    </div>
   );
+};
+
+export default TWINManager;
+
+/* ---------------------------------------------------------
+   CSS (inline for now — move to TWINManager.css if needed)
+--------------------------------------------------------- */
+
+const style = document.createElement("style");
+style.innerHTML = `
+.twin-lotus {
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
+
+.twin-lotus-core {
+  width: 90px;
+  height: 90px;
+  border-radius: 50%;
+  background: radial-gradient(circle, #ff9cff, #b45cff, #6a2cff);
+  box-shadow: 0 0 20px #ff9cff, 0 0 40px #b45cff;
+  animation: twin-pulse 3s infinite ease-in-out;
+}
+
+/* Idle Pulse */
+@keyframes twin-pulse {
+  0% { transform: scale(1); filter: brightness(1); }
+  50% { transform: scale(1.08); filter: brightness(1.2); }
+  100% { transform: scale(1); filter: brightness(1); }
+}
+
+/* Working Animation */
+.twin-working .twin-lotus-core {
+  animation: twin-working 1.2s infinite ease-in-out;
+}
+
+@keyframes twin-working {
+  0% { transform: scale(1); filter: brightness(1); }
+  50% { transform: scale(1.15); filter: brightness(1.4); }
+  100% { transform: scale(1); filter: brightness(1); }
+}
+
+/* Done Animation */
+.twin-done .twin-lotus-core {
+  animation: twin-done 0.8s ease-out forwards;
+}
+
+@keyframes twin-done {
+  0% { transform: scale(1); filter: brightness(1); }
+  100% { transform: scale(1.25); filter: brightness(1.6); }
+}
+`;
+document.head.appendChild(style);
