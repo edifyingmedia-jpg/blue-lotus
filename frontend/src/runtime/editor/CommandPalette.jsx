@@ -3,6 +3,7 @@
 import React, { useState, useEffect, useCallback } from "react";
 import EventBus from "./core/EventBus";
 import { LotusCommandRegistry } from "./core/LotusCommandRegistry";
+import { Theme } from "./EditorTheme";
 
 const EDITOR_EVENT_CHANNEL = "editor:event";
 
@@ -27,27 +28,30 @@ const LotusCommandPalette = () => {
     setQuery("");
   };
 
-  const handleKey = useCallback((e) => {
-    // Open palette with Cmd+K or Ctrl+K
-    if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "k") {
-      e.preventDefault();
-      setOpen((prev) => !prev);
-      return;
-    }
+  const handleKey = useCallback(
+    (e) => {
+      // Open palette with Cmd+K or Ctrl+K
+      if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "k") {
+        e.preventDefault();
+        setOpen((prev) => !prev);
+        return;
+      }
 
-    // Slash command
-    if (e.key === "/" && !open) {
-      setOpen(true);
-      setQuery("");
-      return;
-    }
+      // Slash command
+      if (e.key === "/" && !open) {
+        setOpen(true);
+        setQuery("");
+        return;
+      }
 
-    // Escape closes palette
-    if (e.key === "Escape") {
-      setOpen(false);
-      setQuery("");
-    }
-  }, [open]);
+      // Escape closes palette
+      if (e.key === "Escape") {
+        setOpen(false);
+        setQuery("");
+      }
+    },
+    [open]
+  );
 
   useEffect(() => {
     window.addEventListener("keydown", handleKey);
@@ -65,12 +69,13 @@ const LotusCommandPalette = () => {
         left: "50%",
         transform: "translateX(-50%)",
         width: "420px",
-        background: "#111",
-        border: "1px solid #333",
-        borderRadius: "8px",
-        padding: "12px",
+        background: Theme.colors.bgElevated,
+        border: `1px solid ${Theme.colors.border}`,
+        borderRadius: Theme.radius.lg,
+        padding: Theme.spacing.md,
         zIndex: 9999,
-        boxShadow: "0 8px 24px rgba(0,0,0,0.4)",
+        boxShadow: Theme.neonGlow("neonPurple"),
+        fontFamily: Theme.fonts.body,
       }}
     >
       <input
@@ -80,43 +85,68 @@ const LotusCommandPalette = () => {
         placeholder="Type a command…"
         style={{
           width: "100%",
-          padding: "8px",
-          background: "#222",
-          border: "1px solid #444",
-          borderRadius: "4px",
-          color: "#eee",
-          marginBottom: "10px",
+          padding: Theme.spacing.sm,
+          background: Theme.colors.buttonBg,
+          border: `1px solid ${Theme.colors.border}`,
+          borderRadius: Theme.radius.md,
+          color: Theme.colors.text,
+          marginBottom: Theme.spacing.md,
           fontSize: "14px",
         }}
       />
 
       <div style={{ maxHeight: "240px", overflowY: "auto" }}>
         {filtered.length === 0 && (
-          <div style={{ color: "#777", padding: "8px" }}>
+          <div style={{ color: Theme.colors.textMuted, padding: Theme.spacing.sm }}>
             No matching commands
           </div>
         )}
 
-        {filtered.map((cmd) => (
-          <div
-            key={cmd.name}
-            onClick={() => handleTrigger(cmd)}
-            style={{
-              padding: "8px",
-              borderRadius: "4px",
-              cursor: "pointer",
-              background: "#181818",
-              marginBottom: "6px",
-              border: "1px solid #333",
-              color: "#eee",
-            }}
-          >
-            <div style={{ fontSize: "14px" }}>{cmd.label}</div>
-            <div style={{ fontSize: "11px", color: "#888" }}>
-              {cmd.description}
+        {filtered.map((cmd, index) => {
+          const neonColors = [
+            Theme.colors.neonCyan,
+            Theme.colors.neonPurple,
+            Theme.colors.neonPink,
+          ];
+          const accent = neonColors[index % neonColors.length];
+
+          return (
+            <div
+              key={cmd.name}
+              onClick={() => handleTrigger(cmd)}
+              style={{
+                padding: Theme.spacing.sm,
+                borderRadius: Theme.radius.md,
+                cursor: "pointer",
+                background: Theme.colors.bgPanel,
+                marginBottom: Theme.spacing.xs,
+                border: `1px solid ${Theme.colors.border}`,
+                color: Theme.colors.text,
+                transition: "0.15s ease",
+                boxShadow: `0 0 4px ${accent}55`,
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.background = Theme.colors.buttonHover;
+                e.currentTarget.style.boxShadow = Theme.neonGlow(
+                  index % 3 === 0
+                    ? "neonCyan"
+                    : index % 3 === 1
+                    ? "neonPurple"
+                    : "neonPink"
+                );
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.background = Theme.colors.bgPanel;
+                e.currentTarget.style.boxShadow = `0 0 4px ${accent}55`;
+              }}
+            >
+              <div style={{ fontSize: "14px" }}>{cmd.label}</div>
+              <div style={{ fontSize: "11px", color: Theme.colors.textMuted }}>
+                {cmd.description}
+              </div>
             </div>
-          </div>
-        ))}
+          );
+        })}
       </div>
     </div>
   );
