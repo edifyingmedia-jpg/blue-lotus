@@ -3,6 +3,7 @@
 import React, { useEffect, useState, useCallback } from "react";
 import EventBus from "./core/EventBus";
 import { getText, setText, applyUpdate } from "./core/DocumentModel";
+import { updateSelection } from "./core/SelectionModel";
 import TWINLotus from "./TWIN/TWINLotus";
 import LotusCommandPanel from "./LotusCommandPanel";
 
@@ -15,13 +16,25 @@ const EditorSurface = () => {
   // Handle user typing
   const handleChange = useCallback((event) => {
     const value = event.target.value;
+
+    // Update document model
     setText(value);
     setLocalText(value);
 
+    // Update selection model
+    updateSelection(event.target.selectionStart, event.target.selectionEnd, value);
+
+    // Emit event to TWINLotus
     EventBus.emit(EDITOR_EVENT_CHANNEL, {
       action: "update_text",
       payload: { value },
     });
+  }, []);
+
+  // Handle selection changes
+  const handleSelectionChange = useCallback((event) => {
+    const el = event.target;
+    updateSelection(el.selectionStart, el.selectionEnd, el.value);
   }, []);
 
   // Listen for updates from TWINLotus
@@ -69,6 +82,7 @@ const EditorSurface = () => {
       <textarea
         value={text}
         onChange={handleChange}
+        onSelect={handleSelectionChange}
         style={{
           flex: 1,
           width: "100%",
