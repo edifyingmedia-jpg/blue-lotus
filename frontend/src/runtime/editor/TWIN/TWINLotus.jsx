@@ -4,23 +4,9 @@ import React, { useEffect, useState, useCallback } from "react";
 import PropTypes from "prop-types";
 
 import EventBus from "../core/EventBus";
-import { getSelection } from "../core/SelectionModel";
-import {
-  getCurrentParagraph,
-  getSurroundingParagraphs,
-  getCurrentScene,
-} from "../core/ContextModel";
-
-import {
-  getChapters,
-  getCurrentChapter,
-  getSections,
-  getCurrentSection,
-  getBeats,
-  getCurrentBeat,
-} from "../core/StructuralContextModel";
-
+import { getLotusContext } from "../core/LotusContextBundle";
 import { applyContextualReplacement } from "../core/TextRegionEngine";
+import { applyStructuralReplacement } from "../core/StructuralEditingEngine";
 
 const TWIN_STATES = {
   IDLE: "IDLE",
@@ -248,27 +234,11 @@ const TWINLotus = ({ initialText, onChange }) => {
         setState(TWIN_STATES.PROCESSING);
 
         try {
-          const selection = getSelection();
-          const paragraph = getCurrentParagraph();
-          const surrounding = getSurroundingParagraphs();
-          const scene = getCurrentScene();
-
-          const chapter = getCurrentChapter();
-          const section = getCurrentSection();
-          const beat = getCurrentBeat();
+          const context = getLotusContext();
 
           const enrichedPayload = {
             ...payload,
-            selection,
-            paragraph,
-            surrounding,
-            scene,
-            chapter,
-            section,
-            beat,
-            chapters: getChapters(),
-            sections: getSections(),
-            beats: getBeats(),
+            ...context,
           };
 
           const result = runLotusCommand(
@@ -277,12 +247,17 @@ const TWINLotus = ({ initialText, onChange }) => {
             currentText
           );
 
-          const merged = applyContextualReplacement(
+          const structurallyMerged = applyStructuralReplacement(
             enrichedPayload,
             result.text
           );
 
-          const nextText = normalizeText(merged);
+          const finalMerged = applyContextualReplacement(
+            enrichedPayload,
+            structurallyMerged
+          );
+
+          const nextText = normalizeText(finalMerged);
           setCurrentText(nextText);
 
           setState(TWIN_STATES.UPDATING);
