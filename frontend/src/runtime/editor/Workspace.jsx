@@ -1,100 +1,73 @@
-// Workspace.jsx
-"use client";
+// frontend/src/runtime/editor/Workspace.jsx
 
 import React from "react";
-import EditorScreen from "./EditorScreen";
+import { useEditor } from "./EditorContext";
+import EditorChrome from "./EditorChrome";
+import { Theme } from "./EditorTheme";
 
-export default function Workspace() {
+/**
+ * Workspace
+ *
+ * The multi-pane layout container for Blue Lotus.
+ * Supports:
+ * - main editor pane
+ * - optional left/right panes (outline, builder, notes)
+ * - theme-aware layout
+ */
+
+const Workspace = () => {
+  const { activePane } = useEditor();
+
   return (
     <div
+      data-workspace
       style={{
-        width: "100%",
-        height: "100vh",
         display: "flex",
-        flexDirection: "column",
-        background: "#0d0d0d",
-        color: "#fff",
-        overflow: "hidden"
+        width: "100%",
+        height: "100%",
+        background: Theme.colors.bg,
+        color: Theme.colors.text,
+        fontFamily: Theme.fonts.body,
       }}
     >
-      {/* Top Bar */}
-      <div
-        style={{
-          height: "48px",
-          width: "100%",
-          background: "#111",
-          borderBottom: "1px solid #222",
-          display: "flex",
-          alignItems: "center",
-          padding: "0 16px",
-          fontSize: "14px",
-          letterSpacing: "0.5px"
-        }}
-      >
-        Blue Lotus — Editor
-      </div>
-
-      {/* Main Editor Area */}
-      <div
-        style={{
-          flex: 1,
-          display: "flex",
-          width: "100%",
-          height: "100%"
-        }}
-      >
-        {/* Left Sidebar (Tools) */}
+      {/* Left Pane (future: OutlinePane, NavigatorPane) */}
+      {activePane === "outline" && (
         <div
           style={{
-            width: "64px",
-            background: "#141414",
-            borderRight: "1px solid #222",
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-            paddingTop: "12px",
-            gap: "12px"
+            width: "260px",
+            borderRight: `1px solid ${Theme.colors.border}`,
+            background: Theme.colors.bgPanel,
+            padding: Theme.spacing.md,
           }}
         >
-          <div style={{ width: 32, height: 32, background: "#222", borderRadius: 6 }} />
-          <div style={{ width: 32, height: 32, background: "#222", borderRadius: 6 }} />
-          <div style={{ width: 32, height: 32, background: "#222", borderRadius: 6 }} />
+          <div style={{ color: Theme.colors.textMuted }}>
+            Outline Pane (coming soon)
+          </div>
         </div>
+      )}
 
-        {/* Canvas Area */}
-        <div style={{ flex: 1, position: "relative" }}>
-          <EditorScreen />
-        </div>
+      {/* Main Editor Pane */}
+      <div style={{ flex: 1, position: "relative" }}>
+        <EditorChrome />
+      </div>
 
-        {/* Right Sidebar (Properties) */}
+      {/* Right Pane (future: BuilderPane, NotesPane) */}
+      {activePane === "builder" && (
         <div
           style={{
-            width: "280px",
-            background: "#141414",
-            borderLeft: "1px solid #222",
-            padding: "16px"
+            width: "300px",
+            borderLeft: `1px solid ${Theme.colors.border}`,
+            background: Theme.colors.bgPanel,
+            padding: Theme.spacing.md,
           }}
         >
-          <h3 style={{ margin: 0, marginBottom: 12, fontSize: 16 }}>Properties</h3>
-          <div style={{ width: "100%", height: 200, background: "#222", borderRadius: 8 }} />
+          <div style={{ color: Theme.colors.textMuted }}>
+            Builder Pane (coming soon)
+          </div>
         </div>
-      </div>
-
-      {/* Bottom Bar */}
-      <div
-        style={{
-          height: "32px",
-          width: "100%",
-          background: "#111",
-          borderTop: "1px solid #222",
-          display: "flex",
-          alignItems: "center",
-          padding: "0 12px",
-          fontSize: "12px"
-        }}
-      >
-        Zoom: 100%
-      </div>
+      )}
     </div>
   );
-}
+};
+
+export default Workspace;
