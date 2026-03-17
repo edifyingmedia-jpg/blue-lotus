@@ -5,7 +5,13 @@ import PropTypes from "prop-types";
 
 import EventBus from "../core/EventBus";
 import { getSelection } from "../core/SelectionModel";
-import { getCurrentParagraph, getSurroundingParagraphs, getCurrentScene } from "../core/ContextModel";
+import {
+  getCurrentParagraph,
+  getSurroundingParagraphs,
+  getCurrentScene,
+} from "../core/ContextModel";
+
+import { applyContextualReplacement } from "../core/TextRegionEngine";
 
 const TWIN_STATES = {
   IDLE: "IDLE",
@@ -123,7 +129,11 @@ const lotusCommands = {
   },
 
   summarizeSection(payload, currentText) {
-    const base = payload.selection?.text || payload.paragraph?.text || currentText;
+    const base =
+      payload.selection?.text ||
+      payload.paragraph?.text ||
+      currentText;
+
     return {
       text: summarize(base),
       meta: { command: "summarizeSection" },
@@ -132,6 +142,7 @@ const lotusCommands = {
 
   expandScene(payload, currentText) {
     const base = payload.scene?.text || currentText;
+
     return {
       text: expand(base, payload.factor || 1.6),
       meta: { command: "expandScene" },
@@ -140,6 +151,7 @@ const lotusCommands = {
 
   fixTone(payload, currentText) {
     const base = payload.selection?.text || currentText;
+
     return {
       text: adjustTone(base, payload.mode || "softer"),
       meta: { command: "fixTone" },
@@ -148,6 +160,7 @@ const lotusCommands = {
 
   applyStyle(payload, currentText) {
     const base = payload.selection?.text || currentText;
+
     return {
       text: applyStyle(base, payload.style || "cinematic"),
       meta: { command: "applyStyle" },
@@ -155,7 +168,11 @@ const lotusCommands = {
   },
 
   generateNextBeat(payload, currentText) {
-    const base = payload.scene?.text || payload.paragraph?.text || currentText;
+    const base =
+      payload.scene?.text ||
+      payload.paragraph?.text ||
+      currentText;
+
     return {
       text: generateNextBeat(base),
       meta: { command: "generateNextBeat" },
@@ -176,7 +193,9 @@ function runLotusCommand(name, payload, currentText) {
 const TWINLotus = ({ initialText, onChange }) => {
   const [state, setState] = useState(TWIN_STATES.IDLE);
   const [lastError, setLastError] = useState(null);
-  const [currentText, setCurrentText] = useState(normalizeText(initialText || ""));
+  const [currentText, setCurrentText] = useState(
+    normalizeText(initialText || "")
+  );
 
   const emitUpdate = useCallback(
     (update) => {
@@ -207,6 +226,7 @@ const TWINLotus = ({ initialText, onChange }) => {
       if (action === "update_text") {
         const next = normalizeText(payload?.value || "");
         setCurrentText(next);
+
         setState(TWIN_STATES.UPDATING);
         emitUpdate({ text: next, source: "editor" });
         setState(TWIN_STATES.IDLE);
@@ -230,9 +250,18 @@ const TWINLotus = ({ initialText, onChange }) => {
             scene,
           };
 
-          const result = runLotusCommand(payload.command, enrichedPayload, currentText);
+          const result = runLotusCommand(
+            payload.command,
+            enrichedPayload,
+            currentText
+          );
 
-          const nextText = normalizeText(result.text || currentText);
+          const merged = applyContextualReplacement(
+            enrichedPayload,
+            result.text
+          );
+
+          const nextText = normalizeText(merged);
           setCurrentText(nextText);
 
           setState(TWIN_STATES.UPDATING);
@@ -265,13 +294,21 @@ const TWINLotus = ({ initialText, onChange }) => {
 
   useEffect(() => {
     EventBus.on(EDITOR_EVENT_CHANNEL, handleEditorEvent);
-    return () => EventBus.off(EDITOR_EVENT_CHANNEL, handleEditorEvent);
+    return () =>
+      EventBus.off(EDITOR_EVENT_CHANNEL, handleEditorEvent);
   }, [handleEditorEvent]);
 
   return (
-    <div data-twin-lotus data-state={state} style={{ display: "none" }}>
+    <div
+      data-twin-lotus
+      data-state={state}
+      style={{ display: "none" }}
+    >
       {lastError && (
-        <span data-twin-lotus-error={lastError} aria-hidden="true" />
+        <span
+          data-twin-lotus-error={lastError}
+          aria-hidden="true"
+        />
       )}
     </div>
   );
