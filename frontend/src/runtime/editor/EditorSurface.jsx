@@ -4,6 +4,7 @@ import React, { useEffect, useState, useCallback } from "react";
 import EventBus from "./core/EventBus";
 import { getText, setText, applyUpdate } from "./core/DocumentModel";
 import TWINLotus from "./TWIN/TWINLotus";
+import LotusCommandPanel from "./LotusCommandPanel";
 
 const EDITOR_EVENT_CHANNEL = "editor:event";
 const EDITOR_UPDATE_CHANNEL = "editor:update";
@@ -11,7 +12,7 @@ const EDITOR_UPDATE_CHANNEL = "editor:update";
 const EditorSurface = () => {
   const [text, setLocalText] = useState(() => getText());
 
-  // Keep DocumentModel and local state in sync when user types
+  // Handle user typing
   const handleChange = useCallback((event) => {
     const value = event.target.value;
     setText(value);
@@ -36,7 +37,7 @@ const EditorSurface = () => {
     };
   }, []);
 
-  // Optional: expose a simple debug hook on window for you
+  // Optional debug hook
   useEffect(() => {
     if (typeof window !== "undefined") {
       window.__BLUE_LOTUS_DEBUG__ = {
@@ -61,6 +62,10 @@ const EditorSurface = () => {
         height: "100%",
       }}
     >
+      {/* Command Panel */}
+      <LotusCommandPanel />
+
+      {/* Main Editor */}
       <textarea
         value={text}
         onChange={handleChange}
@@ -74,6 +79,7 @@ const EditorSurface = () => {
           lineHeight: 1.5,
         }}
       />
+
       {/* Invisible runtime brain */}
       <TWINLotus
         initialText={text}
