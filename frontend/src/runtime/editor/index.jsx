@@ -5,6 +5,7 @@ import { createRoot } from "react-dom/client";
 
 import EditorChrome from "./EditorChrome";
 import TWINLotus from "./TWIN/TWINLotus";
+import { injectEditorScrollStyles } from "./EditorScrollStyles";
 
 /**
  * Blue Lotus Editor Entry Point
@@ -12,9 +13,11 @@ import TWINLotus from "./TWIN/TWINLotus";
  * This file mounts:
  * - EditorChrome (UI shell)
  * - TWINLotus (intelligent engine)
- *
- * into the runtime environment.
+ * - Scroll styles (global neon scrollbars)
  */
+
+// Inject global scroll styles once at startup
+injectEditorScrollStyles();
 
 function BlueLotusEditor() {
   return (
