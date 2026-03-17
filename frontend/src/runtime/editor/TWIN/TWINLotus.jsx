@@ -1,43 +1,280 @@
 // frontend/src/runtime/editor/TWIN/TWINLotus.jsx
-// Pure visual lotus avatar for TWIN — controlled entirely by TWINManager
 
-import React, { forwardRef } from "react";
-import "./twinAnimations.css";
+import React, { useEffect, useState, useCallback } from "react";
+import PropTypes from "prop-types";
+
+// Adjust this import to match your actual EventBus location
+import EventBus from "../EventBus";
 
 /**
- * Props:
- * - animationTier: 0 | 1 | 2 | 3
- * - isBlooming: boolean
- *
- * Tiers:
- * 0 = idle micro‑pulse
- * 1 = pulse
- * 2 = mini‑expand
- * 3 = full bloom (requires isBlooming = true)
+ * Simple finite state machine for TWIN runtime.
  */
+const TWIN_STATES = {
+  IDLE: "IDLE",
+  LISTENING: "LISTENING",
+  PROCESSING: "PROCESSING",
+  UPDATING: "UPDATING",
+  ERROR: "ERROR",
+};
 
-const TWINLotus = forwardRef(({ animationTier = 0, isBlooming = false }, ref) => {
-  let animationClass = "";
+const EDITOR_EVENT_CHANNEL = "editor:event";
+const EDITOR_UPDATE_CHANNEL = "editor:update";
 
-  if (animationTier === 1) animationClass = "lotus-pulse";
-  if (animationTier === 2) animationClass = "lotus-mini-expand";
-  if (animationTier === 3 && isBlooming) animationClass = "lotus-bloom";
+/**
+ * Core text utilities
+ */
+function normalizeText(text) {
+  if (typeof text !== "string") return "";
+  return text.replace(/\r\n/g, "\n");
+}
+
+function summarize(text, maxSentences = 3) {
+  const clean = normalizeText(text);
+  const sentences = clean.split(/(?<=[.!?])\s+/).filter(Boolean);
+  return sentences.slice(0, maxSentences).join(" ");
+}
+
+function expand(text, factor = 1.5) {
+  const clean = normalizeText(text);
+  if (!clean.trim()) return clean;
+  const words = clean.split(/\s+/);
+  const targetLength = Math.ceil(words.length * factor);
+  const filler = [
+    "with greater clarity",
+    "in more vivid detail",
+    "exploring the emotional undercurrent",
+    "revealing subtle motivations",
+    "deepening the atmosphere",
+  ];
+  const result = [...words];
+  let i = 0;
+  while (result.length < targetLength) {
+    result.push(filler[i % filler.length]);
+    i += 1;
+  }
+  return result.join(" ");
+}
+
+function adjustTone(text, mode = "softer") {
+  const clean = normalizeText(text);
+  if (mode === "softer") {
+    return clean
+      .replace(/\b(hate|furious|rage|disgust)\b/gi, "dislike")
+      .replace(/\b(never|impossible)\b/gi, "rarely");
+  }
+  if (mode === "stronger") {
+    return clean
+      .replace(/\b(like|upset|sad)\b/gi, "deeply affected")
+      .replace(/\b(maybe|perhaps)\b/gi, "absolutely");
+  }
+  return clean;
+}
+
+function applyStyle(text, style = "cinematic") {
+  const clean = normalizeText(text);
+  if (style === "cinematic") {
+    return `The scene unfolds:\n\n${clean}`;
+  }
+  if (style === "intimate") {
+    return `Close to the character's thoughts:\n\n${clean}`;
+  }
+  if (style === "omniscient") {
+    return `From above it all, the narrator sees:\n\n${clean}`;
+  }
+  return clean;
+}
+
+function generateNextBeat(contextText) {
+  const clean = normalizeText(contextText);
+  const lastLine = clean.split("\n").filter(Boolean).slice(-1)[0] || "";
+  return `${clean}\n\nNext beat:\n${lastLine ? `Something shifts after: "${lastLine}"` : "A new tension emerges in the scene."}`;
+}
+
+/**
+ * Command registry
+ * Each command receives (payload, currentText) and returns { text, meta? }
+ */
+const lotusCommands = {
+  rewriteSelection(payload, currentText) {
+    const base = payload?.selection || currentText || "";
+    const clean = normalizeText(base);
+    const trimmed = clean.trim();
+    const capitalized =
+      trimmed.charAt(0).toUpperCase() + trimmed.slice(1);
+    return {
+      text: capitalized,
+      meta: { command: "rewriteSelection" },
+    };
+  },
+
+  summarizeSection(payload, currentText) {
+    const base = payload?.section || currentText || "";
+    return {
+      text: summarize(base),
+      meta: { command: "summarizeSection" },
+    };
+  },
+
+  expandScene(payload, currentText) {
+    const base = payload?.scene || currentText || "";
+    return {
+      text: expand(base, payload?.factor || 1.6),
+      meta: { command: "expandScene" },
+    };
+  },
+
+  fixTone(payload, currentText) {
+    const base = payload?.text || currentText || "";
+    return {
+      text: adjustTone(base, payload?.mode || "softer"),
+      meta: { command: "fixTone" },
+    };
+  },
+
+  applyStyle(payload, currentText) {
+    const base = payload?.text || currentText || "";
+    return {
+      text: applyStyle(base, payload?.style || "cinematic"),
+      meta: { command: "applyStyle" },
+    };
+  },
+
+  generateNextBeat(payload, currentText) {
+    const base = payload?.context || currentText || "";
+    return {
+      text: generateNextBeat(base),
+      meta: { command: "generateNextBeat" },
+    };
+  },
+};
+
+/**
+ * Safely run a command by name.
+ */
+function runLotusCommand(commandName, payload, currentText) {
+  const fn = lotusCommands[commandName];
+  if (!fn) {
+    throw new Error(`Unknown Lotus command: ${commandName}`);
+  }
+  return fn(payload, currentText);
+}
+
+/**
+ * TWINLotus
+ * Runtime bridge between editor events and intelligent transformations.
+ */
+const TWINLotus = ({ initialText, onChange }) => {
+  const [state, setState] = useState(TWIN_STATES.IDLE);
+  const [lastError, setLastError] = useState(null);
+  const [currentText, setCurrentText] = useState(
+    normalizeText(initialText || "")
+  );
+
+  const emitUpdate = useCallback(
+    (update) => {
+      const payload = {
+        ...update,
+        text: update.text ?? currentText,
+        timestamp: Date.now(),
+      };
+
+      EventBus.emit(EDITOR_UPDATE_CHANNEL, payload);
+
+      if (typeof onChange === "function" && payload.text !== currentText) {
+        onChange(payload.text, payload);
+      }
+    },
+    [currentText, onChange]
+  );
+
+  const handleEditorEvent = useCallback(
+    (event) => {
+      if (!event || typeof event !== "object") return;
+
+      setState(TWIN_STATES.LISTENING);
+      setLastError(null);
+
+      const { action, payload } = event;
+
+      // Direct text updates from editor
+      if (action === "update_text") {
+        const next = normalizeText(payload?.value || "");
+        setCurrentText(next);
+        setState(TWIN_STATES.UPDATING);
+        emitUpdate({ text: next, source: "editor" });
+        setState(TWIN_STATES.IDLE);
+        return;
+      }
+
+      // Command-based actions
+      if (action === "lotus_command") {
+        const commandName = payload?.command;
+        setState(TWIN_STATES.PROCESSING);
+
+        try {
+          const result = runLotusCommand(
+            commandName,
+            payload,
+            currentText
+          );
+          const nextText = normalizeText(result.text || currentText);
+          setCurrentText(nextText);
+          setState(TWIN_STATES.UPDATING);
+          emitUpdate({
+            text: nextText,
+            source: "lotus",
+            meta: result.meta || {},
+          });
+          setState(TWIN_STATES.IDLE);
+        } catch (err) {
+          console.error("[TWINLotus] Command error:", err);
+          setLastError(err.message || "Unknown error");
+          setState(TWIN_STATES.ERROR);
+          emitUpdate({
+            text: currentText,
+            source: "lotus",
+            error: err.message || "Unknown error",
+          });
+          setState(TWIN_STATES.IDLE);
+        }
+
+        return;
+      }
+    },
+    [currentText, emitUpdate]
+  );
+
+  useEffect(() => {
+    // Subscribe to editor events
+    EventBus.on(EDITOR_EVENT_CHANNEL, handleEditorEvent);
+
+    return () => {
+      EventBus.off(EDITOR_EVENT_CHANNEL, handleEditorEvent);
+    };
+  }, [handleEditorEvent]);
 
   return (
     <div
-      ref={ref}
-      className={`twin-lotus ${animationClass}`}
-      style={{
-        width: "64px",
-        height: "64px",
-        borderRadius: "50%",
-        background: "radial-gradient(circle, #00eaff, #7b2bff, #ff2bc8)",
-        boxShadow: "0 0 18px rgba(0,255,255,0.6)",
-        transition: "transform 0.25s ease, opacity 0.25s ease",
-        pointerEvents: "none" // never blocks the editor
-      }}
-    />
+      data-twin-lotus
+      data-state={state}
+      style={{ display: "none" }}
+    >
+      {/* Invisible runtime bridge; no UI, only behavior */}
+      {lastError && (
+        <span data-twin-lotus-error={lastError} aria-hidden="true" />
+      )}
+    </div>
   );
-});
+};
+
+TWINLotus.propTypes = {
+  initialText: PropTypes.string,
+  onChange: PropTypes.func,
+};
+
+TWINLotus.defaultProps = {
+  initialText: "",
+  onChange: undefined,
+};
 
 export default TWINLotus;
