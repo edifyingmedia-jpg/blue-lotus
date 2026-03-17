@@ -1,86 +1,89 @@
-import { EventBus } from "./engine/EventBus.js";
-import { ToolRegistry } from "./engine/ToolRegistry.js";
-import { PanelRegistry } from "./engine/PanelRegistry.js";
-import { UndoManager } from "./engine/UndoManager.js";
-import { CommandManager } from "./engine/CommandManager.js";
+// frontend/src/runtime/editor/EditorEngine.js
 
-import { Canvas } from "./canvas/Canvas.js";
-import { NodeTree } from "./canvas/NodeTree.js";
-import { SelectionManager } from "./canvas/SelectionManager.js";
-import { TransformManager } from "./canvas/TransformManager.js";
-import { HitTest } from "./canvas/HitTest.js";
+import EventBus from "./core/EventBus";
+import { StructuralEditingEngine } from "./core/StructuralEditingEngine";
+import { TextRegionEngine } from "./core/TextRegionEngine";
+import { LotusContextBundle } from "./core/LotusContextBundle";
+
+/**
+ * EditorEngine
+ *
+ * The runtime brain of Blue Lotus.
+ * Routes:
+ * - text updates
+ * - structural editing commands
+ * - TWINLotus actions
+ * - context bundle updates
+ *
+ * This file connects the UI layer to the engine layer.
+ */
+
+const EDITOR_EVENT_CHANNEL = "editor:event";
+const EDITOR_UPDATE_CHANNEL = "editor:update";
 
 class EditorEngine {
   constructor() {
-    // Core systems
-    this.eventBus = new EventBus();
-    this.undoManager = new UndoManager();
-    this.commandManager = new CommandManager(this.undoManager);
+    this.text = "";
+    this.contextBundle = new LotusContextBundle();
+    this.structuralEngine = new StructuralEditingEngine();
+    this.textEngine = new TextRegionEngine();
 
-    // Registries
-    this.toolRegistry = new ToolRegistry(this.eventBus);
-    this.panelRegistry = new PanelRegistry(this.eventBus);
-
-    // Canvas systems
-    this.nodeTree = new NodeTree();
-    this.selectionManager = new SelectionManager(this.eventBus, this.nodeTree);
-    this.transformManager = new TransformManager(
-      this.eventBus,
-      this.nodeTree,
-      this.selectionManager
-    );
-    this.hitTest = new HitTest(this.nodeTree);
-
-    this.canvas = null;
-
-    // Editor state
-    this.mode = "design"; // design | preview | inspect
+    this._bindEvents();
   }
 
-  mountCanvas(domElement) {
-    this.canvas = new Canvas(
-      this.eventBus,
-      this.toolRegistry,
-      this.nodeTree
-    );
+  _bindEvents() {
+    EventBus.on(EDITOR_EVENT_CHANNEL, (payload) => {
+      const { action, payload: data } = payload;
 
-    this.canvas.mount(domElement);
+      switch (action) {
+        case "update_text":
+          this._handleTextUpdate(data.value);
+          break;
 
-    this._bindPointerEvents(domElement);
-  }
+        case "lotus_command":
+          this._handleCommand(data.command, data);
+          break;
 
-  _bindPointerEvents(domElement) {
-    domElement.addEventListener("pointerdown", (e) => {
-      const node = this.hitTest.findNodeAt(e.offsetX, e.offsetY);
-
-      if (node) {
-        this.selectionManager.selectNode(node.id);
-        this.transformManager.beginTransform(node.id, e.offsetX, e.offsetY);
+        default:
+          console.warn("[EditorEngine] Unknown action:", action);
       }
     });
+  }
 
-    domElement.addEventListener("pointermove", (e) => {
-      this.transformManager.updateTransform(e.offsetX, e.offsetY);
+  _handleTextUpdate(value) {
+    this.text = value;
+
+    // Update context bundle
+    this.contextBundle.update({
+      text: value,
+      cursor: null, // future: selection model
     });
 
-    domElement.addEventListener("pointerup", () => {
-      this.transformManager.endTransform();
+    // Broadcast update
+    EventBus.emit(EDITOR_UPDATE_CHANNEL, {
+      text: this.text,
     });
   }
 
-  // Mode switching
-  setMode(mode) {
-    this.mode = mode;
-    this.eventBus.emit("mode:changed", { mode });
-  }
-
-  // Project loading
-  loadProject(projectData) {
-    if (projectData?.tree) {
-      this.nodeTree = NodeTree.deserialize(projectData.tree);
+  _handleCommand(commandName, data) {
+    // Structural editing commands
+    if (this.structuralEngine.canHandle(commandName)) {
+      const updated = this.structuralEngine.apply(commandName, this.text);
+      this._handleTextUpdate(updated);
+      return;
     }
-    this.eventBus.emit("project:loaded", projectData);
+
+    // Text region commands
+    if (this.textEngine.canHandle(commandName)) {
+      const updated = this.textEngine.apply(commandName, this.text);
+      this._handleTextUpdate(updated);
+      return;
+    }
+
+    // Unknown command
+    console.warn("[EditorEngine] Unhandled command:", commandName);
   }
 }
 
-export default EditorEngine;
+// Singleton instance
+export const editorEngine = new EditorEngine();
