@@ -1,42 +1,39 @@
-// EditorScreen.jsx
+// frontend/src/runtime/editor/EditorScreen.jsx
 
-"use client";
+import React from "react";
+import { EditorProvider } from "./EditorContext";
+import Workspace from "./Workspace";
+import { Theme } from "./EditorTheme";
 
-import React, { useEffect, useRef } from "react";
-import { useEditor } from "./context/EditorContext";
+/**
+ * EditorScreen
+ *
+ * The full-screen container for the Blue Lotus editor.
+ * Wraps:
+ * - EditorProvider (global UI state)
+ * - Workspace (multi-pane layout)
+ *
+ * This is the component you embed anywhere.
+ */
 
-export default function EditorScreen() {
-  const { engine } = useEditor();
-  const canvasRef = useRef(null);
-
-  useEffect(() => {
-    if (canvasRef.current) {
-      engine.mountCanvas(canvasRef.current);
-    }
-  }, [engine]);
-
+const EditorScreen = () => {
   return (
     <div
+      data-editor-screen
       style={{
         width: "100%",
         height: "100%",
+        background: Theme.colors.bg,
+        color: Theme.colors.text,
+        fontFamily: Theme.fonts.body,
         overflow: "hidden",
-        background: "#111",
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center"
       }}
     >
-      <canvas
-        ref={canvasRef}
-        width={1200}
-        height={800}
-        style={{
-          background: "#1a1a1a",
-          border: "1px solid #333",
-          borderRadius: "6px"
-        }}
-      />
+      <EditorProvider>
+        <Workspace />
+      </EditorProvider>
     </div>
   );
-}
+};
+
+export default EditorScreen;
