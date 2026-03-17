@@ -11,6 +11,15 @@ import {
   getCurrentScene,
 } from "../core/ContextModel";
 
+import {
+  getChapters,
+  getCurrentChapter,
+  getSections,
+  getCurrentSection,
+  getBeats,
+  getCurrentBeat,
+} from "../core/StructuralContextModel";
+
 import { applyContextualReplacement } from "../core/TextRegionEngine";
 
 const TWIN_STATES = {
@@ -132,6 +141,7 @@ const lotusCommands = {
     const base =
       payload.selection?.text ||
       payload.paragraph?.text ||
+      payload.section?.content ||
       currentText;
 
     return {
@@ -169,6 +179,7 @@ const lotusCommands = {
 
   generateNextBeat(payload, currentText) {
     const base =
+      payload.beat ||
       payload.scene?.text ||
       payload.paragraph?.text ||
       currentText;
@@ -242,12 +253,22 @@ const TWINLotus = ({ initialText, onChange }) => {
           const surrounding = getSurroundingParagraphs();
           const scene = getCurrentScene();
 
+          const chapter = getCurrentChapter();
+          const section = getCurrentSection();
+          const beat = getCurrentBeat();
+
           const enrichedPayload = {
             ...payload,
             selection,
             paragraph,
             surrounding,
             scene,
+            chapter,
+            section,
+            beat,
+            chapters: getChapters(),
+            sections: getSections(),
+            beats: getBeats(),
           };
 
           const result = runLotusCommand(
