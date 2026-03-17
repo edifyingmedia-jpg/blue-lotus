@@ -1,105 +1,77 @@
 // frontend/src/runtime/editor/EditorSurface.jsx
 
-import React, { useEffect, useState, useCallback } from "react";
+import React, { useState, useEffect } from "react";
 import EventBus from "./core/EventBus";
-import { getText, setText, applyUpdate } from "./core/DocumentModel";
-import { updateSelection } from "./core/SelectionModel";
-import TWINLotus from "./TWIN/TWINLotus";
-import LotusCommandPanel from "./LotusCommandPanel";
+import { Theme } from "./EditorTheme";
 
-const EDITOR_EVENT_CHANNEL = "editor:event";
+/**
+ * EditorSurface
+ *
+ * The main writing area of Blue Lotus.
+ * Handles:
+ * - text input
+ * - scroll container
+ * - update events from TWINLotus
+ */
+
 const EDITOR_UPDATE_CHANNEL = "editor:update";
+const EDITOR_EVENT_CHANNEL = "editor:event";
 
 const EditorSurface = () => {
-  const [text, setLocalText] = useState(() => getText());
+  const [text, setText] = useState("");
 
-  // Handle user typing
-  const handleChange = useCallback((event) => {
-    const value = event.target.value;
+  useEffect(() => {
+    const handler = (payload) => {
+      if (payload?.text !== undefined) {
+        setText(payload.text);
+      }
+    };
 
-    // Update document model
+    EventBus.on(EDITOR_UPDATE_CHANNEL, handler);
+    return () => EventBus.off(EDITOR_UPDATE_CHANNEL, handler);
+  }, []);
+
+  const handleChange = (e) => {
+    const value = e.target.value;
     setText(value);
-    setLocalText(value);
 
-    // Update selection model
-    updateSelection(event.target.selectionStart, event.target.selectionEnd, value);
-
-    // Emit event to TWINLotus
     EventBus.emit(EDITOR_EVENT_CHANNEL, {
       action: "update_text",
       payload: { value },
     });
-  }, []);
-
-  // Handle selection changes
-  const handleSelectionChange = useCallback((event) => {
-    const el = event.target;
-    updateSelection(el.selectionStart, el.selectionEnd, el.value);
-  }, []);
-
-  // Listen for updates from TWINLotus
-  useEffect(() => {
-    const handleUpdate = (update) => {
-      const next = applyUpdate(update);
-      setLocalText(next);
-    };
-
-    EventBus.on(EDITOR_UPDATE_CHANNEL, handleUpdate);
-    return () => {
-      EventBus.off(EDITOR_UPDATE_CHANNEL, handleUpdate);
-    };
-  }, []);
-
-  // Optional debug hook
-  useEffect(() => {
-    if (typeof window !== "undefined") {
-      window.__BLUE_LOTUS_DEBUG__ = {
-        emitLotusCommand(command, payload = {}) {
-          EventBus.emit(EDITOR_EVENT_CHANNEL, {
-            action: "lotus_command",
-            payload: { command, ...payload },
-          });
-        },
-      };
-    }
-  }, []);
+  };
 
   return (
     <div
       data-editor-surface
       style={{
-        display: "flex",
-        flexDirection: "column",
-        gap: "8px",
         width: "100%",
         height: "100%",
+        overflowY: "auto",
+        background: Theme.colors.bg,
+        padding: Theme.spacing.lg,
+        boxSizing: "border-box",
+        fontFamily: Theme.fonts.body,
       }}
     >
-      {/* Command Panel */}
-      <LotusCommandPanel />
-
-      {/* Main Editor */}
       <textarea
         value={text}
         onChange={handleChange}
-        onSelect={handleSelectionChange}
+        spellCheck={false}
         style={{
-          flex: 1,
           width: "100%",
+          height: "100%",
+          background: Theme.colors.bgElevated,
+          color: Theme.colors.text,
+          border: `1px solid ${Theme.colors.border}`,
+          borderRadius: Theme.radius.md,
+          padding: Theme.spacing.md,
+          fontSize: "16px",
+          lineHeight: "1.6",
           resize: "none",
-          padding: "12px",
-          fontFamily: "system-ui, -apple-system, BlinkMacSystemFont, sans-serif",
-          fontSize: "14px",
-          lineHeight: 1.5,
-        }}
-      />
-
-      {/* Invisible runtime brain */}
-      <TWINLotus
-        initialText={text}
-        onChange={(nextText) => {
-          setText(nextText);
-          setLocalText(nextText);
+          outline: "none",
+          boxShadow: Theme.neonGlow("neonCyan"),
+          fontFamily: Theme.fonts.mono,
         }}
       />
     </div>
