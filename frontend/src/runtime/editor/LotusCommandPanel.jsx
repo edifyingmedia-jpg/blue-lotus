@@ -3,6 +3,7 @@
 import React from "react";
 import EventBus from "./core/EventBus";
 import { LotusCommandRegistry } from "./core/LotusCommandRegistry";
+import { Theme } from "./EditorTheme";
 
 const EDITOR_EVENT_CHANNEL = "editor:event";
 
@@ -30,19 +31,20 @@ const LotusCommandPanel = () => {
       style={{
         display: "flex",
         flexDirection: "column",
-        gap: "8px",
-        padding: "8px",
-        background: "#111",
-        borderBottom: "1px solid #333",
+        gap: Theme.spacing.sm,
+        padding: Theme.spacing.sm,
+        background: Theme.colors.bgPanel,
+        borderBottom: `1px solid ${Theme.colors.border}`,
+        fontFamily: Theme.fonts.body,
       }}
     >
       {Object.entries(categories).map(([category, commands]) => (
-        <div key={category} style={{ marginBottom: "8px" }}>
+        <div key={category} style={{ marginBottom: Theme.spacing.sm }}>
           <div
             style={{
-              color: "#aaa",
-              fontSize: "12px",
-              marginBottom: "4px",
+              color: Theme.colors.textMuted,
+              fontSize: "11px",
+              marginBottom: Theme.spacing.xs,
               textTransform: "uppercase",
               letterSpacing: "1px",
             }}
@@ -50,24 +52,50 @@ const LotusCommandPanel = () => {
             {category}
           </div>
 
-          <div style={{ display: "flex", flexWrap: "wrap", gap: "6px" }}>
-            {commands.map((cmd) => (
-              <button
-                key={cmd.name}
-                onClick={() => handleCommand(cmd)}
-                style={{
-                  padding: "6px 10px",
-                  background: "#222",
-                  border: "1px solid #444",
-                  borderRadius: "4px",
-                  color: "#eee",
-                  cursor: "pointer",
-                  fontSize: "12px",
-                }}
-              >
-                {cmd.label}
-              </button>
-            ))}
+          <div style={{ display: "flex", flexWrap: "wrap", gap: Theme.spacing.xs }}>
+            {commands.map((cmd, index) => {
+              // Rotate neon accents for fun
+              const neonColors = [
+                Theme.colors.neonCyan,
+                Theme.colors.neonPurple,
+                Theme.colors.neonPink,
+              ];
+              const accent = neonColors[index % neonColors.length];
+
+              return (
+                <button
+                  key={cmd.name}
+                  onClick={() => handleCommand(cmd)}
+                  style={{
+                    padding: `${Theme.spacing.xs} ${Theme.spacing.md}`,
+                    background: Theme.colors.buttonBg,
+                    border: `1px solid ${Theme.colors.border}`,
+                    borderRadius: Theme.radius.sm,
+                    color: Theme.colors.text,
+                    cursor: "pointer",
+                    fontSize: "12px",
+                    transition: "0.15s ease",
+                    boxShadow: `0 0 4px ${accent}55`,
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.background = Theme.colors.buttonHover;
+                    e.currentTarget.style.boxShadow = Theme.neonGlow(
+                      index % 3 === 0
+                        ? "neonCyan"
+                        : index % 3 === 1
+                        ? "neonPurple"
+                        : "neonPink"
+                    );
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.background = Theme.colors.buttonBg;
+                    e.currentTarget.style.boxShadow = `0 0 4px ${accent}55`;
+                  }}
+                >
+                  {cmd.label}
+                </button>
+              );
+            })}
           </div>
         </div>
       ))}
