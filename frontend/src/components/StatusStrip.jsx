@@ -2,80 +2,50 @@
 
 /**
  * StatusStrip.jsx
- * ----------------
- * A subtle cinematic status bar that reflects:
+ * ---------------------------------------------------------
+ * Cinematic status bar for the Blue Lotus editor.
+ * Reflects:
  *  - current mode
  *  - save state
- *  - command palette hint
- *  - engine activity
+ *  - command palette state
+ *  - engine activity (future-ready)
  */
 
 import React from "react";
+import "./StatusStrip.css";
 
 export function StatusStrip({ engine }) {
     const { mode, isSaving, commandPaletteOpen } = engine.state;
 
     return (
-        <div style={styles.container}>
+        <footer className="status-root">
+
             {/* Left: Mode */}
-            <div style={styles.section}>
-                <span style={styles.label}>Mode:</span>
-                <span style={styles.value}>{mode}</span>
+            <div className="status-section">
+                <span className="status-label">Mode:</span>
+                <span className="status-value">{mode}</span>
             </div>
 
             {/* Center: Save state */}
-            <div style={styles.section}>
+            <div className="status-section">
                 {isSaving ? (
-                    <span style={styles.saving}>Saving…</span>
+                    <span className="status-saving">Saving…</span>
                 ) : (
-                    <span style={styles.saved}>All changes saved</span>
+                    <span className="status-saved">All changes saved</span>
                 )}
             </div>
 
             {/* Right: Command palette hint */}
-            <div style={styles.section}>
+            <div className="status-section">
                 {commandPaletteOpen ? (
-                    <span style={styles.hint}>Palette open</span>
+                    <span className="status-hint status-hint-active">
+                        Palette open
+                    </span>
                 ) : (
-                    <span style={styles.hint}>Press ⌘K for commands</span>
+                    <span className="status-hint">Press ⌘K for commands</span>
                 )}
             </div>
-        </div>
+
+        </footer>
     );
 }
-
-const styles = {
-    container: {
-        height: "32px",
-        background: "#111118",
-        borderTop: "1px solid rgba(255,255,255,0.05)",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "space-between",
-        padding: "0 14px",
-        fontSize: "13px",
-        color: "#9a9ab3",
-        fontFamily: "Inter, sans-serif"
-    },
-    section: {
-        display: "flex",
-        alignItems: "center",
-        gap: "6px"
-    },
-    label: {
-        opacity: 0.6
-    },
-    value: {
-        color: "#b37bff",
-        fontWeight: 500
-    },
-    saving: {
-        color: "#ff6ad5"
-    },
-    saved: {
-        color: "#3dfdff"
-    },
-    hint: {
-        opacity: 0.7
-    }
-};
