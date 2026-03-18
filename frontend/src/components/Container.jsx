@@ -5,15 +5,9 @@ import React from "react";
 /**
  * Container
  * ---------------------------------------------------------
- * The foundational layout wrapper for Blue Lotus.
- *
- * Features:
- * - Cinematic max-width (default 800px)
- * - Centered layout
- * - Adjustable padding
- * - Smooth transitions
- * - Works with JSON screen definitions
- * - Emotionally clean, stable, and predictable
+ * Cinematic layout wrapper for Blue Lotus.
+ * Supports max-width, padding, centering, background,
+ * blur, borders, neon glow, and JSON-friendly props.
  */
 
 const Container = ({
@@ -21,6 +15,12 @@ const Container = ({
   maxWidth = "800px",
   padding = "1.5rem",
   center = true,
+  background = "transparent",
+  border = "none",
+  radius = "12px",
+  shadow = "none",
+  blur = false,
+  fullHeight = false,
   style = {},
   ...rest
 }) => {
@@ -31,6 +31,12 @@ const Container = ({
         padding,
         margin: center ? "0 auto" : undefined,
         width: "100%",
+        height: fullHeight ? "100%" : "auto",
+        background,
+        border,
+        borderRadius: radius,
+        boxShadow: shadow,
+        backdropFilter: blur ? "blur(12px)" : undefined,
         transition: "all 0.3s ease",
         ...style,
       }}
