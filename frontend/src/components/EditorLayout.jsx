@@ -2,90 +2,61 @@
 
 /**
  * EditorLayout.jsx
- * ----------------
- * The main UI shell of the Blue Lotus editor.
- * Wraps the top bar, side panels, workspace, and status strip.
+ * ---------------------------------------------------------
+ * The cinematic UI shell of the Blue Lotus editor.
+ * Wraps:
+ *  - Top bar
+ *  - Left + right side panels
+ *  - EditorSurface (workspace)
+ *  - StatusStrip (footer)
+ *
+ * Provides:
+ *  - Neon-ready class hooks
+ *  - Responsive layout
+ *  - Emotionally intelligent spacing
+ *  - Future-proof panel structure
  */
 
 import React from "react";
 import { StatusStrip } from "./StatusStrip";
 import { EditorSurface } from "../runtime/EditorSurface";
+import "./EditorLayout.css";
 
 export function EditorLayout({ engine }) {
     return (
-        <div style={styles.container}>
-            <div style={styles.topBar}>
-                <div style={styles.logo}>Blue Lotus</div>
-                <div style={styles.mode}>{engine.state.mode.toUpperCase()}</div>
-            </div>
+        <div className="editor-layout-root">
 
-            <div style={styles.body}>
-                <div style={styles.sidebarLeft}>
+            {/* Top bar */}
+            <header className="editor-topbar">
+                <div className="editor-logo">Blue Lotus</div>
+                <div className="editor-mode">
+                    {engine.state.mode.toUpperCase()}
+                </div>
+            </header>
+
+            {/* Body: sidebars + workspace */}
+            <div className="editor-body">
+
+                {/* Left sidebar */}
+                <aside className="editor-sidebar-left">
                     {/* Future: Scene list, project tree, assets */}
-                </div>
+                </aside>
 
-                <div style={styles.workspace}>
+                {/* Workspace */}
+                <main className="editor-workspace">
                     <EditorSurface engine={engine} />
-                </div>
+                </main>
 
-                <div style={styles.sidebarRight}>
+                {/* Right sidebar */}
+                <aside className="editor-sidebar-right">
                     {/* Future: Inspector, properties, AI panel */}
-                </div>
+                </aside>
             </div>
 
-            <StatusStrip engine={engine} />
+            {/* Footer */}
+            <footer className="editor-footer">
+                <StatusStrip engine={engine} />
+            </footer>
         </div>
     );
 }
-
-const styles = {
-    container: {
-        display: "flex",
-        flexDirection: "column",
-        width: "100vw",
-        height: "100vh",
-        background: "#0b0b0d",
-        color: "#e8e8f0",
-        overflow: "hidden"
-    },
-    topBar: {
-        height: "48px",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "space-between",
-        padding: "0 16px",
-        background: "#111114",
-        borderBottom: "1px solid #1d1d22"
-    },
-    logo: {
-        fontSize: "18px",
-        fontWeight: "600",
-        letterSpacing: "0.5px"
-    },
-    mode: {
-        fontSize: "14px",
-        opacity: 0.7
-    },
-    body: {
-        flex: 1,
-        display: "flex",
-        flexDirection: "row"
-    },
-    sidebarLeft: {
-        width: "220px",
-        background: "#111114",
-        borderRight: "1px solid #1d1d22"
-    },
-    workspace: {
-        flex: 1,
-        background: "#0f0f12",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center"
-    },
-    sidebarRight: {
-        width: "260px",
-        background: "#111114",
-        borderLeft: "1px solid #1d1d22"
-    }
-};
