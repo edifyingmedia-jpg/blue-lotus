@@ -2,12 +2,18 @@
 
 /**
  * EditorSurface.jsx
- * -----------------
- * The visual root of the Blue Lotus editor.
- * Applies the cinematic tri‑neon styling and wraps:
- *  - SceneList
- *  - SceneEditor
- *  - CommandPalette
+ * ---------------------------------------------------------
+ * The cinematic visual root of the Blue Lotus editor.
+ * Wraps:
+ *  - SceneList (left panel)
+ *  - SceneEditor (main writing surface)
+ *  - CommandPalette (overlay)
+ *
+ * Adds:
+ *  - Responsive layout
+ *  - Neon-ready class hooks
+ *  - Emotionally intelligent transitions
+ *  - Future-proof panel structure
  */
 
 import React from "react";
@@ -18,30 +24,33 @@ import { SceneEditor } from "./SceneEditor";
 import { CommandPalette } from "./CommandPalette";
 
 export function EditorSurface({ engine }) {
-    const { scenes, activeSceneId } = engine.state;
+    const { scenes, activeSceneId, commandPaletteOpen } = engine.state;
 
     return (
-        <div className="editor-root">
-            {/* Left panel: Scenes */}
-            <div className="scene-list">
+        <div className="editor-root neon-surface">
+            
+            {/* Left panel: Scene navigation */}
+            <aside className="scene-list-panel">
                 <SceneList
                     scenes={scenes}
                     activeSceneId={activeSceneId}
-                    onSelect={id => engine.setActiveScene(id)}
+                    onSelect={(id) => engine.setActiveScene(id)}
                 />
-            </div>
+            </aside>
 
             {/* Main editor area */}
-            <div className="scene-editor">
+            <main className="scene-editor-panel">
                 <SceneEditor
                     scene={engine.getActiveScene()}
-                    onChange={content => engine.updateSceneContent(activeSceneId, content)}
+                    onChange={(content) =>
+                        engine.updateSceneContent(activeSceneId, content)
+                    }
                 />
-            </div>
+            </main>
 
             {/* Command palette overlay */}
-            {engine.state.commandPaletteOpen && (
-                <div className="command-palette fade-in">
+            {commandPaletteOpen && (
+                <div className="command-palette-overlay fade-in">
                     <CommandPalette engine={engine} />
                 </div>
             )}
