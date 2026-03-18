@@ -1,30 +1,63 @@
-// EngineTest.js
-// Simple isolated test of your NavigationEngine
+/**
+ * EngineTest.js
+ * ---------------------------------------------------------
+ * A simple, safe test harness for the Blue Lotus runtime.
+ * Run with:
+ *    node frontend/src/runtime/EngineTest.js
+ */
 
-import NavigationEngine from "./NavigationEngine";
+import ProjectLoader from "./ProjectLoader";
+import Engine from "./Engine";
+import EventBus from "./EventBus";
 
-const engine = new NavigationEngine("Login");
+async function run() {
+  console.log("=== Blue Lotus Runtime Test ===");
 
-console.log("Initial:", engine.current);
+  // 1. Load project + document
+  const loader = new ProjectLoader();
+  const { project, document } = await loader.load();
 
-// Test push
-engine.push("Home");
-console.log("After push:", engine.current);
+  console.log("Loaded project:", project?.name || "(no name)");
+  console.log("Loaded document:", document?.title || "(no title)");
 
-// Test replace
-engine.replace("Dashboard");
-console.log("After replace:", engine.current);
+  // 2. Create event bus
+  const events = new EventBus();
 
-// Test pop
-engine.pop();
-console.log("After pop:", engine.current);
+  // 3. Create engine
+  const engine = new Engine({
+    project,
+    document,
+    events,
+  });
 
-// Test reset
-engine.reset("Login");
-console.log("After reset:", engine.current);
+  // 4. Initialize engine
+  await engine.init();
 
-// Test logout
-engine.push("Home");
-engine.push("Settings");
-engine.handleLogout();
-console.log("After logout:", engine.current);
+  // 5. Test navigation actions
+  console.log("\n--- Navigation Tests ---");
+
+  console.log("Initial screen:", engine.navigation.getCurrentScreen());
+
+  engine.navigation.push("Home");
+  console.log("After PUSH:", engine.navigation.getCurrentScreen());
+
+  engine.navigation.replace("Dashboard");
+  console.log("After REPLACE:", engine.navigation.getCurrentScreen());
+
+  engine.navigation.reset("Login");
+  console.log("After RESET:", engine.navigation.getCurrentScreen());
+
+  // 6. Emit a test event
+  console.log("\n--- EventBus Test ---");
+  events.on("ping", (payload) => {
+    console.log("Received event: ping →", payload);
+  });
+
+  events.emit("ping", { ok: true });
+
+  console.log("\n=== Runtime Test Complete ===");
+}
+
+run().catch((err) => {
+  console.error("EngineTest failed:", err);
+});
