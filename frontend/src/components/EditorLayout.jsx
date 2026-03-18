@@ -3,142 +3,82 @@
 /**
  * EditorLayout.jsx
  * ----------------
- * The main UI layout for the Blue Lotus editor.
- * Assembles:
- *  - Toolbar
- *  - SceneList
- *  - SceneEditor
- *  - CommandPalette
- *
- * Connects UI actions to the EditorEngine and DocumentModel.
+ * High‑level layout wrapper for the Blue Lotus editor.
+ * Provides:
+ *  - Top navigation bar
+ *  - Status strip
+ *  - Toolbar mount
+ *  - EditorSurface container
  */
 
-import React, { useState, useEffect } from "react";
+import React from "react";
+import { EditorSurface } from "./EditorSurface";
 import { Toolbar } from "./Toolbar";
-import { SceneList } from "./SceneList";
-import { SceneEditor } from "./SceneEditor";
-import { CommandPalette } from "./CommandPalette";
 
 export function EditorLayout({ engine }) {
-    const [documentModel, setDocumentModel] = useState(engine.getDocumentModel());
-    const [activeSceneId, setActiveSceneId] = useState(
-        documentModel.getScenes()[0]?.id || null
-    );
-    const [isPaletteOpen, setPaletteOpen] = useState(false);
-
-    // Sync with engine updates
-    useEffect(() => {
-        engine.on("sceneUpdated", () => {
-            setDocumentModel(engine.getDocumentModel());
-        });
-
-        engine.on("sceneAdded", () => {
-            setDocumentModel(engine.getDocumentModel());
-        });
-
-        engine.on("sceneRemoved", () => {
-            setDocumentModel(engine.getDocumentModel());
-        });
-    }, [engine]);
-
-    const scenes = documentModel.getScenes();
-    const activeScene = activeSceneId
-        ? documentModel.getSceneById(activeSceneId)
-        : null;
-
-    // Command palette commands
-    const commands = [
-        {
-            id: "add-scene",
-            name: "Add Scene",
-            action: () => handleAddScene()
-        },
-        {
-            id: "delete-scene",
-            name: "Delete Scene",
-            action: () => activeScene && handleDeleteScene(activeScene.id)
-        },
-        {
-            id: "rename-scene",
-            name: "Rename Scene",
-            action: () =>
-                activeScene &&
-                handleRenameScene(activeScene.id, prompt("New name:"))
-        }
-    ];
-
-    // UI → Engine actions
-    const handleAddScene = () => {
-        const newScene = {
-            id: crypto.randomUUID(),
-            title: "New Scene",
-            content: "",
-            order: scenes.length
-        };
-        engine.addScene(newScene);
-        setActiveSceneId(newScene.id);
-    };
-
-    const handleDeleteScene = (id) => {
-        engine.removeScene(id);
-        const remaining = engine.getDocumentModel().getScenes();
-        setActiveSceneId(remaining[0]?.id || null);
-    };
-
-    const handleRenameScene = (id, newName) => {
-        if (!newName) return;
-        engine.updateScene(id, { title: newName });
-    };
-
-    const handleSceneContentChange = (newContent) => {
-        if (!activeScene) return;
-        engine.updateScene(activeScene.id, { content: newContent });
-    };
-
     return (
-        <div style={styles.container}>
-            <Toolbar
-                activeScene={activeScene}
-                onAddScene={handleAddScene}
-                onDeleteScene={handleDeleteScene}
-                onRenameScene={handleRenameScene}
-                onOpenCommandPalette={() => setPaletteOpen(true)}
-            />
-
-            <div style={styles.body}>
-                <SceneList
-                    scenes={scenes}
-                    activeSceneId={activeSceneId}
-                    onSelect={setActiveSceneId}
-                />
-
-                <SceneEditor
-                    scene={activeScene}
-                    onChange={handleSceneContentChange}
-                />
+        <div style={styles.root}>
+            {/* Top navigation */}
+            <div style={styles.navbar}>
+                <div style={styles.logo}>Blue Lotus</div>
+                <div style={styles.status}>
+                    {engine.state.commandPaletteOpen
+                        ? "Command Palette Open"
+                        : "Ready"}
+                </div>
             </div>
 
-            <CommandPalette
-                isOpen={isPaletteOpen}
-                commands={commands}
-                onClose={() => setPaletteOpen(false)}
-            />
+            {/* Toolbar */}
+            <div style={styles.toolbar}>
+                <Toolbar engine={engine} />
+            </div>
+
+            {/* Main editor surface */}
+            <div style={styles.surface}>
+                <EditorSurface engine={engine} />
+            </div>
         </div>
     );
 }
 
 const styles = {
-    container: {
-        width: "100vw",
-        height: "100vh",
+    root: {
         display: "flex",
         flexDirection: "column",
-        background: "#0d0d0f"
+        height: "100vh",
+        background: "#0b0b0d",
+        color: "#e8e8f0",
+        fontFamily: "Inter, sans-serif"
     },
-    body: {
+    navbar: {
+        height: "52px",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "space-between",
+        padding: "0 20px",
+        background: "#111118",
+        borderBottom: "1px solid rgba(255,255,255,0.05)"
+    },
+    logo: {
+        fontSize: "18px",
+        fontWeight: "600",
+        color: "#b37bff"
+    },
+    status: {
+        fontSize: "14px",
+        opacity: 0.7
+    },
+    toolbar: {
+        height: "48px",
+        background: "#16161f",
+        borderBottom: "1px solid rgba(255,255,255,0.05)",
+        display: "flex",
+        alignItems: "center",
+        padding: "0 12px"
+    },
+    surface: {
         flex: 1,
         display: "flex",
-        flexDirection: "row",
         overflow: "hidden"
     }
 };
