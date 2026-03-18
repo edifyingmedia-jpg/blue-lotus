@@ -1,78 +1,42 @@
-// frontend/src/components/SceneEditor.jsx
+// frontend/src/components/SceneList.jsx
 
 /**
- * SceneEditor.jsx
- * ---------------
- * The main writing surface of the Blue Lotus editor.
- * Clean, cinematic, tri‑neon aligned, and fully wired
- * into the engine's update flow.
+ * SceneList.jsx
+ * ---------------------------------------------------------
+ * Cinematic tri‑neon scene navigator.
+ * Displays all scenes, highlights the active one,
+ * and emits selection events to the engine.
  */
 
 import React from "react";
+import "./SceneList.css";
 
-export function SceneEditor({ scene, onChange }) {
-    if (!scene) {
-        return (
-            <div style={styles.empty}>
-                <div style={styles.emptyTitle}>No scene selected</div>
-                <div style={styles.emptySubtitle}>
-                    Choose a scene from the left panel to begin editing.
-                </div>
-            </div>
-        );
-    }
-
+export function SceneList({ scenes, activeSceneId, onSelect }) {
     return (
-        <div style={styles.container}>
-            <textarea
-                style={styles.textarea}
-                value={scene.content}
-                onChange={e => onChange(e.target.value)}
-                placeholder="Start writing your scene..."
-            />
+        <div className="scene-list-root">
+            {scenes.map(scene => (
+                <div
+                    key={scene.id}
+                    className={
+                        "scene-list-item" +
+                        (scene.id === activeSceneId ? " scene-list-item-active" : "")
+                    }
+                    onClick={() => onSelect(scene.id)}
+                >
+                    <div className="scene-list-title">{scene.title}</div>
+                    <div className="scene-list-subtitle">
+                        {scene.content?.length
+                            ? `${scene.content.length} chars`
+                            : "Empty scene"}
+                    </div>
+                </div>
+            ))}
+
+            {scenes.length === 0 && (
+                <div className="scene-list-empty">
+                    No scenes yet. Create one to begin.
+                </div>
+            )}
         </div>
     );
 }
-
-const styles = {
-    container: {
-        width: "100%",
-        height: "100%",
-        display: "flex",
-        flexDirection: "column"
-    },
-    textarea: {
-        flex: 1,
-        width: "100%",
-        height: "100%",
-        background: "transparent",
-        border: "none",
-        outline: "none",
-        resize: "none",
-        color: "#e8e8f0",
-        fontSize: "18px",
-        lineHeight: "1.6",
-        padding: "12px 4px",
-        fontFamily: "Inter, sans-serif",
-        caretColor: "#b37bff",
-        transition: "background 160ms ease"
-    },
-    empty: {
-        flex: 1,
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-        justifyContent: "center",
-        color: "#9a9ab3"
-    },
-    emptyTitle: {
-        fontSize: "20px",
-        fontWeight: 600,
-        marginBottom: "6px",
-        color: "#b37bff"
-    },
-    emptySubtitle: {
-        fontSize: "14px",
-        opacity: 0.7
-    }
-};
