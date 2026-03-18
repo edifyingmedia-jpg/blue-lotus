@@ -2,16 +2,17 @@
 
 /**
  * CommandPalette.jsx
- * ------------------
- * The intelligence layer of the editor.
- * Provides fast access to engine commands with
- * clean tri‑neon styling and zero clutter.
+ * ---------------------------------------------------------
+ * The intelligence layer of the Blue Lotus editor.
+ * Cinematic, neon-ready, keyboard-navigable command palette.
  */
 
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useEffect } from "react";
+import "./CommandPalette.css";
 
 export function CommandPalette({ engine }) {
     const [query, setQuery] = useState("");
+    const [selectedIndex, setSelectedIndex] = useState(0);
 
     const commands = useMemo(() => {
         const all = engine.getCommands(); // [{ id, label, action }]
@@ -21,23 +22,56 @@ export function CommandPalette({ engine }) {
         );
     }, [query, engine]);
 
+    // Keyboard navigation
+    useEffect(() => {
+        const handleKey = (e) => {
+            if (e.key === "ArrowDown") {
+                setSelectedIndex((i) => Math.min(i + 1, commands.length - 1));
+            }
+            if (e.key === "ArrowUp") {
+                setSelectedIndex((i) => Math.max(i - 1, 0));
+            }
+            if (e.key === "Enter") {
+                const cmd = commands[selectedIndex];
+                if (cmd) {
+                    engine.runCommand(cmd.id);
+                    engine.closeCommandPalette();
+                }
+            }
+            if (e.key === "Escape") {
+                engine.closeCommandPalette();
+            }
+        };
+
+        window.addEventListener("keydown", handleKey);
+        return () => window.removeEventListener("keydown", handleKey);
+    }, [commands, selectedIndex, engine]);
+
     return (
-        <div style={styles.container}>
+        <div className="cmd-root">
+
             {/* Search bar */}
             <input
                 autoFocus
-                style={styles.input}
+                className="cmd-input"
                 placeholder="Type a command..."
                 value={query}
-                onChange={e => setQuery(e.target.value)}
+                onChange={(e) => {
+                    setQuery(e.target.value);
+                    setSelectedIndex(0);
+                }}
             />
 
             {/* Command list */}
-            <div style={styles.list}>
-                {commands.map(cmd => (
+            <div className="cmd-list">
+                {commands.map((cmd, i) => (
                     <div
                         key={cmd.id}
-                        style={styles.item}
+                        className={
+                            "cmd-item" +
+                            (i === selectedIndex ? " cmd-item-active" : "")
+                        }
+                        onMouseEnter={() => setSelectedIndex(i)}
                         onClick={() => {
                             engine.runCommand(cmd.id);
                             engine.closeCommandPalette();
@@ -48,47 +82,9 @@ export function CommandPalette({ engine }) {
                 ))}
 
                 {commands.length === 0 && (
-                    <div style={styles.empty}>No matching commands</div>
+                    <div className="cmd-empty">No matching commands</div>
                 )}
             </div>
         </div>
     );
 }
-
-const styles = {
-    container: {
-        display: "flex",
-        flexDirection: "column",
-        gap: "8px"
-    },
-    input: {
-        width: "100%",
-        padding: "10px 12px",
-        borderRadius: "8px",
-        border: "1px solid #b37bff",
-        background: "transparent",
-        color: "#e8e8f0",
-        fontSize: "15px",
-        outline: "none",
-        caretColor: "#b37bff"
-    },
-    list: {
-        display: "flex",
-        flexDirection: "column",
-        maxHeight: "300px",
-        overflowY: "auto",
-        gap: "4px"
-    },
-    item: {
-        padding: "10px 12px",
-        borderRadius: "6px",
-        cursor: "pointer",
-        transition: "all 120ms ease",
-        background: "rgba(255,255,255,0.03)"
-    },
-    empty: {
-        padding: "12px",
-        textAlign: "center",
-        opacity: 0.6
-    }
-};
