@@ -1,29 +1,55 @@
 // frontend/src/runtime/editor/EditorBootstrap.js
 
-import React from "react";
-import { createRoot } from "react-dom/client";
-import { editorLoader } from "./EditorLoader";
-import EditorScreen from "./EditorScreen";
-
 /**
- * EditorBootstrap
- *
- * Bootstraps the Blue Lotus editor:
- * - initializes the loader
- * - waits for engine + context bundle
- * - mounts the full editor screen
+ * EditorBootstrap.js
+ * ------------------
+ * Connects the EditorEngine + DocumentModel to the UI layer.
+ * Responsible for initializing the editor surface, wiring events,
+ * and preparing the runtime environment for interaction.
  */
 
-export async function bootstrapEditor() {
-  await editorLoader.init();
+import { EditorSurface } from "./EditorSurface";
 
-  const container = document.getElementById("blue-lotus-root");
+export class EditorBootstrap {
+    constructor({ engine, project, documentModel }) {
+        this.engine = engine;
+        this.project = project;
+        this.documentModel = documentModel;
 
-  if (!container) {
-    console.error("[Blue Lotus] Missing #blue-lotus-root container.");
-    return;
-  }
+        // Initialize the UI surface
+        this.surface = new EditorSurface({
+            engine: this.engine,
+            documentModel: this.documentModel
+        });
 
-  const root = createRoot(container);
-  root.render(<EditorScreen />);
+        // Wire engine events to UI
+        this._bindEngineEvents();
+
+        // Mount UI
+        this.surface.mount();
+    }
+
+    /**
+     * Bind engine events to the UI surface
+     */
+    _bindEngineEvents() {
+        this.engine.on("sceneUpdated", (scene) => {
+            this.surface.updateScene(scene);
+        });
+
+        this.engine.on("sceneAdded", (scene) => {
+            this.surface.addScene(scene);
+        });
+
+        this.engine.on("sceneRemoved", (sceneId) => {
+            this.surface.removeScene(sceneId);
+        });
+    }
+
+    /**
+     * Expose the surface for external control
+     */
+    getSurface() {
+        return this.surface;
+    }
 }
