@@ -1,0 +1,106 @@
+// frontend/src/services/DataApiGenerator.js
+
+/**
+ * DataApiGenerator.js
+ * -------------------
+ * Generates backend CRUD API code for each data model.
+ *
+ * Output:
+ *   routes/api/<model>.js
+ *
+ * Each file contains:
+ *   - GET /api/<model>
+ *   - GET /api/<model>/:id
+ *   - POST /api/<model>
+ *   - PUT /api/<model>/:id
+ *   - DELETE /api/<model>/:id
+ */
+
+export function generateDataApi(schema) {
+    const output = {};
+
+    schema.models.forEach(model => {
+        const filePath = `routes/api/${model.name.toLowerCase()}.js`;
+        output[filePath] = generateModelApi(model);
+    });
+
+    return output;
+}
+
+/**
+ * Generate CRUD API for a single model
+ */
+function generateModelApi(model) {
+    const modelVar = model.name.toLowerCase();
+    const storeVar = `${modelVar}Store`;
+
+    return `
+/**
+ * Auto-generated CRUD API for ${model.name}
+ */
+module.exports = function(app) {
+    const ${storeVar} = [];
+
+    // GET all
+    app.get("/api/${modelVar}", (req, res) => {
+        res.json(${storeVar});
+    });
+
+    // GET by ID
+    app.get("/api/${modelVar}/:id", (req, res) => {
+        const item = ${storeVar}.find(i => i.id === req.params.id);
+        if (!item) return res.status(404).json({ error: "${model.name} not found" });
+        res.json(item);
+    });
+
+    // CREATE
+    app.post("/api/${modelVar}", (req, res) => {
+        const newItem = validate${model.name}(req.body);
+        newItem.id = crypto.randomUUID();
+        ${storeVar}.push(newItem);
+        res.json(newItem);
+    });
+
+    // UPDATE
+    app.put("/api/${modelVar}/:id", (req, res) => {
+        const index = ${storeVar}.findIndex(i => i.id === req.params.id);
+        if (index === -1) return res.status(404).json({ error: "${model.name} not found" });
+
+        const updated = validate${model.name}(req.body);
+        updated.id = req.params.id;
+        ${storeVar}[index] = updated;
+
+        res.json(updated);
+    });
+
+    // DELETE
+    app.delete("/api/${modelVar}/:id", (req, res) => {
+        const index = ${storeVar}.findIndex(i => i.id === req.params.id);
+        if (index === -1) return res.status(404).json({ error: "${model.name} not found" });
+
+        ${storeVar}.splice(index, 1);
+        res.json({ success: true });
+    });
+};
+
+/**
+ * Validation for ${model.name}
+ */
+function validate${model.name}(data) {
+    const output = {};
+
+    ${model.fields
+        .map(field => {
+            const requiredCheck = field.required
+                ? `if (data["${field.name}"] === undefined) throw new Error("${field.name} is required");`
+                : "";
+            return `
+    ${requiredCheck}
+    output["${field.name}"] = data["${field.name}"];`;
+        })
+        .join("\n")}
+
+    return output;
+}
+`;
+}
