@@ -3,82 +3,89 @@
 /**
  * EditorLayout.jsx
  * ----------------
- * High‑level layout wrapper for the Blue Lotus editor.
- * Provides:
- *  - Top navigation bar
- *  - Status strip
- *  - Toolbar mount
- *  - EditorSurface container
+ * The main UI shell of the Blue Lotus editor.
+ * Wraps the top bar, side panels, workspace, and status strip.
  */
 
 import React from "react";
-import { EditorSurface } from "./EditorSurface";
-import { Toolbar } from "./Toolbar";
+import { StatusStrip } from "./StatusStrip";
+import { EditorSurface } from "../runtime/EditorSurface";
 
 export function EditorLayout({ engine }) {
     return (
-        <div style={styles.root}>
-            {/* Top navigation */}
-            <div style={styles.navbar}>
+        <div style={styles.container}>
+            <div style={styles.topBar}>
                 <div style={styles.logo}>Blue Lotus</div>
-                <div style={styles.status}>
-                    {engine.state.commandPaletteOpen
-                        ? "Command Palette Open"
-                        : "Ready"}
+                <div style={styles.mode}>{engine.state.mode.toUpperCase()}</div>
+            </div>
+
+            <div style={styles.body}>
+                <div style={styles.sidebarLeft}>
+                    {/* Future: Scene list, project tree, assets */}
+                </div>
+
+                <div style={styles.workspace}>
+                    <EditorSurface engine={engine} />
+                </div>
+
+                <div style={styles.sidebarRight}>
+                    {/* Future: Inspector, properties, AI panel */}
                 </div>
             </div>
 
-            {/* Toolbar */}
-            <div style={styles.toolbar}>
-                <Toolbar engine={engine} />
-            </div>
-
-            {/* Main editor surface */}
-            <div style={styles.surface}>
-                <EditorSurface engine={engine} />
-            </div>
+            <StatusStrip engine={engine} />
         </div>
     );
 }
 
 const styles = {
-    root: {
+    container: {
         display: "flex",
         flexDirection: "column",
+        width: "100vw",
         height: "100vh",
         background: "#0b0b0d",
         color: "#e8e8f0",
-        fontFamily: "Inter, sans-serif"
+        overflow: "hidden"
     },
-    navbar: {
-        height: "52px",
+    topBar: {
+        height: "48px",
         display: "flex",
         alignItems: "center",
         justifyContent: "space-between",
-        padding: "0 20px",
-        background: "#111118",
-        borderBottom: "1px solid rgba(255,255,255,0.05)"
+        padding: "0 16px",
+        background: "#111114",
+        borderBottom: "1px solid #1d1d22"
     },
     logo: {
         fontSize: "18px",
         fontWeight: "600",
-        color: "#b37bff"
+        letterSpacing: "0.5px"
     },
-    status: {
+    mode: {
         fontSize: "14px",
         opacity: 0.7
     },
-    toolbar: {
-        height: "48px",
-        background: "#16161f",
-        borderBottom: "1px solid rgba(255,255,255,0.05)",
-        display: "flex",
-        alignItems: "center",
-        padding: "0 12px"
-    },
-    surface: {
+    body: {
         flex: 1,
         display: "flex",
-        overflow: "hidden"
+        flexDirection: "row"
+    },
+    sidebarLeft: {
+        width: "220px",
+        background: "#111114",
+        borderRight: "1px solid #1d1d22"
+    },
+    workspace: {
+        flex: 1,
+        background: "#0f0f12",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center"
+    },
+    sidebarRight: {
+        width: "260px",
+        background: "#111114",
+        borderLeft: "1px solid #1d1d22"
     }
 };
