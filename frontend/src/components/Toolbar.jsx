@@ -3,95 +3,116 @@
 /**
  * Toolbar.jsx
  * -----------
- * A real, functional toolbar for the Blue Lotus editor.
- * Provides actions for:
- *  - Adding a scene
- *  - Deleting the active scene
- *  - Renaming a scene
- *  - Triggering the command palette
+ * The action strip for the Blue Lotus editor.
+ * Provides:
+ *  - Mode switching (design / preview / inspect)
+ *  - Tool selection (move / frame)
+ *  - Panel toggles (layers / properties)
+ *  - Command palette trigger
  */
 
 import React from "react";
 
-export function Toolbar({
-    activeScene,
-    onAddScene,
-    onDeleteScene,
-    onRenameScene,
-    onOpenCommandPalette
-}) {
+export function Toolbar({ engine }) {
+    const { mode, activeTool } = engine.state;
+
     return (
-        <div style={styles.container}>
-            <div style={styles.left}>
-                <button style={styles.button} onClick={onAddScene}>
-                    + Add Scene
-                </button>
+        <div style={styles.row}>
+            {/* Modes */}
+            <ToolbarButton
+                label="Design"
+                active={mode === "design"}
+                onClick={() => engine.setMode("design")}
+            />
+            <ToolbarButton
+                label="Preview"
+                active={mode === "preview"}
+                onClick={() => engine.setMode("preview")}
+            />
+            <ToolbarButton
+                label="Inspect"
+                active={mode === "inspect"}
+                onClick={() => engine.setMode("inspect")}
+            />
 
-                <button
-                    style={{
-                        ...styles.button,
-                        ...(activeScene ? {} : styles.disabled)
-                    }}
-                    onClick={() => activeScene && onDeleteScene(activeScene.id)}
-                    disabled={!activeScene}
-                >
-                    Delete
-                </button>
+            <div style={styles.divider} />
 
-                <button
-                    style={{
-                        ...styles.button,
-                        ...(activeScene ? {} : styles.disabled)
-                    }}
-                    onClick={() =>
-                        activeScene &&
-                        onRenameScene(activeScene.id, prompt("New name:"))
-                    }
-                    disabled={!activeScene}
-                >
-                    Rename
-                </button>
-            </div>
+            {/* Tools */}
+            <ToolbarButton
+                label="Move"
+                active={activeTool === "move"}
+                onClick={() => engine.selectTool("move")}
+            />
+            <ToolbarButton
+                label="Frame"
+                active={activeTool === "frame"}
+                onClick={() => engine.selectTool("frame")}
+            />
 
-            <div style={styles.right}>
-                <button style={styles.button} onClick={onOpenCommandPalette}>
-                    Commands
-                </button>
-            </div>
+            <div style={styles.divider} />
+
+            {/* Panels */}
+            <ToolbarButton
+                label="Layers"
+                onClick={() => engine.openPanel("layers")}
+            />
+            <ToolbarButton
+                label="Properties"
+                onClick={() => engine.openPanel("properties")}
+            />
+            <ToolbarButton
+                label="Close Panel"
+                onClick={() => engine.closePanel()}
+            />
+
+            <div style={styles.divider} />
+
+            {/* Command Palette */}
+            <ToolbarButton
+                label="Commands"
+                onClick={() => engine.toggleCommandPalette()}
+            />
         </div>
     );
 }
 
+function ToolbarButton({ label, active, onClick }) {
+    return (
+        <button
+            onClick={onClick}
+            style={{
+                ...styles.button,
+                ...(active ? styles.buttonActive : {})
+            }}
+        >
+            {label}
+        </button>
+    );
+}
+
 const styles = {
-    container: {
-        width: "100%",
-        height: "48px",
-        background: "#111114",
-        borderBottom: "1px solid #1c1c20",
+    row: {
         display: "flex",
         alignItems: "center",
-        justifyContent: "space-between",
-        padding: "0 12px"
-    },
-    left: {
-        display: "flex",
-        gap: "8px"
-    },
-    right: {
-        display: "flex",
         gap: "8px"
     },
     button: {
-        padding: "6px 12px",
-        background: "#1a1a1f",
+        background: "transparent",
+        border: "1px solid #b37bff",
         color: "#e8e8f0",
-        border: "1px solid #2a2a30",
-        borderRadius: "4px",
+        padding: "6px 12px",
+        borderRadius: "6px",
         cursor: "pointer",
-        fontSize: "14px"
+        transition: "all 120ms ease"
     },
-    disabled: {
-        opacity: 0.4,
-        cursor: "not-allowed"
+    buttonActive: {
+        background: "#b37bff",
+        color: "#000"
+    },
+    divider: {
+        width: "1px",
+        height: "24px",
+        background: "rgba(255,255,255,0.1)",
+        margin: "0 6px"
     }
 };
