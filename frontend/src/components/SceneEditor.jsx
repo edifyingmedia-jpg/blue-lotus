@@ -2,15 +2,18 @@
 
 /**
  * SceneEditor.jsx
- * ---------------
- * A real, functional scene editor panel.
- * Displays the active scene's content and emits edits upward.
- *
- * This component is designed to replace the raw textarea
- * inside EditorSurface once the full UI is integrated.
+ * ---------------------------------------------------------
+ * Cinematic writing surface for the Blue Lotus editor.
+ * Syncs with the active scene and emits edits upward.
+ * Future-ready for:
+ *  - inline AI tools
+ *  - syntax highlighting
+ *  - minimap
+ *  - formatting controls
  */
 
 import React, { useEffect, useState } from "react";
+import "./SceneEditor.css";
 
 export function SceneEditor({ scene, onChange }) {
     const [value, setValue] = useState(scene?.content || "");
@@ -27,36 +30,13 @@ export function SceneEditor({ scene, onChange }) {
     };
 
     return (
-        <div style={styles.container}>
+        <section className="scene-editor-root">
             <textarea
-                style={styles.textarea}
+                className="scene-editor-textarea"
                 value={value}
                 onChange={handleInput}
+                spellCheck={false}
             />
-        </div>
+        </section>
     );
 }
-
-const styles = {
-    container: {
-        flex: 1,
-        display: "flex",
-        flexDirection: "column",
-        background: "#0d0d0f",
-        padding: "0"
-    },
-    textarea: {
-        flex: 1,
-        width: "100%",
-        height: "100%",
-        padding: "16px",
-        fontSize: "16px",
-        lineHeight: "1.6",
-        border: "none",
-        outline: "none",
-        resize: "none",
-        background: "#0d0d0f",
-        color: "#e8e8f0",
-        fontFamily: "monospace"
-    }
-};
