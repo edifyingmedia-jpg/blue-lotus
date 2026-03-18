@@ -1,89 +1,76 @@
 // frontend/src/runtime/editor/EditorEngine.js
 
-import EventBus from "./core/EventBus";
-import { StructuralEditingEngine } from "./core/StructuralEditingEngine";
-import { TextRegionEngine } from "./core/TextRegionEngine";
-import { LotusContextBundle } from "./core/LotusContextBundle";
-
 /**
- * EditorEngine
- *
- * The runtime brain of Blue Lotus.
- * Routes:
- * - text updates
- * - structural editing commands
- * - TWINLotus actions
- * - context bundle updates
- *
- * This file connects the UI layer to the engine layer.
+ * EditorEngine.js
+ * ---------------
+ * Core runtime logic engine for Blue Lotus.
+ * Handles scene updates, additions, removals, and dispatches events
+ * to the UI layer and other runtime systems.
  */
 
-const EDITOR_EVENT_CHANNEL = "editor:event";
-const EDITOR_UPDATE_CHANNEL = "editor:update";
-
-class EditorEngine {
-  constructor() {
-    this.text = "";
-    this.contextBundle = new LotusContextBundle();
-    this.structuralEngine = new StructuralEditingEngine();
-    this.textEngine = new TextRegionEngine();
-
-    this._bindEvents();
-  }
-
-  _bindEvents() {
-    EventBus.on(EDITOR_EVENT_CHANNEL, (payload) => {
-      const { action, payload: data } = payload;
-
-      switch (action) {
-        case "update_text":
-          this._handleTextUpdate(data.value);
-          break;
-
-        case "lotus_command":
-          this._handleCommand(data.command, data);
-          break;
-
-        default:
-          console.warn("[EditorEngine] Unknown action:", action);
-      }
-    });
-  }
-
-  _handleTextUpdate(value) {
-    this.text = value;
-
-    // Update context bundle
-    this.contextBundle.update({
-      text: value,
-      cursor: null, // future: selection model
-    });
-
-    // Broadcast update
-    EventBus.emit(EDITOR_UPDATE_CHANNEL, {
-      text: this.text,
-    });
-  }
-
-  _handleCommand(commandName, data) {
-    // Structural editing commands
-    if (this.structuralEngine.canHandle(commandName)) {
-      const updated = this.structuralEngine.apply(commandName, this.text);
-      this._handleTextUpdate(updated);
-      return;
+export class EditorEngine {
+    constructor({ project, documentModel }) {
+        this.project = project;
+        this.documentModel = documentModel;
+        this.listeners = {};
     }
 
-    // Text region commands
-    if (this.textEngine.canHandle(commandName)) {
-      const updated = this.textEngine.apply(commandName, this.text);
-      this._handleTextUpdate(updated);
-      return;
+    /**
+     * Subscribe to engine events
+     */
+    on(event, callback) {
+        if (!this.listeners[event]) {
+            this.listeners[event] = [];
+        }
+        this.listeners[event].push(callback);
     }
 
-    // Unknown command
-    console.warn("[EditorEngine] Unhandled command:", commandName);
-  }
+    /**
+     * Emit an event to all listeners
+     */
+    emit(event, payload) {
+        const handlers = this.listeners[event];
+        if (handlers) {
+            handlers.forEach(fn => fn(payload));
+        }
+    }
+
+    /**
+     * Update a scene's content
+     */
+    updateScene(sceneId, updates) {
+        const updatedModel = this.documentModel.updateScene(sceneId, updates);
+        this.documentModel = updatedModel;
+
+        const updatedScene = updatedModel.getSceneById(sceneId);
+        this.emit("sceneUpdated", updatedScene);
+    }
+
+    /**
+     * Add a new scene
+     */
+    addScene(scene) {
+        const updatedModel = this.documentModel.addScene(scene);
+        this.documentModel = updatedModel;
+
+        const addedScene = updatedModel.getSceneById(scene.id);
+        this.emit("sceneAdded", addedScene);
+    }
+
+    /**
+     * Remove a scene
+     */
+    removeScene(sceneId) {
+        const updatedModel = this.documentModel.removeScene(sceneId);
+        this.documentModel = updatedModel;
+
+        this.emit("sceneRemoved", sceneId);
+    }
+
+    /**
+     * Get the current document model
+     */
+    getDocumentModel() {
+        return this.documentModel;
+    }
 }
-
-// Singleton instance
-export const editorEngine = new EditorEngine();
