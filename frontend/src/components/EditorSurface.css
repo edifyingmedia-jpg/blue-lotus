@@ -1,0 +1,144 @@
+/* frontend/src/components/EditorSurface.css */
+
+/**
+ * EditorSurface.css
+ * -----------------
+ * Global styling for the Blue Lotus editor.
+ * Cinematic, tri‑neon, dark, clean, emotionally intelligent.
+ */
+
+:root {
+    --bg-dark: #0b0b0d;
+    --bg-panel: #111118;
+    --bg-panel-light: #16161f;
+
+    --neon-cyan: #3dfdff;
+    --neon-purple: #b37bff;
+    --neon-pink: #ff6ad5;
+
+    --text-primary: #e8e8f0;
+    --text-secondary: #9a9ab3;
+
+    --radius: 8px;
+    --transition-fast: 120ms ease;
+    --transition-medium: 220ms ease;
+}
+
+/* Global reset */
+body, html {
+    margin: 0;
+    padding: 0;
+    background: var(--bg-dark);
+    color: var(--text-primary);
+    font-family: "Inter", sans-serif;
+    height: 100%;
+    overflow: hidden;
+}
+
+/* Panels */
+.editor-panel {
+    background: var(--bg-panel);
+    border-radius: var(--radius);
+    padding: 16px;
+    box-shadow: 0 0 20px rgba(0,0,0,0.4);
+    transition: background var(--transition-medium);
+}
+
+.editor-panel:hover {
+    background: var(--bg-panel-light);
+}
+
+/* Neon accents */
+.neon-cyan {
+    color: var(--neon-cyan);
+}
+
+.neon-purple {
+    color: var(--neon-purple);
+}
+
+.neon-pink {
+    color: var(--neon-pink);
+}
+
+/* Buttons */
+.editor-button {
+    background: transparent;
+    border: 1px solid var(--neon-purple);
+    padding: 8px 14px;
+    border-radius: var(--radius);
+    color: var(--text-primary);
+    cursor: pointer;
+    transition: all var(--transition-fast);
+}
+
+.editor-button:hover {
+    background: var(--neon-purple);
+    color: #000;
+}
+
+/* Scene list */
+.scene-list {
+    width: 260px;
+    overflow-y: auto;
+    border-right: 1px solid rgba(255,255,255,0.05);
+}
+
+.scene-item {
+    padding: 10px 14px;
+    cursor: pointer;
+    border-radius: var(--radius);
+    transition: background var(--transition-fast);
+}
+
+.scene-item:hover {
+    background: rgba(255,255,255,0.05);
+}
+
+.scene-item.active {
+    background: rgba(179, 123, 255, 0.15);
+    border-left: 3px solid var(--neon-purple);
+}
+
+/* Editor area */
+.scene-editor {
+    flex: 1;
+    padding: 24px;
+    overflow-y: auto;
+    line-height: 1.6;
+    font-size: 18px;
+}
+
+/* Command palette */
+.command-palette {
+    position: absolute;
+    top: 80px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 480px;
+    background: var(--bg-panel);
+    border-radius: var(--radius);
+    box-shadow: 0 0 30px rgba(0,0,0,0.6);
+    padding: 16px;
+    z-index: 1000;
+}
+
+.command-item {
+    padding: 10px 12px;
+    border-radius: var(--radius);
+    transition: background var(--transition-fast);
+}
+
+.command-item:hover {
+    background: rgba(255,255,255,0.05);
+}
+
+/* Smooth fade */
+.fade-in {
+    animation: fadeIn 200ms ease forwards;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(6px); }
+    to { opacity: 1; transform: translateY(0); }
+}
