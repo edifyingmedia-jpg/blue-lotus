@@ -2,117 +2,58 @@
 
 /**
  * Toolbar.jsx
- * -----------
- * The action strip for the Blue Lotus editor.
+ * ---------------------------------------------------------
+ * The cinematic top toolbar for the Blue Lotus editor.
  * Provides:
- *  - Mode switching (design / preview / inspect)
- *  - Tool selection (move / frame)
- *  - Panel toggles (layers / properties)
- *  - Command palette trigger
+ *  - Neon-ready class hooks
+ *  - Icon buttons
+ *  - Mode indicator
+ *  - Future AI actions
  */
 
 import React from "react";
+import "./Toolbar.css";
 
 export function Toolbar({ engine }) {
-    const { mode, activeTool } = engine.state;
+    const { mode } = engine.state;
 
     return (
-        <div style={styles.row}>
-            {/* Modes */}
-            <ToolbarButton
-                label="Design"
-                active={mode === "design"}
-                onClick={() => engine.setMode("design")}
-            />
-            <ToolbarButton
-                label="Preview"
-                active={mode === "preview"}
-                onClick={() => engine.setMode("preview")}
-            />
-            <ToolbarButton
-                label="Inspect"
-                active={mode === "inspect"}
-                onClick={() => engine.setMode("inspect")}
-            />
+        <div className="toolbar-root">
+            {/* Left cluster */}
+            <div className="toolbar-group">
+                <button
+                    className="toolbar-btn"
+                    onClick={() => engine.createScene()}
+                >
+                    + Scene
+                </button>
 
-            <div style={styles.divider} />
+                <button
+                    className="toolbar-btn"
+                    onClick={() => engine.saveProject()}
+                >
+                    Save
+                </button>
+            </div>
 
-            {/* Tools */}
-            <ToolbarButton
-                label="Move"
-                active={activeTool === "move"}
-                onClick={() => engine.selectTool("move")}
-            />
-            <ToolbarButton
-                label="Frame"
-                active={activeTool === "frame"}
-                onClick={() => engine.selectTool("frame")}
-            />
+            {/* Center title */}
+            <div className="toolbar-title">
+                {engine.projectName || "Untitled Project"}
+            </div>
 
-            <div style={styles.divider} />
+            {/* Right cluster */}
+            <div className="toolbar-group">
+                <button
+                    className="toolbar-btn"
+                    onClick={() => engine.toggleCommandPalette()}
+                >
+                    Commands
+                </button>
 
-            {/* Panels */}
-            <ToolbarButton
-                label="Layers"
-                onClick={() => engine.openPanel("layers")}
-            />
-            <ToolbarButton
-                label="Properties"
-                onClick={() => engine.openPanel("properties")}
-            />
-            <ToolbarButton
-                label="Close Panel"
-                onClick={() => engine.closePanel()}
-            />
-
-            <div style={styles.divider} />
-
-            {/* Command Palette */}
-            <ToolbarButton
-                label="Commands"
-                onClick={() => engine.toggleCommandPalette()}
-            />
+                <div className="toolbar-mode">
+                    {mode.toUpperCase()}
+                </div>
+            </div>
         </div>
     );
 }
-
-function ToolbarButton({ label, active, onClick }) {
-    return (
-        <button
-            onClick={onClick}
-            style={{
-                ...styles.button,
-                ...(active ? styles.buttonActive : {})
-            }}
-        >
-            {label}
-        </button>
-    );
-}
-
-const styles = {
-    row: {
-        display: "flex",
-        alignItems: "center",
-        gap: "8px"
-    },
-    button: {
-        background: "transparent",
-        border: "1px solid #b37bff",
-        color: "#e8e8f0",
-        padding: "6px 12px",
-        borderRadius: "6px",
-        cursor: "pointer",
-        transition: "all 120ms ease"
-    },
-    buttonActive: {
-        background: "#b37bff",
-        color: "#000"
-    },
-    divider: {
-        width: "1px",
-        height: "24px",
-        background: "rgba(255,255,255,0.1)",
-        margin: "0 6px"
-    }
-};
