@@ -1,61 +1,85 @@
-// ScreenRenderer.jsx
-// Renders a screen by ID using your JSON-defined screens and component resolver
+/**
+ * ScreenRenderer.jsx
+ * ---------------------------------------------------------
+ * React-side renderer for Blue Lotus runtime.
+ *
+ * Responsibilities:
+ * - Receive a JSON screen definition from ScreenRenderer.js
+ * - Resolve the correct component
+ * - Render with project, document, params, events
+ * - Provide a clean, predictable rendering lifecycle
+ */
 
 import React from "react";
-import screens from "./screens";
-import resolveComponent from "./components/resolveComponent";
+import resolveComponent from "./resolveComponent";
 
-// Import the Editor context wrapper
-import { EditorProvider } from "./editor/EditorContext";
-
-export default function ScreenRenderer({ screenId, navigation, engine }) {
-  const screen = screens[screenId];
-
-  if (!screen) {
-    return (
-      <div style={styles.error}>
-        <h2>Screen not found</h2>
-        <p>{screenId}</p>
-      </div>
-    );
+export default function ScreenRenderer({
+  definition,
+  project,
+  document,
+  params = {},
+  events,
+}) {
+  if (!definition) {
+    console.error("[ScreenRenderer.jsx] Missing screen definition");
+    return <div>Screen definition missing</div>;
   }
 
-  const content = (
-    <div style={styles.container}>
-      {screen.components?.map((component, index) => {
-        const Component = resolveComponent(component.type);
-        if (!Component) return null;
+  const { type, props = {}, children = [] } = definition;
 
-        return (
-          <Component
-            key={index}
-            {...component}
-            navigation={navigation}
-            engine={engine}
-          />
-        );
-      })}
-    </div>
+  // Resolve top-level component
+  const Component = resolveComponent(type);
+
+  if (!Component) {
+    console.error(`[ScreenRenderer.jsx] Unknown component type: ${type}`);
+    return <div>Unknown component: {type}</div>;
+  }
+
+  /**
+   * Recursively render child nodes
+   */
+  const renderNode = (node, index) => {
+    if (!node || typeof node !== "object") return null;
+
+    const NodeComponent = resolveComponent(node.type);
+
+    if (!NodeComponent) {
+      console.warn(`[ScreenRenderer.jsx] Unknown child component: ${node.type}`);
+      return null;
+    }
+
+    const childProps = {
+      key: index,
+      ...node.props,
+      project,
+      document,
+      params,
+      events,
+    };
+
+    if (node.children && Array.isArray(node.children)) {
+      return (
+        <NodeComponent {...childProps}>
+          {node.children.map((child, i) => renderNode(child, i))}
+        </NodeComponent>
+      );
+    }
+
+    return <NodeComponent {...childProps} />;
+  };
+
+  /**
+   * Render the root component
+   */
+  return (
+    <Component
+      {...props}
+      project={project}
+      document={document}
+      params={params}
+      events={events}
+    >
+      {children.map((child, i) => renderNode(child, i))}
+    </Component>
   );
-
-  // Wrap the Editor screen in the EditorProvider
-  if (screenId === "Editor") {
-    return <EditorProvider>{content}</EditorProvider>;
-  }
-
-  return content;
 }
-
-const styles = {
-  container: {
-    width: "100%",
-    height: "100%",
-    overflowY: "auto",
-    boxSizing: "border-box",
-  },
-  error: {
-    padding: 20,
-    color: "white",
-    background: "red",
-  },
-};
