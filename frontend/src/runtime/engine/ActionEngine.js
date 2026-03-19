@@ -3,50 +3,29 @@
 /**
  * ActionEngine
  * ---------------------------------------------------------
- * Central dispatcher for all actions triggered by components.
- * Supports:
- * - navigation actions
- * - state updates
- * - async operations
- * - custom user-defined actions
+ * Central dispatcher for high-level actions.
+ * - Normalizes action objects
+ * - Ensures every action has a type
+ * - Forwards actions into the reducer pipeline
  */
 
-import { useNavigation } from "./NavigationEngine";
-
-export default function ActionEngine() {
-  const navigation = useNavigation();
-
-  const run = async (action, value) => {
+export default function ActionEngine(dispatch) {
+  function run(action, value) {
     if (!action) return;
 
-    const { type, params = {} } = action;
+    // Normalize string actions: "SAVE" → { type: "SAVE" }
+    const normalized =
+      typeof action === "string"
+        ? { type: action, value }
+        : { ...action, value };
 
-    switch (type) {
-      case "navigate":
-        navigation.push(params.screen, params);
-        break;
-
-      case "replace":
-        navigation.replace(params.screen, params);
-        break;
-
-      case "back":
-        navigation.goBack();
-        break;
-
-      case "log":
-        console.log("ActionEngine log:", value);
-        break;
-
-      case "alert":
-        alert(params.message || "Action triggered");
-        break;
-
-      default:
-        console.warn("Unknown action type:", type, action);
-        break;
+    if (!normalized.type) {
+      console.warn("ActionEngine: Missing action.type", normalized);
+      return;
     }
-  };
+
+    dispatch(normalized);
+  }
 
   return { run };
 }
