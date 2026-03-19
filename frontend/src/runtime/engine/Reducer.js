@@ -2,7 +2,7 @@
 
 /**
  * Reducer.js
- * ----------
+ * ---------------------------------------------------------
  * Pure reducer for Blue Lotus runtime state.
  * Applies actions to the project model.
  *
