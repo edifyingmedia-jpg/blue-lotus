@@ -10,17 +10,17 @@
 import React, { useState, useMemo, useEffect } from "react";
 import "./CommandPalette.css";
 
-export function CommandPalette({ engine }) {
+export default function CommandPalette({ state, dispatch }) {
     const [query, setQuery] = useState("");
     const [selectedIndex, setSelectedIndex] = useState(0);
 
     const commands = useMemo(() => {
-        const all = engine.getCommands(); // [{ id, label, action }]
+        const all = state.commands || [];
         if (!query.trim()) return all;
         return all.filter(cmd =>
             cmd.label.toLowerCase().includes(query.toLowerCase())
         );
-    }, [query, engine]);
+    }, [query, state.commands]);
 
     // Keyboard navigation
     useEffect(() => {
@@ -34,18 +34,21 @@ export function CommandPalette({ engine }) {
             if (e.key === "Enter") {
                 const cmd = commands[selectedIndex];
                 if (cmd) {
-                    engine.runCommand(cmd.id);
-                    engine.closeCommandPalette();
+                    dispatch({
+                        type: "RUN_COMMAND",
+                        payload: { commandId: cmd.id }
+                    });
+                    dispatch({ type: "CLOSE_COMMAND_PALETTE" });
                 }
             }
             if (e.key === "Escape") {
-                engine.closeCommandPalette();
+                dispatch({ type: "CLOSE_COMMAND_PALETTE" });
             }
         };
 
         window.addEventListener("keydown", handleKey);
         return () => window.removeEventListener("keydown", handleKey);
-    }, [commands, selectedIndex, engine]);
+    }, [commands, selectedIndex, dispatch]);
 
     return (
         <div className="cmd-root">
@@ -73,8 +76,11 @@ export function CommandPalette({ engine }) {
                         }
                         onMouseEnter={() => setSelectedIndex(i)}
                         onClick={() => {
-                            engine.runCommand(cmd.id);
-                            engine.closeCommandPalette();
+                            dispatch({
+                                type: "RUN_COMMAND",
+                                payload: { commandId: cmd.id }
+                            });
+                            dispatch({ type: "CLOSE_COMMAND_PALETTE" });
                         }}
                     >
                         {cmd.label}
