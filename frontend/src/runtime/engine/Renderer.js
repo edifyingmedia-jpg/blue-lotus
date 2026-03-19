@@ -1,13 +1,16 @@
+// frontend/src/runtime/engine/Renderer.js
+
 import React from "react";
 import * as Components from "../components";
 
 /**
- * Simple Renderer
+ * Renderer
+ * ---------------------------------------------------------
  * - Renders a JSON tree into real UI components
  * - Looks up components by name
  * - Recursively renders children
  * - Supports props, styles, and actions
- * - MVP-ready and stable
+ * - Stable, predictable, and runtime-safe
  */
 
 export default function Renderer({ tree }) {
