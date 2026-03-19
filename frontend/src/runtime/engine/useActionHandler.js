@@ -1,18 +1,23 @@
 // frontend/src/runtime/engine/useActionHandler.js
 
+import { useCallback } from "react";
+
 /**
  * useActionHandler
  * ---------------------------------------------------------
- * Hook that connects UI components to the ActionDispatcher.
- * Components call `onAction(type, payload)` and this hook
- * forwards the action into the runtime dispatch loop.
+ * Connects UI components to the ActionEngine via dispatch.
+ *
+ * Components call:
+ *    onAction(type, payload)
+ *
+ * This hook wraps dispatch into a stable callback.
  */
-
-import { useCallback } from "react";
 
 export default function useActionHandler(dispatch) {
   return useCallback(
     (type, payload = {}) => {
+      if (!type) return;
+
       dispatch({
         type,
         ...payload
