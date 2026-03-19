@@ -1,42 +1,59 @@
-// frontend/src/components/SceneEditor.jsx
-
 /**
  * SceneEditor.jsx
  * ---------------------------------------------------------
- * Cinematic writing surface for the Blue Lotus editor.
- * Syncs with the active scene and emits edits upward.
- * Future-ready for:
- *  - inline AI tools
- *  - syntax highlighting
- *  - minimap
- *  - formatting controls
+ * Renders the active scene using the Builder engine.
+ * Displays the component tree and forwards actions upward.
  */
 
-import React, { useEffect, useState } from "react";
+import React from "react";
 import "./SceneEditor.css";
 
-export function SceneEditor({ scene, onChange }) {
-    const [value, setValue] = useState(scene?.content || "");
+export default function SceneEditor({ scene, state, dispatch }) {
+  if (!scene) {
+    return (
+      <div className="scene-editor-root">
+        <div className="scene-editor-empty">No scene selected</div>
+      </div>
+    );
+  }
 
-    // Sync when the active scene changes
-    useEffect(() => {
-        setValue(scene?.content || "");
-    }, [scene?.id]);
+  const renderNode = (node) => {
+    if (!node) return null;
 
-    const handleInput = (e) => {
-        const newValue = e.target.value;
-        setValue(newValue);
-        onChange(newValue);
+    const Component = state.registry[node.type];
+    if (!Component) {
+      return (
+        <div className="unknown-component">
+          Unknown component: {node.type}
+        </div>
+      );
+    }
+
+    const isSelected = state.selectedComponentId === node.id;
+
+    const handleSelect = (e) => {
+      e.stopPropagation();
+      dispatch({
+        type: "SELECT_COMPONENT",
+        payload: { componentId: node.id },
+      });
     };
 
     return (
-        <section className="scene-editor-root">
-            <textarea
-                className="scene-editor-textarea"
-                value={value}
-                onChange={handleInput}
-                spellCheck={false}
-            />
-        </section>
+      <div
+        className={`scene-node-wrapper ${isSelected ? "selected" : ""}`}
+        onClick={handleSelect}
+      >
+        <Component {...node.props}>
+          {node.children?.map((child) => renderNode(child))}
+        </Component>
+      </div>
     );
+  };
+
+  return (
+    <div className="scene-editor-root">
+      {renderNode(scene.root)}
+    </div>
+  );
 }
