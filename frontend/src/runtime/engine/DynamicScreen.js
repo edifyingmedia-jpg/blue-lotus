@@ -1,24 +1,23 @@
 // frontend/src/runtime/engine/DynamicScreen.js
 
 import React from "react";
-import resolver from "../resolver/resolverComponents";
+import resolveComponent from "./resolveComponent";
 import useActionHandler from "./useActionHandler";
 
 /**
  * DynamicScreen
  * ---------------------------------------------------------
- * Renders all components inside a screen definition.
- * - Loops through component JSON
- * - Resolves each component type
- * - Passes props, params, and actions
- * - Handles unknown components safely
+ * Renders a screen's component list.
+ * - Resolves component types
+ * - Passes props + params
+ * - Wires action handlers
  */
 
-export default function DynamicScreen({ components = [], params = {} }) {
+export default function DynamicScreen({ components = [], params = {}, dispatch }) {
   return (
     <>
       {components.map((item, index) => {
-        const Component = resolver(item.type);
+        const Component = resolveComponent(item.type);
 
         if (!Component) {
           return (
@@ -28,13 +27,13 @@ export default function DynamicScreen({ components = [], params = {} }) {
           );
         }
 
-        // Prepare action handler
-        const onAction = useActionHandler(item.action);
+        // Create action handler for this component
+        const onAction = useActionHandler(dispatch);
 
         return (
           <Component
             key={index}
-            {...item}
+            {...item.props}
             params={params}
             onAction={onAction}
           />
