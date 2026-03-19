@@ -1,3 +1,12 @@
+// frontend/src/runtime/engine/resolveComponent.js
+
+/**
+ * resolveComponent
+ * ---------------------------------------------------------
+ * Maps component type strings to actual React components.
+ * This is the central registry for the entire runtime.
+ */
+
 import Button from "../components/Button";
 import Text from "../components/Text";
 import Input from "../components/Input";
@@ -15,11 +24,6 @@ import Toast from "../components/Toast";
 import ProgressBar from "../components/ProgressBar";
 import Spinner from "../components/Spinner";
 import ScreenContainer from "../components/ScreenContainer";
-
-/**
- * Maps component type strings to actual React components.
- * This is the central registry for the entire runtime.
- */
 
 const components = {
   Button,
