@@ -1,15 +1,34 @@
-import React from "react";
-import { AppDefinitionProvider } from "./AppDefinitionContext";
-import { NavigationProvider } from "./NavigationEngine";
+// frontend/src/runtime/engine/LivePreview.js
 
-export default function LivePreview({ app }) {
-  if (!app) return <div>No app loaded.</div>;
+/**
+ * LivePreview
+ * ---------------------------------------------------------
+ * Renders a screen in "live" mode.
+ * Used by the editor and by the runtime when previewing.
+ *
+ * Responsibilities:
+ * - Accept a screen definition
+ * - Pass props + params
+ * - Forward dispatch to DynamicScreen
+ */
+
+import React from "react";
+import DynamicScreen from "./DynamicScreen";
+
+export default function LivePreview({ screen, params = {}, dispatch }) {
+  if (!screen) {
+    return (
+      <div style={{ padding: 20, color: "red" }}>
+        No screen selected.
+      </div>
+    );
+  }
 
   return (
-    <AppDefinitionProvider app={app}>
-      <NavigationProvider app={app}>
-        {/* The actual app UI will render inside NavigationProvider */}
-      </NavigationProvider>
-    </AppDefinitionProvider>
+    <DynamicScreen
+      components={screen.components || []}
+      params={params}
+      dispatch={dispatch}
+    />
   );
 }
