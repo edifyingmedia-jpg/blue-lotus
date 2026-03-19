@@ -1,43 +1,19 @@
 // frontend/src/runtime/engine/index.js
 
 /**
- * engine/index.js
- * ----------------
- * Tiny runtime entrypoint for Blue Lotus.
- * Wires together:
- *   - ProjectLoader
- *   - SceneManager
- *   - ActionDispatcher
- *   - Reducer dispatch loop (provided by EditorApp)
+ * Runtime Engine Entry Point
+ * ---------------------------------------------------------
+ * Exports all engine modules for use by the runtime and editor.
  */
 
-import { loadProject, createNewProject, saveProject } from "../ProjectLoader";
-import { createSceneManager } from "../SceneManager";
-import { createActionDispatcher } from "../ActionDispatcher";
-
-/**
- * Initialize the runtime engine.
- * Returns:
- *   {
- *     project,
- *     sceneManager,
- *     dispatcher
- *   }
- */
-export function initializeEngine(dispatch) {
-  // Load or create project
-  let project = loadProject();
-  if (!project) {
-    project = createNewProject("Untitled Project");
-  }
-
-  const sceneManager = createSceneManager(project);
-  const dispatcher = createActionDispatcher(dispatch);
-
-  return {
-    project,
-    sceneManager,
-    dispatcher,
-    save: () => saveProject(project)
-  };
-}
+export { default as ActionEngine } from "./ActionEngine";
+export { default as AppDefinitionContext } from "./AppDefinitionContext";
+export { default as DynamicScreen } from "./DynamicScreen";
+export { default as LivePreview } from "./LivePreview";
+export { default as NavigationEngine } from "./NavigationEngine";
+export { createReducer } from "./Reducer";
+export { default as Renderer } from "./Renderer";
+export { default as Screen } from "./Screen";
+export { createScreenEngine } from "./ScreenEngine";
+export { default as resolveComponent } from "./resolveComponent";
+export { default as useActionHandler } from "./useActionHandler";
