@@ -1,48 +1,29 @@
 // frontend/src/runtime/engine/ScreenEngine.js
 
-import React from "react";
-import { useNavigation } from "./NavigationEngine";
-import Screen from "../components/Screen";
-
 /**
- * ScreenEngine
+ * ScreenEngine.js
  * ---------------------------------------------------------
- * Renders the active screen based on the navigation stack.
- * - Reads current screen from NavigationEngine
- * - Passes params to the Screen component
- * - Handles missing screens safely
+ * Lightweight runtime engine for managing active screens.
+ * - Tracks which screen is currently active
+ * - Provides helpers to switch screens
+ * - Integrates with SceneManager + Renderer pipeline
  */
 
-export default function ScreenEngine({ screens }) {
-  const navigation = useNavigation();
-  const current = navigation.getCurrent();
+export function createScreenEngine(project) {
+  let activeScreen = project?.scenes?.[0]?.id || null;
 
-  if (!current) {
-    return (
-      <div style={{ color: "red", padding: 20 }}>
-        Error: No active screen found.
-      </div>
-    );
-  }
+  return {
+    getActiveScreen() {
+      return activeScreen;
+    },
 
-  const { screen, params } = current;
+    setActiveScreen(id) {
+      activeScreen = id;
+    },
 
-  // Look up the screen definition
-  const screenDef = screens?.[screen];
-
-  if (!screenDef) {
-    return (
-      <div style={{ color: "red", padding: 20 }}>
-        Error: Screen "{screen}" not found in registry.
-      </div>
-    );
-  }
-
-  return (
-    <Screen
-      name={screen}
-      components={screenDef.components || []}
-      params={params || {}}
-    />
-  );
+    getActiveScreenDefinition() {
+      if (!activeScreen) return null;
+      return project.scenes.find((s) => s.id === activeScreen) || null;
+    }
+  };
 }
