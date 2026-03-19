@@ -17,10 +17,20 @@ export default function SceneEditor({ scene, state, dispatch }) {
     );
   }
 
+  /**
+   * Recursively render a node in the scene tree.
+   * Each node has:
+   *  - id
+   *  - type (component type)
+   *  - props
+   *  - children (array)
+   */
   const renderNode = (node) => {
     if (!node) return null;
 
+    // Look up the actual React component from the registry
     const Component = state.registry[node.type];
+
     if (!Component) {
       return (
         <div className="unknown-component">
