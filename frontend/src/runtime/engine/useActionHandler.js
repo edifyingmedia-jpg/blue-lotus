@@ -1,25 +1,23 @@
 // frontend/src/runtime/engine/useActionHandler.js
 
-import { useCallback } from "react";
-import ActionEngine from "./ActionEngine";
-
 /**
  * useActionHandler
  * ---------------------------------------------------------
- * Connects components to the ActionEngine.
- * - Normalizes null/undefined actions
- * - Returns a stable callback
- * - Supports passing values (e.g., Input, TextArea)
+ * Hook that connects UI components to the ActionDispatcher.
+ * Components call `onAction(type, payload)` and this hook
+ * forwards the action into the runtime dispatch loop.
  */
 
-export default function useActionHandler(action) {
-  const { run } = ActionEngine();
+import { useCallback } from "react";
 
+export default function useActionHandler(dispatch) {
   return useCallback(
-    (value) => {
-      if (!action) return;
-      run(action, value);
+    (type, payload = {}) => {
+      dispatch({
+        type,
+        ...payload
+      });
     },
-    [action, run]
+    [dispatch]
   );
 }
