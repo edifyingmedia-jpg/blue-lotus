@@ -8,12 +8,20 @@ import DynamicScreen from "./DynamicScreen";
  * ---------------------------------------------------------
  * Wraps a screen definition and renders its components
  * using DynamicScreen.
+ *
+ * Responsibilities:
+ * - Provide layout container
+ * - Pass params + dispatch to DynamicScreen
  */
 
-export default function Screen({ name, components = [], params = {} }) {
+export default function Screen({ name, components = [], params = {}, dispatch }) {
   return (
     <div style={screenStyle}>
-      <DynamicScreen components={components} params={params} />
+      <DynamicScreen
+        components={components}
+        params={params}
+        dispatch={dispatch}
+      />
     </div>
   );
 }
