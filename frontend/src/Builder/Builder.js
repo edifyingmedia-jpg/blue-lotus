@@ -16,7 +16,7 @@ import SceneManager from "./SceneManager";
 import ActionDispatcher from "./ActionDispatcher";
 import registerComponents from "./registerComponents";
 
-// Optional: later this can come from API, file, etc.
+// Default project structure (can be replaced later with real saved projects)
 const DEFAULT_PROJECT = {
   name: "New Blue Lotus Project",
   scenes: [],
@@ -46,6 +46,8 @@ async function initializeBuilder(projectData = DEFAULT_PROJECT) {
   });
 
   console.log("Builder: initialized.");
+
+  // Expose a clean API for the UI layer
   return {
     getState: BuilderState.getState,
     dispatch: ActionDispatcher.dispatch,
