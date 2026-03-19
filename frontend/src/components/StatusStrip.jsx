@@ -1,5 +1,3 @@
-// frontend/src/components/StatusStrip.jsx
-
 /**
  * StatusStrip.jsx
  * ---------------------------------------------------------
@@ -14,8 +12,10 @@
 import React from "react";
 import "./StatusStrip.css";
 
-export function StatusStrip({ engine }) {
-    const { mode, isSaving, commandPaletteOpen } = engine.state;
+export default function StatusStrip({ state }) {
+    const mode = state?.mode || "edit";
+    const isSaving = state?.isSaving || false;
+    const commandPaletteOpen = state?.commandPaletteOpen || false;
 
     return (
         <footer className="status-root">
