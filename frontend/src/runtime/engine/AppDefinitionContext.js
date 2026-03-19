@@ -1,17 +1,16 @@
+// frontend/src/runtime/engine/AppDefinitionContext.js
+
 import React, { createContext, useContext, useState, useEffect } from "react";
 
 /**
  * AppDefinitionContext
- * Holds the entire app definition used by the runtime engine.
- *
- * Provides:
- * - screens
- * - components
- * - theme
- * - metadata
- * - initialScreen
- * - actions
- * - globalState
+ * ---------------------------------------------------------
+ * Provides the normalized app definition to the runtime.
+ * Ensures:
+ * - predictable structure
+ * - stable screen list
+ * - stable component definitions
+ * - stable metadata + theme
  */
 
 const AppContext = createContext(null);
@@ -19,7 +18,6 @@ const AppContext = createContext(null);
 export function AppDefinitionProvider({ app, children }) {
   const [definition, setDefinition] = useState(() => normalize(app));
 
-  // If the app definition changes, normalize again
   useEffect(() => {
     setDefinition(normalize(app));
   }, [app]);
@@ -37,18 +35,15 @@ export function useAppDefinition() {
 
 /**
  * Normalize the app definition into a stable structure.
- * Ensures the runtime always receives predictable fields.
  */
 function normalize(app) {
   if (!app || typeof app !== "object") {
     return {
-      screens: {},
+      screens: [],
       components: {},
       theme: {},
       metadata: {},
-      initialScreen: "home",
-      actions: {},
-      globalState: {},
+      initialScreen: null,
     };
   }
 
@@ -57,27 +52,21 @@ function normalize(app) {
     components: app.components || {},
     theme: app.theme || {},
     metadata: app.metadata || {},
-    initialScreen: app.initialScreen || "home",
-    actions: app.actions || {},
-    globalState: app.globalState || {},
+    initialScreen: app.initialScreen || null,
   };
 }
 
 /**
- * Convert screens array → dictionary for fast lookup.
+ * Normalize screens into a clean array.
  */
 function normalizeScreens(screens) {
-  if (!screens) return {};
+  if (!screens) return [];
 
-  // If already a dictionary, return as-is
-  if (!Array.isArray(screens)) return screens;
+  if (Array.isArray(screens)) return screens;
 
-  const dict = {};
-  screens.forEach((screen) => {
-    if (screen && screen.id) {
-      dict[screen.id] = screen;
-    }
-  });
-
-  return dict;
+  // Convert dictionary → array
+  return Object.keys(screens).map((key) => ({
+    id: key,
+    ...screens[key],
+  }));
 }
