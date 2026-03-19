@@ -1,42 +1,39 @@
-// frontend/src/components/SceneList.jsx
-
 /**
  * SceneList.jsx
- * ---------------------------------------------------------
- * Cinematic tri‑neon scene navigator.
- * Displays all scenes, highlights the active one,
- * and emits selection events to the engine.
+ * Displays all scenes and allows switching between them.
  */
 
 import React from "react";
-import "./SceneList.css";
 
-export function SceneList({ scenes, activeSceneId, onSelect }) {
+export default function SceneList({ scenes, currentScene, dispatch }) {
+  if (!scenes || scenes.length === 0) {
     return (
-        <div className="scene-list-root">
-            {scenes.map(scene => (
-                <div
-                    key={scene.id}
-                    className={
-                        "scene-list-item" +
-                        (scene.id === activeSceneId ? " scene-list-item-active" : "")
-                    }
-                    onClick={() => onSelect(scene.id)}
-                >
-                    <div className="scene-list-title">{scene.title}</div>
-                    <div className="scene-list-subtitle">
-                        {scene.content?.length
-                            ? `${scene.content.length} chars`
-                            : "Empty scene"}
-                    </div>
-                </div>
-            ))}
-
-            {scenes.length === 0 && (
-                <div className="scene-list-empty">
-                    No scenes yet. Create one to begin.
-                </div>
-            )}
-        </div>
+      <div className="scene-list">
+        <div className="scene-list-empty">No scenes yet</div>
+      </div>
     );
+  }
+
+  return (
+    <div className="scene-list">
+      {scenes.map((scene) => {
+        const isActive = currentScene && currentScene.id === scene.id;
+
+        return (
+          <div
+            key={scene.id}
+            className={`scene-list-item ${isActive ? "active" : ""}`}
+            onClick={() =>
+              dispatch({
+                type: "SWITCH_SCENE",
+                payload: { sceneId: scene.id },
+              })
+            }
+          >
+            {scene.name || `Scene ${scene.id}`}
+          </div>
+        );
+      })}
+    </div>
+  );
 }
