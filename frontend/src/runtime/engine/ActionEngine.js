@@ -3,29 +3,46 @@
 /**
  * ActionEngine
  * ---------------------------------------------------------
- * Central dispatcher for high-level actions.
- * - Normalizes action objects
- * - Ensures every action has a type
- * - Forwards actions into the reducer pipeline
+ * Handles execution of user-defined actions inside the runtime.
+ * Actions may trigger navigation, state updates, API calls,
+ * component events, or custom logic.
  */
 
-export default function ActionEngine(dispatch) {
-  function run(action, value) {
-    if (!action) return;
+import CoreEngine from "../core/CoreEngine.js";
 
-    // Normalize string actions: "SAVE" → { type: "SAVE" }
-    const normalized =
-      typeof action === "string"
-        ? { type: action, value }
-        : { ...action, value };
+export default class ActionEngine extends CoreEngine {
+  static name = "action";
 
-    if (!normalized.type) {
-      console.warn("ActionEngine: Missing action.type", normalized);
+  constructor(context) {
+    super(context);
+    this.handlers = new Map();
+  }
+
+  registerAction(name, handler) {
+    this.handlers.set(name, handler);
+  }
+
+  async run(name, payload, context = {}) {
+    const handler = this.handlers.get(name);
+
+    if (!handler) {
+      console.warn(`ActionEngine: No handler registered for action "${name}"`);
       return;
     }
 
-    dispatch(normalized);
+    try {
+      return await handler(payload, {
+        ...context,
+        eventBus: this.eventBus,
+        state: this.context.state,
+        engines: this.context.engines
+      });
+    } catch (err) {
+      console.error(`ActionEngine: Error running action "${name}"`, err);
+    }
   }
 
-  return { run };
+  onStart() {
+    // Optional: preload or initialize action handlers
+  }
 }
