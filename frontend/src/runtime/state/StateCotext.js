@@ -1,43 +1,60 @@
 // frontend/src/runtime/state/StateContext.js
 
 /**
- * StateContext
+ * StateContext.js
  * ---------------------------------------------------------
- * React context wrapper for global runtime state.
- * Exposes:
- * - state
- * - dispatch
+ * Global runtime state for Blue Lotus apps.
  *
  * Responsibilities:
- * - Provide state + dispatch to the UI
- * - Re-render on state changes
+ *  - Provide a shared state store for the runtime
+ *  - Allow components to read/write state
+ *  - Support actions, variables, and data binding
  */
 
-import React, { createContext, useContext, useEffect, useState } from "react";
+import React, { createContext, useContext, useState, useCallback } from "react";
 
-export const StateContext = createContext(null);
+const StateContext = createContext(null);
 
-export function StateProvider({ stateManager, dispatch, children }) {
-  const [state, setState] = useState(stateManager.getState());
-
-  // Subscribe to state changes
-  useEffect(() => {
-    const unsubscribe = stateManager.subscribe(setState);
-    return unsubscribe;
-  }, [stateManager]);
-
-  return (
-    <StateContext.Provider value={{ state, dispatch }}>
-      {children}
-    </StateContext.Provider>
-  );
+export function useRuntimeState() {
+  return useContext(StateContext);
 }
 
-// Hook for consuming state + dispatch
-export function useStateContext() {
-  const ctx = useContext(StateContext);
-  if (!ctx) {
-    throw new Error("useStateContext must be used inside <StateProvider>");
-  }
-  return ctx;
+export default function StateProvider({ initialState = {}, children }) {
+  const [state, setState] = useState(initialState);
+
+  /**
+   * Update a single key in the state
+   */
+  const setValue = useCallback((key, value) => {
+    setState((prev) => ({
+      ...prev,
+      [key]: value,
+    }));
+  }, []);
+
+  /**
+   * Update multiple keys at once
+   */
+  const setValues = useCallback((updates) => {
+    setState((prev) => ({
+      ...prev,
+      ...updates,
+    }));
+  }, []);
+
+  /**
+   * Reset state to initial
+   */
+  const resetState = useCallback(() => {
+    setState(initialState);
+  }, [initialState]);
+
+  const value = {
+    state,
+    setValue,
+    setValues,
+    resetState,
+  };
+
+  return <StateContext.Provider value={value}>{children}</StateContext.Provider>;
 }
