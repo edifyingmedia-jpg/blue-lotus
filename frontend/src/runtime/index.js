@@ -1,15 +1,13 @@
-// frontend/src/runtime/engine/index.js
+// frontend/src/runtime/index.js
 
 /**
- * Runtime Engine Export Barrel
+ * Runtime Export Barrel
  * ---------------------------------------------------------
- * Centralizes exports for the runtime engine subsystem.
- *
- * Allows clean imports like:
- *
- *   import { RuntimeEngine } from "@/runtime/engine";
+ * Centralizes exports for the entire runtime subsystem.
  */
 
-import RuntimeEngine from "./RuntimeEngine";
-
-export { RuntimeEngine };
+export * from "./engine";
+export * from "./resolver";
+export * from "./state";
+export * from "./view"; // screen runtime engine
+export { default as screens } from "./screens"; // JSON screen registry
