@@ -1,41 +1,74 @@
+// frontend/src/Builder/EditorBridge.js
+
 /**
- * EditorBridge.js
- * Blue Lotus — AI‑Driven No‑Code Builder
+ * EditorBridge
+ * ---------------------------------------------------------
+ * Connects AI (TWIN) to the Builder Engine.
  *
- * Provides a clean interface between the Builder engine
- * and the Editor UI (EditorApp, SceneList, Toolbar, etc.)
+ * Responsibilities:
+ *  - Receive natural-language edit requests
+ *  - Interpret high-level instructions
+ *  - Dispatch structured actions to BuilderEngine
+ *  - Provide a safe, predictable API for AI-driven editing
  */
 
-import Builder from "./Builder";
+import { useBuilder } from "./BuilderContext";
 
-let api = null;
+export default function EditorBridge() {
+  const { builderState, actions } = useBuilder();
 
-/**
- * Initialize the builder engine and expose a UI-friendly API.
- */
-export async function initializeEditorBridge(projectData) {
-  api = await Builder.initializeBuilder(projectData);
+  /**
+   * Apply an AI-driven instruction.
+   * Example payload:
+   * {
+   *   type: "update",
+   *   target: "selected",
+   *   data: { props: { text: "Hello" } }
+   * }
+   */
+  function apply(instruction) {
+    if (!instruction || typeof instruction !== "object") {
+      console.warn("EditorBridge: Invalid instruction", instruction);
+      return;
+    }
+
+    const { type, target, data } = instruction;
+
+    switch (type) {
+      case "add":
+        if (!data?.component) return;
+        actions.addComponent(data.component);
+        break;
+
+      case "remove":
+        if (target === "selected" && builderState.selected) {
+          actions.removeComponent(builderState.selected);
+        } else if (data?.id) {
+          actions.removeComponent(data.id);
+        }
+        break;
+
+      case "update":
+        if (target === "selected" && builderState.selected) {
+          actions.updateComponent(builderState.selected, data);
+        } else if (data?.id) {
+          actions.updateComponent(data.id, data.update);
+        }
+        break;
+
+      case "select":
+        if (data?.id) {
+          actions.selectComponent(data.id);
+        }
+        break;
+
+      default:
+        console.warn("EditorBridge: Unknown instruction type:", type);
+    }
+  }
 
   return {
-    getState: api.getState,
-    dispatch: api.dispatch,
-    getScenes: api.scenes,
-    getCurrentScene: api.getCurrentScene,
+    apply,
+    state: builderState,
   };
 }
-
-/**
- * Expose the API after initialization.
- */
-export function useEditorAPI() {
-  if (!api) {
-    console.error("EditorBridge: API not initialized.");
-    return null;
-  }
-  return api;
-}
-
-export default {
-  initializeEditorBridge,
-  useEditorAPI,
-};
