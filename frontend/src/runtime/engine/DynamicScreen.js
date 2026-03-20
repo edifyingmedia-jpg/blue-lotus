@@ -1,44 +1,31 @@
 // frontend/src/runtime/engine/DynamicScreen.js
 
-import React from "react";
-import resolveComponent from "./resolveComponent";
-import useActionHandler from "./useActionHandler";
-
 /**
  * DynamicScreen
  * ---------------------------------------------------------
- * Renders a screen's component list.
- * - Resolves component types
- * - Passes props + params
- * - Wires action handlers
+ * Represents a screen whose structure is generated at runtime.
+ * Useful for AI‑generated screens, conditional layouts, or
+ * screens that depend on dynamic data.
  */
 
-export default function DynamicScreen({ components = [], params = {}, dispatch }) {
-  return (
-    <>
-      {components.map((item, index) => {
-        const Component = resolveComponent(item.type);
+export default class DynamicScreen {
+  constructor({ id, title, build }) {
+    this.id = id;
+    this.title = title;
+    this.build = build; // function that returns a screen definition
+  }
 
-        if (!Component) {
-          return (
-            <div key={index} style={{ color: "red", padding: 10 }}>
-              Unknown component type: {item.type}
-            </div>
-          );
-        }
+  getDefinition(context) {
+    if (typeof this.build !== "function") {
+      console.warn(`DynamicScreen "${this.id}" has no build() function.`);
+      return null;
+    }
 
-        // Create action handler for this component
-        const onAction = useActionHandler(dispatch);
-
-        return (
-          <Component
-            key={index}
-            {...item.props}
-            params={params}
-            onAction={onAction}
-          />
-        );
-      })}
-    </>
-  );
+    try {
+      return this.build(context);
+    } catch (err) {
+      console.error(`DynamicScreen "${this.id}" failed to build.`, err);
+      return null;
+    }
+  }
 }
