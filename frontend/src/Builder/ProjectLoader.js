@@ -1,148 +1,39 @@
+// frontend/src/Builder/ProjectLoader.js
+
 /**
- * ProjectLoader.js
- * Blue Lotus — 2026 Architect Edition
+ * ProjectLoader
+ * ---------------------------------------------------------
+ * Loads a project into the Builder Engine.
  *
- * Loads a project into the Builder system:
- *  - Loads project metadata
- *  - Loads scenes
- *  - Loads component trees
- *  - Hydrates BuilderState
- *  - Prepares SceneManager + ComponentRegistry
- *  - Exposes async loadProject() for UI + Voice
+ * Responsibilities:
+ *  - Accept a project object (from storage, API, or export)
+ *  - Initialize builder state (project + components)
+ *  - Ensure the builder is ready before rendering children
  */
 
-import BuilderState from "./BuilderState";
-import SceneManager from "./SceneManager";
-import ComponentRegistry from "./ComponentRegistry";
-import ActionDispatcher from "./ActionDispatcher";
+import React, { useEffect } from "react";
+import { useBuilder } from "./BuilderContext";
 
-/**
- * Validate minimal project structure.
- */
-function validateProject(project) {
-  if (!project) throw new Error("ProjectLoader: No project provided.");
-  if (!project.scenes || !Array.isArray(project.scenes)) {
-    throw new Error("ProjectLoader: Project is missing scenes array.");
-  }
-  if (!project.name) {
-    console.warn("ProjectLoader: Project has no name. Using 'Untitled Project'.");
-    project.name = "Untitled Project";
-  }
-}
+export default function ProjectLoader({ project, children }) {
+  const { actions } = useBuilder();
 
-/**
- * Normalize scene structure.
- */
-function normalizeScene(scene) {
-  return {
-    id: scene.id || crypto.randomUUID(),
-    name: scene.name || "Untitled Scene",
-    components: Array.isArray(scene.components) ? scene.components : [],
-    data: scene.data || {},
-  };
-}
+  useEffect(() => {
+    if (!project) return;
 
-/**
- * Normalize component structure.
- */
-function normalizeComponent(component) {
-  return {
-    id: component.id || crypto.randomUUID(),
-    type: component.type || "Unknown",
-    props: component.props || {},
-    children: Array.isArray(component.children) ? component.children : [],
-  };
-}
-
-/**
- * Recursively normalize component trees.
- */
-function normalizeComponentTree(tree) {
-  const node = normalizeComponent(tree);
-  node.children = node.children.map(normalizeComponentTree);
-  return node;
-}
-
-/**
- * Load scenes + components into BuilderState.
- */
-function hydrateScenes(scenes) {
-  const normalized = scenes.map((scene) => {
-    const s = normalizeScene(scene);
-    s.components = s.components.map(normalizeComponentTree);
-    return s;
-  });
-
-  BuilderState.setScenes(normalized);
-  SceneManager.initialize(normalized);
-}
-
-/**
- * Load project metadata.
- */
-function hydrateMetadata(project) {
-  BuilderState.setProject({
-    id: project.id || crypto.randomUUID(),
-    name: project.name,
-    createdAt: project.createdAt || Date.now(),
-    updatedAt: Date.now(),
-    version: project.version || 1,
-  });
-}
-
-/**
- * Register components from project (if any).
- */
-function hydrateRegistry(project) {
-  if (project.registry && typeof project.registry === "object") {
-    Object.entries(project.registry).forEach(([type, renderer]) => {
-      ComponentRegistry.register(type, renderer);
+    // Load project metadata
+    actions.setProject({
+      id: project.id,
+      name: project.name || "Untitled Project",
+      createdAt: project.createdAt || null,
+      updatedAt: project.updatedAt || null,
+      version: project.version || 1
     });
-  }
+
+    // Load component tree
+    if (Array.isArray(project.components)) {
+      actions.setComponents(project.components);
+    }
+  }, [project]);
+
+  return <>{children}</>;
 }
-
-/**
- * Prepare ActionDispatcher for voice + UI actions.
- */
-function hydrateActions() {
-  ActionDispatcher.initialize({
-    getState: () => BuilderState.getState(),
-    updateState: (fn) => BuilderState.update(fn),
-    switchScene: (id) => SceneManager.switchScene(id),
-  });
-}
-
-/**
- * Main loader function.
- */
-async function loadProject(project) {
-  try {
-    validateProject(project);
-
-    // 1. Metadata
-    hydrateMetadata(project);
-
-    // 2. Component registry
-    hydrateRegistry(project);
-
-    // 3. Scenes + component trees
-    hydrateScenes(project.scenes);
-
-    // 4. Action dispatcher (voice + UI)
-    hydrateActions();
-
-    // 5. Mark project as loaded
-    BuilderState.setLoaded(true);
-
-    console.log("ProjectLoader: Project loaded successfully.");
-    return true;
-  } catch (err) {
-    console.error("ProjectLoader: Failed to load project:", err);
-    BuilderState.setLoaded(false);
-    return false;
-  }
-}
-
-export default {
-  loadProject,
-};
