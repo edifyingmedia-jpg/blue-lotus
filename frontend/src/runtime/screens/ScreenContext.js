@@ -1,24 +1,33 @@
 // frontend/src/runtime/screens/ScreenContext.js
 
 /**
- * ScreenContext
+ * ScreenContext.js
  * ---------------------------------------------------------
- * Provides screen-level context to the UI.
- * Exposes:
- * - current screen name
- * - screen params
- * - navigation helpers
+ * Provides screen-level context for runtime components.
+ *
+ * Responsibilities:
+ *  - Expose the active screen object
+ *  - Provide screen metadata (id, name, params)
+ *  - Support screen-level helpers
  */
 
 import React, { createContext, useContext } from "react";
+import { useScreenEngine } from "../resolver/ScreenEngine";
 
-export const ScreenContext = createContext(null);
+const ScreenContext = createContext(null);
 
-export function ScreenProvider({ screen, params = {}, navigation, children }) {
+export function useScreen() {
+  return useContext(ScreenContext);
+}
+
+export default function ScreenProvider({ children }) {
+  const { activeScreen } = useScreenEngine();
+
   const value = {
-    screen,
-    params,
-    navigation,
+    id: activeScreen?.id || null,
+    name: activeScreen?.name || null,
+    params: activeScreen?.params || {},
+    screen: activeScreen || null,
   };
 
   return (
@@ -26,12 +35,4 @@ export function ScreenProvider({ screen, params = {}, navigation, children }) {
       {children}
     </ScreenContext.Provider>
   );
-}
-
-export function useScreen() {
-  const ctx = useContext(ScreenContext);
-  if (!ctx) {
-    throw new Error("useScreen must be used inside <ScreenProvider>");
-  }
-  return ctx;
 }
