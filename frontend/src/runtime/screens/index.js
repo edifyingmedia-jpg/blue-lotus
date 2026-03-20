@@ -1,4 +1,5 @@
 // frontend/src/runtime/screens/index.js
+
 import Register from "./Register.json";
 import Login from "./Login.json";
 import Notifications from "./Notifications.json";
@@ -20,14 +21,14 @@ import Dashboard from "./Dashboard.json";
 const screens = {
   Home,
   Dashboard,
- Studio,
- Projects,
- NewProject,
- Settings,
- Account,
- Notifications,
- Login,
- Register,
+  Studio,
+  Projects,
+  NewProject,
+  Settings,
+  Account,
+  Notifications,
+  Login,
+  Register,
 
   // Temporary navigation test screen
   Next: {
