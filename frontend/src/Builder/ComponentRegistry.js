@@ -1,69 +1,69 @@
+// frontend/src/Builder/ComponentRegistry.js
+
 /**
- * ComponentRegistry.js
- * Blue Lotus — AI‑Driven No‑Code Builder
+ * ComponentRegistry (Builder)
+ * ---------------------------------------------------------
+ * Registry for all components used inside the Blue Lotus Builder UI.
  *
- * Central registry for all component types.
- * This allows AI + ActionDispatcher to safely create components
- * without drag‑and‑drop or manual imports.
+ * This is NOT the runtime component registry.
+ * This registry is for:
+ *  - Canvas components
+ *  - Builder panels
+ *  - Property editors
+ *  - Inspector widgets
+ *  - Any UI element the Builder needs internally
  *
- * Responsibilities:
- *  - Register component types
- *  - Retrieve component definitions
- *  - Validate component existence
- *  - Allow plugins to extend the system
+ * The runtime registry lives in: frontend/src/runtime/resolver
  */
 
 const registry = {};
 
 /**
- * Register a component type.
+ * Register a builder component.
  * Example:
- *   ComponentRegistry.register("Button", ButtonRenderer)
+ *   ComponentRegistry.register("Canvas", Canvas);
  */
-function register(type, renderer) {
+function register(type, component) {
   if (!type) {
     console.error("ComponentRegistry: Cannot register component without a type.");
     return;
   }
 
-  registry[type] = renderer || { render: () => null };
+  registry[type] = component || null;
 
-  console.log(`ComponentRegistry: Registered component "${type}".`);
+  console.log(`Builder ComponentRegistry: Registered "${type}".`);
 }
 
 /**
  * Register multiple components at once.
  */
 function registerMany(map) {
-  Object.entries(map).forEach(([type, renderer]) => {
-    register(type, renderer);
+  Object.entries(map).forEach(([type, component]) => {
+    register(type, component);
   });
 }
 
 /**
- * Retrieve a component renderer by type.
+ * Retrieve a component by type.
  */
 function get(type) {
   return registry[type] || null;
 }
 
 /**
- * Check if a component type exists.
+ * Check if a component exists.
  */
 function exists(type) {
   return !!registry[type];
 }
 
 /**
- * Get all registered component types.
+ * List all registered builder components.
  */
 function list() {
   return Object.keys(registry);
 }
 
-/**
- * Exported API
- */
 export default {
   register,
   registerMany,
