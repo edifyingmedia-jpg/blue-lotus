@@ -4,20 +4,20 @@
  * Builder
  * ---------------------------------------------------------
  * Main Builder container.
- * Renders the toolbar and the rest of the Builder UI.
+ * Wraps the layout and renders the Canvas inside it.
  */
 
 import React from "react";
-import { Toolbar } from "./components/Toolbar";
+import { BuilderLayout } from "./Layout";
+import { Canvas } from "./components/Canvas";
+import { useBuilderState } from "./state";
 
-export function Builder({ builderState }) {
+export function Builder({ initialState }) {
+  const { builderState } = useBuilderState(initialState);
+
   return (
-    <div className="builder-root">
-      <Toolbar builderState={builderState} />
-
-      <div className="builder-content">
-        {/* Future: Canvas, Inspector, Screens, Components, etc. */}
-      </div>
-    </div>
+    <BuilderLayout builderState={builderState}>
+      <Canvas builderState={builderState} />
+    </BuilderLayout>
   );
 }
