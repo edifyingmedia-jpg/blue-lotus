@@ -1,0 +1,50 @@
+/* ScreenList.css
+ * ---------------------------------------------------------
+ * Styles for the ScreenList component and its header.
+ */
+
+.screen-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 12px;
+  font-family: sans-serif;
+}
+
+.screen-list-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+.add-screen-button {
+  background: #4a6cff;
+  color: white;
+  border: none;
+  padding: 6px 10px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.add-screen-button:hover {
+  background: #3a57d8;
+}
+
+.screen-list-item {
+  padding: 8px 10px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.screen-list-item:hover {
+  background: #f0f2ff;
+}
+
+.screen-list-empty {
+  opacity: 0.6;
+  font-size: 14px;
+  padding: 8px 0;
+}
