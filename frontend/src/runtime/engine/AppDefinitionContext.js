@@ -1,72 +1,38 @@
 // frontend/src/runtime/engine/AppDefinitionContext.js
 
-import React, { createContext, useContext, useState, useEffect } from "react";
-
 /**
  * AppDefinitionContext
  * ---------------------------------------------------------
- * Provides the normalized app definition to the runtime.
- * Ensures:
- * - predictable structure
- * - stable screen list
- * - stable component definitions
- * - stable metadata + theme
+ * Provides runtime access to:
+ * - app definition (screens, components)
+ * - navigation engine
+ * - action engine
+ * - global state
+ *
+ * This is the core context used by all runtime components.
  */
 
-const AppContext = createContext(null);
+import React, { createContext, useContext } from "react";
 
-export function AppDefinitionProvider({ app, children }) {
-  const [definition, setDefinition] = useState(() => normalize(app));
+const AppDefinitionContext = createContext(null);
 
-  useEffect(() => {
-    setDefinition(normalize(app));
-  }, [app]);
+export function useAppDefinition() {
+  return useContext(AppDefinitionContext);
+}
+
+export function AppDefinitionProvider({ app, navigation, actions, state, children }) {
+  const value = {
+    app,         // full app definition JSON
+    navigation,  // NavigationEngine instance
+    actions,     // ActionEngine instance
+    state,       // Runtime state manager
+  };
 
   return (
-    <AppContext.Provider value={definition}>
+    <AppDefinitionContext.Provider value={value}>
       {children}
-    </AppContext.Provider>
+    </AppDefinitionContext.Provider>
   );
 }
 
-export function useAppDefinition() {
-  return useContext(AppContext);
-}
-
-/**
- * Normalize the app definition into a stable structure.
- */
-function normalize(app) {
-  if (!app || typeof app !== "object") {
-    return {
-      screens: [],
-      components: {},
-      theme: {},
-      metadata: {},
-      initialScreen: null,
-    };
-  }
-
-  return {
-    screens: normalizeScreens(app.screens),
-    components: app.components || {},
-    theme: app.theme || {},
-    metadata: app.metadata || {},
-    initialScreen: app.initialScreen || null,
-  };
-}
-
-/**
- * Normalize screens into a clean array.
- */
-function normalizeScreens(screens) {
-  if (!screens) return [];
-
-  if (Array.isArray(screens)) return screens;
-
-  // Convert dictionary → array
-  return Object.keys(screens).map((key) => ({
-    id: key,
-    ...screens[key],
-  }));
-}
+export default AppDefinitionContext;
