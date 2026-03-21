@@ -1,4 +1,4 @@
-// frontend/src/Builder/layout/BuilderLayout.js
+// frontend/src/Builder/Layout/BuilderLayout.js
 
 /**
  * BuilderLayout
@@ -11,16 +11,20 @@
 
 import React from "react";
 import { Toolbar } from "../components/Toolbar";
+import { ScreenList } from "../components/ScreenList";
 
-export function BuilderLayout({ builderState, children }) {
+export function BuilderLayout({ builderState, onSelectScreen, children }) {
   return (
     <div className="builder-layout">
       <Toolbar builderState={builderState} />
 
       <div className="builder-body">
-        {/* Left sidebar (screens, components, etc.) */}
+        {/* Left sidebar */}
         <div className="builder-sidebar-left">
-          {/* Future: ScreenList, ComponentTree */}
+          <ScreenList
+            builderState={builderState}
+            onSelectScreen={onSelectScreen}
+          />
         </div>
 
         {/* Main canvas area */}
@@ -28,7 +32,7 @@ export function BuilderLayout({ builderState, children }) {
           {children}
         </div>
 
-        {/* Right sidebar (inspector, properties, etc.) */}
+        {/* Right sidebar */}
         <div className="builder-sidebar-right">
           {/* Future: Inspector */}
         </div>
