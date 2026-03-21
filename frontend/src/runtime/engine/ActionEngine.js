@@ -3,46 +3,40 @@
 /**
  * ActionEngine
  * ---------------------------------------------------------
- * Handles execution of user-defined actions inside the runtime.
- * Actions may trigger navigation, state updates, API calls,
- * component events, or custom logic.
+ * Executes actions triggered by components at runtime.
+ * Handles navigation, state updates, and async operations.
  */
 
-import CoreEngine from "../core/CoreEngine.js";
-
-export default class ActionEngine extends CoreEngine {
-  static name = "action";
-
-  constructor(context) {
-    super(context);
-    this.handlers = new Map();
+export default class ActionEngine {
+  constructor({ navigation, state }) {
+    this.navigation = navigation;
+    this.state = state;
   }
 
-  registerAction(name, handler) {
-    this.handlers.set(name, handler);
-  }
-
-  async run(name, payload, context = {}) {
-    const handler = this.handlers.get(name);
-
-    if (!handler) {
-      console.warn(`ActionEngine: No handler registered for action "${name}"`);
+  /**
+   * Execute an action definition.
+   */
+  run(action) {
+    if (!action || !action.type) {
+      console.warn("ActionEngine: Invalid action", action);
       return;
     }
 
-    try {
-      return await handler(payload, {
-        ...context,
-        eventBus: this.eventBus,
-        state: this.context.state,
-        engines: this.context.engines
-      });
-    } catch (err) {
-      console.error(`ActionEngine: Error running action "${name}"`, err);
-    }
-  }
+    switch (action.type) {
+      case "navigate":
+        return this.navigation.goTo(action.screenId);
 
-  onStart() {
-    // Optional: preload or initialize action handlers
+      case "setState":
+        return this.state.update(action.key, action.value);
+
+      case "alert":
+        return window.alert(action.message);
+
+      case "log":
+        return console.log("Runtime Log:", action.message);
+
+      default:
+        console.warn("ActionEngine: Unknown action type:", action.type);
+    }
   }
 }
