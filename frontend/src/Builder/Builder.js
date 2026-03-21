@@ -12,6 +12,7 @@ import { BuilderLayout } from "./Layout";
 import { Canvas } from "./components/Canvas";
 import { useBuilderState } from "./state";
 import { selectScreen } from "./actions/screenActions";
+import { addScreen } from "./actions/addScreen";
 
 export function Builder({ initialState }) {
   const { builderState, updateBuilderState } = useBuilderState(initialState);
@@ -20,10 +21,15 @@ export function Builder({ initialState }) {
     selectScreen(updateBuilderState, index);
   };
 
+  const handleAddScreen = () => {
+    addScreen(updateBuilderState);
+  };
+
   return (
     <BuilderLayout
       builderState={builderState}
       onSelectScreen={handleSelectScreen}
+      onAddScreen={handleAddScreen}
     >
       <Canvas builderState={builderState} />
     </BuilderLayout>
