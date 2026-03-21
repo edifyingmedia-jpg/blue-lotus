@@ -1,116 +1,63 @@
+// frontend/src/Builder/registerComponents.js
+
 /**
  * registerComponents.js
- * Blue Lotus — AI‑Driven No‑Code Builder
- *
- * This file registers ALL real UI components with ComponentRegistry
- * so the AI + ActionDispatcher can safely create them.
+ * ---------------------------------------------------------
+ * Centralized registration of all UI components for the Builder
+ * and runtime resolver. Maps string types to actual React components.
  */
 
 import ComponentRegistry from "./ComponentRegistry";
 
 // UI primitives
-import Button from "../components/Button.jsx";
-import Text from "../components/Text.jsx";
-import Input from "../components/Input.jsx";
-import Image from "../components/Image.jsx";
-import Container from "../components/Container.jsx";
-import Spacer from "../components/Spacer.jsx";
+import Button from "../components/Button";
+import Text from "../components/Text";
+import Input from "../components/Input";
+import TextArea from "../components/TextArea";
+import Image from "../components/Image";
 
-// Editor UI
-import EditorSurface from "../components/EditorSurface.jsx";
-import SceneEditor from "../components/SceneEditor.jsx";
-import SceneList from "../components/SceneList.jsx";
-import Toolbar from "../components/Toolbar.jsx";
-import StatusStrip from "../components/StatusStrip.jsx";
+// Layout + containers
+import Card from "../components/Card";
+import CardMedia from "../components/CardMedia";
+import Container from "../components/Container";
 
-// Voice / AI UI
-import CommandPalette from "../components/CommandPalette.jsx";
-import VoiceInputPanel from "../components/VoiceInputPanel.jsx";
-import MicrophoneButton from "../components/MicrophoneButton.jsx";
-import ListeningIndicator from "../components/ListeningIndicator.jsx";
-import VoiceConfirmationDialog from "../components/VoiceConfirmationDialog.jsx";
-import VoiceModeToggle from "../components/VoiceModeToggle.jsx";
-import WaveformVisualizer from "../components/WaveformVisualizer.jsx";
+// Navigation
+import Tabs from "../components/Tabs";
+import Accordion from "../components/Accordion";
+import Drawer from "../components/Drawer";
+import Modal from "../components/Modal";
+import Navbar from "../components/Navbar";
+import BottomTabs from "../components/BottomTabs";
 
-// Marketing / Landing Page
-import HeroSection from "../components/HeroSection.jsx";
-import CTASection from "../components/CTASection.jsx";
-import FeaturesSection from "../components/FeaturesSection.jsx";
-import PricingSection from "../components/PricingSection.jsx";
-import ShowcaseSection from "../components/ShowcaseSection.jsx";
-import TestimonialsSection from "../components/TestimonialsSection.jsx";
-import HowItWorksSection from "../components/HowItWorksSection.jsx";
-import WhySection from "../components/WhySection.jsx";
-import Footer from "../components/Footer.jsx";
-import MadeWithBlueLotus from "../components/MadeWithBlueLotus.jsx";
+// Feedback
+import Toast from "../components/Toast";
+import ProgressBar from "../components/ProgressBar";
+import Spinner from "../components/Spinner";
 
-// SaaS / Billing / Account
-import CreditUsageTracker from "../components/CreditUsageTracker.jsx";
-import PlanRestrictionBadge from "../components/PlanRestrictionBadge.jsx";
-import ProjectLimitsCard from "../components/ProjectLimitsCard.jsx";
-import ProtectedRoute from "../components/ProtectedRoute.jsx";
-import TeamManagement from "../components/TeamManagement.jsx";
-import UpgradePaywall from "../components/UpgradePaywall.jsx";
-import UpgradePromptModal from "../components/UpgradePromptModal.jsx";
-import UserAgreementModal from "../components/UserAgreementModal.jsx";
+// Screen wrapper
+import ScreenContainer from "../components/ScreenContainer";
 
-// Branding
-import Logo from "../components/Logo.jsx";
-
-/**
- * Register all components with the registry.
- */
 export default function registerComponents() {
-  ComponentRegistry.registerMany({
-    // UI primitives
-    Button,
-    Text,
-    Input,
-    Image,
-    Container,
-    Spacer,
+  ComponentRegistry.register("Button", Button);
+  ComponentRegistry.register("Text", Text);
+  ComponentRegistry.register("Input", Input);
+  ComponentRegistry.register("TextArea", TextArea);
+  ComponentRegistry.register("Image", Image);
 
-    // Editor UI
-    EditorSurface,
-    SceneEditor,
-    SceneList,
-    Toolbar,
-    StatusStrip,
+  ComponentRegistry.register("Card", Card);
+  ComponentRegistry.register("CardMedia", CardMedia);
+  ComponentRegistry.register("Container", Container);
 
-    // Voice / AI UI
-    CommandPalette,
-    VoiceInputPanel,
-    MicrophoneButton,
-    ListeningIndicator,
-    VoiceConfirmationDialog,
-    VoiceModeToggle,
-    WaveformVisualizer,
+  ComponentRegistry.register("Tabs", Tabs);
+  ComponentRegistry.register("Accordion", Accordion);
+  ComponentRegistry.register("Drawer", Drawer);
+  ComponentRegistry.register("Modal", Modal);
+  ComponentRegistry.register("Navbar", Navbar);
+  ComponentRegistry.register("BottomTabs", BottomTabs);
 
-    // Marketing / Landing Page
-    HeroSection,
-    CTASection,
-    FeaturesSection,
-    PricingSection,
-    ShowcaseSection,
-    TestimonialsSection,
-    HowItWorksSection,
-    WhySection,
-    Footer,
-    MadeWithBlueLotus,
+  ComponentRegistry.register("Toast", Toast);
+  ComponentRegistry.register("ProgressBar", ProgressBar);
+  ComponentRegistry.register("Spinner", Spinner);
 
-    // SaaS / Billing / Account
-    CreditUsageTracker,
-    PlanRestrictionBadge,
-    ProjectLimitsCard,
-    ProtectedRoute,
-    TeamManagement,
-    UpgradePaywall,
-    UpgradePromptModal,
-    UserAgreementModal,
-
-    // Branding
-    Logo,
-  });
-
-  console.log("ComponentRegistry: All components registered.");
+  ComponentRegistry.register("ScreenContainer", ScreenContainer);
 }
