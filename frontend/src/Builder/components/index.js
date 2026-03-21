@@ -3,12 +3,9 @@
 /**
  * Builder Components Barrel
  * ---------------------------------------------------------
- * Central export point for all Builder UI components.
+ * Central export point for all Builder components.
  */
 
+export * from "./Canvas";
+export * from "./ScreenList";
 export * from "./Toolbar";
-// Future Builder components will be added here:
-// export * from "./Canvas";
-// export * from "./Inspector";
-// export * from "./ScreenList";
-// export * from "./ComponentTree";
