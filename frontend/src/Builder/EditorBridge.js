@@ -3,72 +3,59 @@
 /**
  * EditorBridge
  * ---------------------------------------------------------
- * Connects AI (TWIN) to the Builder Engine.
+ * A thin communication layer between the Builder UI and the
+ * AI / automation engine. This keeps the Builder clean and
+ * prevents direct coupling to external systems.
  *
- * Responsibilities:
- *  - Receive natural-language edit requests
- *  - Interpret high-level instructions
- *  - Dispatch structured actions to BuilderEngine
- *  - Provide a safe, predictable API for AI-driven editing
+ * For 1.0, this is intentionally minimal.
  */
 
-import { useBuilder } from "./BuilderContext";
-
-export default function EditorBridge() {
-  const { builderState, actions } = useBuilder();
-
-  /**
-   * Apply an AI-driven instruction.
-   * Example payload:
-   * {
-   *   type: "update",
-   *   target: "selected",
-   *   data: { props: { text: "Hello" } }
-   * }
-   */
-  function apply(instruction) {
-    if (!instruction || typeof instruction !== "object") {
-      console.warn("EditorBridge: Invalid instruction", instruction);
-      return;
-    }
-
-    const { type, target, data } = instruction;
-
-    switch (type) {
-      case "add":
-        if (!data?.component) return;
-        actions.addComponent(data.component);
-        break;
-
-      case "remove":
-        if (target === "selected" && builderState.selected) {
-          actions.removeComponent(builderState.selected);
-        } else if (data?.id) {
-          actions.removeComponent(data.id);
-        }
-        break;
-
-      case "update":
-        if (target === "selected" && builderState.selected) {
-          actions.updateComponent(builderState.selected, data);
-        } else if (data?.id) {
-          actions.updateComponent(data.id, data.update);
-        }
-        break;
-
-      case "select":
-        if (data?.id) {
-          actions.selectComponent(data.id);
-        }
-        break;
-
-      default:
-        console.warn("EditorBridge: Unknown instruction type:", type);
-    }
+class EditorBridge {
+  constructor() {
+    this.handlers = {};
   }
 
-  return {
-    apply,
-    state: builderState,
-  };
+  /**
+   * Register a handler for a specific message type.
+   */
+  on(type, callback) {
+    if (!this.handlers[type]) {
+      this.handlers[type] = [];
+    }
+    this.handlers[type].push(callback);
+  }
+
+  /**
+   * Send a message to all listeners of that type.
+   */
+  emit(type, payload) {
+    const list = this.handlers[type];
+    if (!list) return;
+
+    list.forEach((cb) => {
+      try {
+        cb(payload);
+      } catch (err) {
+        console.error("EditorBridge handler error:", err);
+      }
+    });
+  }
+
+  /**
+   * Convenience method for AI-driven updates.
+   */
+  sendToAI(event, data) {
+    this.emit("ai:request", { event, data });
+  }
+
+  /**
+   * Convenience method for receiving AI responses.
+   */
+  receiveFromAI(event, data) {
+    this.emit(`ai:${event}`, data);
+  }
 }
+
+// Singleton instance
+const instance = new EditorBridge();
+export default instance;
