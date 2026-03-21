@@ -3,19 +3,21 @@
 /**
  * ScreenList
  * ---------------------------------------------------------
- * Displays all screens in the project and allows selecting
- * the active screen.
+ * Displays all screens and provides controls for adding
+ * and selecting screens.
  */
 
 import React from "react";
+import { AddScreenButton } from "./AddScreenButton";
 
-export function ScreenList({ builderState, onSelectScreen }) {
+export function ScreenList({ builderState, onSelectScreen, onAddScreen }) {
   const screens = builderState?.screens || [];
 
   return (
     <div className="screen-list">
       <div className="screen-list-header">
-        Screens
+        <span>Screens</span>
+        <AddScreenButton onAdd={onAddScreen} />
       </div>
 
       {screens.length === 0 && (
