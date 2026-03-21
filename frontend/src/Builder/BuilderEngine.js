@@ -3,65 +3,39 @@
 /**
  * BuilderEngine
  * ---------------------------------------------------------
- * Central orchestrator for the Blue Lotus Builder.
- *
- * Responsibilities:
- *  - Initialize builder state
- *  - Provide BuilderContext to the UI
- *  - Expose builder actions (add/update/remove/select)
- *  - Integrate with ActionDispatcher + AI (TWIN)
- *  - Support undo/redo
+ * Initializes the Builder environment:
+ * - Registers all components
+ * - Loads the project into BuilderContext
+ * - Provides a clean entry point for the Builder shell
  */
 
-import React, { useReducer, useMemo } from "react";
-import { BuilderProvider } from "./BuilderContext";
-import {
-  initialBuilderState,
-  builderReducer
-} from "./BuilderState";
+import registerComponents from "./registerComponents";
+import ProjectLoader from "./ProjectLoader";
 
-export default function BuilderEngine({ children }) {
-  const [state, dispatch] = useReducer(builderReducer, initialBuilderState);
+class BuilderEngine {
+  constructor() {
+    this.initialized = false;
+  }
 
   /**
-   * Builder actions exposed to UI + AI
+   * Initialize the Builder environment.
    */
-  const actions = useMemo(() => {
-    return {
-      setProject(project) {
-        dispatch({ type: "SET_PROJECT", project });
-      },
+  init(builderActions, project) {
+    if (this.initialized) return;
 
-      setComponents(components) {
-        dispatch({ type: "SET_COMPONENTS", components });
-      },
+    // Register all UI components
+    registerComponents();
 
-      addComponent(component) {
-        dispatch({ type: "ADD_COMPONENT", component });
-      },
+    // Load the project into BuilderContext
+    if (project) {
+      const normalized = ProjectLoader.load(project);
+      builderActions.loadProject(normalized);
+    }
 
-      updateComponent(id, data) {
-        dispatch({ type: "UPDATE_COMPONENT", id, data });
-      },
-
-      removeComponent(id) {
-        dispatch({ type: "REMOVE_COMPONENT", id });
-      },
-
-      selectComponent(id) {
-        dispatch({ type: "SELECT_COMPONENT", id });
-      }
-    };
-  }, []);
-
-  return (
-    <BuilderProvider
-      builderState={state}
-      dispatch={dispatch}
-      actions={actions}
-      project={state.project}
-    >
-      {children}
-    </BuilderProvider>
-  );
+    this.initialized = true;
+  }
 }
+
+// Singleton instance
+const instance = new BuilderEngine();
+export default instance;
