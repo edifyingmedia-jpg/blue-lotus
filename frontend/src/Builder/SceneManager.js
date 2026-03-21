@@ -1,123 +1,67 @@
-/**
- * SceneManager.js
- * Blue Lotus — AI‑Driven No‑Code Builder
- *
- * Manages scenes:
- *  - Initialize scenes
- *  - Switch scenes
- *  - Create, rename, delete scenes
- *  - Provide helpers for AI + ActionDispatcher
- */
-
-import BuilderState from "./BuilderState";
-
-let scenes = [];
-let currentSceneId = null;
+// frontend/src/Builder/SceneManager.js
 
 /**
- * Initialize scenes from ProjectLoader.
+ * SceneManager
+ * ---------------------------------------------------------
+ * Handles creation, deletion, and switching of screens
+ * (scenes) inside the Builder. Keeps the BuilderState stable.
  */
-function initialize(initialScenes) {
-  scenes = initialScenes;
-  if (initialScenes.length > 0) {
-    currentSceneId = initialScenes[0].id;
-    BuilderState.setCurrentScene(currentSceneId);
-  }
-  console.log("SceneManager: initialized with", initialScenes.length, "scenes.");
-}
 
-/**
- * Get all scenes.
- */
-function getScenes() {
-  return BuilderState.getState().scenes;
-}
+import { v4 as uuid } from "uuid";
 
-/**
- * Get the current scene.
- */
-function getCurrentScene() {
-  const state = BuilderState.getState();
-  return state.scenes.find((s) => s.id === state.currentSceneId) || null;
-}
+export default class SceneManager {
+  /**
+   * Create a new screen with a default root container.
+   */
+  static createScreen(name = "New Screen") {
+    const id = uuid();
 
-/**
- * Switch to a different scene.
- */
-function switchScene(id) {
-  const state = BuilderState.getState();
-  const exists = state.scenes.some((s) => s.id === id);
-
-  if (!exists) {
-    console.error(`SceneManager: Scene ${id} does not exist.`);
-    return;
-  }
-
-  BuilderState.setCurrentScene(id);
-  currentSceneId = id;
-
-  console.log(`SceneManager: Switched to scene ${id}.`);
-}
-
-/**
- * Create a new scene.
- */
-function createScene(name = "New Scene") {
-  const id = crypto.randomUUID();
-
-  BuilderState.update((state) => {
-    state.scenes.push({
+    return {
       id,
       name,
-      components: [],
-      data: {},
-    });
-    state.currentSceneId = id;
-  });
+      root: {
+        id: uuid(),
+        type: "Container",
+        props: {},
+        children: [],
+      },
+    };
+  }
 
-  currentSceneId = id;
+  /**
+   * Delete a screen safely.
+   * Ensures the Builder always has at least one screen.
+   */
+  static deleteScreen(project, screenId) {
+    if (!project.screens[screenId]) return project;
 
-  console.log(`SceneManager: Scene "${name}" created.`);
-  return id;
-}
+    delete project.screens[screenId];
 
-/**
- * Rename a scene.
- */
-function renameScene(id, newName) {
-  BuilderState.update((state) => {
-    const scene = state.scenes.find((s) => s.id === id);
-    if (scene) scene.name = newName;
-  });
+    const remaining = Object.keys(project.screens);
 
-  console.log(`SceneManager: Scene ${id} renamed to "${newName}".`);
-}
-
-/**
- * Delete a scene.
- */
-function deleteScene(id) {
-  BuilderState.update((state) => {
-    state.scenes = state.scenes.filter((s) => s.id !== id);
-
-    // If the deleted scene was active, switch to first available
-    if (state.currentSceneId === id) {
-      state.currentSceneId = state.scenes.length > 0 ? state.scenes[0].id : null;
+    // Ensure at least one screen exists
+    if (remaining.length === 0) {
+      const newScreen = SceneManager.createScreen("Screen 1");
+      project.screens[newScreen.id] = newScreen;
+      project.currentScreen = newScreen.id;
+      return project;
     }
-  });
 
-  console.log(`SceneManager: Scene ${id} deleted.`);
+    // If the deleted screen was active, switch to the first remaining
+    if (project.currentScreen === screenId) {
+      project.currentScreen = remaining[0];
+    }
+
+    return project;
+  }
+
+  /**
+   * Switch to a different screen.
+   */
+  static setCurrentScreen(project, screenId) {
+    if (project.screens[screenId]) {
+      project.currentScreen = screenId;
+    }
+    return project;
+  }
 }
-
-/**
- * Exported API
- */
-export default {
-  initialize,
-  getScenes,
-  getCurrentScene,
-  switchScene,
-  createScene,
-  renameScene,
-  deleteScene,
-};
