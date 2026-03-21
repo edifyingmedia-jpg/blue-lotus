@@ -13,7 +13,12 @@ import React from "react";
 import { Toolbar } from "../components/Toolbar";
 import { ScreenList } from "../components/ScreenList";
 
-export function BuilderLayout({ builderState, onSelectScreen, children }) {
+export function BuilderLayout({
+  builderState,
+  onSelectScreen,
+  onAddScreen,
+  children
+}) {
   return (
     <div className="builder-layout">
       <Toolbar builderState={builderState} />
@@ -24,6 +29,7 @@ export function BuilderLayout({ builderState, onSelectScreen, children }) {
           <ScreenList
             builderState={builderState}
             onSelectScreen={onSelectScreen}
+            onAddScreen={onAddScreen}
           />
         </div>
 
