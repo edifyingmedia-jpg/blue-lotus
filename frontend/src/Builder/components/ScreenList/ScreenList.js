@@ -8,6 +8,7 @@
  */
 
 import React from "react";
+import "./ScreenList.css";
 import { AddScreenButton } from "./AddScreenButton";
 
 export function ScreenList({ builderState, onSelectScreen, onAddScreen }) {
