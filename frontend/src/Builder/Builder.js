@@ -1,37 +1,56 @@
 // frontend/src/Builder/Builder.js
 
 /**
- * Builder
+ * Builder.js
  * ---------------------------------------------------------
- * Main Builder container.
- * Wires state, actions, and layout together.
+ * The main UI shell for the Blue Lotus Builder.
+ * Assembles the layout: Sidebar, Canvas, PropertiesPanel,
+ * and wraps everything in BuilderContext.
  */
 
 import React from "react";
-import { BuilderLayout } from "./Layout";
-import { Canvas } from "./components/Canvas";
-import { useBuilderState } from "./state";
-import { selectScreen } from "./actions/screenActions";
-import { addScreen } from "./actions/addScreen";
+import { BuilderProvider } from "./BuilderContext";
+import Sidebar from "./Sidebar";
+import Toolbar from "./Toolbar";
+import Canvas from "./Canvas";
+import PropertiesPanel from "./PropertiesPanel";
 
-export function Builder({ initialState }) {
-  const { builderState, updateBuilderState } = useBuilderState(initialState);
-
-  const handleSelectScreen = (index) => {
-    selectScreen(updateBuilderState, index);
-  };
-
-  const handleAddScreen = () => {
-    addScreen(updateBuilderState);
-  };
-
+export default function Builder() {
   return (
-    <BuilderLayout
-      builderState={builderState}
-      onSelectScreen={handleSelectScreen}
-      onAddScreen={handleAddScreen}
-    >
-      <Canvas builderState={builderState} />
-    </BuilderLayout>
+    <BuilderProvider>
+      <div
+        style={{
+          width: "100%",
+          height: "100vh",
+          display: "flex",
+          flexDirection: "column",
+          background: "#f5f7fa",
+        }}
+      >
+        {/* Top toolbar */}
+        <Toolbar />
+
+        {/* Main layout */}
+        <div
+          style={{
+            flex: 1,
+            display: "flex",
+            flexDirection: "row",
+            overflow: "hidden",
+          }}
+        >
+          {/* Left sidebar */}
+          <Sidebar />
+
+          {/* Center canvas */}
+          <div style={{ flex: 1, overflow: "auto" }}>
+            <Canvas />
+          </div>
+
+          {/* Right properties panel */}
+          <PropertiesPanel />
+        </div>
+      </div>
+    </BuilderProvider>
   );
 }
