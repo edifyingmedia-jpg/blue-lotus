@@ -3,12 +3,9 @@
 /**
  * Builder Actions Barrel
  * ---------------------------------------------------------
- * Centralizes all Builder-level actions for clean imports.
+ * Central export point for all Builder actions.
  */
 
 export * from "./exportActions";
-// Future actions will be added here:
-// export * from "./screenActions";
-// export * from "./componentActions";
-// export * from "./runtimeActions";
-// export * from "./aiActions";
+export * from "./screenActions";
+export * from "./addScreen";
