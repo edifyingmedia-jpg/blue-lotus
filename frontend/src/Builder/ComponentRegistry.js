@@ -1,73 +1,35 @@
 // frontend/src/Builder/ComponentRegistry.js
 
 /**
- * ComponentRegistry (Builder)
+ * ComponentRegistry
  * ---------------------------------------------------------
- * Registry for all components used inside the Blue Lotus Builder UI.
- *
- * This is NOT the runtime component registry.
- * This registry is for:
- *  - Canvas components
- *  - Builder panels
- *  - Property editors
- *  - Inspector widgets
- *  - Any UI element the Builder needs internally
- *
- * The runtime registry lives in: frontend/src/runtime/resolver
+ * A simple global registry that maps string component types
+ * to actual React components. Used by both the Builder and
+ * the runtime resolver.
  */
 
-const registry = {};
-
-/**
- * Register a builder component.
- * Example:
- *   ComponentRegistry.register("Canvas", Canvas);
- */
-function register(type, component) {
-  if (!type) {
-    console.error("ComponentRegistry: Cannot register component without a type.");
-    return;
+class ComponentRegistry {
+  constructor() {
+    this.registry = {};
   }
 
-  registry[type] = component || null;
+  register(type, component) {
+    if (!type || !component) {
+      console.warn("ComponentRegistry: invalid registration", { type, component });
+      return;
+    }
+    this.registry[type] = component;
+  }
 
-  console.log(`Builder ComponentRegistry: Registered "${type}".`);
+  get(type) {
+    return this.registry[type] || null;
+  }
+
+  all() {
+    return { ...this.registry };
+  }
 }
 
-/**
- * Register multiple components at once.
- */
-function registerMany(map) {
-  Object.entries(map).forEach(([type, component]) => {
-    register(type, component);
-  });
-}
-
-/**
- * Retrieve a component by type.
- */
-function get(type) {
-  return registry[type] || null;
-}
-
-/**
- * Check if a component exists.
- */
-function exists(type) {
-  return !!registry[type];
-}
-
-/**
- * List all registered builder components.
- */
-function list() {
-  return Object.keys(registry);
-}
-
-export default {
-  register,
-  registerMany,
-  get,
-  exists,
-  list,
-};
+// Singleton instance
+const instance = new ComponentRegistry();
+export default instance;
