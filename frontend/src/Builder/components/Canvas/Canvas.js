@@ -3,29 +3,34 @@
 /**
  * Canvas
  * ---------------------------------------------------------
- * The main visual workspace of the Builder.
- * Renders the active screen and its components.
+ * Renders the currently active screen.
  */
 
 import React from "react";
+import "./Canvas.css";
 
 export function Canvas({ builderState }) {
-  const activeScreen = builderState?.screens?.[0] || null;
+  const { screens = [], activeScreenIndex = 0 } = builderState || {};
+  const activeScreen = screens[activeScreenIndex];
+
+  if (!activeScreen) {
+    return (
+      <div className="canvas-empty">
+        No screen selected.
+      </div>
+    );
+  }
 
   return (
-    <div className="canvas-root">
-      {activeScreen ? (
-        <div className="canvas-screen">
-          {/* Future: Render components for the active screen */}
-          <div className="canvas-placeholder">
-            Screen: {activeScreen.name}
-          </div>
+    <div className="canvas">
+      <h2 className="canvas-title">{activeScreen.name}</h2>
+
+      <div className="canvas-content">
+        {/* Future: render components for this screen */}
+        <div className="canvas-placeholder">
+          This is where components for <strong>{activeScreen.name}</strong> will appear.
         </div>
-      ) : (
-        <div className="canvas-empty">
-          No screens yet — create one to begin.
-        </div>
-      )}
+      </div>
     </div>
   );
 }
