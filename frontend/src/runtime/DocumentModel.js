@@ -1,72 +1,63 @@
 // frontend/src/runtime/DocumentModel.js
 
 /**
- * DocumentModel.js
- * ----------------
- * Defines the core data structures for Blue Lotus:
- *   - Project
- *   - Scenes
- *   - Scene content
- *   - Metadata
+ * DocumentModel
+ * ---------------------------------------------------------
+ * Provides structured access to the appDefinition document.
  *
- * This is the canonical source of truth for how editor data is shaped.
+ * Responsibilities:
+ *  - Validate the document structure
+ *  - Expose component definitions by ID
+ *  - Expose route → rootComponentId mapping
+ *  - Provide helpers for the runtime renderer
  */
 
-export class Scene {
-    constructor(id, name, content = "") {
-        this.id = id;
-        this.name = name;
-        this.content = content;
-        this.createdAt = Date.now();
-        this.updatedAt = Date.now();
-    }
-}
-
-export class Project {
-    constructor(id, name) {
-        this.id = id;
-        this.name = name;
-        this.createdAt = Date.now();
-        this.updatedAt = Date.now();
-
-        /** @type {Scene[]} */
-        this.scenes = [];
-
-        // Future: project-level metadata
-        this.metadata = {
-            theme: "default",
-            author: "Unknown",
-            version: 1
-        };
+export default class DocumentModel {
+  constructor(appDefinition) {
+    if (!appDefinition) {
+      throw new Error("[DocumentModel] Missing appDefinition");
     }
 
-    addScene(name) {
-        const id = crypto.randomUUID();
-        const scene = new Scene(id, name);
-        this.scenes.push(scene);
-        this.updatedAt = Date.now();
-        return scene;
+    this.appDefinition = appDefinition;
+    this.components = appDefinition.components || {};
+    this.routes = appDefinition.routes || {};
+  }
+
+  /**
+   * Get a component definition by ID.
+   */
+  getComponent(id) {
+    const def = this.components[id];
+    if (!def) {
+      console.warn(`[DocumentModel] Unknown component ID: ${id}`);
+      return null;
     }
+    return def;
+  }
 
-    getScene(id) {
-        return this.scenes.find((s) => s.id === id) || null;
+  /**
+   * Get the root component ID for a route.
+   */
+  getRootComponentForRoute(routeName) {
+    const route = this.routes[routeName];
+    if (!route) {
+      console.warn(`[DocumentModel] Unknown route: ${routeName}`);
+      return null;
     }
+    return route.rootComponentId;
+  }
 
-    updateSceneContent(id, content) {
-        const scene = this.getScene(id);
-        if (!scene) return;
+  /**
+   * Return all component IDs.
+   */
+  getAllComponentIds() {
+    return Object.keys(this.components);
+  }
 
-        scene.content = content;
-        scene.updatedAt = Date.now();
-        this.updatedAt = Date.now();
-    }
-
-    renameScene(id, newName) {
-        const scene = this.getScene(id);
-        if (!scene) return;
-
-        scene.name = newName;
-        scene.updatedAt = Date.now();
-        this.updatedAt = Date.now();
-    }
+  /**
+   * Return all route names.
+   */
+  getAllRoutes() {
+    return Object.keys(this.routes);
+  }
 }
