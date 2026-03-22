@@ -1,86 +1,70 @@
 // frontend/src/runtime/ActionDispatcher.js
 
 /**
- * ActionDispatcher.js
- * -------------------
- * Central command router for Blue Lotus.
- * All user intents (typed or voice) flow through here.
+ * Runtime ActionDispatcher
+ * ---------------------------------------------------------
+ * This module receives component-level events (onPress, onChange, etc.)
+ * and dispatches them to the ActionEngine in a standardized way.
  *
  * Responsibilities:
- *   - Normalize commands
- *   - Validate payloads
- *   - Dispatch clean actions to the reducer
- *   - Never mutate state directly
+ *  - Normalize event payloads
+ *  - Support single or multiple actions
+ *  - Support conditional actions
+ *  - Never mutate state directly
+ *  - Never interpret text commands (builder-only behavior)
  */
 
-export function createActionDispatcher(dispatch) {
+export function createActionDispatcher(actionEngine) {
   /**
-   * Main entry point for all commands.
-   * `command` is a string like:
-   *   "create scene Main"
-   *   "rename scene 123 to Dashboard"
-   *   "update content 123 <new text>"
+   * Dispatch a component event.
+   *
+   * Example event:
+   * {
+   *   type: "onPress",
+   *   actions: [
+   *     { type: "navigate", to: "Home" },
+   *     { type: "setState", key: "clicked", value: true }
+   *   ]
+   * }
    */
-  function handleCommand(command, payload = {}) {
-    if (!command || typeof command !== "string") return;
+  async function dispatchEvent(event) {
+    if (!event) return;
 
-    const normalized = command.trim().toLowerCase();
+    const { actions } = event;
 
-    // --- Scene creation ---
-    if (normalized.startsWith("create scene")) {
-      const name = payload.name || extractName(command);
-      if (!name) return;
+    if (!actions) return;
 
-      dispatch({
-        type: "SCENE_CREATE",
-        name
-      });
+    // Single action
+    if (!Array.isArray(actions)) {
+      await executeAction(actions);
       return;
     }
 
-    // --- Scene rename ---
-    if (normalized.startsWith("rename scene")) {
-      const { id, newName } = payload;
-      if (!id || !newName) return;
-
-      dispatch({
-        type: "SCENE_RENAME",
-        id,
-        newName
-      });
-      return;
+    // Multiple actions
+    for (const action of actions) {
+      await executeAction(action);
     }
-
-    // --- Scene content update ---
-    if (normalized.startsWith("update content")) {
-      const { id, content } = payload;
-      if (!id) return;
-
-      dispatch({
-        type: "SCENE_UPDATE_CONTENT",
-        id,
-        content: content ?? ""
-      });
-      return;
-    }
-
-    // --- Unknown command ---
-    dispatch({
-      type: "COMMAND_UNKNOWN",
-      raw: command
-    });
   }
 
   /**
-   * Extract a scene name from a command like:
-   *   "create scene Main"
+   * Execute a single action object.
    */
-  function extractName(cmd) {
-    const parts = cmd.split(" ");
-    return parts.length >= 3 ? parts.slice(2).join(" ") : null;
+  async function executeAction(action) {
+    if (!action || typeof action !== "object") return;
+
+    // Conditional action
+    if (action.if) {
+      const conditionResult = await actionEngine.evaluateCondition(action.if);
+      if (!conditionResult) return;
+    }
+
+    // Delegate to ActionEngine
+    await actionEngine.execute(action);
   }
 
   return {
-    handleCommand
+    dispatchEvent,
   };
 }
+
+export default createActionDispatcher;
