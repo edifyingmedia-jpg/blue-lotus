@@ -1,147 +1,85 @@
 // frontend/src/runtime/ComponentResolver.js
 
-import React, { useMemo } from "react";
-import PropTypes from "prop-types";
-
 /**
  * ComponentResolver
+ * ---------------------------------------------------------
+ * Converts component definitions from appDefinition into
+ * actual React elements with resolved props, bindings, and
+ * event handlers.
  *
- * This is the core runtime tree resolver.
- * It:
- *  - Takes a components map and a rootComponentId from appDefinition
- *  - Recursively renders the component tree
- *  - Maps abstract component types to real DOM elements
- *
- * It does NOT:
- *  - Invent components
- *  - Provide mock data
- *  - Simulate behavior
+ * Responsibilities:
+ *  - Resolve component type → actual React component
+ *  - Resolve props (static + bound)
+ *  - Resolve event handlers → ActionDispatcher events
+ *  - Recursively build the component tree
  */
-export function ComponentResolver({
-  appDefinition,
-  components,
-  routes,
-  initialRoute,
-  mode = "preview",
-  onEvent,
-}) {
-  const rootId = appDefinition?.rootComponentId;
 
-  const validationError = useMemo(() => {
-    if (!appDefinition) return "ComponentResolver: appDefinition is required.";
-    if (!rootId) return "ComponentResolver: appDefinition.rootComponentId is not set.";
-    if (!components || Object.keys(components).length === 0) {
-      return "ComponentResolver: components map is empty or missing.";
-    }
-    return null;
-  }, [appDefinition, rootId, components]);
+import React from "react";
+import resolveComponent from "./resolveComponent";
 
-  const handleEvent = (eventName, payload, node) => {
-    if (typeof onEvent === "function") {
-      onEvent({
-        type: eventName,
-        payload,
-        nodeId: node.id,
-        mode,
-      });
-    }
-  };
-
-  const resolveElementType = (node) => {
-    const type = node.type;
-
-    if (!type) return "div";
-
-    switch (type) {
-      case "View":
-      case "Container":
-      case "Screen":
-        return "div";
-      case "Text":
-      case "Label":
-        return "span";
-      case "Image":
-        return "img";
-      case "Button":
-        return "button";
-      default:
-        // Fallback to a div for unknown types
-        return "div";
-    }
-  };
-
-  const renderNode = (nodeId) => {
-    const node = components[nodeId];
-    if (!node) return null;
-
-    const ElementType = resolveElementType(node);
-    const { children = [], props = {} } = node;
-
-    const domProps = { ...props };
-
-    // Basic event wiring (non-simulated, just forwarding if present)
-    if (props.onClick) {
-      domProps.onClick = (e) => {
-        props.onClick(e);
-        handleEvent("click", { event: e }, node);
-      };
-    }
-
-    if (props.onPress) {
-      domProps.onClick = (e) => {
-        props.onPress(e);
-        handleEvent("press", { event: e }, node);
-      };
-    }
-
-    // Ensure img has alt
-    if (ElementType === "img" && !domProps.alt) {
-      domProps.alt = props.alt || "";
-    }
-
-    return (
-      <ElementType key={nodeId} {...domProps}>
-        {children.map((childId) => renderNode(childId))}
-      </ElementType>
-    );
-  };
-
-  if (validationError) {
-    return (
-      <div
-        style={{
-          width: "100%",
-          height: "100%",
-          padding: 16,
-          boxSizing: "border-box",
-          backgroundColor: "#020617",
-          color: "#e5e7eb",
-          fontFamily:
-            "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          textAlign: "center",
-          fontSize: 13,
-        }}
-      >
-        {validationError}
-      </div>
-    );
+export default class ComponentResolver {
+  constructor({ appDefinition, state, dispatcher }) {
+    this.appDefinition = appDefinition;
+    this.state = state;
+    this.dispatcher = dispatcher;
   }
 
-  return renderNode(rootId);
+  /**
+   * Resolve a component by ID into a React element.
+   */
+  resolveById(componentId) {
+    const def = this.appDefinition.components[componentId];
+    if (!def) {
+      console.warn(`[ComponentResolver] Unknown component ID: ${componentId}`);
+      return null;
+    }
+
+    return this._resolve(def);
+  }
+
+  /**
+   * Internal: resolve a component definition.
+   */
+  _resolve(def) {
+    const { type, props = {}, bindings = {}, events = {}, children = [] } = def;
+
+    // 1. Resolve actual React component
+    const Component = resolveComponent(type);
+    if (!Component) {
+      console.warn(`[ComponentResolver] Unknown component type: ${type}`);
+      return null;
+    }
+
+    // 2. Resolve props (static + bound)
+    const resolvedProps = { ...props };
+
+    for (const key of Object.keys(bindings)) {
+      const stateKey = bindings[key];
+      resolvedProps[key] = this.state.get(stateKey);
+    }
+
+    // 3. Resolve event handlers
+    const resolvedEvents = {};
+    for (const eventName of Object.keys(events)) {
+      const eventDef = events[eventName];
+      resolvedEvents[eventName] = () => {
+        this.dispatcher.dispatchEvent({
+          type: eventName,
+          actions: eventDef.actions,
+        });
+      };
+    }
+
+    // 4. Resolve children recursively
+    const resolvedChildren = children.map((childId) =>
+      this.resolveById(childId)
+    );
+
+    // 5. Return final React element
+    return React.createElement(
+      Component,
+      { ...resolvedProps, ...resolvedEvents },
+      ...resolvedChildren
+    );
+  }
 }
-
-ComponentResolver.propTypes = {
-  appDefinition: PropTypes.shape({
-    rootComponentId: PropTypes.string,
-  }),
-  components: PropTypes.object.isRequired,
-  routes: PropTypes.object,
-  initialRoute: PropTypes.string,
-  mode: PropTypes.oneOf(["preview", "live"]),
-  onEvent: PropTypes.func,
-};
-
-export default ComponentResolver;
