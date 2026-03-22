@@ -1,39 +1,42 @@
-import React from "react";
-import { resolveComponent } from "./resolveComponent";
+// frontend/src/runtime/RenderScreen.js
 
 /**
  * RenderScreen
- * ------------
- * Takes a full screen JSON definition and renders the root node.
- *
- * Example screen JSON:
- * {
- *   "name": "Home",
- *   "root": {
- *     "type": "View",
- *     "props": { "padding": 20 },
- *     "children": [
- *       { "type": "Heading", "props": { "text": "Welcome" } },
- *       { "type": "PrimaryButton", "props": { "title": "Start" } }
- *     ]
- *   }
- * }
+ * ---------------------------------------------------------
+ * Renders the active screen based on the current route.
+ * This is a thin wrapper around DynamicScreen that provides
+ * a stable mount point for the runtime and preview engine.
  */
 
-export default function RenderScreen({ screen }) {
-  if (!screen || !screen.root) {
-    console.warn("⚠ RenderScreen: No screen or root node provided.");
+import React from "react";
+import DynamicScreen from "./DynamicScreen";
+
+export default function RenderScreen({
+  appDefinition,
+  navigation,
+  state,
+  dispatcher,
+}) {
+  if (!navigation) {
+    console.warn("[RenderScreen] Missing navigation engine");
     return null;
   }
 
-  try {
-    return resolveComponent(screen.root);
-  } catch (err) {
-    console.error("❌ Error rendering screen:", err);
-    return (
-      <div style={{ padding: 20, color: "red" }}>
-        <strong>Render Error:</strong> {err.message}
-      </div>
-    );
+  const routeName = navigation.getCurrentRoute();
+
+  if (!routeName) {
+    console.warn("[RenderScreen] No active route to render");
+    return null;
   }
+
+  return (
+    <div className="bl-render-screen" data-route={routeName}>
+      <DynamicScreen
+        appDefinition={appDefinition}
+        routeName={routeName}
+        state={state}
+        dispatcher={dispatcher}
+      />
+    </div>
+  );
 }
