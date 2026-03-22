@@ -1,100 +1,75 @@
+// frontend/src/runtime/NavigationEngine.js
+
 /**
- * NavigationEngine.js
+ * NavigationEngine
  * ---------------------------------------------------------
- * A clean, deterministic navigation controller for Blue Lotus.
+ * A deterministic, route-based navigation controller for
+ * the Blue Lotus runtime engine.
  *
  * Responsibilities:
- * - Maintain a navigation stack
- * - Provide PUSH, REPLACE, RESET, and MODAL actions
- * - Expose getInitialScreen()
- * - Notify Engine.js when navigation occurs
+ *  - Validate route names
+ *  - Update the current route
+ *  - Notify listeners (preview/builder) of route changes
+ *
+ * It does NOT:
+ *  - maintain a navigation stack
+ *  - manage modals
+ *  - interpret screen-based navigation
  */
 
 export default class NavigationEngine {
-  constructor() {
-    this.stack = [];
-    this.onNavigate = null;
+  constructor({ routes, onNavigate }) {
+    this.routes = routes || {};
+    this.onNavigate = onNavigate || null;
 
-    // Default initial screen
-    this.initialScreen = "Home";
+    // Current route name
+    this.currentRoute = null;
   }
 
   /**
-   * Initialize navigation with project + document context
+   * Initialize navigation with an initial route.
    */
-  init({ project, document, onNavigate }) {
-    this.project = project;
-    this.document = document;
-    this.onNavigate = onNavigate;
-
-    // Reset navigation stack
-    this.stack = [this.initialScreen];
-  }
-
-  /**
-   * Return the first screen to mount
-   */
-  getInitialScreen() {
-    return this.initialScreen;
-  }
-
-  /**
-   * Core navigation dispatcher
-   */
-  navigate = (type, screen, params = {}) => {
-    const action = { type, screen, params };
-
-    switch (type) {
-      case "PUSH":
-        this.stack.push(screen);
-        break;
-
-      case "REPLACE":
-        this.stack.pop();
-        this.stack.push(screen);
-        break;
-
-      case "RESET":
-        this.stack = [screen];
-        break;
-
-      case "MODAL":
-        // Future modal system
-        break;
-
-      default:
-        console.warn("[NavigationEngine] Unknown navigation type:", type);
-        return;
+  init(initialRoute) {
+    if (initialRoute && this.routes[initialRoute]) {
+      this.currentRoute = initialRoute;
+    } else {
+      // fallback to first route
+      const keys = Object.keys(this.routes);
+      this.currentRoute = keys.length > 0 ? keys[0] : null;
     }
 
+    this._emit();
+  }
+
+  /**
+   * Navigate to a route by name.
+   */
+  navigate(routeName) {
+    if (!routeName || !this.routes[routeName]) {
+      console.warn(`[NavigationEngine] Unknown route "${routeName}"`);
+      return;
+    }
+
+    this.currentRoute = routeName;
+    this._emit();
+  }
+
+  /**
+   * Get the current route name.
+   */
+  getCurrentRoute() {
+    return this.currentRoute;
+  }
+
+  /**
+   * Internal: notify listeners.
+   */
+  _emit() {
     if (this.onNavigate) {
-      this.onNavigate(action);
+      this.onNavigate({
+        type: "routeChange",
+        route: this.currentRoute,
+      });
     }
-  };
-
-  /**
-   * Convenience wrappers
-   */
-  push(screen, params = {}) {
-    this.navigate("PUSH", screen, params);
-  }
-
-  replace(screen, params = {}) {
-    this.navigate("REPLACE", screen, params);
-  }
-
-  reset(screen, params = {}) {
-    this.navigate("RESET", screen, params);
-  }
-
-  modal(screen, params = {}) {
-    this.navigate("MODAL", screen, params);
-  }
-
-  /**
-   * Return the current screen name
-   */
-  getCurrentScreen() {
-    return this.stack[this.stack.length - 1] || null;
   }
 }
