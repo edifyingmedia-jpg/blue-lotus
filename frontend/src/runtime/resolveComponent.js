@@ -1,50 +1,61 @@
+// frontend/src/runtime/resolveComponent.js
+
 /**
- * resolveComponent.js
- * ---------------------------------------------------------
- * Maps JSON "type" fields to actual React components.
+ * resolveComponent
  *
- * This is the central registry for all runtime components.
- * Every component used in JSON screens must be registered here.
+ * This function maps a component "type" string from the appDefinition
+ * to a real React component implementation.
+ *
+ * It is intentionally minimal and deterministic:
+ *  - No placeholders
+ *  - No mock components
+ *  - No simulation
+ *
+ * Blue Lotus components must be explicitly registered here or
+ * injected via a registry in the future.
  */
 
 import React from "react";
 
-// Import your UI components here
-// ---------------------------------------------------------
-import Container from "../components/Container";
-import Text from "../components/Text";
-import Button from "../components/Button";
-import Image from "../components/Image";
-import Input from "../components/Input";
-import Spacer from "../components/Spacer";
+// Core built‑in runtime components
+import BLView from "../components/BLView";
+import BLText from "../components/BLText";
+import BLImage from "../components/BLImage";
+import BLButton from "../components/BLButton";
 
-// Add more as your component library grows…
+/**
+ * Component registry
+ *
+ * This is the authoritative mapping of component types → React components.
+ * Every real component Blue Lotus supports must be registered here.
+ */
+const registry = {
+  View: BLView,
+  Container: BLView,
+  Screen: BLView,
 
-// Component registry
-// ---------------------------------------------------------
-const COMPONENT_MAP = {
-  Container,
-  Text,
-  Button,
-  Image,
-  Input,
-  Spacer,
+  Text: BLText,
+  Label: BLText,
+
+  Image: BLImage,
+
+  Button: BLButton,
 };
 
 /**
- * Resolve a component by its JSON "type"
+ * resolveComponent(type)
+ *
+ * Returns the actual React component for a given type string.
+ * If the type is unknown, it falls back to a safe <div>.
  */
 export default function resolveComponent(type) {
-  if (!type || typeof type !== "string") {
-    console.warn("[resolveComponent] Invalid type:", type);
-    return null;
-  }
+  if (!type) return "div";
 
-  const Component = COMPONENT_MAP[type];
+  const Component = registry[type];
 
   if (!Component) {
-    console.error(`[resolveComponent] Unknown component type: ${type}`);
-    return null;
+    console.warn(`resolveComponent: Unknown component type "${type}". Falling back to <div>.`);
+    return "div";
   }
 
   return Component;
