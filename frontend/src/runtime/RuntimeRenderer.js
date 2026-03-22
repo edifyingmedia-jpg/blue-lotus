@@ -1,96 +1,105 @@
 // frontend/src/runtime/RuntimeRenderer.js
 
-import React, { useMemo } from "react";
-import PropTypes from "prop-types";
-
+import React, { useState, useMemo, useCallback } from "react";
 import ComponentResolver from "./ComponentResolver";
+import useNavigation from "./useNavigation";
+import useRuntimeDataBindings from "./useRuntimeDataBindings";
+import ActionEngine from "./ActionEngine";
 
 /**
  * RuntimeRenderer
+ * ---------------------------------------------------------
+ * The core runtime engine for Blue Lotus.
  *
- * This is the engine-level renderer that LivePreview delegates to.
- * It is responsible for:
- *  - Taking a real appDefinition, components, and routes
- *  - Validating that a root component exists
- *  - Delegating actual tree construction to ComponentResolver
+ * Responsibilities:
+ *  - Manage route state
+ *  - Manage runtime app state
+ *  - Execute actions
+ *  - Bind data to components
+ *  - Render the component tree
  *
  * It does NOT:
- *  - Invent components
- *  - Provide mock data
- *  - Simulate routes
- *  - Fake bindings or actions
+ *  - invent data
+ *  - simulate backend responses
+ *  - mutate appDefinition
  */
-export function RuntimeRenderer({
+export default function RuntimeRenderer({
   appDefinition,
   components,
   routes,
   initialRoute,
-  mode = "preview",
   onEvent,
 }) {
-  const validationError = useMemo(() => {
-    if (!appDefinition) {
-      return "RuntimeRenderer: appDefinition is required.";
-    }
+  // ---------------------------------------------
+  // Navigation
+  // ---------------------------------------------
+  const { currentRoute, navigate } = useNavigation({
+    routes,
+    initialRoute,
+  });
 
-    if (!appDefinition.rootComponentId) {
-      return "RuntimeRenderer: appDefinition.rootComponentId is not set.";
-    }
+  // ---------------------------------------------
+  // Runtime App State (future‑ready)
+  // ---------------------------------------------
+  const [appState, setAppState] = useState({});
 
-    if (!components || Object.keys(components).length === 0) {
-      return "RuntimeRenderer: components map is empty or missing.";
-    }
+  // ---------------------------------------------
+  // Action Engine
+  // ---------------------------------------------
+  const actionEngine = useMemo(() => {
+    return new ActionEngine({
+      navigate,
+      getState: () => appState,
+      setState: setAppState,
+      onEvent,
+    });
+  }, [navigate, appState, onEvent]);
 
-    if (!routes || Object.keys(routes).length === 0) {
-      return "RuntimeRenderer: routes map is empty or missing.";
-    }
+  const runAction = useCallback(
+    (action) => {
+      actionEngine.run(action);
+    },
+    [actionEngine]
+  );
 
-    return null;
-  }, [appDefinition, components, routes]);
+  // ---------------------------------------------
+  // Resolve the root component for the current route
+  // ---------------------------------------------
+  const activeRootId = useMemo(() => {
+    if (!routes || !currentRoute) return appDefinition?.rootComponentId;
+    return routes[currentRoute]?.rootComponentId || appDefinition?.rootComponentId;
+  }, [routes, currentRoute, appDefinition]);
 
-  if (validationError) {
+  if (!activeRootId) {
     return (
-      <div
-        style={{
-          width: "100%",
-          height: "100%",
-          padding: 16,
-          boxSizing: "border-box",
-          backgroundColor: "#020617",
-          color: "#e5e7eb",
-          fontFamily:
-            "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          textAlign: "center",
-          fontSize: 13,
-        }}
-      >
-        {validationError}
+      <div style={{ padding: 20, color: "#e2e8f0", background: "#020617" }}>
+        RuntimeRenderer: No root component found.
       </div>
     );
   }
 
+  // ---------------------------------------------
+  // Render
+  // ---------------------------------------------
   return (
     <ComponentResolver
-      appDefinition={appDefinition}
+      appDefinition={{ rootComponentId: activeRootId }}
       components={components}
       routes={routes}
       initialRoute={initialRoute}
-      mode={mode}
-      onEvent={onEvent}
+      mode="live"
+      onEvent={(evt) => {
+        if (evt?.payload?.action) {
+          runAction(evt.payload.action);
+        }
+        if (onEvent) onEvent(evt);
+      }}
+      bindProps={(node) =>
+        useRuntimeDataBindings({
+          node,
+          appState,
+        })
+      }
     />
   );
 }
-
-RuntimeRenderer.propTypes = {
-  appDefinition: PropTypes.object,
-  components: PropTypes.object,
-  routes: PropTypes.object,
-  initialRoute: PropTypes.string,
-  mode: PropTypes.oneOf(["preview", "live"]),
-  onEvent: PropTypes.func,
-};
-
-export default RuntimeRenderer;
