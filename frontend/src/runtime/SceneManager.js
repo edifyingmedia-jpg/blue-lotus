@@ -1,59 +1,60 @@
 // frontend/src/runtime/SceneManager.js
 
 /**
- * SceneManager.js
- * ----------------
- * A small helper module that manages scene-level operations
- * for the Blue Lotus runtime.
+ * SceneManager
+ * ---------------------------------------------------------
+ * A lightweight helper that manages scene transitions
+ * within the runtime. A "scene" is simply a route-level
+ * screen in the appDefinition.
  *
- * This keeps scene logic clean and separate from the reducer.
+ * Responsibilities:
+ *  - Expose available scenes (routes)
+ *  - Allow switching scenes
+ *  - Provide helpers for the runtime engine
  */
 
-export function createSceneManager(project) {
-  if (!project) {
-    throw new Error("SceneManager requires a valid project instance");
+export default class SceneManager {
+  constructor(runtimeEngine) {
+    if (!runtimeEngine) {
+      throw new Error("[SceneManager] Missing runtime engine");
+    }
+
+    this.engine = runtimeEngine;
+    this.document = runtimeEngine.document;
   }
 
   /**
-   * Create a new scene.
+   * Return all available scenes (routes).
    */
-  function createScene(name) {
-    return project.addScene(name);
+  listScenes() {
+    return this.document.getAllRoutes();
   }
 
   /**
-   * Rename an existing scene.
+   * Get the currently active scene.
    */
-  function renameScene(id, newName) {
-    project.renameScene(id, newName);
+  getCurrentScene() {
+    return this.engine.getCurrentRoute();
   }
 
   /**
-   * Update the content of a scene.
+   * Switch to a different scene.
    */
-  function updateSceneContent(id, content) {
-    project.updateSceneContent(id, content);
+  setScene(routeName) {
+    const routes = this.document.getAllRoutes();
+
+    if (!routes.includes(routeName)) {
+      console.warn(`[SceneManager] Unknown scene: ${routeName}`);
+      return;
+    }
+
+    this.engine.navigation.setRoute(routeName);
   }
 
   /**
-   * Get a scene by ID.
+   * Check if a scene exists.
    */
-  function getScene(id) {
-    return project.getScene(id);
+  hasScene(routeName) {
+    return this.document.getAllRoutes().includes(routeName);
   }
-
-  /**
-   * List all scenes.
-   */
-  function listScenes() {
-    return project.scenes;
-  }
-
-  return {
-    createScene,
-    renameScene,
-    updateSceneContent,
-    getScene,
-    listScenes
-  };
 }
