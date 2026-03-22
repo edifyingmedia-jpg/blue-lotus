@@ -1,41 +1,48 @@
-// RuntimeApp.jsx
-// Clean, modern runtime root for Blue Lotus
+// frontend/src/runtime/RuntimeApp.jsx
+
+/**
+ * RuntimeApp
+ * ---------------------------------------------------------
+ * The root component for the Blue Lotus runtime.
+ * Initializes the RuntimeEngine and renders the active screen.
+ */
 
 import React, { useEffect, useState } from "react";
-import NavigationEngine from "./NavigationEngine";
-import ScreenRenderer from "./ScreenRenderer";
-import navigation from "./navigation";
+import RuntimeEngine from "./RuntimeEngine";
+import RenderScreen from "./RenderScreen";
 
-const engine = new NavigationEngine("Login");
+export default function RuntimeApp({ appDefinition }) {
+  const [engine] = useState(() => new RuntimeEngine());
+  const [route, setRoute] = useState(null);
+  const [stateSnapshot, setStateSnapshot] = useState({});
 
-export default function RuntimeApp() {
-  const [currentScreen, setCurrentScreen] = useState(engine.current);
-
+  // Initialize runtime when appDefinition changes
   useEffect(() => {
-    // Listen for navigation changes
-    const unsubscribe = engine.onChange((screenId) => {
-      setCurrentScreen(screenId);
-    });
+    if (!appDefinition) return;
 
-    return unsubscribe;
-  }, []);
+    engine.load(appDefinition);
+
+    // Subscribe to route + state changes
+    engine.onRouteChange = (newRoute) => setRoute(newRoute);
+    engine.onStateChange = (newState) => setStateSnapshot(newState);
+
+    // Set initial values
+    setRoute(engine.getCurrentRoute());
+    setStateSnapshot(engine.getState());
+  }, [appDefinition, engine]);
+
+  if (!route) {
+    return <div>Loading…</div>;
+  }
 
   return (
-    <div style={styles.appContainer}>
-      <ScreenRenderer
-        screenId={currentScreen}
-        navigation={navigation(engine)}
-        engine={engine}
+    <div className="bl-runtime-app">
+      <RenderScreen
+        appDefinition={appDefinition}
+        navigation={engine.navigation}
+        state={engine.state}
+        dispatcher={engine.dispatcher}
       />
     </div>
   );
 }
-
-const styles = {
-  appContainer: {
-    width: "100%",
-    height: "100%",
-    overflow: "hidden",
-    backgroundColor: "#000", // Cinematic base
-  },
-};
