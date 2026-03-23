@@ -1,50 +1,57 @@
-/* ScreenList.css
- * ---------------------------------------------------------
- * Styles for the ScreenList component and its header.
- */
+/* frontend/src/Builder/components/ScreenList/ScreenList.css
+------------------------------------------------------------
+Styles for the Builder's screen list panel.
+Provides a clean, structured list of screens with clear
+selection and hover states.
+*/
 
-.screen-list {
+.screenlist-container {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 6px;
   padding: 12px;
-  font-family: sans-serif;
+  background: #fafafa;
+  border-right: 1px solid #e0e0e0;
+  height: 100%;
+  box-sizing: border-box;
 }
 
-.screen-list-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  font-weight: 600;
-  margin-bottom: 8px;
-}
-
-.add-screen-button {
-  background: #4a6cff;
-  color: white;
-  border: none;
-  padding: 6px 10px;
-  border-radius: 6px;
-  cursor: pointer;
-  font-size: 14px;
-}
-
-.add-screen-button:hover {
-  background: #3a57d8;
-}
-
-.screen-list-item {
+.screenlist-item {
   padding: 8px 10px;
-  border-radius: 6px;
+  border-radius: 4px;
   cursor: pointer;
+  background: #ffffff;
+  border: 1px solid #e0e0e0;
+  transition: background 0.15s ease, border-color 0.15s ease;
 }
 
-.screen-list-item:hover {
-  background: #f0f2ff;
+.screenlist-item:hover {
+  background: #f0f0f0;
 }
 
-.screen-list-empty {
-  opacity: 0.6;
+.screenlist-item.selected {
+  background: #e6f0ff;
+  border-color: #4a90e2;
+}
+
+.screenlist-item-name {
   font-size: 14px;
-  padding: 8px 0;
+  color: #333;
+  user-select: none;
+}
+
+.screenlist-add-button {
+  margin-top: 12px;
+  padding: 8px 10px;
+  background: #4a90e2;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background 0.15s ease;
+}
+
+.screenlist-add-button:hover {
+  background: #3a78c2;
 }
