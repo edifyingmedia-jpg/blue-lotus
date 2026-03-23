@@ -3,47 +3,30 @@
 /**
  * ScreenLoader.js
  * ---------------------------------------------------------
- * Loads a screen definition from the DocumentModel and
- * prepares it for the screen-layer ScreenEngine.
+ * Loads raw screen definitions from the runtime bundle.
  *
- * This is the screen-layer loader (not the resolver version).
+ * Responsibilities:
+ *  - Resolve a screen definition by name
+ *  - Return the raw screen object
+ *
+ * This loader must remain deterministic and side‑effect free.
  */
 
-import DocumentModel from "../resolver/DocumentModel";
+import screens from './index';
 
-/**
- * Loads a screen by name and returns a normalized screen object.
- */
-export function loadScreen(screenName, params = {}) {
-  if (!screenName || typeof screenName !== "string") {
-    return {
-      name: null,
-      error: "Invalid screen name.",
-      components: {},
-      bindings: {},
-      params: {},
-      root: null,
-    };
+class ScreenLoader {
+  load(screenName) {
+    if (!screenName) return null;
+
+    const screen = screens[screenName];
+    if (!screen) {
+      console.warn(`Screen not found: ${screenName}`);
+      return null;
+    }
+
+    return screen;
   }
-
-  const model = DocumentModel.load(screenName);
-
-  if (!model) {
-    return {
-      name: screenName,
-      error: `Unknown screen: ${screenName}`,
-      components: {},
-      bindings: {},
-      params,
-      root: null,
-    };
-  }
-
-  return {
-    name: model.name,
-    components: model.components || {},
-    bindings: model.bindings || {},
-    params: { ...model.params, ...params },
-    root: model.root || null,
-  };
 }
+
+const screenLoader = new ScreenLoader();
+export default screenLoader;
