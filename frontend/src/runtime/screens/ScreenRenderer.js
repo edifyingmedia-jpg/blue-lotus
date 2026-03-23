@@ -3,46 +3,28 @@
 /**
  * ScreenRenderer.js
  * ---------------------------------------------------------
- * Renders a screen inside the runtime environment.
+ * Renders a normalized runtime screen definition.
  *
  * Responsibilities:
- *  - Wrap the screen in ScreenProvider
- *  - Render the screen's component tree via DynamicScreen
- *  - Provide a stable visual container for transitions/layout
+ *  - Receive a resolved screen object
+ *  - Render its layout and component tree
+ *
+ * This renderer must remain deterministic and UI‑agnostic.
  */
 
-import React from "react";
-import ScreenProvider from "./ScreenContext";
-import DynamicScreen from "../resolver/DynamicScreen";
-import { useScreenEngine } from "../resolver/ScreenEngine";
+import React from 'react';
+import ComponentResolver from '../resolver/ComponentResolver';
 
-export default function ScreenRenderer() {
-  const { activeScreen } = useScreenEngine();
+export default function ScreenRenderer({ screen }) {
+  if (!screen) return null;
 
-  if (!activeScreen) {
-    return (
-      <div
-        style={{
-          padding: 20,
-          color: "red",
-          fontSize: 16,
-          fontWeight: "bold",
-        }}
-      >
-        No active screen to render.
-      </div>
-    );
-  }
+  const { components } = screen;
 
   return (
-    <ScreenProvider screen={activeScreen}>
-      <div
-        className="bl-screen-renderer"
-        data-screen={activeScreen?.name}
-        style={{ width: "100%", height: "100%" }}
-      >
-        <DynamicScreen screen={activeScreen} />
-      </div>
-    </ScreenProvider>
+    <>
+      {components.map((node, index) => (
+        <ComponentResolver key={index} node={node} />
+      ))}
+    </>
   );
 }
