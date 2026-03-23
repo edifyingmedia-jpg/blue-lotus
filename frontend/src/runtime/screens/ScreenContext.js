@@ -3,42 +3,32 @@
 /**
  * ScreenContext.js
  * ---------------------------------------------------------
- * Provides the active screen object to the runtime.
+ * React context for exposing runtime screen state.
  *
  * Responsibilities:
- *  - Expose the active screen from ScreenEngine
- *  - Provide useScreen() hook for components
- *  - Keep screen state isolated and deterministic
+ *  - Provide the active screen to the UI layer
+ *  - Subscribe to SceneManager updates
+ *  - Keep React in sync with runtime state
  */
 
-import React, { createContext, useContext } from "react";
-import { useScreenEngine } from "../resolver/ScreenEngine";
+import React, { createContext, useEffect, useState } from 'react';
+import sceneManager from './SceneManager';
 
-const ScreenContext = createContext(null);
+export const ScreenContext = createContext(null);
 
-/**
- * Provider used by SceneManager and RuntimeApp.
- */
 export function ScreenProvider({ children }) {
-  const { activeScreen } = useScreenEngine();
+  const [activeScreen, setActiveScreen] = useState(
+    sceneManager.getActiveScene()
+  );
+
+  useEffect(() => {
+    const unsubscribe = sceneManager.subscribe(setActiveScreen);
+    return unsubscribe;
+  }, []);
 
   return (
-    <ScreenContext.Provider value={activeScreen}>
+    <ScreenContext.Provider value={{ activeScreen }}>
       {children}
     </ScreenContext.Provider>
   );
-}
-
-/**
- * Hook used by components to access the active screen.
- */
-export function useScreen() {
-  const ctx = useContext(ScreenContext);
-
-  if (!ctx) {
-    console.warn("[ScreenContext] useScreen() called outside provider.");
-    return null;
-  }
-
-  return ctx;
 }
