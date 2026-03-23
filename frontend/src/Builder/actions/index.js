@@ -1,11 +1,21 @@
-// frontend/src/Builder/actions/index.js
-
 /**
- * Builder Actions Barrel
+ * index.js
  * ---------------------------------------------------------
- * Central export point for all Builder actions.
+ * Entry point for Builder-side actions.
+ *
+ * Provides a clean, deterministic export surface for all
+ * Builder actions used by the BuilderEngine, EditorBridge,
+ * and UI panels.
  */
 
-export * from "./exportActions";
-export * from "./screenActions";
-export * from "./addScreen";
+import addScreen from './addScreen';
+import * as screenActions from './screenActions';
+import actions from './exportActions';
+
+export {
+  addScreen,
+  screenActions,
+  actions
+};
+
+export default actions;
