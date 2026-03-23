@@ -1,61 +1,32 @@
 // frontend/src/runtime/resolveComponent.js
 
 /**
- * resolveComponent
+ * resolveComponent.js
+ * ---------------------------------------------------------
+ * Maps a component type string to the actual React component
+ * using the central componentMap registry.
  *
- * This function maps a component "type" string from the appDefinition
- * to a real React component implementation.
- *
- * It is intentionally minimal and deterministic:
- *  - No placeholders
- *  - No mock components
- *  - No simulation
- *
- * Blue Lotus components must be explicitly registered here or
- * injected via a registry in the future.
+ * This is used by:
+ *   - ComponentResolver
+ *   - DynamicScreen
  */
 
-import React from "react";
-
-// Core built‑in runtime components
-import BLView from "../components/BLView";
-import BLText from "../components/BLText";
-import BLImage from "../components/BLImage";
-import BLButton from "../components/BLButton";
+import componentMap from "./componentMap";
 
 /**
- * Component registry
- *
- * This is the authoritative mapping of component types → React components.
- * Every real component Blue Lotus supports must be registered here.
- */
-const registry = {
-  View: BLView,
-  Container: BLView,
-  Screen: BLView,
-
-  Text: BLText,
-  Label: BLText,
-
-  Image: BLImage,
-
-  Button: BLButton,
-};
-
-/**
- * resolveComponent(type)
- *
- * Returns the actual React component for a given type string.
- * If the type is unknown, it falls back to a safe <div>.
+ * Resolve a component type → actual React component.
  */
 export default function resolveComponent(type) {
-  if (!type) return "div";
+  if (!type || typeof type !== "string") {
+    console.warn("[resolveComponent] Invalid component type:", type);
+    return null;
+  }
 
-  const Component = registry[type];
+  const Component = componentMap[type];
 
   if (!Component) {
-    console.warn(`resolveComponent: Unknown component type "${type}". Falling back to <div>.`);
-    return "div";
+    console.warn(`[resolveComponent] Unknown component type: ${type}`);
+    return null;
   }
 
   return Component;
