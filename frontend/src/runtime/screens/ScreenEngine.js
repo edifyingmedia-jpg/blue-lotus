@@ -3,56 +3,39 @@
 /**
  * ScreenEngine.js
  * ---------------------------------------------------------
- * Screen-level state manager for the active screen.
+ * Resolves runtime screen definitions.
  *
- * This is the screen-layer engine (not the resolver version).
- * It provides a stable API for SceneManager and NavigationContext
- * to update the active screen object.
+ * Responsibilities:
+ *  - Load screen definitions by name
+ *  - Validate screen structure
+ *  - Normalize screen data for rendering
+ *
+ * This engine must remain deterministic and UI‑agnostic.
  */
 
-let _activeScreen = null;
-let _listeners = new Set();
+import ScreenLoader from './ScreenLoader';
 
-/**
- * Subscribe to screen changes.
- */
-export function subscribe(listener) {
-  _listeners.add(listener);
-  return () => _listeners.delete(listener);
-}
+class ScreenEngine {
+  load(screenName) {
+    if (!screenName) return null;
 
-/**
- * Get the current active screen object.
- */
-export function getActiveScreen() {
-  return _activeScreen;
-}
+    const screen = ScreenLoader.load(screenName);
+    if (!screen) return null;
 
-/**
- * Set the active screen and notify subscribers.
- */
-export function setActiveScreen(screenObject) {
-  _activeScreen = screenObject;
+    return this.normalize(screen);
+  }
 
-  for (const fn of _listeners) {
-    try {
-      fn(_activeScreen);
-    } catch (err) {
-      console.error("[ScreenEngine] Listener error:", err);
-    }
+  normalize(screen) {
+    return {
+      name: screen.name,
+      layout: screen.layout || null,
+      components: Array.isArray(screen.components)
+        ? screen.components
+        : [],
+      metadata: screen.metadata || {},
+    };
   }
 }
 
-/**
- * Reset screen state (used by RuntimeEngine or hot reload).
- */
-export function resetScreen() {
-  _activeScreen = null;
-  for (const fn of _listeners) {
-    try {
-      fn(null);
-    } catch (err) {
-      console.error("[ScreenEngine] Listener error:", err);
-    }
-  }
-}
+const screenEngine = new ScreenEngine();
+export default screenEngine;
