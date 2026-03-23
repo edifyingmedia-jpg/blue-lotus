@@ -5,10 +5,8 @@
  * ---------------------------------------------------------
  * JSX wrapper for rendering a resolved runtime screen.
  *
- * This component assumes:
- *  - The screen has already been loaded
- *  - The screen has already been normalized
- *  - Rendering is purely declarative
+ * This component is intentionally thin.
+ * All logic lives in ScreenRenderer.js.
  */
 
 import React from 'react';
