@@ -3,43 +3,56 @@
 /**
  * ScreenEngine.js
  * ---------------------------------------------------------
- * Central runtime engine for screen state.
+ * Screen-level state manager for the active screen.
  *
- * Responsibilities:
- *  - Hold the active screen object
- *  - Expose screen metadata through useScreenEngine()
- *  - Provide a stable API for ScreenRenderer + DynamicScreen
- *
- * This replaces the legacy JSON-based screen registry.
+ * This is the screen-layer engine (not the resolver version).
+ * It provides a stable API for SceneManager and NavigationContext
+ * to update the active screen object.
  */
 
-import { useState, useCallback } from "react";
-
-let _setActiveScreen = null;
+let _activeScreen = null;
+let _listeners = new Set();
 
 /**
- * Hook used by ScreenRenderer and ScreenContext.
+ * Subscribe to screen changes.
  */
-export function useScreenEngine() {
-  const [activeScreen, setActiveScreen] = useState(null);
-
-  // Expose setter globally so NavigationEngine can update screens
-  _setActiveScreen = setActiveScreen;
-
-  return {
-    activeScreen,
-    setActiveScreen,
-  };
+export function subscribe(listener) {
+  _listeners.add(listener);
+  return () => _listeners.delete(listener);
 }
 
 /**
- * External API used by NavigationEngine or RuntimeEngine
- * to change screens deterministically.
+ * Get the current active screen object.
+ */
+export function getActiveScreen() {
+  return _activeScreen;
+}
+
+/**
+ * Set the active screen and notify subscribers.
  */
 export function setActiveScreen(screenObject) {
-  if (typeof _setActiveScreen === "function") {
-    _setActiveScreen(screenObject);
-  } else {
-    console.warn("ScreenEngine not initialized yet.");
+  _activeScreen = screenObject;
+
+  for (const fn of _listeners) {
+    try {
+      fn(_activeScreen);
+    } catch (err) {
+      console.error("[ScreenEngine] Listener error:", err);
+    }
+  }
+}
+
+/**
+ * Reset screen state (used by RuntimeEngine or hot reload).
+ */
+export function resetScreen() {
+  _activeScreen = null;
+  for (const fn of _listeners) {
+    try {
+      fn(null);
+    } catch (err) {
+      console.error("[ScreenEngine] Listener error:", err);
+    }
   }
 }
