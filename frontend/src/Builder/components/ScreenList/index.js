@@ -1,10 +1,5 @@
 // frontend/src/Builder/components/ScreenList/index.js
 
-/**
- * ScreenList Barrel
- * ---------------------------------------------------------
- * Central export point for all ScreenList components.
- */
+import ScreenList from './ScreenList';
 
-export * from "./ScreenList";
-export * from "./AddScreenButton";
+export default ScreenList;
