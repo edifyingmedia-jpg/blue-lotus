@@ -1,46 +1,38 @@
-/* Canvas.css
- * ---------------------------------------------------------
- * Styles for the Builder Canvas area.
- */
+/* frontend/src/Builder/components/Canvas/Canvas.css
+---------------------------------------------------------
+Styles for the Builder's live editing surface.
+Provides a clean, neutral workspace for component editing.
+*/
 
-.canvas {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  padding: 20px;
-  background: #ffffff;
-  border-left: 1px solid #e5e7eb;
-  border-right: 1px solid #e5e7eb;
-  overflow-y: auto;
+.canvas-container {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  background: #f8f8f8;
+  border: 1px solid #e0e0e0;
+  border-radius: 6px;
+  padding: 16px;
+  box-sizing: border-box;
 }
 
-.canvas-title {
-  font-size: 20px;
-  font-weight: 600;
-  margin-bottom: 16px;
-}
-
-.canvas-content {
-  flex: 1;
+.canvas-empty,
+.canvas-error {
   display: flex;
   align-items: center;
   justify-content: center;
-}
-
-.canvas-placeholder {
-  padding: 20px;
-  border: 2px dashed #c7cbe3;
-  border-radius: 8px;
-  color: #6b7280;
+  height: 100%;
+  color: #777;
   font-size: 14px;
-  text-align: center;
+  font-style: italic;
 }
 
-.canvas-empty {
-  flex: 1;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: #9ca3af;
-  font-size: 16px;
+.canvas-selected {
+  outline: 2px solid #4a90e2;
+  outline-offset: 2px;
+}
+
+.canvas-hover {
+  outline: 1px dashed #999;
+  outline-offset: 2px;
 }
