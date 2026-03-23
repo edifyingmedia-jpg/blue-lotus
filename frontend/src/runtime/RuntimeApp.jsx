@@ -3,46 +3,39 @@
 /**
  * RuntimeApp
  * ---------------------------------------------------------
- * The root component for the Blue Lotus runtime.
- * Initializes the RuntimeEngine and renders the active screen.
+ * Root React entry point for the Blue Lotus runtime.
+ *
+ * Responsibilities:
+ *  - Initialize RuntimeEngine once
+ *  - Bridge runtime events into React
+ *  - Render the active screen via the screen pipeline
  */
 
 import React, { useEffect, useState } from "react";
 import RuntimeEngine from "./RuntimeEngine";
-import RenderScreen from "./RenderScreen";
+import { ScreenProvider } from "./screens/ScreenContext";
+import DynamicScreen from "./screens/DynamicScreen";
 
 export default function RuntimeApp({ appDefinition }) {
   const [engine] = useState(() => new RuntimeEngine());
-  const [route, setRoute] = useState(null);
-  const [stateSnapshot, setStateSnapshot] = useState({});
+  const [ready, setReady] = useState(false);
 
-  // Initialize runtime when appDefinition changes
   useEffect(() => {
     if (!appDefinition) return;
 
     engine.load(appDefinition);
-
-    // Subscribe to route + state changes
-    engine.onRouteChange = (newRoute) => setRoute(newRoute);
-    engine.onStateChange = (newState) => setStateSnapshot(newState);
-
-    // Set initial values
-    setRoute(engine.getCurrentRoute());
-    setStateSnapshot(engine.getState());
+    setReady(true);
   }, [appDefinition, engine]);
 
-  if (!route) {
+  if (!ready) {
     return <div>Loading…</div>;
   }
 
   return (
     <div className="bl-runtime-app">
-      <RenderScreen
-        appDefinition={appDefinition}
-        navigation={engine.navigation}
-        state={engine.state}
-        dispatcher={engine.dispatcher}
-      />
+      <ScreenProvider>
+        <DynamicScreen runtime={engine} />
+      </ScreenProvider>
     </div>
   );
 }
