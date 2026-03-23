@@ -1,32 +1,25 @@
 // frontend/src/Builder/components/Toolbar/Toolbar.js
 
 /**
- * Toolbar
+ * Toolbar.js
  * ---------------------------------------------------------
- * Main Builder toolbar container.
- * Renders all toolbar actions, including Export.
+ * The Builder's top toolbar.
+ *
+ * Responsibilities:
+ *  - Render toolbar action buttons
+ *  - Provide a clean, consistent layout
+ *  - Contain no business logic
  */
 
-import React from "react";
-import { ExportButton } from "./ExportButton";
+import React from 'react';
+import ExportButton from './ExportButton';
+import './Toolbar.css'; // Only if you have a CSS file; safe to remove if not present
 
-export function Toolbar({ builderState }) {
+export default function Toolbar() {
   return (
-    <div className="builder-toolbar">
-      {/* Left side actions */}
-      <div className="toolbar-group left">
-        {/* Future: screen actions, undo/redo, etc. */}
-      </div>
-
-      {/* Center actions */}
-      <div className="toolbar-group center">
-        {/* Future: AI actions, search, etc. */}
-      </div>
-
-      {/* Right side actions */}
-      <div className="toolbar-group right">
-        <ExportButton builderState={builderState} />
-      </div>
+    <div className="toolbar-container">
+      <ExportButton />
+      {/* Future toolbar buttons go here */}
     </div>
   );
 }
