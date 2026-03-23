@@ -1,0 +1,26 @@
+/* frontend/src/Builder/components/TreeView/TreeView.css */
+
+.treeview-container {
+  padding: 8px;
+  background: #f7f7f7;
+  border-right: 1px solid #ddd;
+  height: 100%;
+  overflow-y: auto;
+}
+
+.treenode-item {
+  padding: 6px 10px;
+  cursor: pointer;
+  border-radius: 4px;
+  margin-bottom: 4px;
+  transition: background 0.15s ease;
+}
+
+.treenode-item:hover {
+  background: #eaeaea;
+}
+
+.treenode-item.selected {
+  background: #d0e6ff;
+  font-weight: bold;
+}
