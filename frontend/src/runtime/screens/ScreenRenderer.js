@@ -35,8 +35,12 @@ export default function ScreenRenderer() {
   }
 
   return (
-    <ScreenProvider>
-      <div style={{ width: "100%", height: "100%", position: "relative" }}>
+    <ScreenProvider screen={activeScreen}>
+      <div
+        className="bl-screen-renderer"
+        data-screen={activeScreen?.name}
+        style={{ width: "100%", height: "100%" }}
+      >
         <DynamicScreen screen={activeScreen} />
       </div>
     </ScreenProvider>
