@@ -1,41 +1,52 @@
 // frontend/src/Builder/components/ScreenList/ScreenList.js
 
 /**
- * ScreenList
+ * ScreenList.js
  * ---------------------------------------------------------
- * Displays all screens and provides controls for adding
- * and selecting screens.
+ * Displays all screens in the project and allows the user
+ * to select, rename, or delete screens.
+ *
+ * Responsibilities:
+ *  - Render list of screens from DocumentModel
+ *  - Highlight the active screen
+ *  - Trigger screen selection
+ *  - Provide UI hooks for rename/delete (future)
  */
 
-import React from "react";
-import "./ScreenList.css";
-import { AddScreenButton } from "./AddScreenButton";
+import React, { useContext } from 'react';
+import { BuilderContext } from '../../../BuilderContext';
+import './ScreenList.css';
+import AddScreenButton from './AddScreenButton';
 
-export function ScreenList({ builderState, onSelectScreen, onAddScreen }) {
-  const screens = builderState?.screens || [];
+export default function ScreenList() {
+  const {
+    documentModel,
+    activeScreen,
+    setActiveScreen,
+    builderEngine
+  } = useContext(BuilderContext);
+
+  const handleSelect = (screenId) => {
+    setActiveScreen(screenId);
+    builderEngine.selectScreen(screenId);
+  };
 
   return (
-    <div className="screen-list">
-      <div className="screen-list-header">
-        <span>Screens</span>
-        <AddScreenButton onAdd={onAddScreen} />
-      </div>
-
-      {screens.length === 0 && (
-        <div className="screen-list-empty">
-          No screens yet.
-        </div>
-      )}
-
-      {screens.map((screen, index) => (
+    <div className="screenlist-container">
+      {documentModel.screens.map((screen) => (
         <div
-          key={screen.id || index}
-          className="screen-list-item"
-          onClick={() => onSelectScreen(index)}
+          key={screen.id}
+          className={
+            'screenlist-item' +
+            (screen.id === activeScreen ? ' selected' : '')
+          }
+          onClick={() => handleSelect(screen.id)}
         >
-          {screen.name || `Screen ${index + 1}`}
+          <div className="screenlist-item-name">{screen.name}</div>
         </div>
       ))}
+
+      <AddScreenButton />
     </div>
   );
 }
