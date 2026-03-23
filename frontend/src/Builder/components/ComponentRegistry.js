@@ -1,63 +1,27 @@
-// frontend/src/Builder/components/ComponentRegistry.js
-
 /**
- * ComponentRegistry
+ * ComponentRegistry.js
  * ---------------------------------------------------------
- * Central lookup table for all renderable UI components.
- * The Builder uses this registry to translate JSON nodes
- * (e.g., { type: "Button", props: {...} }) into real React
- * components at runtime.
+ * Maps component type strings to actual React components.
  *
- * New components should be added here so the Builder,
- * Renderer, and AI systems can use them.
+ * This is how the Builder knows what to render when the AI
+ * generates nodes like:
+ *   { type: "BLText", props: {...} }
  */
 
-import { Button } from "../ui/Button";
-import { Text } from "../ui/Text";
-import { Input } from "../ui/Input";
-import { TextArea } from "../ui/TextArea";
-import { Image } from "../ui/Image";
-import { Card } from "../ui/Card";
-import { CardMedia } from "../ui/CardMedia";
-import { Tabs } from "../ui/Tabs";
-import { Accordion } from "../ui/Accordion";
-import { Drawer } from "../ui/Drawer";
-import { Modal } from "../ui/Modal";
-import { Navbar } from "../ui/Navbar";
-import { BottomTabs } from "../ui/BottomTabs";
-import { Toast } from "../ui/Toast";
-import { ProgressBar } from "../ui/ProgressBar";
-import { Spinner } from "../ui/Spinner";
-import { ScreenContainer } from "../ui/ScreenContainer";
+import BLText from '../../runtime/components/BLText';
+import BLButton from '../../runtime/components/BLButton';
+import BLImage from '../../runtime/components/BLImage';
+import BLInput from '../../runtime/components/BLInput';
+import BLContainer from '../../runtime/components/BLContainer';
 
-/**
- * The registry object.
- * Keys = component type strings
- * Values = actual React components
- */
-export const ComponentRegistry = {
-  Button,
-  Text,
-  Input,
-  TextArea,
-  Image,
-  Card,
-  CardMedia,
-  Tabs,
-  Accordion,
-  Drawer,
-  Modal,
-  Navbar,
-  BottomTabs,
-  Toast,
-  ProgressBar,
-  Spinner,
-  ScreenContainer,
+// Add more components here as your runtime grows
+
+const ComponentRegistry = {
+  BLText,
+  BLButton,
+  BLImage,
+  BLInput,
+  BLContainer,
 };
 
-/**
- * Lookup helper
- */
-export function resolveComponent(type) {
-  return ComponentRegistry[type] || null;
-}
+export default ComponentRegistry;
