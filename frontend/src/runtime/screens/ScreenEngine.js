@@ -1,33 +1,45 @@
 // frontend/src/runtime/screens/ScreenEngine.js
 
 /**
- * ScreenEngine
+ * ScreenEngine.js
  * ---------------------------------------------------------
- * Responsible for:
- * - Selecting the active screen
- * - Passing params to DynamicScreen
- * - Providing ScreenContext to children
+ * Central runtime engine for screen state.
+ *
+ * Responsibilities:
+ *  - Hold the active screen object
+ *  - Expose screen metadata through useScreenEngine()
+ *  - Provide a stable API for ScreenRenderer + DynamicScreen
+ *
+ * This replaces the legacy JSON-based screen registry.
  */
 
-import React from "react";
-import screens from "./index";
-import DynamicScreen from "./DynamicScreen";
-import { ScreenProvider } from "./ScreenContext";
+import { useState, useCallback } from "react";
 
-export default function ScreenEngine({ current, params = {}, navigation }) {
-  const screen = screens[current];
+let _setActiveScreen = null;
 
-  if (!screen) {
-    return (
-      <div style={{ padding: 20, color: "red" }}>
-        Unknown screen: {current}
-      </div>
-    );
+/**
+ * Hook used by ScreenRenderer and ScreenContext.
+ */
+export function useScreenEngine() {
+  const [activeScreen, setActiveScreen] = useState(null);
+
+  // Expose setter globally so NavigationEngine can update screens
+  _setActiveScreen = setActiveScreen;
+
+  return {
+    activeScreen,
+    setActiveScreen,
+  };
+}
+
+/**
+ * External API used by NavigationEngine or RuntimeEngine
+ * to change screens deterministically.
+ */
+export function setActiveScreen(screenObject) {
+  if (typeof _setActiveScreen === "function") {
+    _setActiveScreen(screenObject);
+  } else {
+    console.warn("ScreenEngine not initialized yet.");
   }
-
-  return (
-    <ScreenProvider screen={current} params={params} navigation={navigation}>
-      <DynamicScreen components={screen.components} params={params} />
-    </ScreenProvider>
-  );
 }
