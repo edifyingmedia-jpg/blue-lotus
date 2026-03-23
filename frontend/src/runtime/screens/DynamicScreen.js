@@ -1,45 +1,31 @@
 // frontend/src/runtime/screens/DynamicScreen.js
 
 /**
- * DynamicScreen
+ * DynamicScreen.js
  * ---------------------------------------------------------
- * Renders all components inside a screen definition.
- * - Loops through component JSON
- * - Resolves each component type
- * - Passes props, params, and actions
- * - Handles unknown components safely
+ * Runtime screen wrapper responsible for:
+ *  - Loading a screen definition by name
+ *  - Passing it into the ScreenEngine
+ *  - Rendering it via ScreenRenderer
+ *
+ * This file is runtime‑critical and must remain deterministic.
  */
 
-import React from "react";
-import resolver from "../resolver/resolverComponents";
-import useActionHandler from "../engine/useActionHandler";
+import React, { useEffect, useState } from 'react';
+import ScreenEngine from './ScreenEngine';
+import ScreenRenderer from './ScreenRenderer';
 
-export default function DynamicScreen({ components = [], params = {} }) {
-  return (
-    <>
-      {components.map((item, index) => {
-        const Component = resolver(item.type);
+export default function DynamicScreen({ screenName }) {
+  const [screen, setScreen] = useState(null);
 
-        if (!Component) {
-          return (
-            <div key={index} style={{ color: "red", padding: 10 }}>
-              Unknown component type: {item.type}
-            </div>
-          );
-        }
+  useEffect(() => {
+    if (!screenName) return;
 
-        // Prepare action handler
-        const onAction = useActionHandler(item.action);
+    const loadedScreen = ScreenEngine.load(screenName);
+    setScreen(loadedScreen);
+  }, [screenName]);
 
-        return (
-          <Component
-            key={index}
-            {...item}
-            params={params}
-            onAction={onAction}
-          />
-        );
-      })}
-    </>
-  );
+  if (!screen) return null;
+
+  return <ScreenRenderer screen={screen} />;
 }
