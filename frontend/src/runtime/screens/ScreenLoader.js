@@ -3,25 +3,26 @@
 /**
  * ScreenLoader.js
  * ---------------------------------------------------------
- * Loads and normalizes a screen's DocumentModel.
+ * Loads a screen definition from the DocumentModel and
+ * prepares it for the screen-layer ScreenEngine.
  *
- * Responsibilities:
- *  - Validate the screen name
- *  - Load the DocumentModel for that screen
- *  - Ensure a consistent return shape
- *
- * This replaces the legacy JSON-based screen registry.
+ * This is the screen-layer loader (not the resolver version).
  */
 
-import DocumentModel from "../DocumentModel";
+import DocumentModel from "../resolver/DocumentModel";
 
-export default function ScreenLoader(screenName) {
+/**
+ * Loads a screen by name and returns a normalized screen object.
+ */
+export function loadScreen(screenName, params = {}) {
   if (!screenName || typeof screenName !== "string") {
     return {
-      name: screenName || null,
+      name: null,
       error: "Invalid screen name.",
-      components: [],
+      components: {},
       bindings: {},
+      params: {},
+      root: null,
     };
   }
 
@@ -31,15 +32,18 @@ export default function ScreenLoader(screenName) {
     return {
       name: screenName,
       error: `Unknown screen: ${screenName}`,
-      components: [],
+      components: {},
       bindings: {},
+      params,
+      root: null,
     };
   }
 
   return {
     name: model.name,
-    components: model.components || [],
+    components: model.components || {},
     bindings: model.bindings || {},
-    params: model.params || {},
+    params: { ...model.params, ...params },
+    root: model.root || null,
   };
 }
