@@ -1,47 +1,49 @@
 // frontend/src/runtime/useRuntimeDataBindings.js
 
+/**
+ * useRuntimeDataBindings.js
+ * ---------------------------------------------------------
+ * React hook that resolves dynamic bindings inside component props.
+ *
+ * This is the glue between:
+ *  - DocumentModel (screen-level bindings)
+ *  - StateEngine (global reactive state)
+ *  - ActionDispatcher (action results)
+ *  - resolveProps / resolveBinding (expression resolver)
+ *
+ * It ensures that any {{ ... }} expression inside props is
+ * resolved into a real value before the component renders.
+ */
+
 import { useMemo } from "react";
+import { resolveProps } from "./bindings";
+import StateEngine from "./StateEngine";
+import ActionDispatcher from "./ActionDispatcher";
 
 /**
- * useRuntimeDataBindings
+ * Hook: useRuntimeDataBindings
  *
- * The runtime data‑binding hook for Blue Lotus.
- *
- * Responsibilities:
- *  - Resolve static props
- *  - Resolve bound values from runtime state (future)
- *  - Provide a stable interface for ComponentResolver
- *
- * It does NOT:
- *  - invent data
- *  - simulate backend responses
- *  - mutate appDefinition
- *  - create placeholder values
+ * @param {object} rawProps - The component's original props from DocumentModel
+ * @param {object} screenBindings - The bindings defined on the current screen
  */
-export default function useRuntimeDataBindings({ node, appState }) {
-  return useMemo(() => {
-    if (!node || !node.props) return {};
+export default function useRuntimeDataBindings(rawProps, screenBindings) {
+  // Pull reactive state
+  const state = StateEngine.useState(); // subscribes to state changes
 
-    const resolved = {};
+  // Pull action results (reactive)
+  const actions = ActionDispatcher.useActionResults();
 
-    for (const [key, value] of Object.entries(node.props)) {
-      // Static literal value
-      if (typeof value !== "object" || value === null) {
-        resolved[key] = value;
-        continue;
-      }
+  /**
+   * Resolve all dynamic expressions inside props.
+   * Memoized so components only re-render when dependencies change.
+   */
+  const resolvedProps = useMemo(() => {
+    return resolveProps(rawProps, {
+      state,
+      bindings: screenBindings || {},
+      actions,
+    });
+  }, [rawProps, state, screenBindings, actions]);
 
-      // Future: dynamic binding object
-      if (value.binding) {
-        const boundValue = appState?.[value.binding];
-        resolved[key] = boundValue ?? null;
-        continue;
-      }
-
-      // Fallback: pass through raw object
-      resolved[key] = value;
-    }
-
-    return resolved;
-  }, [node, appState]);
+  return resolvedProps;
 }
