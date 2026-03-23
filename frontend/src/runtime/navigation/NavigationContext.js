@@ -1,30 +1,47 @@
 // frontend/src/runtime/navigation/NavigationContext.js
 
 /**
- * NavigationContext
+ * NavigationContext.js
  * ---------------------------------------------------------
- * Provides navigation helpers to the UI.
- * Exposes:
- * - navigate(screen, params)
- * - goBack()   (optional)
+ * Provides navigation helpers and exposes the active screen
+ * to the runtime. This is the glue between NavigationEngine
+ * and the React component tree.
  */
 
 import React, { createContext, useContext } from "react";
+import { setActiveScreen } from "../resolver/ScreenEngine";
 
-export const NavigationContext = createContext(null);
+const NavigationContext = createContext(null);
 
-export function NavigationProvider({ navigation, children }) {
+/**
+ * Provider used by RuntimeApp / SceneManager.
+ */
+export function NavigationProvider({ children }) {
+  const api = {
+    navigate: (screenName, params = {}) => {
+      setActiveScreen({ name: screenName, params });
+    },
+  };
+
   return (
-    <NavigationContext.Provider value={navigation}>
+    <NavigationContext.Provider value={api}>
       {children}
     </NavigationContext.Provider>
   );
 }
 
+/**
+ * Hook used by components and actions to trigger navigation.
+ */
 export function useNavigation() {
   const ctx = useContext(NavigationContext);
+
   if (!ctx) {
-    throw new Error("useNavigation must be used inside <NavigationProvider>");
+    console.warn("[NavigationContext] useNavigation() called outside provider.");
+    return {
+      navigate: () => {},
+    };
   }
+
   return ctx;
 }
