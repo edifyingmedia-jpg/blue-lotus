@@ -3,49 +3,44 @@
 /**
  * SceneManager.js
  * ---------------------------------------------------------
- * Stable container for rendering the active screen.
+ * Coordinates runtime screen lifecycle.
  *
  * Responsibilities:
- *  - Render the active screen via ScreenRenderer
- *  - Provide a root-level scene container
- *  - Prepare for future transitions or stacked navigation
+ *  - Track the active scene
+ *  - Handle scene transitions
+ *  - Provide a single source of truth for scene state
+ *
+ * This manager must remain deterministic and side‑effect free.
  */
 
-import React from "react";
-import ScreenRenderer from "./ScreenRenderer";
-import { useScreenEngine } from "../resolver/ScreenEngine";
-
-export default function SceneManager() {
-  const { activeScreen } = useScreenEngine();
-
-  if (!activeScreen) {
-    return (
-      <div
-        style={{
-          padding: 20,
-          color: "red",
-          fontSize: 16,
-          fontWeight: "bold",
-        }}
-      >
-        No active screen loaded in SceneManager.
-      </div>
-    );
+class SceneManager {
+  constructor() {
+    this.activeScene = null;
+    this.listeners = new Set();
   }
 
-  return (
-    <div
-      className="bl-scene-manager"
-      data-scene={activeScreen?.name}
-      style={{
-        width: "100%",
-        height: "100%",
-        position: "relative",
-        overflow: "hidden",
-      }}
-    >
-      {/* Future: transitions, animations, stacked navigation */}
-      <ScreenRenderer />
-    </div>
-  );
+  getActiveScene() {
+    return this.activeScene;
+  }
+
+  setActiveScene(scene) {
+    if (!scene || scene === this.activeScene) return;
+
+    this.activeScene = scene;
+    this.notify();
+  }
+
+  subscribe(listener) {
+    this.listeners.add(listener);
+    return () => this.listeners.delete(listener);
+  }
+
+  notify() {
+    this.listeners.forEach((listener) =>
+      listener(this.activeScene)
+    );
+  }
 }
+
+const sceneManager = new SceneManager();
+export default sceneManager;
