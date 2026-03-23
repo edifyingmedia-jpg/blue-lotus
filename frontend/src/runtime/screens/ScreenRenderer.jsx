@@ -3,51 +3,19 @@
 /**
  * ScreenRenderer.jsx
  * ---------------------------------------------------------
- * React component wrapper for rendering the active screen.
+ * JSX wrapper for rendering a resolved runtime screen.
  *
- * This JSX version is used by:
- *  - RuntimeRenderer
- *  - LivePreview
- *  - PreviewHost
- *
- * Responsibilities:
- *  - Wrap the active screen in ScreenProvider
- *  - Render the screen's component tree via DynamicScreen
- *  - Provide a stable DOM container for layout + transitions
+ * This component assumes:
+ *  - The screen has already been loaded
+ *  - The screen has already been normalized
+ *  - Rendering is purely declarative
  */
 
-import React from "react";
-import ScreenProvider from "./ScreenContext";
-import DynamicScreen from "../resolver/DynamicScreen";
-import { useScreenEngine } from "../resolver/ScreenEngine";
+import React from 'react';
+import ScreenRenderer from './ScreenRenderer';
 
-export default function ScreenRenderer() {
-  const { activeScreen } = useScreenEngine();
+export default function ScreenRendererJSX({ screen }) {
+  if (!screen) return null;
 
-  if (!activeScreen) {
-    return (
-      <div
-        style={{
-          padding: 20,
-          color: "red",
-          fontSize: 16,
-          fontWeight: "bold",
-        }}
-      >
-        No active screen to render.
-      </div>
-    );
-  }
-
-  return (
-    <ScreenProvider screen={activeScreen}>
-      <div
-        className="bl-screen-renderer"
-        data-screen={activeScreen?.name}
-        style={{ width: "100%", height: "100%" }}
-      >
-        <DynamicScreen screen={activeScreen} />
-      </div>
-    </ScreenProvider>
-  );
+  return <ScreenRenderer screen={screen} />;
 }
