@@ -1,46 +1,57 @@
 // frontend/src/runtime/useNavigation.js
 
-import { useState, useCallback, useMemo } from "react";
-
 /**
- * useNavigation
+ * useNavigation.js
+ * ---------------------------------------------------------
+ * React hook providing safe, deterministic access to the
+ * Blue Lotus navigation API.
  *
- * The runtime navigation hook for Blue Lotus.
- * Provides:
- *  - currentRoute state
- *  - navigate() function
- *  - initialRoute handling
+ * This hook wraps the public navigation.js module, which
+ * itself wraps NavigationEngine.
  *
- * It does NOT:
- *  - simulate navigation
- *  - invent routes
- *  - mutate the appDefinition
+ * Rules:
+ *  - Route-based navigation only
+ *  - No stacks, no screens, no legacy models
+ *  - Deterministic, predictable, safe
+ *  - Never throws if navigation is not initialized
  */
-export default function useNavigation({ routes, initialRoute }) {
-  const validInitial = useMemo(() => {
-    if (!routes || typeof routes !== "object") return null;
-    if (initialRoute && routes[initialRoute]) return initialRoute;
 
-    // fallback to first route in map
-    const keys = Object.keys(routes);
-    return keys.length > 0 ? keys[0] : null;
-  }, [routes, initialRoute]);
+import { useCallback } from "react";
+import navigation from "./navigation";
 
-  const [currentRoute, setCurrentRoute] = useState(validInitial);
+export default function useNavigation() {
+  /**
+   * Navigate to a route.
+   */
+  const navigate = useCallback((routeName, params = {}) => {
+    navigation.navigate(routeName, params);
+  }, []);
 
-  const navigate = useCallback(
-    (routeName) => {
-      if (!routes || !routes[routeName]) {
-        console.warn(`useNavigation: Attempted to navigate to unknown route "${routeName}"`);
-        return;
-      }
-      setCurrentRoute(routeName);
-    },
-    [routes]
-  );
+  /**
+   * Replace the current route.
+   */
+  const replace = useCallback((routeName, params = {}) => {
+    navigation.replace(routeName, params);
+  }, []);
+
+  /**
+   * Reset the entire navigation state.
+   */
+  const reset = useCallback((routeName, params = {}) => {
+    navigation.reset(routeName, params);
+  }, []);
+
+  /**
+   * Get the current route name.
+   */
+  const getCurrentRoute = useCallback(() => {
+    return navigation.getCurrentRoute();
+  }, []);
 
   return {
-    currentRoute,
     navigate,
+    replace,
+    reset,
+    getCurrentRoute,
   };
 }
