@@ -3,54 +3,48 @@
 /**
  * ScreenLoader.js
  * ---------------------------------------------------------
- * Loads the project's screens into the runtime.
+ * Loads and normalizes a screen's DocumentModel.
  *
  * Responsibilities:
- *  - Accept the full project object
- *  - Extract screens and prepare them for ScreenEngine
- *  - Pass initialScreen and screen list to ScreenEngine
+ *  - Validate the screen name
+ *  - Load the DocumentModel for that screen
+ *  - Ensure a consistent return shape for the runtime
+ *
+ * This replaces the legacy JSON-based screen registry.
  */
 
-import React from "react";
-import ScreenEngine from "./ScreenEngine";
+import DocumentModel from "../DocumentModel";
 
-export default function ScreenLoader({ project, children }) {
-  if (!project) {
-    return (
-      <div
-        style={{
-          padding: 20,
-          color: "red",
-          fontSize: 16,
-          fontWeight: "bold",
-        }}
-      >
-        No project provided to ScreenLoader.
-      </div>
-    );
+export default function ScreenLoader(screenName) {
+  if (!screenName || typeof screenName !== "string") {
+    return {
+      name: screenName || null,
+      error: "Invalid screen name.",
+      components: {},
+      bindings: {},
+      params: {},
+      root: null,
+    };
   }
 
-  const screens = project.screens || [];
-  const initialScreen = project.initialScreen || screens[0]?.id || null;
+  const model = DocumentModel.load(screenName);
 
-  if (screens.length === 0) {
-    return (
-      <div
-        style={{
-          padding: 20,
-          color: "red",
-          fontSize: 16,
-          fontWeight: "bold",
-        }}
-      >
-        This project has no screens.
-      </div>
-    );
+  if (!model) {
+    return {
+      name: screenName,
+      error: `Unknown screen: ${screenName}`,
+      components: {},
+      bindings: {},
+      params: {},
+      root: null,
+    };
   }
 
-  return (
-    <ScreenEngine screens={screens} initialScreen={initialScreen}>
-      {children}
-    </ScreenEngine>
-  );
+  return {
+    name: model.name,
+    components: model.components || {},
+    bindings: model.bindings || {},
+    params: model.params || {},
+    root: model.root || null,
+  };
 }
