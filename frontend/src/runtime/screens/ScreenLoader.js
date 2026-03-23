@@ -1,39 +1,45 @@
 // frontend/src/runtime/screens/ScreenLoader.js
 
 /**
- * ScreenLoader
+ * ScreenLoader.js
  * ---------------------------------------------------------
- * Lightweight helper that prepares screen data
- * before it reaches ScreenEngine.
+ * Loads and normalizes a screen's DocumentModel.
  *
  * Responsibilities:
- * - Validate screen name
- * - Normalize params
- * - Return a clean screen descriptor
+ *  - Validate the screen name
+ *  - Load the DocumentModel for that screen
+ *  - Ensure a consistent return shape
+ *
+ * This replaces the legacy JSON-based screen registry.
  */
 
-import screens from "./index";
+import DocumentModel from "../DocumentModel";
 
-export default function ScreenLoader(name, params = {}) {
-  const screen = screens[name];
-
-  if (!screen) {
+export default function ScreenLoader(screenName) {
+  if (!screenName || typeof screenName !== "string") {
     return {
-      name,
-      params,
-      error: `Unknown screen: ${name}`,
-      components: [
-        {
-          type: "Text",
-          value: `Unknown screen: ${name}`
-        }
-      ]
+      name: screenName || null,
+      error: "Invalid screen name.",
+      components: [],
+      bindings: {},
+    };
+  }
+
+  const model = DocumentModel.load(screenName);
+
+  if (!model) {
+    return {
+      name: screenName,
+      error: `Unknown screen: ${screenName}`,
+      components: [],
+      bindings: {},
     };
   }
 
   return {
-    name,
-    params,
-    components: screen.components || []
+    name: model.name,
+    components: model.components || [],
+    bindings: model.bindings || {},
+    params: model.params || {},
   };
 }
