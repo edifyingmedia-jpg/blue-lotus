@@ -1,19 +1,32 @@
 // frontend/src/Builder/components/ScreenList/AddScreenButton.js
 
 /**
- * AddScreenButton
+ * AddScreenButton.js
  * ---------------------------------------------------------
- * Button for creating a new screen inside the Builder.
+ * UI button for creating a new screen inside the Builder.
+ *
+ * Responsibilities:
+ *  - Trigger addScreen action
+ *  - Update DocumentModel through BuilderEngine
+ *  - Select the newly created screen
  */
 
-import React from "react";
+import React, { useContext } from 'react';
+import { BuilderContext } from '../../../BuilderContext';
+import { addScreen } from '../../../actions';
 
-export function AddScreenButton({ onAdd }) {
+export default function AddScreenButton() {
+  const { builderEngine, documentModel, setActiveScreen } =
+    useContext(BuilderContext);
+
+  const handleAdd = () => {
+    const newScreen = addScreen(documentModel);
+    builderEngine.refresh(); // ensure UI sync
+    setActiveScreen(newScreen.id);
+  };
+
   return (
-    <button
-      className="add-screen-button"
-      onClick={onAdd}
-    >
+    <button className="screenlist-add-button" onClick={handleAdd}>
       + Add Screen
     </button>
   );
