@@ -3,55 +3,43 @@
 /**
  * ScreenEngine.js
  * ---------------------------------------------------------
- * The logic engine for runtime screens.
+ * Central runtime engine for managing the active screen.
  *
  * Responsibilities:
- *  - Manage the active screen
- *  - Provide navigation helpers
- *  - Pass the active screen to DynamicScreen
+ *  - Hold the active screen object
+ *  - Provide a stable API for setting/changing screens
+ *  - Expose screen state through useScreenEngine()
+ *
+ * This replaces the legacy JSON-based screen registry.
  */
 
-import React, { createContext, useContext, useState, useMemo } from "react";
-import DynamicScreen from "./DynamicScreen";
+import { useState } from "react";
 
-const ScreenContext = createContext(null);
+let _setActiveScreen = null;
 
+/**
+ * Hook used by SceneManager, ScreenRenderer, and ScreenContext.
+ */
 export function useScreenEngine() {
-  return useContext(ScreenContext);
+  const [activeScreen, setActiveScreen] = useState(null);
+
+  // Expose setter globally so NavigationEngine can update screens
+  _setActiveScreen = setActiveScreen;
+
+  return {
+    activeScreen,
+    setActiveScreen,
+  };
 }
 
-export default function ScreenEngine({ screens = [], initialScreen, children }) {
-  const [active, setActive] = useState(initialScreen || screens[0]?.id || null);
-
-  const screenMap = useMemo(() => {
-    const map = {};
-    screens.forEach((s) => (map[s.id] = s));
-    return map;
-  }, [screens]);
-
-  function navigate(screenId) {
-    if (!screenMap[screenId]) {
-      console.warn(`ScreenEngine: Unknown screen "${screenId}"`);
-      return;
-    }
-    setActive(screenId);
+/**
+ * External API used by NavigationEngine or RuntimeEngine
+ * to change screens deterministically.
+ */
+export function setActiveScreen(screenObject) {
+  if (typeof _setActiveScreen === "function") {
+    _setActiveScreen(screenObject);
+  } else {
+    console.warn("[ScreenEngine] setActiveScreen called before initialization.");
   }
-
-  const value = {
-    activeScreenId: active,
-    activeScreen: screenMap[active] || null,
-    navigate,
-    screens,
-  };
-
-  return (
-    <ScreenContext.Provider value={value}>
-      {children}
-
-      {/* Render the active screen */}
-      {value.activeScreen && (
-        <DynamicScreen screen={value.activeScreen} />
-      )}
-    </ScreenContext.Provider>
-  );
 }
