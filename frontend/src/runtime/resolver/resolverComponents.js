@@ -3,72 +3,37 @@
 /**
  * resolverComponents.js
  * ---------------------------------------------------------
- * Runtime component resolver for Blue Lotus.
+ * Registry of REAL React components available to the runtime.
  *
- * This maps component type strings (e.g., "Button", "Text")
- * to actual React components used in the runtime renderer.
+ * This file is the authoritative map used by ComponentResolver
+ * to turn a component "type" into an actual React component.
  *
- * This is NOT the Builder registry.
- * This is used by:
- *   - Renderer.js
- *   - DynamicScreen.js
- *   - ScreenEngine.js
- *   - ActionEngine.js
+ * Only production-grade components from:
+ *   frontend/src/components/
+ * may be registered here.
  */
 
-import Button from "../../components/Button";
 import Text from "../../components/Text";
-import Input from "../../components/Input";
-import TextArea from "../../components/TextArea";
+import Button from "../../components/Button";
+import View from "../../components/View";
 import Image from "../../components/Image";
+import Input from "../../components/Input";
+import Spacer from "../../components/Spacer";
 import Card from "../../components/Card";
-import CardMedia from "../../components/CardMedia";
-import Tabs from "../../components/Tabs";
-import Accordion from "../../components/Accordion";
-import Drawer from "../../components/Drawer";
-import Modal from "../../components/Modal";
-import Navbar from "../../components/Navbar";
-import BottomTabs from "../../components/BottomTabs";
-import Toast from "../../components/Toast";
-import ProgressBar from "../../components/ProgressBar";
-import Spinner from "../../components/Spinner";
-import ScreenContainer from "../../components/ScreenContainer";
+import Container from "../../components/Container";
 
-/**
- * Component map
- * ---------------------------------------------------------
- * This is the authoritative runtime registry.
- */
-const components = {
-  Button,
+// Add new components here as your platform grows.
+// This registry must remain deterministic and owner-controlled.
+
+const resolverComponents = {
   Text,
-  Input,
-  TextArea,
+  Button,
+  View,
   Image,
+  Input,
+  Spacer,
   Card,
-  CardMedia,
-  Tabs,
-  Accordion,
-  Drawer,
-  Modal,
-  Navbar,
-  BottomTabs,
-  Toast,
-  ProgressBar,
-  Spinner,
-  ScreenContainer,
+  Container,
 };
 
-/**
- * Resolve a component by type.
- */
-export default function resolverComponents(type) {
-  const Component = components[type];
-
-  if (!Component) {
-    console.warn(`Runtime resolver: Unknown component type "${type}"`);
-    return null;
-  }
-
-  return Component;
-}
+export default resolverComponents;
