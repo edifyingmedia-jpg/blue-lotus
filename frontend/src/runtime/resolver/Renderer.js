@@ -3,24 +3,30 @@
 /**
  * Renderer.js
  * ---------------------------------------------------------
- * The core runtime renderer for Blue Lotus.
+ * Core recursive renderer for Blue Lotus runtime.
  *
  * Responsibilities:
- *  - Take a component node from the Builder
- *  - Resolve its type to a real React component
- *  - Render it with props
+ *  - Resolve a node's component type
+ *  - Resolve props (including bindings)
  *  - Recursively render children
+ *  - Return a fully constructed React element tree
  */
 
 import React from "react";
-import resolverComponents from "./resolverComponents";
+import ComponentResolver from "./ComponentResolver";
+import resolveProps from "./resolveProps";
+import useRuntimeDataBindings from "./useRuntimeDataBindings";
 
-export default function Renderer({ node }) {
+export default function Renderer(node, model) {
   if (!node || typeof node !== "object") {
     return null;
   }
 
-  const Component = resolverComponents(node.type);
+  const resolver = new ComponentResolver();
+  const bindings = useRuntimeDataBindings(model?.bindings || {});
+
+  // Resolve the component type
+  const Component = resolver.get(node.type);
 
   if (!Component) {
     return (
@@ -37,12 +43,17 @@ export default function Renderer({ node }) {
     );
   }
 
-  return (
-    <Component {...node.props}>
-      {Array.isArray(node.children) &&
-        node.children.map((child) => (
-          <Renderer key={child.id} node={child} />
-        ))}
-    </Component>
-  );
+  // Resolve props (including dynamic bindings)
+  const props = resolveProps(node.props || {}, bindings);
+
+  // Recursively render children
+  let children = null;
+
+  if (Array.isArray(node.children)) {
+    children = node.children.map((child, index) =>
+      Renderer(child, model, index)
+    );
+  }
+
+  return <Component {...props}>{children}</Component>;
 }
