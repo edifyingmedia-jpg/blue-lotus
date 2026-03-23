@@ -1,23 +1,34 @@
-// frontend/src/runtime/App.js
-
-import React from "react";
-import { NavigationProvider } from "./engine/NavigationEngine";
-import ScreenEngine from "./engine/ScreenEngine";
-import screens from "./screens";
+// frontend/src/runtime/app.js
 
 /**
- * App
+ * app.js
  * ---------------------------------------------------------
- * Root of the runtime.
- * - Initializes navigation
- * - Loads screen registry
- * - Renders the active screen
+ * Runtime bootstrap module for Blue Lotus.
+ *
+ * This file initializes the API client and exposes a clean
+ * entry point for the runtime environment. It does NOT mount
+ * React — that is handled by RuntimeApp.jsx.
  */
 
-export default function App() {
-  return (
-    <NavigationProvider>
-      <ScreenEngine screens={screens} />
-    </NavigationProvider>
-  );
+import APIClient from "./api";
+import supabaseClient from "./supabaseClient";
+
+/**
+ * Create a fully configured runtime environment.
+ */
+export function createRuntimeEnvironment() {
+  const api = new APIClient({
+    supabase: supabaseClient || null,
+  });
+
+  return {
+    api,
+  };
 }
+
+/**
+ * Default export for convenience.
+ */
+export default {
+  createRuntimeEnvironment,
+};
