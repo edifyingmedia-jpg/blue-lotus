@@ -1,17 +1,11 @@
 // frontend/src/runtime/navigation/index.js
 
 /**
- * Navigation Module Exports
+ * index.js
  * ---------------------------------------------------------
- * Central export surface for the navigation system.
- * Exposes:
- * - NavigationContext
- * - NavigationProvider
- * - useNavigation
+ * Central export hub for the navigation subsystem.
+ *
+ * Keeps the public API clean and deterministic.
  */
 
-export {
-  NavigationContext,
-  NavigationProvider,
-  useNavigation,
-} from "./NavigationContext";
+export { NavigationProvider, useNavigation } from "./NavigationContext";
