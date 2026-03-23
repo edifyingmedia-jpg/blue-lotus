@@ -3,12 +3,12 @@
 /**
  * SceneManager.js
  * ---------------------------------------------------------
- * Manages screen scenes and transitions in the runtime.
+ * Stable container for rendering the active screen.
  *
  * Responsibilities:
  *  - Render the active screen via ScreenRenderer
- *  - Provide a stable container for transitions
- *  - Prepare for future stacked navigation
+ *  - Provide a root-level scene container
+ *  - Prepare for future transitions or stacked navigation
  */
 
 import React from "react";
@@ -35,6 +35,8 @@ export default function SceneManager() {
 
   return (
     <div
+      className="bl-scene-manager"
+      data-scene={activeScreen?.name}
       style={{
         width: "100%",
         height: "100%",
