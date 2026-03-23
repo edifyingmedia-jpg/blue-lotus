@@ -1,9 +1,5 @@
 // frontend/src/Builder/components/Canvas/index.js
 
-/**
- * Canvas Barrel
- * ---------------------------------------------------------
- * Central export point for the Canvas component.
- */
+import Canvas from './Canvas';
 
-export * from "./Canvas";
+export default Canvas;
