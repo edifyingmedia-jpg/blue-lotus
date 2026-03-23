@@ -3,46 +3,44 @@
 /**
  * NavigationEngine.js
  * ---------------------------------------------------------
- * Provides navigation helpers for runtime components.
+ * Centralized runtime navigation controller.
  *
  * Responsibilities:
- *  - Wrap ScreenEngine navigation
- *  - Expose a clean API for components
- *  - Prepare for future navigation modes (stack, tabs, modals)
+ *  - Track the active screen
+ *  - Resolve navigation requests
+ *  - Notify listeners of screen changes
+ *
+ * This engine must remain deterministic and UI‑agnostic.
  */
 
-import { useScreenEngine } from "../resolver/ScreenEngine";
-
-export default function useNavigation() {
-  const { navigate, activeScreenId, screens } = useScreenEngine();
-
-  /**
-   * Navigate to a screen by ID
-   */
-  function go(screenId) {
-    navigate(screenId);
+class NavigationEngine {
+  constructor() {
+    this.currentScreen = null;
+    this.listeners = new Set();
   }
 
-  /**
-   * Navigate to the first screen in the project
-   */
-  function goHome() {
-    if (screens.length > 0) {
-      navigate(screens[0].id);
-    }
+  getCurrentScreen() {
+    return this.currentScreen;
   }
 
-  /**
-   * Reload the current screen
-   */
-  function reload() {
-    navigate(activeScreenId);
+  navigate(screenName) {
+    if (!screenName || screenName === this.currentScreen) return;
+
+    this.currentScreen = screenName;
+    this.notify();
   }
 
-  return {
-    go,
-    goHome,
-    reload,
-    activeScreenId,
-  };
+  subscribe(listener) {
+    this.listeners.add(listener);
+    return () => this.listeners.delete(listener);
+  }
+
+  notify() {
+    this.listeners.forEach((listener) =>
+      listener(this.currentScreen)
+    );
+  }
 }
+
+const navigationEngine = new NavigationEngine();
+export default navigationEngine;
