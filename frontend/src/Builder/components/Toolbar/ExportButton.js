@@ -1,55 +1,29 @@
 // frontend/src/Builder/components/Toolbar/ExportButton.js
 
 /**
- * ExportButton
+ * ExportButton.js
  * ---------------------------------------------------------
- * UI button for triggering the export flow from the Builder.
+ * Triggers the Builder's export pipeline.
+ *
+ * Responsibilities:
+ *  - Call builderEngine.exportProject()
+ *  - Provide a clean UI button in the toolbar
+ *  - No logic beyond triggering the export action
  */
 
-import React from "react";
-import { createExportActions } from "@/Builder/actions";
-import { useBuilderExport } from "@/Builder/hooks/useBuilderExport";
+import React, { useContext } from 'react';
+import { BuilderContext } from '../../../BuilderContext';
 
-export function ExportButton({ builderState }) {
-  const exportApi = useBuilderExport(builderState);
-  const actions = createExportActions({ builderState, exportApi });
+export default function ExportButton() {
+  const { builderEngine } = useContext(BuilderContext);
 
-  const handleExport = async () => {
-    try {
-      await actions.runExport();
-    } catch (err) {
-      console.error("Export failed:", err);
-    }
-  };
-
-  const handleDownload = () => {
-    try {
-      actions.downloadExport();
-    } catch (err) {
-      console.error("Download failed:", err);
-    }
+  const handleExport = () => {
+    builderEngine.exportProject();
   };
 
   return (
-    <div className="export-button">
-      <button
-        onClick={handleExport}
-        disabled={actions.isExporting}
-      >
-        {actions.isExporting ? "Exporting..." : "Export"}
-      </button>
-
-      {actions.bundle && (
-        <button onClick={handleDownload}>
-          Download
-        </button>
-      )}
-
-      {actions.error && (
-        <div className="export-error">
-          Export failed — check console for details.
-        </div>
-      )}
-    </div>
+    <button className="toolbar-button" onClick={handleExport}>
+      Export
+    </button>
   );
 }
