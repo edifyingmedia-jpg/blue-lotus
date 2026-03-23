@@ -1,51 +1,15 @@
 // frontend/src/runtime/screens/index.js
 
-import Register from "./Register.json";
-import Login from "./Login.json";
-import Notifications from "./Notifications.json";
-import Account from "./Account.json";
-import Settings from "./Settings.json";
-import NewProject from "./NewProject.json";
-import Projects from "./Projects.json";
-import Studio from "./Studio.json";
-import Home from "./Home.json";
-import Dashboard from "./Dashboard.json";
-
 /**
- * Screen Registry
+ * index.js
  * ---------------------------------------------------------
- * This file defines all screens available in the runtime.
- * Each screen is loaded from a JSON file.
+ * Legacy screen registry placeholder.
+ *
+ * In the modern runtime, screens are loaded dynamically
+ * through DocumentModel.load(screenName), so this file
+ * no longer maintains a registry.
+ *
+ * It remains only to prevent import errors.
  */
 
-const screens = {
-  Home,
-  Dashboard,
-  Studio,
-  Projects,
-  NewProject,
-  Settings,
-  Account,
-  Notifications,
-  Login,
-  Register,
-
-  // Temporary navigation test screen
-  Next: {
-    components: [
-      {
-        type: "Text",
-        value: "You navigated to the next screen!"
-      },
-      {
-        type: "Button",
-        label: "Go Back",
-        action: {
-          type: "goBack"
-        }
-      }
-    ]
-  }
-};
-
-export default screens;
+export default {};
