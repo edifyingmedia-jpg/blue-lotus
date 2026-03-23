@@ -1,48 +1,22 @@
-// frontend/src/Builder/actions/exportActions.js
-
 /**
- * exportActions
+ * exportActions.js
  * ---------------------------------------------------------
- * Builder-level actions for triggering the export flow.
- * These actions are called by UI components (e.g., toolbar).
+ * Centralized export surface for all Builder-side actions.
+ *
+ * This file ensures the BuilderEngine, UI panels, and
+ * EditorBridge can import actions deterministically without
+ * relying on legacy registries or dynamic resolution.
  */
 
-export function createExportActions({ builderState, exportApi }) {
-  if (!builderState) {
-    throw new Error("exportActions: Missing builderState");
-  }
-  if (!exportApi) {
-    throw new Error("exportActions: Missing exportApi");
-  }
+import addScreen from './addScreen';
+import * as screenActions from './screenActions';
 
-  const {
-    exportCurrentProject,
-    downloadCurrentBundle,
-    isExporting,
-    error,
-    bundle,
-  } = exportApi;
+export {
+  addScreen,
+  screenActions
+};
 
-  return {
-    /**
-     * Trigger the export pipeline using the current builder state.
-     */
-    runExport: async () => {
-      return await exportCurrentProject(builderState);
-    },
-
-    /**
-     * Download the most recent export bundle.
-     */
-    downloadExport: () => {
-      return downloadCurrentBundle();
-    },
-
-    /**
-     * Expose state to the UI.
-     */
-    isExporting,
-    error,
-    bundle,
-  };
-}
+export default {
+  addScreen,
+  screenActions
+};
