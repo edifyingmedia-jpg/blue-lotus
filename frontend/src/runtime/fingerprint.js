@@ -1,114 +1,36 @@
-// frontend/src/runtime/fingerprint.js
-
 /**
  * fingerprint.js
- * ---------------------------------------------------------
- * Blue Lotus Device Fingerprint Collector
- *
- * This module collects NON‑PERSONAL technical metadata
- * and produces a stable, privacy‑safe fingerprint hash.
+ * ----------------------------------------------------
+ * Generates a lightweight, deterministic fingerprint
+ * for the current browser/device.
  *
  * Used for:
- *  - preventing free‑tier abuse
- *  - limiting one free trial per physical device
- *  - detecting VPN/proxy usage
- *  - detecting spoofing attempts
+ * - anonymous analytics
+ * - rate limiting
+ * - preventing duplicate sessions
+ * - identifying preview sessions
  *
- * NEVER collects:
- *  - personal data
- *  - emails
- *  - names
- *  - passwords
- *  - browsing history
+ * No PII. No tracking. No cookies.
  */
 
-import sha256 from "./utils/sha256"; // small local hashing utility
-
-/**
- * Collect device metadata
- */
-async function getDeviceInfo() {
-  const canvas = document.createElement("canvas");
-  const ctx = canvas.getContext("2d");
-  ctx.textBaseline = "top";
-  ctx.font = "14px 'Arial'";
-  ctx.fillText("BL-Fingerprint", 2, 2);
-  const canvasHash = canvas.toDataURL();
-
-  const gl = document.createElement("canvas").getContext("webgl");
-  const glInfo = gl
-    ? {
-        vendor: gl.getParameter(gl.VENDOR),
-        renderer: gl.getParameter(gl.RENDERER),
-      }
-    : { vendor: "unknown", renderer: "unknown" };
-
-  return {
-    userAgent: navigator.userAgent,
-    platform: navigator.platform,
-    hardwareConcurrency: navigator.hardwareConcurrency,
-    deviceMemory: navigator.deviceMemory || "unknown",
-    screen: {
-      width: window.screen.width,
-      height: window.screen.height,
-      colorDepth: window.screen.colorDepth,
-    },
-    timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
-    canvasHash,
-    glVendor: glInfo.vendor,
-    glRenderer: glInfo.renderer,
-  };
-}
-
-/**
- * Collect behavior metadata (lightweight, privacy‑safe)
- */
-function getBehaviorInfo() {
-  return {
-    // coarse timing patterns only
-    sessionStart: performance.timeOrigin.toString(),
-    navTiming: performance.now().toString().slice(0, 6),
-  };
-}
-
-/**
- * Collect account metadata (non‑personal)
- */
-function getAccountInfo() {
-  let localId = localStorage.getItem("bl_local_id");
-  if (!localId) {
-    localId = crypto.randomUUID();
-    localStorage.setItem("bl_local_id", localId);
+function hashString(str) {
+  let hash = 0;
+  for (let i = 0; i < str.length; i++) {
+    hash = (hash << 5) - hash + str.charCodeAt(i);
+    hash |= 0; // Convert to 32‑bit integer
   }
-
-  return {
-    localId,
-  };
+  return Math.abs(hash).toString();
 }
 
-/**
- * Generate final fingerprint hash
- */
-export async function generateFingerprint() {
-  const device = await getDeviceInfo();
-  const behavior = getBehaviorInfo();
-  const account = getAccountInfo();
+export default function getFingerprint() {
+  const data = [
+    navigator.userAgent,
+    navigator.language,
+    screen.width,
+    screen.height,
+    screen.colorDepth,
+    Intl.DateTimeFormat().resolvedOptions().timeZone,
+  ].join("|");
 
-  const combined = JSON.stringify({
-    device,
-    behavior,
-    account,
-  });
-
-  // Hash everything together
-  const fingerprintHash = await sha256(combined);
-
-  return {
-    fingerprint: fingerprintHash,
-    device,
-    behavior,
-    account,
-  };
+  return hashString(data);
 }
-
-export default generateFingerprint;
