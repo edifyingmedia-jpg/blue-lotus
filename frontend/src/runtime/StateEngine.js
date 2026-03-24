@@ -1,82 +1,55 @@
-// frontend/src/runtime/StateEngine.js
-
 /**
  * StateEngine
- * ---------------------------------------------------------
- * Centralized reactive state container for the Blue Lotus runtime.
+ * ----------------------------------------------------
+ * Centralized state container for the runtime.
  *
  * Responsibilities:
- *  - Hold the global state tree
- *  - Provide immutable snapshots
- *  - Notify subscribers on change
- *  - Allow controlled updates from ActionDispatcher
- *  - Support data bindings in DynamicScreen
+ * - Store key/value state
+ * - Provide deterministic getters/setters
+ * - Emit state change events
+ * - Integrate with components + actions
  */
+
+import EventBus from "./EventBus";
 
 export default class StateEngine {
   constructor(initialState = {}) {
     this.state = { ...initialState };
-    this.subscribers = new Set();
   }
 
   /**
-   * Subscribe to state changes.
-   * Returns an unsubscribe function.
+   * Get a value from state
    */
-  subscribe(callback) {
-    if (typeof callback !== "function") {
-      throw new Error("[StateEngine] subscribe() requires a function");
-    }
-
-    this.subscribers.add(callback);
-
-    return () => {
-      this.subscribers.delete(callback);
-    };
+  getState(key) {
+    return this.state[key];
   }
 
   /**
-   * Get a deep snapshot of the current state.
+   * Set a value in state
    */
-  getSnapshot() {
-    return JSON.parse(JSON.stringify(this.state));
+  setState(key, value) {
+    this.state[key] = value;
+
+    // Notify listeners (preview + runtime)
+    EventBus.emit("state:update", {
+      key,
+      value,
+      state: { ...this.state },
+    });
   }
 
   /**
-   * Update the state with a partial patch.
-   * Triggers subscriber notifications.
+   * Replace entire state object
    */
-  update(patch) {
-    if (typeof patch !== "object" || patch === null) {
-      console.warn("[StateEngine] Ignoring invalid state patch:", patch);
-      return;
-    }
-
-    this.state = {
-      ...this.state,
-      ...patch,
-    };
-
-    this._notify();
-  }
-
-  /**
-   * Replace the entire state tree.
-   */
-  replace(newState) {
-    if (typeof newState !== "object" || newState === null) {
-      throw new Error("[StateEngine] replace() requires an object");
-    }
-
+  replaceState(newState) {
     this.state = { ...newState };
-    this._notify();
+    EventBus.emit("state:replace", { state: { ...this.state } });
   }
 
   /**
-   * Internal: notify all subscribers.
+   * Get full state snapshot
    */
-  _notify() {
-    const snapshot = this.getSnapshot();
-    this.subscribers.forEach((fn) => fn(snapshot));
+  getAll() {
+    return { ...this.state };
   }
 }
