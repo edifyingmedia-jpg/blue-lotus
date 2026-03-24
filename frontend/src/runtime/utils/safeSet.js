@@ -1,41 +1,43 @@
 /**
  * safeSet.js
  * ----------------------------------------------------
- * Safely sets a nested value on an object using a
- * dot‑separated path. Creates intermediate objects
- * as needed. Never throws.
+ * Safely set a nested value using dot-path notation.
  *
- * Examples:
- *   safeSet(obj, "user.profile.name", "Tiffany")
- *   safeSet(obj, "settings.theme.colors.primary", "#000")
+ * Example:
+ *   const obj = {};
+ *   safeSet(obj, "user.profile.name", "Tiffany");
+ *   → obj = { user: { profile: { name: "Tiffany" } } }
  */
 
 export default function safeSet(obj, path, value) {
-  if (!obj || !path || typeof path !== "string") return obj;
+  if (!obj || typeof obj !== "object") {
+    throw new Error("safeSet requires a target object");
+  }
+  if (!path || typeof path !== "string") {
+    throw new Error("safeSet requires a string path");
+  }
 
   const parts = path.split(".");
   let current = obj;
 
   for (let i = 0; i < parts.length; i++) {
-    const key = parts[i];
+    const part = parts[i];
 
-    // Last key → assign value
+    // If we're at the last segment, assign the value
     if (i === parts.length - 1) {
-      current[key] = value;
-      return obj;
+      current[part] = value;
+      return;
     }
 
-    // Create intermediate objects if missing
+    // If the next segment doesn't exist, create it
     if (
-      !current[key] ||
-      typeof current[key] !== "object" ||
-      Array.isArray(current[key])
+      current[part] === undefined ||
+      current[part] === null ||
+      typeof current[part] !== "object"
     ) {
-      current[key] = {};
+      current[part] = {};
     }
 
-    current = current[key];
+    current = current[part];
   }
-
-  return obj;
 }
