@@ -1,92 +1,97 @@
 /**
- * Blue Lotus — Tri‑Neon Global Theme Tokens
- * Unified design system for all components and screens.
+ * tokens.js
+ * ----------------------------------------------------
+ * Theme token definitions for the runtime.
+ *
+ * These tokens define:
+ * - colors
+ * - typography
+ * - spacing
+ * - radii
+ * - shadows
+ *
+ * ThemeEngine loads these and exposes them to the app.
  */
 
-const colors = {
-  // Core neutrals
-  background: "#0A0A0F",
-  surface: "rgba(255,255,255,0.04)",
-  surfaceHover: "rgba(255,255,255,0.08)",
-  border: "rgba(255,255,255,0.12)",
-  textPrimary: "#FFFFFF",
-  textSecondary: "rgba(255,255,255,0.6)",
-
-  // Tri‑Neon signature colors
-  neonCyan: "#00FFFF",
-  neonPink: "#FF00FF",
-  neonPurple: "#9D4BFF",
-
-  // Utility
-  danger: "#FF4D4D",
-  success: "#4DFF88",
-  warning: "#FFD84D",
-};
-
-const radii = {
-  xs: "4px",
-  sm: "6px",
-  md: "8px",
-  lg: "12px",
-  xl: "20px",
-  full: "999px",
-};
-
-const spacing = {
-  xs: "4px",
-  sm: "8px",
-  md: "12px",
-  lg: "16px",
-  xl: "24px",
-  xxl: "32px",
-};
-
-const typography = {
-  fontFamily: "'Inter', sans-serif",
-
-  sizes: {
-    xs: "12px",
-    sm: "14px",
-    md: "16px",
-    lg: "20px",
-    xl: "24px",
-    xxl: "32px",
+const base = {
+  colors: {
+    primary: "#4A90E2",
+    secondary: "#50E3C2",
+    background: "#FFFFFF",
+    surface: "#F7F7F7",
+    text: "#1A1A1A",
+    muted: "#999999",
+    border: "#E0E0E0",
+    danger: "#FF4D4F",
+    warning: "#FAAD14",
+    success: "#52C41A",
   },
 
-  weights: {
-    regular: 400,
-    medium: 500,
-    semibold: 600,
-    bold: 700,
+  typography: {
+    fontFamily: "Inter, system-ui, sans-serif",
+    fontSize: {
+      xs: 12,
+      sm: 14,
+      md: 16,
+      lg: 20,
+      xl: 24,
+      xxl: 32,
+    },
+    fontWeight: {
+      regular: 400,
+      medium: 500,
+      bold: 700,
+    },
+  },
+
+  spacing: {
+    xs: 4,
+    sm: 8,
+    md: 12,
+    lg: 16,
+    xl: 24,
+    xxl: 32,
+  },
+
+  radii: {
+    sm: 4,
+    md: 8,
+    lg: 12,
+    round: 999,
+  },
+
+  shadows: {
+    sm: "0 1px 2px rgba(0,0,0,0.05)",
+    md: "0 2px 4px rgba(0,0,0,0.08)",
+    lg: "0 4px 12px rgba(0,0,0,0.12)",
   },
 };
 
-const shadows = {
-  soft: "0 4px 12px rgba(0,0,0,0.25)",
-  medium: "0 6px 20px rgba(0,0,0,0.35)",
-  strong: "0 10px 30px rgba(0,0,0,0.45)",
+const light = {
+  ...base,
+  mode: "light",
+  colors: {
+    ...base.colors,
+    background: "#FFFFFF",
+    surface: "#F7F7F7",
+    text: "#1A1A1A",
+  },
 };
 
-const neon = {
-  cyan: "0 0 8px rgba(0,255,255,0.7), 0 0 16px rgba(0,255,255,0.4)",
-  pink: "0 0 8px rgba(255,0,255,0.7), 0 0 16px rgba(255,0,255,0.4)",
-  purple: "0 0 8px rgba(157,75,255,0.7), 0 0 16px rgba(157,75,255,0.4)",
+const dark = {
+  ...base,
+  mode: "dark",
+  colors: {
+    ...base.colors,
+    background: "#0D0D0D",
+    surface: "#1A1A1A",
+    text: "#FFFFFF",
+    border: "#333333",
+    muted: "#777777",
+  },
 };
 
-const motion = {
-  fast: "150ms ease",
-  normal: "250ms ease",
-  slow: "400ms ease",
+export default {
+  light,
+  dark,
 };
-
-export const tokens = {
-  colors,
-  radii,
-  spacing,
-  typography,
-  shadows,
-  neon,
-  motion,
-};
-
-export default tokens;
