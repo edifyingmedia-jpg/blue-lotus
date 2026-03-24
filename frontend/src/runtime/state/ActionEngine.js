@@ -1,68 +1,58 @@
-// frontend/src/runtime/state/ActionEngine.js
-
 /**
  * ActionEngine.js
- * ---------------------------------------------------------
- * Executes runtime actions triggered by components or screens.
+ * ----------------------------------------------------
+ * Executes actions defined in the project.
  *
  * Responsibilities:
- *  - Run logic blocks
- *  - Update runtime state
- *  - Navigate between screens
- *  - Support async operations
+ * - Look up actions by ID
+ * - Execute action handlers
+ * - Integrate with StateEngine and NavigationEngine
+ * - Provide deterministic, synchronous action flow
  */
 
-import { useRuntimeState } from "./StateContext";
-import { useScreenEngine } from "../resolver/ScreenEngine";
+import project from "../../project";
+import StateEngine from "./StateEngine";
+import NavigationEngine from "../navigation/NavigationEngine";
 
-export default function useActionEngine() {
-  const { setValue, setValues, state } = useRuntimeState();
-  const { navigate } = useScreenEngine();
+class ActionEngine {
+  constructor() {
+    this.actions = project?.actions || {};
+  }
 
   /**
-   * Execute a single action object
+   * Execute an action by ID.
    */
-  async function runAction(action) {
-    if (!action || typeof action !== "object") return;
+  run(actionId, payload = {}) {
+    const action = this.actions[actionId];
+
+    if (!action) {
+      console.error(`ActionEngine: Action "${actionId}" not found`);
+      return;
+    }
 
     switch (action.type) {
-      case "setValue":
-        setValue(action.key, action.value);
+      case "state.set":
+        StateEngine.set(action.key, payload.value);
         break;
 
-      case "setValues":
-        setValues(action.values);
+      case "state.merge":
+        StateEngine.merge(payload.values || {});
         break;
 
-      case "navigate":
-        navigate(action.screenId);
+      case "navigate.to":
+        NavigationEngine.navigate(action.screenId);
         break;
 
       case "log":
-        console.log("Runtime Log:", action.message, { state });
-        break;
-
-      case "delay":
-        await new Promise((resolve) => setTimeout(resolve, action.ms));
+        console.log("ActionEngine log:", payload);
         break;
 
       default:
-        console.warn(`Unknown action type: ${action.type}`);
+        console.error(`ActionEngine: Unknown action type "${action.type}"`);
         break;
     }
   }
-
-  /**
-   * Execute an array of actions in sequence
-   */
-  async function runActions(actions = []) {
-    for (const action of actions) {
-      await runAction(action);
-    }
-  }
-
-  return {
-    runAction,
-    runActions,
-  };
 }
+
+const engine = new ActionEngine();
+export default engine;
