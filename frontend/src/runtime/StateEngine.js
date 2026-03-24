@@ -1,55 +1,76 @@
 /**
- * StateEngine
+ * StateEngine.js
  * ----------------------------------------------------
- * Centralized state container for the runtime.
+ * Centralized runtime state container.
  *
  * Responsibilities:
- * - Store key/value state
- * - Provide deterministic getters/setters
- * - Emit state change events
- * - Integrate with components + actions
+ *  - Store and manage app state
+ *  - Provide safe get/set operations
+ *  - Emit state change events
+ *  - Ensure deterministic updates
  */
 
-import EventBus from "./EventBus";
+import eventBus from "./utils/eventBus";
+import { safeGet, safeSet, deepClone } from "./utils";
 
 export default class StateEngine {
   constructor(initialState = {}) {
-    this.state = { ...initialState };
+    if (typeof initialState !== "object") {
+      throw new Error("StateEngine requires an object as initial state");
+    }
+
+    this.state = deepClone(initialState);
   }
 
   /**
-   * Get a value from state
+   * Get a value from state using dot-path notation.
    */
-  getState(key) {
-    return this.state[key];
+  get(path) {
+    if (!path || typeof path !== "string") {
+      throw new Error("StateEngine.get requires a string path");
+    }
+
+    return safeGet(this.state, path);
   }
 
   /**
-   * Set a value in state
+   * Set a value in state using dot-path notation.
    */
-  setState(key, value) {
-    this.state[key] = value;
+  set(path, value) {
+    if (!path || typeof path !== "string") {
+      throw new Error("StateEngine.set requires a string path");
+    }
 
-    // Notify listeners (preview + runtime)
-    EventBus.emit("state:update", {
-      key,
-      value,
-      state: { ...this.state },
+    const cloned = deepClone(value);
+
+    safeSet(this.state, path, cloned);
+
+    eventBus.emit("state:change", {
+      path,
+      value: cloned,
+      state: this.state,
     });
   }
 
   /**
-   * Replace entire state object
+   * Replace the entire state object.
    */
-  replaceState(newState) {
-    this.state = { ...newState };
-    EventBus.emit("state:replace", { state: { ...this.state } });
+  replace(newState) {
+    if (typeof newState !== "object") {
+      throw new Error("StateEngine.replace requires an object");
+    }
+
+    this.state = deepClone(newState);
+
+    eventBus.emit("state:replace", {
+      state: this.state,
+    });
   }
 
   /**
-   * Get full state snapshot
+   * Return a deep clone of the current state.
    */
-  getAll() {
-    return { ...this.state };
+  snapshot() {
+    return deepClone(this.state);
   }
 }
