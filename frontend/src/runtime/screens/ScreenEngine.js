@@ -1,41 +1,61 @@
-// frontend/src/runtime/screens/ScreenEngine.js
-
 /**
  * ScreenEngine.js
- * ---------------------------------------------------------
- * Resolves runtime screen definitions.
+ * ----------------------------------------------------
+ * Central controller for screen state.
  *
  * Responsibilities:
- *  - Load screen definitions by name
- *  - Validate screen structure
- *  - Normalize screen data for rendering
- *
- * This engine must remain deterministic and UI‑agnostic.
+ * - Track the active screen
+ * - Allow subscriptions to screen changes
+ * - Provide deterministic screen switching
+ * - Integrate with NavigationEngine + ScreenLoader
  */
 
-import ScreenLoader from './ScreenLoader';
-
 class ScreenEngine {
-  load(screenName) {
-    if (!screenName) return null;
-
-    const screen = ScreenLoader.load(screenName);
-    if (!screen) return null;
-
-    return this.normalize(screen);
+  constructor() {
+    this.activeScreen = null;
+    this.subscribers = new Set();
   }
 
-  normalize(screen) {
-    return {
-      name: screen.name,
-      layout: screen.layout || null,
-      components: Array.isArray(screen.components)
-        ? screen.components
-        : [],
-      metadata: screen.metadata || {},
-    };
+  /**
+   * Initialize the engine with the first screen.
+   */
+  setInitialScreen(screen) {
+    this.activeScreen = screen;
+    this.notify();
+  }
+
+  /**
+   * Change the active screen.
+   */
+  setScreen(screen) {
+    this.activeScreen = screen;
+    this.notify();
+  }
+
+  /**
+   * Get the current active screen.
+   */
+  getScreen() {
+    return this.activeScreen;
+  }
+
+  /**
+   * Subscribe to screen changes.
+   */
+  subscribe(callback) {
+    this.subscribers.add(callback);
+    return () => this.subscribers.delete(callback);
+  }
+
+  /**
+   * Notify all subscribers of a screen change.
+   */
+  notify() {
+    for (const callback of this.subscribers) {
+      callback(this.activeScreen);
+    }
   }
 }
 
-const screenEngine = new ScreenEngine();
-export default screenEngine;
+const engine = new ScreenEngine();
+export default engine;
