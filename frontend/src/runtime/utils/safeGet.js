@@ -1,31 +1,32 @@
 /**
  * safeGet.js
  * ----------------------------------------------------
- * Safely retrieves a nested value from an object using
- * a dot‑separated path. Returns undefined if any part
- * of the path is missing.
+ * Safely read a nested value using dot-path notation.
  *
- * Examples:
- *   safeGet(obj, "user.profile.name")
- *   safeGet(obj, "settings.theme.colors.primary")
+ * Example:
+ *   safeGet({ user: { name: "Tiffany" } }, "user.name")
+ *   → "Tiffany"
  */
 
-export default function safeGet(obj, path) {
-  if (!obj || !path || typeof path !== "string") return undefined;
+export default function safeGet(obj, path, fallback = undefined) {
+  if (!obj || typeof obj !== "object") return fallback;
+  if (!path || typeof path !== "string") return fallback;
 
   const parts = path.split(".");
+
   let current = obj;
 
   for (const part of parts) {
     if (
-      current &&
-      typeof current === "object" &&
-      Object.prototype.hasOwnProperty.call(current, part)
+      current === null ||
+      current === undefined ||
+      typeof current !== "object" ||
+      !(part in current)
     ) {
-      current = current[part];
-    } else {
-      return undefined;
+      return fallback;
     }
+
+    current = current[part];
   }
 
   return current;
