@@ -1,33 +1,15 @@
-// frontend/src/runtime/state/Dispatch.js
-
 /**
- * Dispatch
- * ---------------------------------------------------------
- * Connects actions to the reducer + StateManager.
+ * Dispatch.js
+ * ----------------------------------------------------
+ * Provides a unified dispatch function for triggering
+ * actions in the runtime.
  *
- * Responsibilities:
- * - Accept an action object
- * - Run reducer(state, action)
- * - Update StateManager with the new state
- * - Return the updated state for convenience
+ * This is a thin wrapper around ActionEngine.run(),
+ * giving components a clean way to trigger actions.
  */
 
-export default function createDispatch(stateManager, reducer) {
-  return function dispatch(action) {
-    if (!action || typeof action.type !== "string") {
-      console.warn("Dispatch: Invalid action:", action);
-      return stateManager.getState();
-    }
+import ActionEngine from "./ActionEngine";
 
-    const prevState = stateManager.getState();
-    const nextState = reducer(prevState, action);
-
-    // Reducer must always return a new object
-    if (nextState === prevState) {
-      console.warn("Reducer returned the same state object. Check immutability.");
-    }
-
-    stateManager.setState(nextState);
-    return nextState;
-  };
+export default function Dispatch(actionId, payload = {}) {
+  ActionEngine.run(actionId, payload);
 }
