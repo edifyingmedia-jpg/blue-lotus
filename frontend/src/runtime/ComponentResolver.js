@@ -1,85 +1,39 @@
-// frontend/src/runtime/ComponentResolver.js
-
 /**
- * ComponentResolver
- * ---------------------------------------------------------
- * Converts component definitions from appDefinition into
- * actual React elements with resolved props, bindings, and
- * event handlers.
+ * ComponentResolver.js
+ * ----------------------------------------------------
+ * Resolves component types from the app definition
+ * into actual React components registered in the
+ * runtime component map.
  *
  * Responsibilities:
- *  - Resolve component type → actual React component
- *  - Resolve props (static + bound)
- *  - Resolve event handlers → ActionDispatcher events
- *  - Recursively build the component tree
+ *  - Map string component types to real components
+ *  - Throw deterministic errors for unknown types
+ *  - Provide a single entry point for resolution
  */
 
-import React from "react";
-import resolveComponent from "./resolveComponent";
+import componentMap from "../componentMap";
 
 export default class ComponentResolver {
-  constructor({ appDefinition, state, dispatcher }) {
-    this.appDefinition = appDefinition;
-    this.state = state;
-    this.dispatcher = dispatcher;
+  constructor() {
+    if (!componentMap || typeof componentMap !== "object") {
+      throw new Error("componentMap is missing or invalid");
+    }
   }
 
   /**
-   * Resolve a component by ID into a React element.
+   * Resolve a component type into a real React component.
    */
-  resolveById(componentId) {
-    const def = this.appDefinition.components[componentId];
-    if (!def) {
-      console.warn(`[ComponentResolver] Unknown component ID: ${componentId}`);
-      return null;
+  resolve(type) {
+    if (!type || typeof type !== "string") {
+      throw new Error(`Invalid component type: ${type}`);
     }
 
-    return this._resolve(def);
-  }
+    const Component = componentMap[type];
 
-  /**
-   * Internal: resolve a component definition.
-   */
-  _resolve(def) {
-    const { type, props = {}, bindings = {}, events = {}, children = [] } = def;
-
-    // 1. Resolve actual React component
-    const Component = resolveComponent(type);
     if (!Component) {
-      console.warn(`[ComponentResolver] Unknown component type: ${type}`);
-      return null;
+      throw new Error(`Unknown component type: '${type}'`);
     }
 
-    // 2. Resolve props (static + bound)
-    const resolvedProps = { ...props };
-
-    for (const key of Object.keys(bindings)) {
-      const stateKey = bindings[key];
-      resolvedProps[key] = this.state.get(stateKey);
-    }
-
-    // 3. Resolve event handlers
-    const resolvedEvents = {};
-    for (const eventName of Object.keys(events)) {
-      const eventDef = events[eventName];
-      resolvedEvents[eventName] = () => {
-        this.dispatcher.dispatchEvent({
-          type: eventName,
-          actions: eventDef.actions,
-        });
-      };
-    }
-
-    // 4. Resolve children recursively
-    const resolvedChildren = children.map((childId) =>
-      this.resolveById(childId)
-    );
-
-    // 5. Return final React element
-    return React.createElement(
-      Component,
-      { ...resolvedProps, ...resolvedEvents },
-      ...resolvedChildren
-    );
+    return Component;
   }
 }
