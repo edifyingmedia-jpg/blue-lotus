@@ -1,69 +1,80 @@
-// frontend/src/runtime/twinClient.js
-
 /**
  * twinClient.js
- * ---------------------------------------------------------
- * Safe runtime wrapper around the owner‑only TWIN interface.
+ * ----------------------------------------------------
+ * Public client wrapper for TWIN API calls.
  *
- * Rules enforced:
- *  - Clients NEVER get TWIN access
- *  - Free tier NEVER gets TWIN access
- *  - Paid tier NEVER gets TWIN access
- *  - Only the OWNER receives TWIN capabilities
- *  - TWIN must NEVER clone Blue Lotus or itself except for the owner
- *  - TWIN must NEVER expose builder logic to clients
+ * IMPORTANT:
+ * - Only the OWNER (Tiffany) can trigger TWIN operations.
+ * - Free-tier users have NO access to TWIN.
+ * - Paid-tier users have LIMITED access (repair, sync).
+ * - TWIN cannot be exported, cloned, or accessed externally.
  *
- * This wrapper ensures the runtime never crashes if TWIN is null.
+ * This client is intentionally minimal and deterministic.
  */
 
-import twin from "./twin";
+import APIClient from "./api";
+import auth from "./auth";
 
-/**
- * Safe wrapper for TWIN calls.
- * Returns null for all non‑owner users.
- */
-const twinClient = {
-  /**
-   * Check if TWIN is available (owner only).
-   */
-  isEnabled() {
-    return twin !== null;
-  },
+class TwinClient {
+  constructor() {
+    this.api = new APIClient();
+  }
 
   /**
-   * Owner‑only: infer appDefinition from a public website.
-   * Never clones private areas, never clones Blue Lotus, never clones TWIN.
+   * Check if the current user is the OWNER.
    */
-  async inferFromUrl(url) {
-    if (!twin) {
-      console.warn("[twinClient] TWIN unavailable. User is not owner.");
-      return null;
-    }
+  async isOwner() {
+    const session = await auth.getSession();
+    const email = session?.user?.email || null;
 
-    try {
-      return await twin.inferFromUrl(url);
-    } catch (err) {
-      console.error("[twinClient] Error during TWIN inference:", err);
-      return null;
-    }
-  },
+    // Hard-coded owner identity (sovereign control)
+    return email === "tiffany@bluelotus.ai";
+  }
 
   /**
-   * Generic request passthrough (owner only).
+   * Call a TWIN endpoint safely.
    */
-  async request(path, options = {}) {
-    if (!twin) {
-      console.warn("[twinClient] TWIN unavailable. User is not owner.");
-      return null;
+  async call(endpoint, payload = {}) {
+    const owner = await this.isOwner();
+
+    if (!owner) {
+      return {
+        ok: false,
+        error: "Access denied: Only the owner can use TWIN.",
+      };
     }
 
-    try {
-      return await twin.request(path, options);
-    } catch (err) {
-      console.error("[twinClient] TWIN request failed:", err);
-      return null;
-    }
-  },
-};
+    return this.api.post(`/api/twin/${endpoint}`, payload);
+  }
 
+  /**
+   * Provision backend for a user project.
+   */
+  async provisionBackend(projectId) {
+    return this.call("provision-backend", { projectId });
+  }
+
+  /**
+   * Sync backend schema with app definition.
+   */
+  async syncSchema(projectId, appDefinition) {
+    return this.call("sync-schema", { projectId, appDefinition });
+  }
+
+  /**
+   * Repair backend if user breaks their project.
+   */
+  async repair(projectId) {
+    return this.call("repair", { projectId });
+  }
+
+  /**
+   * Migrate project to White Lotus backup platform.
+   */
+  async migrateToWhiteLotus(projectId) {
+    return this.call("migrate", { projectId });
+  }
+}
+
+const twinClient = new TwinClient();
 export default twinClient;
