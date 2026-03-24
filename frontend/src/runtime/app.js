@@ -1,34 +1,57 @@
-// frontend/src/runtime/app.js
-
 /**
  * app.js
- * ---------------------------------------------------------
- * Runtime bootstrap module for Blue Lotus.
+ * ----------------------------------------------------
+ * Entry point for initializing the Blue Lotus runtime.
  *
- * This file initializes the API client and exposes a clean
- * entry point for the runtime environment. It does NOT mount
- * React — that is handled by RuntimeApp.jsx.
+ * Responsibilities:
+ * - Initialize API client
+ * - Initialize Supabase (optional)
+ * - Provide a clean bootstrap for RuntimeEngine
  */
 
 import APIClient from "./api";
 import supabaseClient from "./supabaseClient";
+import RuntimeEngine from "./RuntimeEngine";
 
-/**
- * Create a fully configured runtime environment.
- */
-export function createRuntimeEnvironment() {
-  const api = new APIClient({
-    supabase: supabaseClient || null,
-  });
+const app = {
+  api: null,
+  runtime: null,
 
-  return {
-    api,
-  };
-}
+  /**
+   * Initialize the runtime environment
+   */
+  init({ appDefinition, onRender }) {
+    // Initialize API client
+    this.api = new APIClient({
+      supabase: supabaseClient || null,
+    });
 
-/**
- * Default export for convenience.
- */
-export default {
-  createRuntimeEnvironment,
+    // Initialize runtime engine
+    this.runtime = new RuntimeEngine({
+      onRender,
+    });
+
+    // Load the app definition
+    if (appDefinition) {
+      this.runtime.load(appDefinition);
+    }
+
+    return this.runtime;
+  },
+
+  /**
+   * Expose API client
+   */
+  getAPI() {
+    return this.api;
+  },
+
+  /**
+   * Expose runtime engine
+   */
+  getRuntime() {
+    return this.runtime;
+  },
 };
+
+export default app;
