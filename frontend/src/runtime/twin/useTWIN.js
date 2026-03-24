@@ -1,35 +1,52 @@
-// frontend/src/runtime/twin/useTWIN.js
-// Hook to manage TWIN textarea input + output + loading state
+/**
+ * useTWIN.js
+ * ----------------------------------------------------
+ * React hook that exposes TWIN orchestration functions
+ * to the UI layer. This is owner-only and only active
+ * inside the Blue Lotus builder environment.
+ *
+ * End users of generated apps NEVER have access to TWIN.
+ */
 
-import { useState } from "react";
-import { sendToTWIN } from "./TWINLogic";
+import { useMemo } from "react";
+import TWINActionEngine from "./ActionEngine";
 
-export function useTWIN() {
-  const [input, setInput] = useState("");
-  const [output, setOutput] = useState("");
-  const [loading, setLoading] = useState(false);
+export default function useTWIN() {
+  // Expose a stable API surface
+  return useMemo(() => {
+    return {
+      run: (action, payload) => TWINActionEngine.run(action, payload),
 
-  const sendMessage = async () => {
-    if (!input.trim()) return;
+      // Convenience wrappers
+      generateProject: (payload) =>
+        TWINActionEngine.generateProject(payload),
 
-    setLoading(true);
+      validateProject: (payload) =>
+        TWINActionEngine.validateProject(payload),
 
-    const response = await sendToTWIN(input);
+      loadProject: (payload) =>
+        TWINActionEngine.loadProject(payload),
 
-    if (response.success) {
-      setOutput(response.output);
-    } else {
-      setOutput("TWIN could not process your request.");
-    }
+      syncSchema: (payload) =>
+        TWINActionEngine.syncSchema(payload),
 
-    setLoading(false);
-  };
+      repairSchema: (payload) =>
+        TWINActionEngine.repairSchema(payload),
 
-  return {
-    input,
-    setInput,
-    output,
-    loading,
-    sendMessage,
-  };
+      generateBuilder: (payload) =>
+        TWINActionEngine.generateBuilder(payload),
+
+      repairBuilder: (payload) =>
+        TWINActionEngine.repairBuilder(payload),
+
+      startDeployment: (payload) =>
+        TWINActionEngine.startDeployment(payload),
+
+      verifyDeployment: (payload) =>
+        TWINActionEngine.verifyDeployment(payload),
+
+      rollbackDeployment: (payload) =>
+        TWINActionEngine.rollbackDeployment(payload),
+    };
+  }, []);
 }
