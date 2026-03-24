@@ -1,75 +1,62 @@
-// frontend/src/runtime/NavigationEngine.js
-
 /**
  * NavigationEngine
- * ---------------------------------------------------------
- * A deterministic, route-based navigation controller for
- * the Blue Lotus runtime engine.
+ * ----------------------------------------------------
+ * Centralized navigation controller for the runtime.
  *
  * Responsibilities:
- *  - Validate route names
- *  - Update the current route
- *  - Notify listeners (preview/builder) of route changes
- *
- * It does NOT:
- *  - maintain a navigation stack
- *  - manage modals
- *  - interpret screen-based navigation
+ * - Track current screen
+ * - Validate navigation targets
+ * - Emit navigation events
+ * - Integrate with EventBus + RuntimeRenderer
  */
 
+import EventBus from "./EventBus";
+
 export default class NavigationEngine {
-  constructor({ routes, onNavigate }) {
-    this.routes = routes || {};
-    this.onNavigate = onNavigate || null;
-
-    // Current route name
-    this.currentRoute = null;
+  constructor({ appDefinition, onNavigate }) {
+    this.appDefinition = appDefinition;
+    this.onNavigate = onNavigate;
+    this.currentScreen = appDefinition?.entryScreen || null;
   }
 
   /**
-   * Initialize navigation with an initial route.
+   * Navigate to a screen by ID
    */
-  init(initialRoute) {
-    if (initialRoute && this.routes[initialRoute]) {
-      this.currentRoute = initialRoute;
-    } else {
-      // fallback to first route
-      const keys = Object.keys(this.routes);
-      this.currentRoute = keys.length > 0 ? keys[0] : null;
-    }
-
-    this._emit();
-  }
-
-  /**
-   * Navigate to a route by name.
-   */
-  navigate(routeName) {
-    if (!routeName || !this.routes[routeName]) {
-      console.warn(`[NavigationEngine] Unknown route "${routeName}"`);
+  navigate(screenId) {
+    if (!this.appDefinition?.screens?.[screenId]) {
+      console.warn(`NavigationEngine: Screen "${screenId}" does not exist.`);
       return;
     }
 
-    this.currentRoute = routeName;
-    this._emit();
-  }
+    this.currentScreen = screenId;
 
-  /**
-   * Get the current route name.
-   */
-  getCurrentRoute() {
-    return this.currentRoute;
-  }
-
-  /**
-   * Internal: notify listeners.
-   */
-  _emit() {
+    // Notify runtime + preview
     if (this.onNavigate) {
-      this.onNavigate({
-        type: "routeChange",
-        route: this.currentRoute,
-      });
+      this.onNavigate(screenId);
+    }
+
+    EventBus.emit("preview:navigate", screenId);
+  }
+
+  /**
+   * Returns the current screen ID
+   */
+  getCurrentScreen() {
+    return this.currentScreen;
+  }
+
+  /**
+   * Update app definition (e.g., builder changes)
+   */
+  updateDefinition(newDefinition) {
+    this.appDefinition = newDefinition;
+
+    // If the current screen was deleted, reset to entry
+    if (!newDefinition.screens?.[this.currentScreen]) {
+      this.currentScreen = newDefinition.entryScreen || null;
+      if (this.onNavigate) {
+        this.onNavigate(this.currentScreen);
+      }
     }
   }
 }
