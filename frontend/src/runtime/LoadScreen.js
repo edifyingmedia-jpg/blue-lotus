@@ -1,48 +1,30 @@
+import React from "react";
+
 /**
- * loadScreen.js
- * --------------
- * Loads a screen JSON definition by name or ID.
+ * LoadScreen
+ * -----------------------------------------
+ * A simple, deterministic loading screen used by the
+ * runtime engine while initializing app definitions,
+ * resolving components, or preparing the preview host.
  *
- * Supports:
- *  - Local development screens (from /screens folder)
- *  - Remote Supabase screens (optional)
+ * This component must remain lightweight and synchronous.
  */
 
-export async function loadScreen(screenName) {
-  if (!screenName) {
-    console.warn("⚠ loadScreen: No screen name provided.");
-    return null;
-  }
-
-  // 1. Try loading from local JSON (development mode)
-  try {
-    const localScreen = await import(`../screens/${screenName}.json`);
-    return localScreen.default || localScreen;
-  } catch (err) {
-    console.info(`ℹ No local screen found for "${screenName}". Checking Supabase...`);
-  }
-
-  // 2. Try loading from Supabase (if configured)
-  try {
-    if (!window.supabase) {
-      console.warn("⚠ Supabase client not found on window.supabase.");
-      return null;
-    }
-
-    const { data, error } = await window.supabase
-      .from("screens")
-      .select("*")
-      .eq("name", screenName)
-      .single();
-
-    if (error) {
-      console.error("❌ Supabase error loading screen:", error);
-      return null;
-    }
-
-    return data?.json || null;
-  } catch (err) {
-    console.error("❌ Error loading screen from Supabase:", err);
-    return null;
-  }
+export default function LoadScreen({ message = "Loading..." }) {
+  return (
+    <div
+      style={{
+        width: "100%",
+        height: "100%",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        fontSize: "1.25rem",
+        color: "#555",
+        fontFamily: "Inter, sans-serif",
+      }}
+    >
+      {message}
+    </div>
+  );
 }
