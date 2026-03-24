@@ -1,34 +1,38 @@
-// frontend/src/runtime/screens/ScreenContext.js
-
 /**
  * ScreenContext.js
- * ---------------------------------------------------------
- * React context for exposing runtime screen state.
+ * ----------------------------------------------------
+ * Provides React context for the currently rendered screen.
  *
- * Responsibilities:
- *  - Provide the active screen to the UI layer
- *  - Subscribe to SceneManager updates
- *  - Keep React in sync with runtime state
+ * This allows deeply nested components to access:
+ * - the current screen object
+ * - screen-level props
+ * - runtime bindings
+ *
+ * This context is used by:
+ * - ScreenRenderer
+ * - SceneManager
+ * - ComponentResolver-driven components
  */
 
-import React, { createContext, useEffect, useState } from 'react';
-import sceneManager from './SceneManager';
+import React, { createContext, useContext } from "react";
 
-export const ScreenContext = createContext(null);
+const ScreenContext = createContext(null);
 
-export function ScreenProvider({ children }) {
-  const [activeScreen, setActiveScreen] = useState(
-    sceneManager.getActiveScene()
-  );
-
-  useEffect(() => {
-    const unsubscribe = sceneManager.subscribe(setActiveScreen);
-    return unsubscribe;
-  }, []);
+export function ScreenProvider({ screen, bindings, children }) {
+  const value = {
+    screen,
+    bindings,
+  };
 
   return (
-    <ScreenContext.Provider value={{ activeScreen }}>
+    <ScreenContext.Provider value={value}>
       {children}
     </ScreenContext.Provider>
   );
 }
+
+export function useScreenContext() {
+  return useContext(ScreenContext);
+}
+
+export default ScreenContext;
