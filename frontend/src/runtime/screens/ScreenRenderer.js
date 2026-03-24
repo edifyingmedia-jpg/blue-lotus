@@ -1,30 +1,51 @@
-// frontend/src/runtime/screens/ScreenRenderer.js
-
 /**
  * ScreenRenderer.js
- * ---------------------------------------------------------
- * Renders a normalized runtime screen definition.
+ * ----------------------------------------------------
+ * The final rendering layer for a screen node.
  *
  * Responsibilities:
- *  - Receive a resolved screen object
- *  - Render its layout and component tree
+ * - Resolve the component type using ComponentResolver
+ * - Inject runtime data bindings
+ * - Render children recursively
  *
- * This renderer must remain deterministic and UI‑agnostic.
+ * This file is used by both:
+ * - DynamicScreen (navigation-aware)
+ * - RenderScreen (screen-level rendering)
+ * - SceneManager (nested scenes)
  */
 
-import React from 'react';
-import ComponentResolver from '../resolver/ComponentResolver';
+import React from "react";
+import ComponentResolver from "../resolver/ComponentResolver";
+import useRuntimeDataBindings from "../useRuntimeDataBindings";
 
-export default function ScreenRenderer({ screen }) {
+export default function ScreenRenderer({ screen, bindings }) {
   if (!screen) return null;
 
-  const { components } = screen;
+  const { type, props = {}, children = [] } = screen;
+
+  // Resolve the actual React component
+  const Component = ComponentResolver.resolve(type);
+  if (!Component) {
+    console.error(`ScreenRenderer: Unknown component type "${type}"`);
+    return null;
+  }
+
+  // Merge props with runtime bindings
+  const mergedProps = {
+    ...props,
+    ...bindings,
+  };
 
   return (
-    <>
-      {components.map((node, index) => (
-        <ComponentResolver key={index} node={node} />
-      ))}
-    </>
+    <Component {...mergedProps}>
+      {Array.isArray(children) &&
+        children.map((child, index) => (
+          <ScreenRenderer
+            key={index}
+            screen={child}
+            bindings={useRuntimeDataBindings(child.id, child.props || {})}
+          />
+        ))}
+    </Component>
   );
 }
