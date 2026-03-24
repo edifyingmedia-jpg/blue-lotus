@@ -1,49 +1,31 @@
-// frontend/src/runtime/useRuntimeDataBindings.js
-
 /**
  * useRuntimeDataBindings.js
- * ---------------------------------------------------------
- * React hook that resolves dynamic bindings inside component props.
+ * ----------------------------------------------------
+ * React hook that provides components with access to
+ * runtime data bindings (state, props, computed values).
  *
- * This is the glue between:
- *  - DocumentModel (screen-level bindings)
- *  - StateEngine (global reactive state)
- *  - ActionDispatcher (action results)
- *  - resolveProps / resolveBinding (expression resolver)
- *
- * It ensures that any {{ ... }} expression inside props is
- * resolved into a real value before the component renders.
+ * This hook listens to StateEngine updates and returns
+ * the resolved binding values for the component.
  */
 
-import { useMemo } from "react";
-import { resolveProps } from "./bindings";
+import { useState, useEffect } from "react";
+import createBindings from "./bindings";
 import StateEngine from "./StateEngine";
-import ActionDispatcher from "./ActionDispatcher";
 
-/**
- * Hook: useRuntimeDataBindings
- *
- * @param {object} rawProps - The component's original props from DocumentModel
- * @param {object} screenBindings - The bindings defined on the current screen
- */
-export default function useRuntimeDataBindings(rawProps, screenBindings) {
-  // Pull reactive state
-  const state = StateEngine.useState(); // subscribes to state changes
+export default function useRuntimeDataBindings(componentId, props = {}) {
+  const [bindings, setBindings] = useState(() =>
+    createBindings(componentId, props)
+  );
 
-  // Pull action results (reactive)
-  const actions = ActionDispatcher.useActionResults();
-
-  /**
-   * Resolve all dynamic expressions inside props.
-   * Memoized so components only re-render when dependencies change.
-   */
-  const resolvedProps = useMemo(() => {
-    return resolveProps(rawProps, {
-      state,
-      bindings: screenBindings || {},
-      actions,
+  useEffect(() => {
+    // Subscribe to state changes
+    const unsubscribe = StateEngine.subscribe(() => {
+      const updated = createBindings(componentId, props);
+      setBindings(updated);
     });
-  }, [rawProps, state, screenBindings, actions]);
 
-  return resolvedProps;
+    return () => unsubscribe && unsubscribe();
+  }, [componentId, props]);
+
+  return bindings;
 }
