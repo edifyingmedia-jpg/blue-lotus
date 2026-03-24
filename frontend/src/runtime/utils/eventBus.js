@@ -1,43 +1,70 @@
-// frontend/src/runtime/utils/eventBus.js
-
 /**
- * eventBus
- * ---------------------------------------------------------
- * A lightweight publish/subscribe system for runtime modules.
- * Engines and components can emit events without knowing
- * who is listening, keeping the architecture decoupled.
+ * eventBus.js
+ * ----------------------------------------------------
+ * Lightweight, deterministic event bus used throughout
+ * the runtime. This is NOT the same as the TWIN EventBus
+ * or the Editor EventBus — this is the generic runtime
+ * utility version.
+ *
+ * Features:
+ * - subscribe(event, handler)
+ * - unsubscribe(event, handler)
+ * - emit(event, payload)
+ *
+ * Deterministic, dependency-free, and safe for both
+ * Preview and Runtime environments.
  */
 
-export default function createEventBus() {
-  const listeners = new Map();
+class EventBus {
+  constructor() {
+    this.events = {};
+  }
 
-  return {
-    // Subscribe to an event
-    on(event, handler) {
-      if (!listeners.has(event)) {
-        listeners.set(event, new Set());
-      }
-      listeners.get(event).add(handler);
-
-      // Unsubscribe function
-      return () => {
-        listeners.get(event)?.delete(handler);
-      };
-    },
-
-    // Emit an event
-    emit(event, payload) {
-      const handlers = listeners.get(event);
-      if (!handlers) return;
-
-      for (const handler of handlers) {
-        handler(payload);
-      }
-    },
-
-    // Remove all listeners for an event
-    clear(event) {
-      listeners.delete(event);
+  /**
+   * Subscribe to an event.
+   */
+  subscribe(event, handler) {
+    if (typeof handler !== "function") {
+      throw new Error(`EventBus: handler for "${event}" must be a function`);
     }
-  };
+
+    if (!this.events[event]) {
+      this.events[event] = new Set();
+    }
+
+    this.events[event].add(handler);
+
+    // Return unsubscribe function
+    return () => this.unsubscribe(event, handler);
+  }
+
+  /**
+   * Unsubscribe from an event.
+   */
+  unsubscribe(event, handler) {
+    if (!this.events[event]) return;
+    this.events[event].delete(handler);
+    if (this.events[event].size === 0) {
+      delete this.events[event];
+    }
+  }
+
+  /**
+   * Emit an event synchronously.
+   */
+  emit(event, payload) {
+    const handlers = this.events[event];
+    if (!handlers) return;
+
+    for (const handler of handlers) {
+      try {
+        handler(payload);
+      } catch (err) {
+        console.error(`EventBus: handler for "${event}" threw`, err);
+      }
+    }
+  }
 }
+
+const eventBus = new EventBus();
+export default eventBus;
