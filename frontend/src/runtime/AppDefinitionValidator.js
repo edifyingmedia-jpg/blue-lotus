@@ -1,111 +1,184 @@
-// frontend/src/runtime/AppDefinitionValidator.js
-
 /**
- * AppDefinitionValidator
- * ---------------------------------------------------------
- * Ensures the appDefinition, components, and routes are valid
- * before the runtime engine attempts to render anything.
+ * AppDefinitionValidator.js
+ * ----------------------------------------------------
+ * Validates the structure of the app definition JSON
+ * before the runtime attempts to render or execute it.
  *
- * This prevents:
- *  - dangling component references
- *  - missing root components
- *  - invalid node structures
- *  - invalid route definitions
- *
- * It does NOT:
- *  - mutate the appDefinition
- *  - invent missing components
- *  - auto-correct invalid structures
+ * Responsibilities:
+ *  - Ensure required top-level fields exist
+ *  - Validate screens, components, props, bindings, and actions
+ *  - Prevent malformed definitions from reaching the runtime
+ *  - Provide deterministic, developer-friendly error messages
  */
 
-export function validateAppDefinition({ appDefinition, components, routes }) {
-  const errors = [];
+export default class AppDefinitionValidator {
+  constructor() {}
 
-  // -----------------------------------------------------
-  // 1. Validate appDefinition existence
-  // -----------------------------------------------------
-  if (!appDefinition) {
-    errors.push("appDefinition is missing.");
-    return errors;
+  /**
+   * Main entry point.
+   * Throws an error if invalid.
+   */
+  validate(appDefinition) {
+    if (!appDefinition || typeof appDefinition !== "object") {
+      throw new Error("App definition must be an object");
+    }
+
+    this.validateScreens(appDefinition.screens);
+    this.validateInitialScreen(appDefinition.initialScreen);
+    this.validateState(appDefinition.state);
   }
 
-  // -----------------------------------------------------
-  // 2. Validate rootComponentId
-  // -----------------------------------------------------
-  if (!appDefinition.rootComponentId) {
-    errors.push("appDefinition.rootComponentId is not set.");
-  } else if (!components?.[appDefinition.rootComponentId]) {
-    errors.push(
-      `Root component "${appDefinition.rootComponentId}" does not exist in components map.`
-    );
+  /**
+   * Validate screens array
+   */
+  validateScreens(screens) {
+    if (!Array.isArray(screens)) {
+      throw new Error("App definition must include a screens array");
+    }
+
+    for (const screen of screens) {
+      this.validateScreen(screen);
+    }
   }
 
-  // -----------------------------------------------------
-  // 3. Validate components map
-  // -----------------------------------------------------
-  if (!components || typeof components !== "object") {
-    errors.push("components map is missing or invalid.");
-    return errors;
+  /**
+   * Validate a single screen
+   */
+  validateScreen(screen) {
+    if (!screen || typeof screen !== "object") {
+      throw new Error("Screen must be an object");
+    }
+
+    if (!screen.id || typeof screen.id !== "string") {
+      throw new Error("Screen missing required id");
+    }
+
+    if (!Array.isArray(screen.components)) {
+      throw new Error(`Screen '${screen.id}' must include a components array`);
+    }
+
+    for (const component of screen.components) {
+      this.validateComponent(component, screen.id);
+    }
   }
 
-  Object.entries(components).forEach(([id, node]) => {
-    if (!node) {
-      errors.push(`Component "${id}" is null or undefined.`);
-      return;
+  /**
+   * Validate a component
+   */
+  validateComponent(component, screenId) {
+    if (!component || typeof component !== "object") {
+      throw new Error(`Invalid component in screen '${screenId}'`);
     }
 
-    if (!node.type) {
-      errors.push(`Component "${id}" is missing required field "type".`);
-    }
-
-    if (node.children && !Array.isArray(node.children)) {
-      errors.push(`Component "${id}" has invalid "children" (must be an array).`);
-    }
-
-    if (node.children) {
-      node.children.forEach((childId) => {
-        if (!components[childId]) {
-          errors.push(
-            `Component "${id}" references missing child component "${childId}".`
-          );
-        }
-      });
-    }
-  });
-
-  // -----------------------------------------------------
-  // 4. Validate routes
-  // -----------------------------------------------------
-  if (!routes || typeof routes !== "object") {
-    errors.push("routes map is missing or invalid.");
-    return errors;
-  }
-
-  Object.entries(routes).forEach(([routeName, route]) => {
-    if (!route.rootComponentId) {
-      errors.push(`Route "${routeName}" is missing rootComponentId.`);
-      return;
-    }
-
-    if (!components[route.rootComponentId]) {
-      errors.push(
-        `Route "${routeName}" references missing root component "${route.rootComponentId}".`
+    if (!component.type || typeof component.type !== "string") {
+      throw new Error(
+        `Component in screen '${screenId}' missing required type`
       );
     }
-  });
 
-  return errors;
+    if (component.props && typeof component.props !== "object") {
+      throw new Error(
+        `Component '${component.type}' in screen '${screenId}' has invalid props`
+      );
+    }
+
+    if (component.bindings) {
+      this.validateBindings(component.bindings, component.type, screenId);
+    }
+
+    if (component.actions) {
+      this.validateActions(component.actions, component.type, screenId);
+    }
+
+    if (Array.isArray(component.children)) {
+      for (const child of component.children) {
+        this.validateComponent(child, screenId);
+      }
+    }
+  }
+
+  /**
+   * Validate bindings
+   */
+  validateBindings(bindings, componentType, screenId) {
+    if (typeof bindings !== "object") {
+      throw new Error(
+        `Bindings for component '${componentType}' in screen '${screenId}' must be an object`
+      );
+    }
+
+    for (const key of Object.keys(bindings)) {
+      const binding = bindings[key];
+
+      if (
+        typeof binding !== "string" ||
+        (!binding.startsWith("$state.") &&
+          !binding.startsWith("$props.") &&
+          !binding.startsWith("$context."))
+      ) {
+        throw new Error(
+          `Invalid binding '${key}' on component '${componentType}' in screen '${screenId}'`
+        );
+      }
+    }
+  }
+
+  /**
+   * Validate actions
+   */
+  validateActions(actions, componentType, screenId) {
+    if (!Array.isArray(actions)) {
+      throw new Error(
+        `Actions for component '${componentType}' in screen '${screenId}' must be an array`
+      );
+    }
+
+    for (const action of actions) {
+      this.validateAction(action, componentType, screenId);
+    }
+  }
+
+  /**
+   * Validate a single action
+   */
+  validateAction(action, componentType, screenId) {
+    if (!action || typeof action !== "object") {
+      throw new Error(
+        `Invalid action on component '${componentType}' in screen '${screenId}'`
+      );
+    }
+
+    if (!action.type || typeof action.type !== "string") {
+      throw new Error(
+        `Action missing type on component '${componentType}' in screen '${screenId}'`
+      );
+    }
+
+    // Conditional action
+    if (action.type === "conditional") {
+      if (!action.if || typeof action.if !== "object") {
+        throw new Error(
+          `Conditional action missing 'if' block on component '${componentType}' in screen '${screenId}'`
+        );
+      }
+    }
+  }
+
+  /**
+   * Validate initial screen
+   */
+  validateInitialScreen(initialScreen) {
+    if (!initialScreen || typeof initialScreen !== "string") {
+      throw new Error("App definition must include an initialScreen string");
+    }
+  }
+
+  /**
+   * Validate initial state
+   */
+  validateState(state) {
+    if (state && typeof state !== "object") {
+      throw new Error("App state must be an object if provided");
+    }
+  }
 }
-
-/**
- * Convenience helper:
- * Returns true if no validation errors exist.
- */
-export function isAppDefinitionValid(args) {
-  return validateAppDefinition(args).length === 0;
-}
-
-export default {
-  validateAppDefinition,
-  isAppDefinitionValid,
-};
