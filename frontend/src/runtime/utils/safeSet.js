@@ -1,29 +1,31 @@
-// frontend/src/runtime/utils/safeSet.js
-
 /**
- * safeSet
- * ---------------------------------------------------------
- * Safely sets a nested value inside an object using a path.
- * Example: safeSet(obj, "user.profile.name", "Tiffany")
- * Creates intermediate objects as needed.
+ * safeSet.js
+ * ----------------------------------------------------
+ * Safely sets a nested value on an object using a
+ * dot‑separated path. Creates intermediate objects
+ * as needed. Never throws.
+ *
+ * Examples:
+ *   safeSet(obj, "user.profile.name", "Tiffany")
+ *   safeSet(obj, "settings.theme.colors.primary", "#000")
  */
 
 export default function safeSet(obj, path, value) {
-  if (!obj || typeof path !== "string") return obj;
+  if (!obj || !path || typeof path !== "string") return obj;
 
-  const keys = path.split(".");
+  const parts = path.split(".");
   let current = obj;
 
-  for (let i = 0; i < keys.length; i++) {
-    const key = keys[i];
+  for (let i = 0; i < parts.length; i++) {
+    const key = parts[i];
 
-    // Last key: assign the value
-    if (i === keys.length - 1) {
+    // Last key → assign value
+    if (i === parts.length - 1) {
       current[key] = value;
       return obj;
     }
 
-    // Create intermediate objects if missing or invalid
+    // Create intermediate objects if missing
     if (
       !current[key] ||
       typeof current[key] !== "object" ||
