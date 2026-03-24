@@ -1,47 +1,73 @@
-// frontend/src/runtime/state/StateManager.js
-
 /**
- * StateManager
- * ---------------------------------------------------------
- * - Centralized runtime state container
- * - Provides get/set/update helpers
- * - Emits change events to subscribed engines
- * - Pure, predictable, and framework‑agnostic
+ * stateManager.js
+ * ----------------------------------------------------
+ * High-level orchestrator for the runtime state system.
+ *
+ * Responsibilities:
+ * - Initialize global state
+ * - Provide unified access to state engines
+ * - Expose helper methods for components + runtime
+ * - Bridge StateEngine, ActionEngine, Reducer, and StateLoader
  */
 
-export default class StateManager {
-  constructor(initialState = {}) {
-    this.state = { ...initialState };
-    this.listeners = new Set();
+import StateEngine from "./StateEngine";
+import LocalStateEngine from "./stateEngine";
+import StateLoader from "./StateLoader";
+import ActionEngine from "./ActionEngine";
+
+class StateManager {
+  /**
+   * Initialize global state from project definition.
+   */
+  init() {
+    return StateLoader.load();
   }
 
-  // Read current state
-  getState() {
-    return this.state;
+  /**
+   * Get a global state value.
+   */
+  get(key) {
+    return StateEngine.get(key);
   }
 
-  // Replace entire state
-  setState(nextState) {
-    this.state = { ...nextState };
-    this._emit();
+  /**
+   * Set a global state value.
+   */
+  set(key, value) {
+    StateEngine.set(key, value);
   }
 
-  // Merge partial updates
-  update(partial) {
-    this.state = { ...this.state, ...partial };
-    this._emit();
+  /**
+   * Merge multiple values into global state.
+   */
+  merge(values) {
+    StateEngine.merge(values);
   }
 
-  // Subscribe to state changes
-  subscribe(fn) {
-    this.listeners.add(fn);
-    return () => this.listeners.delete(fn);
+  /**
+   * Subscribe to global state changes.
+   */
+  subscribe(callback) {
+    return StateEngine.subscribe(callback);
   }
 
-  // Notify subscribers
-  _emit() {
-    for (const fn of this.listeners) {
-      fn(this.state);
-    }
+  /**
+   * Dispatch an action.
+   */
+  dispatch(actionId, payload = {}) {
+    ActionEngine.run(actionId, payload);
   }
+
+  /**
+   * Local state helpers (component-level).
+   */
+  local = {
+    get: (key) => LocalStateEngine.get(key),
+    set: (key, value) => LocalStateEngine.set(key, value),
+    merge: (values) => LocalStateEngine.merge(values),
+    subscribe: (callback) => LocalStateEngine.subscribe(callback),
+  };
 }
+
+const manager = new StateManager();
+export default manager;
