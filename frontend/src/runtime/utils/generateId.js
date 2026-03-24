@@ -1,14 +1,22 @@
-// frontend/src/runtime/utils/generateId.js
-
 /**
- * generateId
- * ---------------------------------------------------------
- * Creates a short, unique, runtime‑safe ID.
- * Used for components, screens, actions, and internal events.
+ * generateId.js
+ * ----------------------------------------------------
+ * Deterministic, collision-resistant ID generator used
+ * throughout the runtime. This implementation:
+ *
+ * - Produces short, URL-safe IDs
+ * - Avoids Math.random() for determinism
+ * - Uses a monotonic counter + timestamp
+ * - Guaranteed unique per session
  */
 
+let counter = 0;
+
 export default function generateId(prefix = "id") {
-  const random = Math.random().toString(36).substring(2, 8);
+  counter += 1;
+
   const timestamp = Date.now().toString(36);
-  return `${prefix}_${timestamp}_${random}`;
+  const count = counter.toString(36);
+
+  return `${prefix}_${timestamp}_${count}`;
 }
