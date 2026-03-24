@@ -1,32 +1,28 @@
 /**
- * StateEngine.js
+ * stateEngine.js
  * ----------------------------------------------------
- * Centralized state manager for the runtime.
+ * A lightweight state engine used for component-level
+ * or local runtime state, separate from the global
+ * StateEngine.js.
  *
- * Responsibilities:
- * - Hold global state values
- * - Provide deterministic updates
- * - Notify subscribers on change
- * - Integrate with data bindings
- *
- * This engine is intentionally simple and synchronous.
+ * This engine is intentionally minimal and synchronous.
  */
 
-class StateEngine {
+class LocalStateEngine {
   constructor() {
     this.state = {};
     this.subscribers = new Set();
   }
 
   /**
-   * Get a value from the global state.
+   * Get a value from local state.
    */
   get(key) {
     return this.state[key];
   }
 
   /**
-   * Set a value in the global state.
+   * Set a value in local state.
    */
   set(key, value) {
     this.state[key] = value;
@@ -34,7 +30,7 @@ class StateEngine {
   }
 
   /**
-   * Merge multiple values into the global state.
+   * Merge multiple values into local state.
    */
   merge(values) {
     Object.assign(this.state, values);
@@ -42,7 +38,7 @@ class StateEngine {
   }
 
   /**
-   * Subscribe to state changes.
+   * Subscribe to local state changes.
    */
   subscribe(callback) {
     this.subscribers.add(callback);
@@ -59,5 +55,5 @@ class StateEngine {
   }
 }
 
-const engine = new StateEngine();
-export default engine;
+const localState = new LocalStateEngine();
+export default localState;
