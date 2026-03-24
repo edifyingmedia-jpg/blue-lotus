@@ -1,78 +1,72 @@
-// RuntimeEngine.js
-// Core runtime orchestrator for Blue Lotus
+/**
+ * RuntimeEngine
+ * ----------------------------------------------------
+ * The central orchestrator for the Blue Lotus runtime.
+ *
+ * Responsibilities:
+ * - Load and validate app definitions
+ * - Initialize navigation + state engines
+ * - Render the active screen
+ * - Emit updates to PreviewHost / RuntimeApp
+ */
 
+import ProjectLoader from "./ProjectLoader";
 import NavigationEngine from "./NavigationEngine";
 import StateEngine from "./StateEngine";
-import ActionDispatcher from "./ActionDispatcher";
-import DocumentModel from "./DocumentModel";
+import RenderScreen from "./RenderScreen";
+import EventBus from "./EventBus";
 
 export default class RuntimeEngine {
-  constructor() {
-    this.appDefinition = null;
+  constructor({ onRender }) {
+    this.onRender = onRender;
 
-    this.navigation = new NavigationEngine();
-    this.state = new StateEngine();
-    this.dispatcher = new ActionDispatcher({
-      navigation: this.navigation,
-      state: this.state,
-    });
+    this.projectLoader = new ProjectLoader();
+    this.stateEngine = new StateEngine();
+    this.navigationEngine = null;
+    this.screenRenderer = null;
 
-    this.document = null;
-
-    this.onRouteChange = null;
-    this.onStateChange = null;
-
-    // Wire state change events
-    this.state.subscribe((snapshot) => {
-      if (this.onStateChange) {
-        this.onStateChange(snapshot);
-      }
-    });
-
-    // Wire navigation change events
-    this.navigation.subscribe((route) => {
-      if (this.onRouteChange) {
-        this.onRouteChange(route);
-      }
-    });
+    this.definition = null;
   }
 
   /**
-   * Load a full appDefinition JSON document.
+   * Load an app definition into the runtime
    */
-  load(appDefinition) {
-    if (!appDefinition) {
-      throw new Error("[RuntimeEngine] Missing appDefinition");
+  load(definition) {
+    const normalized = this.projectLoader.load(definition);
+    if (!normalized) return;
+
+    this.definition = normalized;
+
+    // Initialize navigation
+    this.navigationEngine = new NavigationEngine({
+      appDefinition: this.definition,
+      onNavigate: (screenId) => this.render(screenId),
+    });
+
+    // Initialize screen renderer
+    this.screenRenderer = new RenderScreen({
+      appDefinition: this.definition,
+      stateEngine: this.stateEngine,
+      navigationEngine: this.navigationEngine,
+    });
+
+    // Render entry screen
+    this.render(this.definition.entryScreen);
+
+    // Notify listeners
+    EventBus.emit("runtime:loaded", this.definition);
+  }
+
+  /**
+   * Render a screen and send output to the host
+   */
+  render(screenId) {
+    if (!this.screenRenderer) return;
+
+    const html = this.screenRenderer.render(screenId);
+
+    if (this.onRender) {
+      this.onRender(html);
     }
-
-    this.appDefinition = appDefinition;
-    this.document = new DocumentModel(appDefinition);
-
-    // Initialize navigation to first route
-    const routes = this.document.getAllRoutes();
-    if (routes.length > 0) {
-      this.navigation.setRoute(routes[0]);
-    }
-  }
-
-  /**
-   * Get the current active route.
-   */
-  getCurrentRoute() {
-    return this.navigation.getCurrentRoute();
-  }
-
-  /**
-   * Get a snapshot of the current state.
-   */
-  getState() {
-    return this.state.getSnapshot();
-  }
-
-  /**
-   * Dispatch an action event.
-   */
-  dispatch(event) {
-    this.dispatcher.dispatchEvent(event);
   }
 }
