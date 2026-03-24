@@ -1,14 +1,12 @@
-// frontend/src/runtime/auth.js
-
 /**
  * auth.js
- * ---------------------------------------------------------
+ * ----------------------------------------------------
  * Lightweight authentication wrapper for the Blue Lotus runtime.
  *
- * This module provides:
- *  - Optional Supabase auth integration
- *  - Safe fallbacks when no backend is available
- *  - Normalized responses for login/logout/session
+ * Responsibilities:
+ * - Optional Supabase auth integration
+ * - Safe fallbacks when no backend is available
+ * - Normalized responses for login/logout/session
  *
  * The runtime must NEVER crash if authentication is unavailable.
  */
