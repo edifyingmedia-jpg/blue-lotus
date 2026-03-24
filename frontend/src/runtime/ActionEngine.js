@@ -1,20 +1,19 @@
+// frontend/src/runtime/ActionEngine.js
+
 /**
  * ActionEngine.js
  * ----------------------------------------------------
  * Executes JSON-defined runtime actions.
  *
  * Responsibilities:
- * - Validate incoming action objects
- * - Execute single or multi-step actions
- * - Support conditional actions
- * - Integrate with StateEngine and NavigationEngine
- * - Emit lifecycle events through eventBus
- *
- * This engine is deterministic, side-effect controlled,
- * and fully compatible with the TWIN runtime contract.
+ *  - Execute single or multi-step actions
+ *  - Support conditional actions
+ *  - Integrate with StateEngine and NavigationEngine
+ *  - Emit lifecycle events through eventBus
+ *  - Deterministic, side-effect controlled
  */
 
-import { safeGet, safeSet, deepClone, validateType } from "./utils";
+import { safeGet, deepClone } from "./utils";
 import eventBus from "./utils/eventBus";
 
 export default class ActionEngine {
@@ -33,6 +32,7 @@ export default class ActionEngine {
   async run(action) {
     if (!action) return;
 
+    // Array of actions
     if (Array.isArray(action)) {
       for (const step of action) {
         await this.run(step);
@@ -78,11 +78,6 @@ export default class ActionEngine {
 
   /**
    * setState action
-   * {
-   *   type: "setState",
-   *   path: "user.name",
-   *   value: "Tiffany"
-   * }
    */
   async handleSetState(action) {
     const { path, value } = action;
@@ -98,11 +93,6 @@ export default class ActionEngine {
 
   /**
    * navigate action
-   * {
-   *   type: "navigate",
-   *   to: "HomeScreen",
-   *   params: { id: 123 }
-   * }
    */
   async handleNavigate(action) {
     const { to, params } = action;
@@ -117,12 +107,6 @@ export default class ActionEngine {
 
   /**
    * conditional action
-   * {
-   *   type: "conditional",
-   *   if: { path: "user.loggedIn", equals: true },
-   *   then: { type: "navigate", to: "Dashboard" },
-   *   else: { type: "navigate", to: "Login" }
-   * }
    */
   async handleConditional(action) {
     const condition = action.if;
@@ -148,10 +132,6 @@ export default class ActionEngine {
 
   /**
    * log action
-   * {
-   *   type: "log",
-   *   message: "User clicked button"
-   * }
    */
   async handleLog(action) {
     if (action.message) {
