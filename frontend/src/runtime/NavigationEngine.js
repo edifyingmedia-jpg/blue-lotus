@@ -1,62 +1,69 @@
 /**
- * NavigationEngine
+ * NavigationEngine.js
  * ----------------------------------------------------
- * Centralized navigation controller for the runtime.
+ * Minimal deterministic navigation system for the runtime.
  *
  * Responsibilities:
- * - Track current screen
- * - Validate navigation targets
- * - Emit navigation events
- * - Integrate with EventBus + RuntimeRenderer
+ *  - Track current screen
+ *  - Navigate to a new screen by ID
+ *  - Emit navigation lifecycle events
+ *  - Integrate with Renderer and ActionEngine
  */
 
-import EventBus from "./EventBus";
+import eventBus from "./utils/eventBus";
 
 export default class NavigationEngine {
-  constructor({ appDefinition, onNavigate }) {
-    this.appDefinition = appDefinition;
-    this.onNavigate = onNavigate;
-    this.currentScreen = appDefinition?.entryScreen || null;
+  constructor({ documentModel, renderer }) {
+    if (!documentModel) {
+      throw new Error("NavigationEngine requires a documentModel");
+    }
+    if (!renderer) {
+      throw new Error("NavigationEngine requires a renderer");
+    }
+
+    this.documentModel = documentModel;
+    this.renderer = renderer;
+
+    this.currentScreen = documentModel.initialScreen;
   }
 
   /**
-   * Navigate to a screen by ID
+   * Navigate to a new screen.
    */
-  navigate(screenId) {
-    if (!this.appDefinition?.screens?.[screenId]) {
-      console.warn(`NavigationEngine: Screen "${screenId}" does not exist.`);
-      return;
+  navigate(screenId, params = {}) {
+    if (!screenId || typeof screenId !== "string") {
+      throw new Error("NavigationEngine.navigate requires a screenId string");
     }
 
+    const screen = this.documentModel.screens[screenId];
+    if (!screen) {
+      throw new Error(`NavigationEngine: unknown screen '${screenId}'`);
+    }
+
+    const previous = this.currentScreen;
     this.currentScreen = screenId;
 
-    // Notify runtime + preview
-    if (this.onNavigate) {
-      this.onNavigate(screenId);
-    }
+    eventBus.emit("navigation:before", {
+      from: previous,
+      to: screenId,
+      params,
+    });
 
-    EventBus.emit("preview:navigate", screenId);
+    const rendered = this.renderer.renderScreen(screenId);
+
+    eventBus.emit("navigation:after", {
+      from: previous,
+      to: screenId,
+      params,
+    });
+
+    return rendered;
   }
 
   /**
-   * Returns the current screen ID
+   * Get the current screen ID.
    */
   getCurrentScreen() {
     return this.currentScreen;
-  }
-
-  /**
-   * Update app definition (e.g., builder changes)
-   */
-  updateDefinition(newDefinition) {
-    this.appDefinition = newDefinition;
-
-    // If the current screen was deleted, reset to entry
-    if (!newDefinition.screens?.[this.currentScreen]) {
-      this.currentScreen = newDefinition.entryScreen || null;
-      if (this.onNavigate) {
-        this.onNavigate(this.currentScreen);
-      }
-    }
   }
 }
