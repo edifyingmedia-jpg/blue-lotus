@@ -1,66 +1,55 @@
 /**
- * eventBus.js
+ * EventBus.js
  * ----------------------------------------------------
- * Lightweight, deterministic event bus used throughout
- * the runtime. This is NOT the same as the TWIN EventBus
- * or the Editor EventBus — this is the generic runtime
- * utility version.
+ * Minimal synchronous event emitter used across the runtime.
  *
- * Features:
- * - subscribe(event, handler)
- * - unsubscribe(event, handler)
- * - emit(event, payload)
- *
- * Deterministic, dependency-free, and safe for both
- * Preview and Runtime environments.
+ * Responsibilities:
+ *  - Register event listeners
+ *  - Emit events synchronously
+ *  - Remove listeners
  */
 
 class EventBus {
   constructor() {
-    this.events = {};
+    this.listeners = {};
   }
 
   /**
    * Subscribe to an event.
    */
-  subscribe(event, handler) {
-    if (typeof handler !== "function") {
-      throw new Error(`EventBus: handler for "${event}" must be a function`);
+  on(event, callback) {
+    if (!this.listeners[event]) {
+      this.listeners[event] = [];
     }
 
-    if (!this.events[event]) {
-      this.events[event] = new Set();
-    }
+    this.listeners[event].push(callback);
 
-    this.events[event].add(handler);
-
-    // Return unsubscribe function
-    return () => this.unsubscribe(event, handler);
+    return () => this.off(event, callback);
   }
 
   /**
-   * Unsubscribe from an event.
+   * Remove a listener.
    */
-  unsubscribe(event, handler) {
-    if (!this.events[event]) return;
-    this.events[event].delete(handler);
-    if (this.events[event].size === 0) {
-      delete this.events[event];
-    }
+  off(event, callback) {
+    if (!this.listeners[event]) return;
+
+    this.listeners[event] = this.listeners[event].filter(
+      (cb) => cb !== callback
+    );
   }
 
   /**
    * Emit an event synchronously.
    */
   emit(event, payload) {
-    const handlers = this.events[event];
-    if (!handlers) return;
+    const callbacks = this.listeners[event];
+    if (!callbacks || callbacks.length === 0) return;
 
-    for (const handler of handlers) {
+    for (const cb of callbacks) {
       try {
-        handler(payload);
+        cb(payload);
       } catch (err) {
-        console.error(`EventBus: handler for "${event}" threw`, err);
+        console.error(`EventBus listener error for '${event}':`, err);
       }
     }
   }
