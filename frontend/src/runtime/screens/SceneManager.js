@@ -1,46 +1,34 @@
-// frontend/src/runtime/screens/SceneManager.js
-
 /**
  * SceneManager.js
- * ---------------------------------------------------------
- * Coordinates runtime screen lifecycle.
+ * ----------------------------------------------------
+ * Manages screen scenes, transitions, and nested screen
+ * structures. This is a lightweight manager that ensures
+ * the correct screen object is passed to RenderScreen.
  *
- * Responsibilities:
- *  - Track the active scene
- *  - Handle scene transitions
- *  - Provide a single source of truth for scene state
- *
- * This manager must remain deterministic and side‑effect free.
+ * This file replaces the old, overly complex scene logic
+ * with a deterministic, synchronous, stable version.
  */
 
-class SceneManager {
-  constructor() {
-    this.activeScene = null;
-    this.listeners = new Set();
-  }
+import React from "react";
+import RenderScreen from "./RenderScreen";
 
-  getActiveScene() {
-    return this.activeScene;
-  }
+export default function SceneManager({ scene }) {
+  if (!scene) return null;
 
-  setActiveScene(scene) {
-    if (!scene || scene === this.activeScene) return;
+  // A scene may contain:
+  // - a single screen
+  // - nested scenes
+  // - conditional branches (already resolved upstream)
 
-    this.activeScene = scene;
-    this.notify();
-  }
+  const { screen, children } = scene;
 
-  subscribe(listener) {
-    this.listeners.add(listener);
-    return () => this.listeners.delete(listener);
-  }
-
-  notify() {
-    this.listeners.forEach((listener) =>
-      listener(this.activeScene)
-    );
-  }
+  return (
+    <>
+      {screen && <RenderScreen screen={screen} />}
+      {Array.isArray(children) &&
+        children.map((child, index) => (
+          <SceneManager key={index} scene={child} />
+        ))}
+    </>
+  );
 }
-
-const sceneManager = new SceneManager();
-export default sceneManager;
