@@ -1,21 +1,55 @@
-// frontend/src/runtime/utils/validateType.js
-
 /**
- * validateType
- * ---------------------------------------------------------
- * Ensures a value matches one of the expected types.
- * Example:
- *   validateType("hello", ["string"]) → true
- *   validateType(42, ["string", "number"]) → true
- *   validateType({}, ["string"]) → false
+ * validateType.js
+ * ----------------------------------------------------
+ * Lightweight deterministic type validator used across
+ * the runtime (StateEngine, NavigationEngine, Component
+ * resolution, schema validation, etc.).
+ *
+ * Supports:
+ * - "string"
+ * - "number"
+ * - "boolean"
+ * - "array"
+ * - "object"
+ * - "function"
+ * - "date"
  */
 
-export default function validateType(value, expectedTypes = []) {
-  if (!Array.isArray(expectedTypes) || expectedTypes.length === 0) {
-    return true; // No type requirement
+export default function validateType(value, expectedType) {
+  if (!expectedType || typeof expectedType !== "string") {
+    return false;
   }
 
-  const actual = Array.isArray(value) ? "array" : typeof value;
+  const type = expectedType.toLowerCase();
 
-  return expectedTypes.includes(actual);
+  switch (type) {
+    case "string":
+      return typeof value === "string";
+
+    case "number":
+      return typeof value === "number" && !isNaN(value);
+
+    case "boolean":
+      return typeof value === "boolean";
+
+    case "array":
+      return Array.isArray(value);
+
+    case "object":
+      return (
+        value !== null &&
+        typeof value === "object" &&
+        !Array.isArray(value)
+      );
+
+    case "function":
+      return typeof value === "function";
+
+    case "date":
+      return value instanceof Date && !isNaN(value.getTime());
+
+    default:
+      // Unknown type → fail safely
+      return false;
+  }
 }
