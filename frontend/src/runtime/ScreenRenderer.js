@@ -1,73 +1,123 @@
 /**
- * ScreenRenderer
+ * ScreenRenderer.js
  * ----------------------------------------------------
- * Converts a screen definition into HTML output.
+ * Renders a screen definition into a React element tree.
  *
  * Responsibilities:
- * - Resolve components
- * - Render component tree
- * - Pass props, state, and navigation handlers
- * - Produce deterministic HTML output
+ *  - Walk the component tree defined in the app definition
+ *  - Resolve component types via ComponentResolver
+ *  - Bind props, state bindings, and event actions
+ *  - Produce a fully constructed React element tree
  */
 
-import ComponentResolver from "./ComponentResolver";
+import React from "react";
 
 export default class ScreenRenderer {
-  constructor({ resolveComponent, getState, setState, navigate }) {
-    this.resolveComponent = resolveComponent || ComponentResolver.resolve;
-    this.getState = getState;
-    this.setState = setState;
-    this.navigate = navigate;
+  constructor({
+    componentResolver,
+    stateEngine,
+    actionEngine,
+    navigationEngine,
+    documentModel,
+  }) {
+    this.componentResolver = componentResolver;
+    this.stateEngine = stateEngine;
+    this.actionEngine = actionEngine;
+    this.navigationEngine = navigationEngine;
+    this.documentModel = documentModel;
+
+    if (!componentResolver) throw new Error("ScreenRenderer requires componentResolver");
+    if (!stateEngine) throw new Error("ScreenRenderer requires stateEngine");
+    if (!actionEngine) throw new Error("ScreenRenderer requires actionEngine");
+    if (!navigationEngine) throw new Error("ScreenRenderer requires navigationEngine");
+    if (!documentModel) throw new Error("ScreenRenderer requires documentModel");
   }
 
   /**
-   * Render a full screen object
+   * Render a screen by ID.
    */
-  render(screen) {
-    if (!screen || !screen.layout) {
-      return `<div style="padding:20px;color:#900;">Invalid screen definition</div>`;
+  renderScreen(screenId) {
+    const screen = this.documentModel.getScreen(screenId);
+
+    if (!screen || !Array.isArray(screen.components)) {
+      throw new Error(`ScreenRenderer: invalid screen '${screenId}'`);
     }
 
-    try {
-      return this.renderNode(screen.layout);
-    } catch (err) {
-      console.error("ScreenRenderer: Failed to render screen:", err);
-      return `<div style="padding:20px;color:#900;">Render error: ${err.message}</div>`;
-    }
+    return (
+      <>
+        {screen.components.map((component, index) =>
+          this.renderComponent(component, index)
+        )}
+      </>
+    );
   }
 
   /**
-   * Render a single node in the component tree
+   * Render a single component node.
    */
-  renderNode(node) {
-    if (!node || !node.type) {
-      return "";
+  renderComponent(node, key) {
+    if (!node || typeof node !== "object") {
+      throw new Error("ScreenRenderer: invalid component node");
     }
 
-    const Component = this.resolveComponent(node.type);
+    const Component = this.componentResolver.resolve(node.type);
 
-    if (!Component) {
-      return `<div style="padding:10px;color:#b00;">Unknown component: ${node.type}</div>`;
+    const props = this.resolveProps(node);
+    const eventHandlers = this.resolveActions(node);
+
+    const children = Array.isArray(node.children)
+      ? node.children.map((child, index) => this.renderComponent(child, index))
+      : null;
+
+    return (
+      <Component key={key} {...props} {...eventHandlers}>
+        {children}
+      </Component>
+    );
+  }
+
+  /**
+   * Resolve props including state bindings.
+   */
+  resolveProps(node) {
+    const props = { ...(node.props || {}) };
+
+    if (node.bindings) {
+      for (const key of Object.keys(node.bindings)) {
+        const binding = node.bindings[key];
+
+        if (binding.startsWith("$state.")) {
+          const path = binding.replace("$state.", "");
+          props[key] = this.stateEngine.get(path);
+        } else if (binding.startsWith("$context.")) {
+          // Reserved for future context injection
+          props[key] = null;
+        } else if (binding.startsWith("$props.")) {
+          // Reserved for component-level props
+          props[key] = null;
+        }
+      }
     }
 
-    const props = {
-      ...(node.props || {}),
-      getState: this.getState,
-      setState: this.setState,
-      navigate: this.navigate,
-    };
+    return props;
+  }
 
-    // Render children recursively
-    let children = "";
-    if (node.children && Array.isArray(node.children)) {
-      children = node.children.map((child) => this.renderNode(child)).join("");
+  /**
+   * Convert action definitions into event handlers.
+   */
+  resolveActions(node) {
+    if (!node.actions) return {};
+
+    const handlers = {};
+
+    for (const actionDef of node.actions) {
+      const eventName = actionDef.event || "onPress";
+
+      handlers[eventName] = () => {
+        this.actionEngine.run(actionDef.action);
+      };
     }
 
-    try {
-      return Component.render(props, children);
-    } catch (err) {
-      console.error(`ScreenRenderer: Component "${node.type}" failed:`, err);
-      return `<div style="padding:10px;color:#b00;">Component error: ${node.type}</div>`;
-    }
+    return handlers;
   }
 }
