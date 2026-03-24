@@ -1,47 +1,34 @@
-// frontend/src/runtime/supabaseClient.js
-
 /**
  * supabaseClient.js
- * ---------------------------------------------------------
- * Safe, tier‑aware Supabase initialization for the Blue Lotus runtime.
+ * ----------------------------------------------------
+ * Creates a Supabase client instance if environment
+ * variables are available. Otherwise returns null.
  *
- * Rules enforced here:
- *  - Free tier users get NO Supabase client (null)
- *  - Paid users get their assigned Supabase project keys
- *  - Only the owner receives platform‑level Supabase access
- *  - Runtime must NEVER crash if Supabase is unavailable
- *
- * This file is intentionally minimal and deterministic.
+ * This ensures the runtime NEVER crashes on free tier
+ * or when backend is intentionally disabled.
  */
 
 import { createClient } from "@supabase/supabase-js";
 
-// Environment variables injected at build time.
-// These are controlled by the backend tier system.
-const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL;
-const SUPABASE_ANON_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY;
+let supabase = null;
 
-/**
- * If no Supabase credentials exist, return null.
- * This is the correct behavior for:
- *  - free tier users
- *  - preview mode
- *  - environments without backend access
- */
-if (!SUPABASE_URL || !SUPABASE_ANON_KEY) {
-  console.warn("[supabaseClient] No Supabase credentials found. Backend disabled.");
-  export default null;
-} else {
-  /**
-   * Create a fully configured Supabase client.
-   * RLS (Row Level Security) protects all data access.
-   */
-  const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
-    auth: {
-      persistSession: true,
-      autoRefreshToken: true,
-    },
-  });
+try {
+  const url = import.meta.env.VITE_SUPABASE_URL;
+  const key = import.meta.env.VITE_SUPABASE_ANON_KEY;
 
-  export default supabase;
+  if (url && key) {
+    supabase = createClient(url, key, {
+      auth: {
+        persistSession: true,
+        autoRefreshToken: true,
+      },
+    });
+  } else {
+    console.warn("Supabase not configured — running in no-backend mode.");
+  }
+} catch (err) {
+  console.error("Failed to initialize Supabase:", err);
+  supabase = null;
 }
+
+export default supabase;
