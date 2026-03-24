@@ -1,19 +1,21 @@
-// frontend/src/runtime/screens/ScreenRenderer.jsx
-
 /**
  * ScreenRenderer.jsx
- * ---------------------------------------------------------
- * JSX wrapper for rendering a resolved runtime screen.
+ * ----------------------------------------------------
+ * JSX wrapper for ScreenRenderer.js.
  *
- * This component is intentionally thin.
- * All logic lives in ScreenRenderer.js.
+ * This file exists because some components and render
+ * paths require JSX resolution separate from the logic
+ * layer in ScreenRenderer.js.
+ *
+ * This ensures:
+ * - clean separation of logic vs. JSX
+ * - no circular imports
+ * - compatibility with React tooling
  */
 
-import React from 'react';
-import ScreenRenderer from './ScreenRenderer';
+import React from "react";
+import ScreenRenderer from "./ScreenRenderer";
 
-export default function ScreenRendererJSX({ screen }) {
-  if (!screen) return null;
-
-  return <ScreenRenderer screen={screen} />;
+export default function ScreenRendererJSX(props) {
+  return <ScreenRenderer {...props} />;
 }
