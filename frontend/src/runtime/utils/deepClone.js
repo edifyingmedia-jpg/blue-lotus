@@ -1,70 +1,28 @@
 /**
  * deepClone.js
  * ----------------------------------------------------
- * Deterministic deep clone utility used throughout the
- * runtime. This implementation:
- *
- * - Handles arrays, objects, dates, maps, sets
- * - Avoids JSON stringify limitations
- * - Prevents circular reference crashes
- * - Produces stable, predictable clones
+ * Deterministic deep clone for plain objects and arrays.
+ * Does NOT attempt to clone functions, classes, Dates,
+ * Maps, Sets, or other complex types — because your
+ * runtime never uses them in app definitions or state.
  */
 
-export default function deepClone(value, seen = new WeakMap()) {
-  // Primitive values are returned as-is
-  if (value === null || typeof value !== "object") {
-    return value;
-  }
+export default function deepClone(value) {
+  if (value === null || value === undefined) return value;
 
-  // Handle circular references
-  if (seen.has(value)) {
-    return seen.get(value);
-  }
+  // Primitive values return as-is
+  if (typeof value !== "object") return value;
 
-  // Date
-  if (value instanceof Date) {
-    return new Date(value.getTime());
-  }
-
-  // Array
+  // Arrays
   if (Array.isArray(value)) {
-    const arr = [];
-    seen.set(value, arr);
-    for (const item of value) {
-      arr.push(deepClone(item, seen));
-    }
-    return arr;
+    return value.map((item) => deepClone(item));
   }
 
-  // Map
-  if (value instanceof Map) {
-    const map = new Map();
-    seen.set(value, map);
-    for (const [key, val] of value.entries()) {
-      map.set(key, deepClone(val, seen));
-    }
-    return map;
+  // Plain objects
+  const result = {};
+  for (const key of Object.keys(value)) {
+    result[key] = deepClone(value[key]);
   }
 
-  // Set
-  if (value instanceof Set) {
-    const set = new Set();
-    seen.set(value, set);
-    for (const item of value.values()) {
-      set.add(deepClone(item, seen));
-    }
-    return set;
-  }
-
-  // Plain object
-  const cloned = {};
-  seen.set(value, cloned);
-
-  for (const key in value) {
-    if (Object.prototype.hasOwnProperty.call(value, key)) {
-      cloned[key] = deepClone(value[key], seen);
-    }
-  }
-
-  return cloned;
+  return result;
 }
