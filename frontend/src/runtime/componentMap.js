@@ -1,37 +1,30 @@
-// frontend/src/runtime/componentMap.js
-
 /**
  * componentMap.js
- * ---------------------------------------------------------
- * Central registry mapping component type strings to the
- * actual React components used by the Blue Lotus runtime.
+ * ----------------------------------------------------
+ * Maps component type strings to actual component modules.
  *
- * This file is consumed by:
- *   - ComponentResolver
- *   - DynamicScreen
- *   - RenderScreen
+ * This is used by ComponentResolver.js to look up the
+ * correct component implementation at runtime.
  *
- * Only REAL runtime components belong here.
+ * Every component used in screens MUST be registered here.
  */
 
-import BLView from "../components/BLView";
-import BLText from "../components/BLText";
-import BLImage from "../components/BLImage";
-import BLButton from "../components/BLButton";
+import Button from "../components/Button";
+import Text from "../components/Text";
 import Input from "../components/Input";
+import Image from "../components/Image";
+import Container from "../components/Container";
+import List from "../components/List";
 import Spacer from "../components/Spacer";
 
-/**
- * Component registry
- * ---------------------------------------------------------
- * Keys MUST match the "type" field in appDefinition nodes.
- */
+// Add new components here as you build your library
 const componentMap = {
-  BLView,
-  BLText,
-  BLImage,
-  BLButton,
+  Button,
+  Text,
   Input,
+  Image,
+  Container,
+  List,
   Spacer,
 };
 
