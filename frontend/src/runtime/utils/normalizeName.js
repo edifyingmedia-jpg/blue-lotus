@@ -1,16 +1,28 @@
-// frontend/src/runtime/utils/normalizeName.js
-
 /**
- * normalizeName
- * ---------------------------------------------------------
- * Converts a string into a safe, predictable identifier.
- * Used for component names, screen names, and action keys.
+ * normalizeName.js
+ * ----------------------------------------------------
+ * Normalizes strings into safe, deterministic names
+ * used throughout the runtime for:
+ * - component names
+ * - state keys
+ * - navigation identifiers
+ * - schema fields
+ *
+ * Rules:
+ * - Trim whitespace
+ * - Convert to lowercase
+ * - Replace spaces and invalid characters with "-"
+ * - Collapse multiple separators
+ * - Remove leading/trailing separators
  */
 
-export default function normalizeName(value = "") {
-  return String(value)
+export default function normalizeName(value) {
+  if (!value || typeof value !== "string") return "";
+
+  return value
     .trim()
-    .replace(/\s+/g, "_")        // Replace spaces with underscores
-    .replace(/[^a-zA-Z0-9_]/g, "") // Remove invalid characters
-    .toLowerCase();
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")   // replace invalid chars with "-"
+    .replace(/-+/g, "-")           // collapse multiple dashes
+    .replace(/^-|-$/g, "");        // trim leading/trailing dashes
 }
