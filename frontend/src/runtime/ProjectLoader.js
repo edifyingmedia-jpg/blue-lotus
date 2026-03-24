@@ -1,67 +1,67 @@
-// frontend/src/runtime/ProjectLoader.js
-
 /**
- * ProjectLoader.js
- * ----------------
- * Functional project loader for the new Blue Lotus architecture.
- * Handles:
- *   - creating new projects
- *   - loading existing projects
- *   - saving project state
+ * ProjectLoader
+ * ----------------------------------------------------
+ * Loads, validates, and prepares an app definition
+ * for the runtime engine.
+ *
+ * Responsibilities:
+ * - Accept raw project JSON
+ * - Validate structure using AppDefinitionValidator
+ * - Normalize screens, components, and metadata
+ * - Emit load events for the preview/runtime
  */
 
-import { Project } from "./DocumentModel";
+import AppDefinitionValidator from "./AppDefinitionValidator";
+import EventBus from "./EventBus";
 
-const STORAGE_KEY = "blue-lotus-project";
+export default class ProjectLoader {
+  constructor() {
+    this.definition = null;
+  }
 
-/**
- * Create a brand new project with a default scene.
- */
-export function createNewProject(name = "Untitled Project") {
-  const id = crypto.randomUUID();
-  const project = new Project(id, name);
-
-  project.addScene("Main");
-  saveProject(project);
-
-  return project;
-}
-
-/**
- * Load a project from localStorage.
- */
-export function loadProject() {
-  const raw = localStorage.getItem(STORAGE_KEY);
-  if (!raw) return null;
-
-  try {
-    const data = JSON.parse(raw);
-    const project = new Project(data.id, data.name);
-
-    // Restore scenes
-    for (const s of data.scenes) {
-      const scene = project.addScene(s.name);
-      scene.id = s.id;
-      scene.content = s.content;
-      scene.createdAt = s.createdAt;
-      scene.updatedAt = s.updatedAt;
+  /**
+   * Load a raw project definition
+   */
+  load(rawDefinition) {
+    if (!rawDefinition) {
+      console.warn("ProjectLoader: No project definition provided.");
+      return null;
     }
 
-    project.metadata = data.metadata;
-    project.createdAt = data.createdAt;
-    project.updatedAt = data.updatedAt;
+    // Validate structure
+    const validation = AppDefinitionValidator.validate(rawDefinition);
+    if (!validation.valid) {
+      console.error("ProjectLoader: Invalid app definition:", validation.errors);
+      return null;
+    }
 
-    return project;
-  } catch (err) {
-    console.error("Failed to load project:", err);
-    return null;
+    // Normalize structure
+    this.definition = this.normalize(rawDefinition);
+
+    // Notify runtime + preview
+    EventBus.emit("project:loaded", this.definition);
+
+    return this.definition;
   }
-}
 
-/**
- * Save a project to localStorage.
- */
-export function saveProject(project) {
-  if (!project) return;
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(project));
+  /**
+   * Normalize app definition into a predictable structure
+   */
+  normalize(def) {
+    return {
+      id: def.id || "untitled",
+      name: def.name || "Untitled App",
+      entryScreen: def.entryScreen || Object.keys(def.screens || {})[0] || null,
+      screens: def.screens || {},
+      components: def.components || {},
+      metadata: def.metadata || {},
+    };
+  }
+
+  /**
+   * Get the current normalized definition
+   */
+  getDefinition() {
+    return this.definition;
+  }
 }
