@@ -1,31 +1,32 @@
-// frontend/src/runtime/screens/DynamicScreen.js
-
 /**
  * DynamicScreen.js
- * ---------------------------------------------------------
- * Runtime screen wrapper responsible for:
- *  - Loading a screen definition by name
- *  - Passing it into the ScreenEngine
- *  - Rendering it via ScreenRenderer
+ * ----------------------------------------------------
+ * Renders a screen definition dynamically using the
+ * ScreenRenderer and the component resolution pipeline.
  *
- * This file is runtime‑critical and must remain deterministic.
+ * This is the core runtime screen wrapper used by both
+ * Preview mode and deployed apps.
  */
 
-import React, { useEffect, useState } from 'react';
-import ScreenEngine from './ScreenEngine';
-import ScreenRenderer from './ScreenRenderer';
+import React from "react";
+import ScreenRenderer from "../ScreenRenderer";
+import useNavigation from "../useNavigation";
+import useRuntimeDataBindings from "../useRuntimeDataBindings";
 
-export default function DynamicScreen({ screenName }) {
-  const [screen, setScreen] = useState(null);
+export default function DynamicScreen({ screen }) {
+  const { currentScreen } = useNavigation();
 
-  useEffect(() => {
-    if (!screenName) return;
+  // If no screen is passed, fall back to current screen
+  const active = screen || currentScreen;
+  if (!active) return null;
 
-    const loadedScreen = ScreenEngine.load(screenName);
-    setScreen(loadedScreen);
-  }, [screenName]);
+  // Bindings for the root screen node
+  const bindings = useRuntimeDataBindings(active.id, active.props || {});
 
-  if (!screen) return null;
-
-  return <ScreenRenderer screen={screen} />;
+  return (
+    <ScreenRenderer
+      screen={active}
+      bindings={bindings}
+    />
+  );
 }
