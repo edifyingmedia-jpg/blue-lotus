@@ -1,57 +1,42 @@
-// frontend/src/runtime/useNavigation.js
-
 /**
  * useNavigation.js
- * ---------------------------------------------------------
- * React hook providing safe, deterministic access to the
- * Blue Lotus navigation API.
+ * ----------------------------------------------------
+ * React hook that exposes the public navigation API.
  *
- * This hook wraps the public navigation.js module, which
- * itself wraps NavigationEngine.
+ * This hook wraps navigation.js, which wraps the
+ * NavigationEngine instance initialized by RuntimeEngine.
  *
- * Rules:
- *  - Route-based navigation only
- *  - No stacks, no screens, no legacy models
- *  - Deterministic, predictable, safe
- *  - Never throws if navigation is not initialized
+ * Components use this hook to:
+ * - navigate between screens
+ * - read the current screen
+ *
+ * No stacks, no routes arrays, no legacy navigation.
  */
 
-import { useCallback } from "react";
-import navigation from "./navigation";
+import { useState, useEffect } from "react";
+import {
+  navigate,
+  getCurrentScreen,
+  getNavigationEngine,
+} from "./navigation";
 
 export default function useNavigation() {
-  /**
-   * Navigate to a route.
-   */
-  const navigate = useCallback((routeName, params = {}) => {
-    navigation.navigate(routeName, params);
-  }, []);
+  const [screen, setScreen] = useState(() => getCurrentScreen());
 
-  /**
-   * Replace the current route.
-   */
-  const replace = useCallback((routeName, params = {}) => {
-    navigation.replace(routeName, params);
-  }, []);
+  useEffect(() => {
+    const engine = getNavigationEngine();
+    if (!engine) return;
 
-  /**
-   * Reset the entire navigation state.
-   */
-  const reset = useCallback((routeName, params = {}) => {
-    navigation.reset(routeName, params);
-  }, []);
+    // Subscribe to screen changes
+    const unsubscribe = engine.subscribe((newScreen) => {
+      setScreen(newScreen);
+    });
 
-  /**
-   * Get the current route name.
-   */
-  const getCurrentRoute = useCallback(() => {
-    return navigation.getCurrentRoute();
+    return () => unsubscribe && unsubscribe();
   }, []);
 
   return {
     navigate,
-    replace,
-    reset,
-    getCurrentRoute,
+    currentScreen: screen,
   };
 }
