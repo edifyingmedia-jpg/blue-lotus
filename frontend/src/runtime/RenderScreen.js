@@ -1,42 +1,49 @@
-// frontend/src/runtime/RenderScreen.js
-
 /**
  * RenderScreen
- * ---------------------------------------------------------
- * Renders the active screen based on the current route.
- * This is a thin wrapper around DynamicScreen that provides
- * a stable mount point for the runtime and preview engine.
+ * ----------------------------------------------------
+ * Converts a screen definition into a rendered output
+ * using the ScreenRenderer and component resolver.
+ *
+ * Responsibilities:
+ * - Accept a screen object
+ * - Resolve components
+ * - Delegate rendering to ScreenRenderer
+ * - Return deterministic output for PreviewHost
  */
 
-import React from "react";
-import DynamicScreen from "./DynamicScreen";
+import ScreenRenderer from "./ScreenRenderer";
+import ComponentResolver from "./ComponentResolver";
 
-export default function RenderScreen({
-  appDefinition,
-  navigation,
-  state,
-  dispatcher,
-}) {
-  if (!navigation) {
-    console.warn("[RenderScreen] Missing navigation engine");
-    return null;
+export default class RenderScreen {
+  constructor({ appDefinition, stateEngine, navigationEngine }) {
+    this.appDefinition = appDefinition;
+    this.stateEngine = stateEngine;
+    this.navigationEngine = navigationEngine;
+
+    this.renderer = new ScreenRenderer({
+      resolveComponent: (type) => ComponentResolver.resolve(type),
+      getState: (key) => this.stateEngine.getState(key),
+      setState: (key, value) => this.stateEngine.setState(key, value),
+      navigate: (screenId) => this.navigationEngine.navigate(screenId),
+    });
   }
 
-  const routeName = navigation.getCurrentRoute();
+  /**
+   * Render a screen by ID
+   */
+  render(screenId) {
+    const screen = this.appDefinition?.screens?.[screenId];
 
-  if (!routeName) {
-    console.warn("[RenderScreen] No active route to render");
-    return null;
+    if (!screen) {
+      console.warn(`RenderScreen: Screen "${screenId}" not found.`);
+      return `<div style="padding:20px;color:#900;">Screen not found: ${screenId}</div>`;
+    }
+
+    try {
+      return this.renderer.render(screen);
+    } catch (err) {
+      console.error("RenderScreen: Failed to render screen:", err);
+      return `<div style="padding:20px;color:#900;">Render error: ${err.message}</div>`;
+    }
   }
-
-  return (
-    <div className="bl-render-screen" data-route={routeName}>
-      <DynamicScreen
-        appDefinition={appDefinition}
-        routeName={routeName}
-        state={state}
-        dispatcher={dispatcher}
-      />
-    </div>
-  );
 }
