@@ -1,100 +1,161 @@
-// frontend/src/runtime/ActionEngine.js
-
 /**
- * ActionEngine
- * ---------------------------------------------------------
- * Executes runtime actions defined in JSON.
+ * ActionEngine.js
+ * ----------------------------------------------------
+ * Executes JSON-defined runtime actions.
  *
  * Responsibilities:
- *  - Handle navigation actions
- *  - Handle state update actions (future)
- *  - Provide a unified run() dispatcher
+ * - Validate incoming action objects
+ * - Execute single or multi-step actions
+ * - Support conditional actions
+ * - Integrate with StateEngine and NavigationEngine
+ * - Emit lifecycle events through eventBus
  *
- * It does NOT:
- *  - invent actions
- *  - simulate backend responses
- *  - mutate appDefinition
+ * This engine is deterministic, side-effect controlled,
+ * and fully compatible with the TWIN runtime contract.
  */
 
+import { safeGet, safeSet, deepClone, validateType } from "./utils";
+import eventBus from "./utils/eventBus";
+
 export default class ActionEngine {
-  constructor({ navigate, getState, setState, onEvent }) {
-    this.navigate = navigate;
-    this.getState = getState;
-    this.setState = setState;
-    this.onEvent = onEvent;
+  constructor({ stateEngine, navigationEngine }) {
+    this.stateEngine = stateEngine;
+    this.navigationEngine = navigationEngine;
+
+    if (!stateEngine || !navigationEngine) {
+      throw new Error("ActionEngine requires stateEngine and navigationEngine");
+    }
   }
 
   /**
-   * Main dispatcher
+   * Main entry point for executing an action or array of actions.
    */
-  run(action) {
-    if (!action || typeof action !== "object") {
-      console.warn("ActionEngine.run: invalid action:", action);
+  async run(action) {
+    if (!action) return;
+
+    if (Array.isArray(action)) {
+      for (const step of action) {
+        await this.run(step);
+      }
       return;
     }
 
-    const { type } = action;
-
-    switch (type) {
-      case "navigate":
-        return this.handleNavigate(action);
-
-      case "setState":
-        return this.handleSetState(action);
-
-      default:
-        console.warn(`ActionEngine: Unknown action type "${type}"`);
-        return;
+    if (!action.type) {
+      console.warn("Action missing type:", action);
+      return;
     }
+
+    eventBus.emit("action:start", action);
+
+    try {
+      switch (action.type) {
+        case "setState":
+          await this.handleSetState(action);
+          break;
+
+        case "navigate":
+          await this.handleNavigate(action);
+          break;
+
+        case "conditional":
+          await this.handleConditional(action);
+          break;
+
+        case "log":
+          await this.handleLog(action);
+          break;
+
+        default:
+          console.warn("Unknown action type:", action.type);
+      }
+    } catch (err) {
+      console.error("ActionEngine error:", err);
+      eventBus.emit("action:error", { action, error: err });
+    }
+
+    eventBus.emit("action:end", action);
   }
 
   /**
-   * Navigation action
+   * setState action
+   * {
+   *   type: "setState",
+   *   path: "user.name",
+   *   value: "Tiffany"
+   * }
    */
-  handleNavigate(action) {
-    const { to } = action;
+  async handleSetState(action) {
+    const { path, value } = action;
+
+    if (!path || typeof path !== "string") {
+      console.warn("Invalid setState path:", action);
+      return;
+    }
+
+    const cloned = deepClone(value);
+    this.stateEngine.set(path, cloned);
+  }
+
+  /**
+   * navigate action
+   * {
+   *   type: "navigate",
+   *   to: "HomeScreen",
+   *   params: { id: 123 }
+   * }
+   */
+  async handleNavigate(action) {
+    const { to, params } = action;
 
     if (!to || typeof to !== "string") {
-      console.warn("ActionEngine.navigate: missing 'to' field:", action);
+      console.warn("Invalid navigate target:", action);
       return;
     }
 
-    if (typeof this.navigate === "function") {
-      this.navigate(to);
+    await this.navigationEngine.navigate(to, params || {});
+  }
+
+  /**
+   * conditional action
+   * {
+   *   type: "conditional",
+   *   if: { path: "user.loggedIn", equals: true },
+   *   then: { type: "navigate", to: "Dashboard" },
+   *   else: { type: "navigate", to: "Login" }
+   * }
+   */
+  async handleConditional(action) {
+    const condition = action.if;
+
+    if (!condition || !condition.path) {
+      console.warn("Invalid conditional action:", action);
+      return;
     }
 
-    if (this.onEvent) {
-      this.onEvent({
-        type: "navigation",
-        to,
-      });
+    const current = safeGet(this.stateEngine.state, condition.path);
+
+    const matches =
+      condition.equals !== undefined
+        ? current === condition.equals
+        : Boolean(current);
+
+    if (matches && action.then) {
+      await this.run(action.then);
+    } else if (!matches && action.else) {
+      await this.run(action.else);
     }
   }
 
   /**
-   * State update action (future‑ready)
+   * log action
+   * {
+   *   type: "log",
+   *   message: "User clicked button"
+   * }
    */
-  handleSetState(action) {
-    const { key, value } = action;
-
-    if (!key) {
-      console.warn("ActionEngine.setState: missing 'key' field:", action);
-      return;
-    }
-
-    if (typeof this.setState === "function") {
-      this.setState((prev) => ({
-        ...prev,
-        [key]: value,
-      }));
-    }
-
-    if (this.onEvent) {
-      this.onEvent({
-        type: "stateUpdate",
-        key,
-        value,
-      });
+  async handleLog(action) {
+    if (action.message) {
+      console.log("[ActionEngine]", action.message);
     }
   }
 }
