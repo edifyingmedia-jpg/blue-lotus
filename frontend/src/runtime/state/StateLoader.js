@@ -1,40 +1,35 @@
-// frontend/src/runtime/state/StateLoader.js
-
 /**
  * StateLoader.js
- * ---------------------------------------------------------
- * Loads the project's initial state into the runtime.
+ * ----------------------------------------------------
+ * Loads initial state values from the project definition.
  *
- * Responsibilities:
- *  - Accept the full project object
- *  - Extract initial variables/state
- *  - Pass them into StateProvider
+ * This is used by:
+ * - RuntimeEngine (during app startup)
+ * - StateEngine (for initial hydration)
+ *
+ * The loader is intentionally simple and synchronous.
  */
 
-import React from "react";
-import StateProvider from "./StateContext";
+import project from "../../project";
+import StateEngine from "./StateEngine";
+import Reducer from "./Reducer";
 
-export default function StateLoader({ project, children }) {
-  if (!project) {
-    return (
-      <div
-        style={{
-          padding: 20,
-          color: "red",
-          fontSize: 16,
-          fontWeight: "bold",
-        }}
-      >
-        No project provided to StateLoader.
-      </div>
-    );
+class StateLoader {
+  /**
+   * Load initial state from the project definition.
+   */
+  load() {
+    const initialState = project?.state || {};
+
+    // Apply each initial state value through the reducer
+    Object.entries(initialState).forEach(([key, value]) => {
+      const reduced = Reducer(undefined, value);
+      StateEngine.set(key, reduced);
+    });
+
+    return StateEngine.state;
   }
-
-  const initialState = project.initialState || {};
-
-  return (
-    <StateProvider initialState={initialState}>
-      {children}
-    </StateProvider>
-  );
 }
+
+const loader = new StateLoader();
+export default loader;
