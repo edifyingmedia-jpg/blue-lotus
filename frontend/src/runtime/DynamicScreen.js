@@ -1,56 +1,40 @@
-// frontend/src/runtime/DynamicScreen.js
-
 /**
- * DynamicScreen
- * ---------------------------------------------------------
- * A runtime wrapper that renders a screen based on the
- * current route. It resolves the root component for the
- * route and builds the component tree using ComponentResolver.
+ * DynamicScreen.js
+ * ----------------------------------------------------
+ * React wrapper that re-renders whenever the current
+ * screen changes in the NavigationEngine.
  *
  * Responsibilities:
- *  - Accept a routeName
- *  - Resolve the root component ID via DocumentModel
- *  - Build the component tree via ComponentResolver
- *  - Render the resolved tree inside a stable wrapper
+ *  - Subscribe to navigation events
+ *  - Render the current screen via Renderer
+ *  - Provide a stable root component for RuntimeApp
  */
 
-import React from "react";
-import DocumentModel from "./DocumentModel";
-import ComponentResolver from "./ComponentResolver";
+import React, { useEffect, useState } from "react";
+import eventBus from "./utils/eventBus";
 
-export default function DynamicScreen({
-  appDefinition,
-  routeName,
-  state,
-  dispatcher,
-}) {
-  if (!appDefinition || !routeName) {
-    console.warn("[DynamicScreen] Missing appDefinition or routeName");
-    return null;
+export default function DynamicScreen({ navigationEngine, renderer }) {
+  if (!navigationEngine) {
+    throw new Error("DynamicScreen requires navigationEngine");
+  }
+  if (!renderer) {
+    throw new Error("DynamicScreen requires renderer");
   }
 
-  // Initialize document + resolver
-  const documentModel = new DocumentModel(appDefinition);
-  const resolver = new ComponentResolver({
-    appDefinition,
-    state,
-    dispatcher,
-  });
-
-  // Get root component for this route
-  const rootId = documentModel.getRootComponentForRoute(routeName);
-
-  if (!rootId) {
-    console.warn(`[DynamicScreen] No root component for route: ${routeName}`);
-    return null;
-  }
-
-  // Resolve the component tree
-  const tree = resolver.resolveById(rootId);
-
-  return (
-    <div className="bl-dynamic-screen" data-route={routeName}>
-      {tree}
-    </div>
+  const [screenId, setScreenId] = useState(
+    navigationEngine.getCurrentScreen()
   );
+
+  useEffect(() => {
+    const unsubscribeBefore = eventBus.on("navigation:before", (evt) => {
+      // evt: { from, to, params }
+      setScreenId(evt.to);
+    });
+
+    return () => {
+      unsubscribeBefore();
+    };
+  }, []);
+
+  return renderer.renderScreen(screenId);
 }
