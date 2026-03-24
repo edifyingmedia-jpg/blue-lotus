@@ -1,66 +1,74 @@
-// frontend/src/runtime/LivePreview.js
+import React, { useEffect, useRef, useState } from "react";
+import PreviewHost from "./PreviewHost";
+import RuntimeRenderer from "./RuntimeRenderer";
+import EventBus from "./EventBus";
+import ErrorBoundary from "./ErrorBoundary";
 
 /**
  * LivePreview
- * ---------------------------------------------------------
- * This component is used INSIDE the Blue Lotus builder.
- * It renders the app definition in real time as the user edits
- * screens, components, actions, or navigation.
- *
- * It now uses the SAME runtime pipeline as the real app:
- *  - RuntimeEngine
- *  - NavigationEngine
- *  - ScreenEngine
- *  - ScreenProvider
- *  - RenderScreen → DynamicScreen → ScreenRenderer
+ * -----------------------------------------
+ * The real-time preview engine for Blue Lotus.
+ * 
+ * Responsibilities:
+ * - Mount a PreviewHost instance
+ * - Render the current app definition using RuntimeRenderer
+ * - Listen for builder updates via EventBus
+ * - Re-render deterministically on every change
+ * - Provide error isolation via ErrorBoundary
  */
 
-import React, { useEffect, useState } from "react";
-import RuntimeEngine from "./RuntimeEngine";
-import { ScreenProvider } from "./screens/ScreenContext";
-import RenderScreen from "./RenderScreen";
+export default function LivePreview({ appDefinition, initialScreen }) {
+  const hostRef = useRef(null);
+  const rendererRef = useRef(null);
 
-import ToastContainer from "./components/ToastContainer";
-import ModalHost from "./components/ModalHost";
-import DrawerHost from "./components/DrawerHost";
+  const [currentDefinition, setCurrentDefinition] = useState(appDefinition);
+  const [currentScreen, setCurrentScreen] = useState(initialScreen);
 
-export default function LivePreview({ app }) {
-  const [engine] = useState(() => new RuntimeEngine());
-  const [ready, setReady] = useState(false);
-
+  // Initialize PreviewHost + RuntimeRenderer
   useEffect(() => {
-    if (!app) return;
+    if (!hostRef.current) {
+      hostRef.current = new PreviewHost();
+    }
 
-    // Load the updated app definition into the runtime engine
-    engine.load(app);
-    setReady(true);
-  }, [app, engine]);
+    if (!rendererRef.current) {
+      rendererRef.current = new RuntimeRenderer({
+        host: hostRef.current,
+        onNavigate: (screenId) => setCurrentScreen(screenId),
+      });
+    }
 
-  if (!app) {
-    return (
-      <div style={{ padding: 20 }}>
-        <h2>No App Loaded</h2>
-        <p>The builder has not provided an app definition yet.</p>
-      </div>
-    );
-  }
+    rendererRef.current.loadApp(currentDefinition, currentScreen);
+  }, []);
 
-  if (!ready) {
-    return <div>Loading preview…</div>;
-  }
+  // Listen for app definition updates from the Builder
+  useEffect(() => {
+    const unsub = EventBus.subscribe("app:update", (updatedDefinition) => {
+      setCurrentDefinition(updatedDefinition);
+      rendererRef.current.loadApp(updatedDefinition, currentScreen);
+    });
+
+    return () => unsub();
+  }, [currentScreen]);
+
+  // Listen for navigation events
+  useEffect(() => {
+    const unsub = EventBus.subscribe("preview:navigate", (screenId) => {
+      setCurrentScreen(screenId);
+      rendererRef.current.navigate(screenId);
+    });
+
+    return () => unsub();
+  }, []);
 
   return (
-    <ScreenProvider>
-      <ToastContainer />
-      <ModalHost />
-      <DrawerHost />
-
-      <RenderScreen
-        appDefinition={app}
-        navigation={engine.navigation}
-        state={engine.state}
-        dispatcher={engine.dispatcher}
-      />
-    </ScreenProvider>
+    <div className="live-preview-container">
+      <ErrorBoundary>
+        <div id="preview-root">
+          {rendererRef.current
+            ? rendererRef.current.render()
+            : "Initializing preview..."}
+        </div>
+      </ErrorBoundary>
+    </div>
   );
 }
