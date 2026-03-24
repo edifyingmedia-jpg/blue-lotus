@@ -1,60 +1,71 @@
-// frontend/src/runtime/SceneManager.js
-
 /**
  * SceneManager
- * ---------------------------------------------------------
- * A lightweight helper that manages scene transitions
- * within the runtime. A "scene" is simply a route-level
- * screen in the appDefinition.
+ * ----------------------------------------------------
+ * Manages scene-level grouping and transitions.
  *
  * Responsibilities:
- *  - Expose available scenes (routes)
- *  - Allow switching scenes
- *  - Provide helpers for the runtime engine
+ * - Track the active scene
+ * - Validate scene membership
+ * - Provide deterministic transitions
+ * - Integrate with NavigationEngine
+ *
+ * Scenes are optional, but the engine supports them
+ * for future multi-screen flows and animations.
  */
 
 export default class SceneManager {
-  constructor(runtimeEngine) {
-    if (!runtimeEngine) {
-      throw new Error("[SceneManager] Missing runtime engine");
+  constructor({ appDefinition, navigationEngine }) {
+    this.appDefinition = appDefinition;
+    this.navigationEngine = navigationEngine;
+
+    this.currentScene = this.resolveSceneForScreen(
+      navigationEngine.getCurrentScreen()
+    );
+  }
+
+  /**
+   * Determine which scene a screen belongs to
+   */
+  resolveSceneForScreen(screenId) {
+    const scenes = this.appDefinition?.scenes || {};
+
+    for (const sceneId in scenes) {
+      const scene = scenes[sceneId];
+      if (scene.screens?.includes(screenId)) {
+        return sceneId;
+      }
     }
 
-    this.engine = runtimeEngine;
-    this.document = runtimeEngine.document;
+    return null; // screen not in any scene
   }
 
   /**
-   * Return all available scenes (routes).
+   * Navigate to a screen and update scene if needed
    */
-  listScenes() {
-    return this.document.getAllRoutes();
+  navigate(screenId) {
+    this.navigationEngine.navigate(screenId);
+
+    const newScene = this.resolveSceneForScreen(screenId);
+
+    if (newScene !== this.currentScene) {
+      this.currentScene = newScene;
+    }
   }
 
   /**
-   * Get the currently active scene.
+   * Get the current scene ID
    */
   getCurrentScene() {
-    return this.engine.getCurrentRoute();
+    return this.currentScene;
   }
 
   /**
-   * Switch to a different scene.
+   * Update app definition (e.g., builder changes)
    */
-  setScene(routeName) {
-    const routes = this.document.getAllRoutes();
+  updateDefinition(newDefinition) {
+    this.appDefinition = newDefinition;
 
-    if (!routes.includes(routeName)) {
-      console.warn(`[SceneManager] Unknown scene: ${routeName}`);
-      return;
-    }
-
-    this.engine.navigation.setRoute(routeName);
-  }
-
-  /**
-   * Check if a scene exists.
-   */
-  hasScene(routeName) {
-    return this.document.getAllRoutes().includes(routeName);
+    const screenId = this.navigationEngine.getCurrentScreen();
+    this.currentScene = this.resolveSceneForScreen(screenId);
   }
 }
