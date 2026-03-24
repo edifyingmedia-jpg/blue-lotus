@@ -1,63 +1,72 @@
-// frontend/src/runtime/DocumentModel.js
-
 /**
- * DocumentModel
- * ---------------------------------------------------------
- * Provides structured access to the appDefinition document.
+ * DocumentModel.js
+ * ----------------------------------------------------
+ * Normalized, runtime-ready representation of the
+ * app definition JSON.
  *
  * Responsibilities:
- *  - Validate the document structure
- *  - Expose component definitions by ID
- *  - Expose route → rootComponentId mapping
- *  - Provide helpers for the runtime renderer
+ *  - Store validated app definition
+ *  - Provide fast lookup for screens and components
+ *  - Expose deterministic getters for runtime systems
  */
 
 export default class DocumentModel {
   constructor(appDefinition) {
-    if (!appDefinition) {
-      throw new Error("[DocumentModel] Missing appDefinition");
+    if (!appDefinition || typeof appDefinition !== "object") {
+      throw new Error("DocumentModel requires a valid app definition");
     }
 
-    this.appDefinition = appDefinition;
-    this.components = appDefinition.components || {};
-    this.routes = appDefinition.routes || {};
+    this.raw = appDefinition;
+
+    this.screens = this.indexScreens(appDefinition.screens);
+    this.initialScreen = appDefinition.initialScreen;
+    this.state = appDefinition.state || {};
   }
 
   /**
-   * Get a component definition by ID.
+   * Convert screens array into a lookup map:
+   *   { screenId: screenObject }
    */
-  getComponent(id) {
-    const def = this.components[id];
-    if (!def) {
-      console.warn(`[DocumentModel] Unknown component ID: ${id}`);
-      return null;
+  indexScreens(screens) {
+    if (!Array.isArray(screens)) {
+      throw new Error("DocumentModel: screens must be an array");
     }
-    return def;
-  }
 
-  /**
-   * Get the root component ID for a route.
-   */
-  getRootComponentForRoute(routeName) {
-    const route = this.routes[routeName];
-    if (!route) {
-      console.warn(`[DocumentModel] Unknown route: ${routeName}`);
-      return null;
+    const map = {};
+
+    for (const screen of screens) {
+      if (!screen.id) {
+        throw new Error("DocumentModel: screen missing id");
+      }
+
+      map[screen.id] = screen;
     }
-    return route.rootComponentId;
+
+    return map;
   }
 
   /**
-   * Return all component IDs.
+   * Get a screen by ID.
    */
-  getAllComponentIds() {
-    return Object.keys(this.components);
+  getScreen(id) {
+    const screen = this.screens[id];
+    if (!screen) {
+      throw new Error(`DocumentModel: unknown screen '${id}'`);
+    }
+    return screen;
   }
 
   /**
-   * Return all route names.
+   * Get the initial screen.
    */
-  getAllRoutes() {
-    return Object.keys(this.routes);
+  getInitialScreen() {
+    return this.getScreen(this.initialScreen);
+  }
+
+  /**
+   * Get the initial state object.
+   */
+  getInitialState() {
+    return { ...this.state };
   }
 }
