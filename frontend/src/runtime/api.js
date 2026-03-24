@@ -1,109 +1,93 @@
-// frontend/src/runtime/api.js
-
 /**
- * API Layer for Blue Lotus Runtime
- * ---------------------------------------------------------
- * Provides a unified interface for performing network requests
- * inside the runtime. This layer abstracts:
+ * api.js
+ * ----------------------------------------------------
+ * Unified API client for Blue Lotus runtime.
  *
- *  - Supabase (if enabled)
- *  - External REST/GraphQL APIs
- *  - Authenticated requests
- *  - Error normalization
- *
- * The runtime must NEVER crash due to missing backend access.
+ * Responsibilities:
+ * - Provide a clean wrapper around fetch()
+ * - Support optional Supabase integration
+ * - Handle GET/POST/PUT/DELETE requests
+ * - Provide deterministic, production-safe behavior
  */
+
+import supabaseClient from "./supabaseClient";
 
 export default class APIClient {
   constructor({ supabase = null } = {}) {
-    this.supabase = supabase;
+    this.supabase = supabase || supabaseClient || null;
   }
 
   /**
-   * Perform a generic GET request.
+   * Perform a standard HTTP request
    */
-  async get(url, options = {}) {
-    try {
-      const res = await fetch(url, {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-          ...(options.headers || {}),
-        },
-      });
+  async request(method, url, body = null, headers = {}) {
+    const options = {
+      method,
+      headers: {
+        "Content-Type": "application/json",
+        ...headers,
+      },
+    };
 
-      return await this._handleResponse(res);
+    if (body) {
+      options.body = JSON.stringify(body);
+    }
+
+    try {
+      const res = await fetch(url, options);
+      const data = await res.json().catch(() => null);
+
+      return {
+        ok: res.ok,
+        status: res.status,
+        data,
+      };
     } catch (err) {
-      return this._error(err);
+      console.error("APIClient request error:", err);
+      return {
+        ok: false,
+        status: 0,
+        data: null,
+        error: err.message,
+      };
     }
   }
 
   /**
-   * Perform a generic POST request.
+   * Convenience wrappers
    */
-  async post(url, body = {}, options = {}) {
-    try {
-      const res = await fetch(url, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          ...(options.headers || {}),
-        },
-        body: JSON.stringify(body),
-      });
+  get(url, headers = {}) {
+    return this.request("GET", url, null, headers);
+  }
 
-      return await this._handleResponse(res);
-    } catch (err) {
-      return this._error(err);
-    }
+  post(url, body, headers = {}) {
+    return this.request("POST", url, body, headers);
+  }
+
+  put(url, body, headers = {}) {
+    return this.request("PUT", url, body, headers);
+  }
+
+  delete(url, headers = {}) {
+    return this.request("DELETE", url, null, headers);
   }
 
   /**
-   * Supabase wrapper (if available).
+   * Optional Supabase helpers
    */
   async from(table) {
     if (!this.supabase) {
-      return this._error("Supabase is not available in this environment.");
+      console.warn("APIClient: Supabase not available.");
+      return null;
     }
-
     return this.supabase.from(table);
   }
 
-  /**
-   * Normalize fetch responses.
-   */
-  async _handleResponse(res) {
-    const text = await res.text();
-
-    let json;
-    try {
-      json = text ? JSON.parse(text) : null;
-    } catch {
-      json = text;
+  async auth() {
+    if (!this.supabase) {
+      console.warn("APIClient: Supabase auth not available.");
+      return null;
     }
-
-    if (!res.ok) {
-      return this._error({
-        status: res.status,
-        message: json?.message || "Request failed",
-        raw: json,
-      });
-    }
-
-    return {
-      ok: true,
-      status: res.status,
-      data: json,
-    };
-  }
-
-  /**
-   * Standardized error format.
-   */
-  _error(error) {
-    return {
-      ok: false,
-      error,
-    };
+    return this.supabase.auth;
   }
 }
