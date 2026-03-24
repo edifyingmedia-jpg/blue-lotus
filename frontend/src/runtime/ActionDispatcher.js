@@ -3,7 +3,7 @@
 /**
  * Runtime ActionDispatcher
  * ---------------------------------------------------------
- * This module receives component-level events (onPress, onChange, etc.)
+ * Receives component-level events (onPress, onChange, etc.)
  * and dispatches them to the ActionEngine in a standardized way.
  *
  * Responsibilities:
@@ -23,7 +23,7 @@ export function createActionDispatcher(actionEngine) {
    *   type: "onPress",
    *   actions: [
    *     { type: "navigate", to: "Home" },
-   *     { type: "setState", key: "clicked", value: true }
+   *     { type: "setState", path: "clicked", value: true }
    *   ]
    * }
    */
@@ -31,7 +31,6 @@ export function createActionDispatcher(actionEngine) {
     if (!event) return;
 
     const { actions } = event;
-
     if (!actions) return;
 
     // Single action
@@ -52,14 +51,20 @@ export function createActionDispatcher(actionEngine) {
   async function executeAction(action) {
     if (!action || typeof action !== "object") return;
 
-    // Conditional action
+    // Inline conditional support
     if (action.if) {
-      const conditionResult = await actionEngine.evaluateCondition(action.if);
-      if (!conditionResult) return;
+      const condition = action.if;
+      const result = await actionEngine.run({
+        type: "conditional",
+        if: condition,
+        then: action.then,
+        else: action.else,
+      });
+      return result;
     }
 
     // Delegate to ActionEngine
-    await actionEngine.execute(action);
+    await actionEngine.run(action);
   }
 
   return {
