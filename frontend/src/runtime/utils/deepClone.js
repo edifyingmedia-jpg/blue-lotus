@@ -1,24 +1,70 @@
-// frontend/src/runtime/utils/deepClone.js
-
 /**
- * deepClone
- * ---------------------------------------------------------
- * A safe, predictable deep clone utility for runtime objects.
- * Handles arrays, objects, primitives, and nested structures.
+ * deepClone.js
+ * ----------------------------------------------------
+ * Deterministic deep clone utility used throughout the
+ * runtime. This implementation:
+ *
+ * - Handles arrays, objects, dates, maps, sets
+ * - Avoids JSON stringify limitations
+ * - Prevents circular reference crashes
+ * - Produces stable, predictable clones
  */
 
-export default function deepClone(value) {
+export default function deepClone(value, seen = new WeakMap()) {
+  // Primitive values are returned as-is
   if (value === null || typeof value !== "object") {
     return value;
   }
 
-  if (Array.isArray(value)) {
-    return value.map(item => deepClone(item));
+  // Handle circular references
+  if (seen.has(value)) {
+    return seen.get(value);
   }
 
-  const result = {};
-  for (const key in value) {
-    result[key] = deepClone(value[key]);
+  // Date
+  if (value instanceof Date) {
+    return new Date(value.getTime());
   }
-  return result;
+
+  // Array
+  if (Array.isArray(value)) {
+    const arr = [];
+    seen.set(value, arr);
+    for (const item of value) {
+      arr.push(deepClone(item, seen));
+    }
+    return arr;
+  }
+
+  // Map
+  if (value instanceof Map) {
+    const map = new Map();
+    seen.set(value, map);
+    for (const [key, val] of value.entries()) {
+      map.set(key, deepClone(val, seen));
+    }
+    return map;
+  }
+
+  // Set
+  if (value instanceof Set) {
+    const set = new Set();
+    seen.set(value, set);
+    for (const item of value.values()) {
+      set.add(deepClone(item, seen));
+    }
+    return set;
+  }
+
+  // Plain object
+  const cloned = {};
+  seen.set(value, cloned);
+
+  for (const key in value) {
+    if (Object.prototype.hasOwnProperty.call(value, key)) {
+      cloned[key] = deepClone(value[key], seen);
+    }
+  }
+
+  return cloned;
 }
