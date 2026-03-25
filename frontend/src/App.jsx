@@ -1,6 +1,10 @@
-import React from "react";
-import BuilderApp from "./Builder/BuilderApp";
-
 export default function App() {
-  return <BuilderApp />;
+  return (
+    <div style={{ padding: 40 }}>
+      <h1>Blue Lotus is running</h1>
+      <button onClick={() => console.log("clicked")}>
+        Click me
+      </button>
+    </div>
+  );
 }
