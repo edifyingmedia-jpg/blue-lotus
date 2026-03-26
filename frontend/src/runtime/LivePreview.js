@@ -1,74 +1,111 @@
-import React, { useEffect, useRef, useState } from "react";
-import PreviewHost from "./PreviewHost";
-import RuntimeRenderer from "./RuntimeRenderer";
-import EventBus from "./EventBus";
-import ErrorBoundary from "./ErrorBoundary";
-
 /**
- * LivePreview
- * -----------------------------------------
- * The real-time preview engine for Blue Lotus.
- * 
+ * LivePreview.js
+ * ----------------------------------------------------
+ * Deterministic, runtime-faithful preview sandbox.
+ *
  * Responsibilities:
- * - Mount a PreviewHost instance
- * - Render the current app definition using RuntimeRenderer
- * - Listen for builder updates via EventBus
- * - Re-render deterministically on every change
- * - Provide error isolation via ErrorBoundary
+ *  - Initialize isolated runtime engines
+ *  - Render app definition using AppRenderer
+ *  - React to state, navigation, and definition updates
+ *  - Emit lifecycle events through eventBus
+ *  - Never mutate appDefinition or leak side effects
  */
 
-export default function LivePreview({ appDefinition, initialScreen }) {
-  const hostRef = useRef(null);
-  const rendererRef = useRef(null);
+import React from "react";
+import ReactDOM from "react-dom/client";
 
-  const [currentDefinition, setCurrentDefinition] = useState(appDefinition);
-  const [currentScreen, setCurrentScreen] = useState(initialScreen);
+import StateEngine from "./StateEngine";
+import NavigationEngine from "./NavigationEngine";
+import ActionEngine from "./ActionEngine";
+import AppRenderer from "./AppRenderer";
 
-  // Initialize PreviewHost + RuntimeRenderer
-  useEffect(() => {
-    if (!hostRef.current) {
-      hostRef.current = new PreviewHost();
+import eventBus from "./utils/eventBus";
+import { deepClone } from "./utils";
+
+export default class LivePreview {
+  constructor({ appDefinition, initialState = {}, onEvent = null }) {
+    if (!appDefinition) {
+      throw new Error("LivePreview requires a validated appDefinition");
     }
 
-    if (!rendererRef.current) {
-      rendererRef.current = new RuntimeRenderer({
-        host: hostRef.current,
-        onNavigate: (screenId) => setCurrentScreen(screenId),
-      });
+    // Immutable definition
+    this.appDefinition = deepClone(appDefinition);
+    Object.freeze(this.appDefinition);
+
+    this.onEvent = typeof onEvent === "function" ? onEvent : null;
+
+    // Engines
+    this.stateEngine = new StateEngine(initialState);
+    this.navigationEngine = new NavigationEngine();
+    this.actionEngine = new ActionEngine({
+      stateEngine: this.stateEngine,
+      navigationEngine: this.navigationEngine,
+    });
+
+    // DOM + React root
+    this.domNode = null;
+    this.reactRoot = null;
+
+    // Bindings
+    this.handleStateChange = this.handleStateChange.bind(this);
+    this.handleNavigationChange = this.handleNavigationChange.bind(this);
+
+    // Subscribe to engine events
+    eventBus.on("state:changed", this.handleStateChange);
+    eventBus.on("navigation:changed", this.handleNavigationChange);
+  }
+
+  /**
+   * Mount preview into a DOM node
+   */
+  mount(domNode) {
+    if (!domNode) {
+      throw new Error("LivePreview.mount requires a DOM node");
     }
 
-    rendererRef.current.loadApp(currentDefinition, currentScreen);
-  }, []);
+    this.domNode = domNode;
+    this.reactRoot = ReactDOM.createRoot(domNode);
 
-  // Listen for app definition updates from the Builder
-  useEffect(() => {
-    const unsub = EventBus.subscribe("app:update", (updatedDefinition) => {
-      setCurrentDefinition(updatedDefinition);
-      rendererRef.current.loadApp(updatedDefinition, currentScreen);
-    });
+    this.renderApp();
 
-    return () => unsub();
-  }, [currentScreen]);
+    eventBus.emit("preview:mounted");
+    this._emit("mounted");
+  }
 
-  // Listen for navigation events
-  useEffect(() => {
-    const unsub = EventBus.subscribe("preview:navigate", (screenId) => {
-      setCurrentScreen(screenId);
-      rendererRef.current.navigate(screenId);
-    });
+  /**
+   * Render the app using AppRenderer
+   */
+  renderApp() {
+    try {
+      const element = (
+        <AppRenderer
+          appDefinition={this.appDefinition}
+          stateEngine={this.stateEngine}
+          navigationEngine={this.navigationEngine}
+          actionEngine={this.actionEngine}
+        />
+      );
 
-    return () => unsub();
-  }, []);
+      this.reactRoot.render(element);
 
-  return (
-    <div className="live-preview-container">
-      <ErrorBoundary>
-        <div id="preview-root">
-          {rendererRef.current
-            ? rendererRef.current.render()
-            : "Initializing preview..."}
-        </div>
-      </ErrorBoundary>
-    </div>
-  );
-}
+      eventBus.emit("preview:render");
+      this._emit("render");
+    } catch (err) {
+      console.error("LivePreview render error:", err);
+      eventBus.emit("preview:error", err);
+      this._emit("error", err);
+    }
+  }
+
+  /**
+   * Update app definition (already validated externally)
+   */
+  updateDefinition(newDefinition) {
+    if (!newDefinition) return;
+
+    this.appDefinition = deepClone(newDefinition);
+    Object.freeze(this.appDefinition);
+
+    this.renderApp();
+
+    event
