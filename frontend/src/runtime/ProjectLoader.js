@@ -1,67 +1,72 @@
 /**
- * ProjectLoader
+ * ProjectLoader.js
  * ----------------------------------------------------
- * Loads, validates, and prepares an app definition
- * for the runtime engine.
+ * Loads, normalizes, and prepares project definitions
+ * before they enter the runtime or LivePreview.
  *
  * Responsibilities:
- * - Accept raw project JSON
- * - Validate structure using AppDefinitionValidator
- * - Normalize screens, components, and metadata
- * - Emit load events for the preview/runtime
+ *  - Accept raw project JSON
+ *  - Normalize structure
+ *  - Ensure required fields exist
+ *  - Deep clone to avoid mutation
+ *  - Return a clean, runtime-ready definition
+ *
+ * Non‑Responsibilities:
+ *  - Validation (handled by AppDefinitionValidator)
+ *  - Rendering
+ *  - State management
+ *  - Navigation
  */
 
-import AppDefinitionValidator from "./AppDefinitionValidator";
-import EventBus from "./EventBus";
+import { deepClone } from "./utils";
 
 export default class ProjectLoader {
-  constructor() {
-    this.definition = null;
-  }
-
   /**
-   * Load a raw project definition
+   * Load a raw project definition and normalize it.
    */
-  load(rawDefinition) {
-    if (!rawDefinition) {
-      console.warn("ProjectLoader: No project definition provided.");
-      return null;
+  static load(raw) {
+    if (!raw || typeof raw !== "object") {
+      throw new Error("ProjectLoader.load requires a project object");
     }
 
-    // Validate structure
-    const validation = AppDefinitionValidator.validate(rawDefinition);
-    if (!validation.valid) {
-      console.error("ProjectLoader: Invalid app definition:", validation.errors);
-      return null;
+    // Clone to avoid mutating caller data
+    const project = deepClone(raw);
+
+    // Ensure required top-level fields
+    if (!project.screens || typeof project.screens !== "object") {
+      project.screens = {};
     }
 
-    // Normalize structure
-    this.definition = this.normalize(rawDefinition);
+    if (!project.theme || typeof project.theme !== "object") {
+      project.theme = {};
+    }
 
-    // Notify runtime + preview
-    EventBus.emit("project:loaded", this.definition);
+    if (!project.navigation || typeof project.navigation !== "object") {
+      project.navigation = {};
+    }
 
-    return this.definition;
-  }
+    if (!project.state || typeof project.state !== "object") {
+      project.state = {};
+    }
 
-  /**
-   * Normalize app definition into a predictable structure
-   */
-  normalize(def) {
-    return {
-      id: def.id || "untitled",
-      name: def.name || "Untitled App",
-      entryScreen: def.entryScreen || Object.keys(def.screens || {})[0] || null,
-      screens: def.screens || {},
-      components: def.components || {},
-      metadata: def.metadata || {},
-    };
-  }
+    // Normalize screens
+    for (const key of Object.keys(project.screens)) {
+      const screen = project.screens[key];
 
-  /**
-   * Get the current normalized definition
-   */
-  getDefinition() {
-    return this.definition;
+      if (!screen || typeof screen !== "object") {
+        project.screens[key] = {};
+        continue;
+      }
+
+      if (!screen.components || !Array.isArray(screen.components)) {
+        screen.components = [];
+      }
+
+      if (!screen.layout || typeof screen.layout !== "object") {
+        screen.layout = {};
+      }
+    }
+
+    return project;
   }
 }
