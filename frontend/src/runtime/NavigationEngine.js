@@ -1,69 +1,76 @@
 /**
  * NavigationEngine.js
  * ----------------------------------------------------
- * Minimal deterministic navigation system for the runtime.
+ * Deterministic navigation state manager for runtime.
  *
  * Responsibilities:
- *  - Track current screen
- *  - Navigate to a new screen by ID
- *  - Emit navigation lifecycle events
- *  - Integrate with Renderer and ActionEngine
+ *  - Track current screen + params
+ *  - Provide navigate() with full lifecycle events
+ *  - Integrate with ActionEngine + AppRenderer
+ *  - Never mutate appDefinition
+ *  - Emit navigation events through eventBus
  */
 
 import eventBus from "./utils/eventBus";
 
 export default class NavigationEngine {
-  constructor({ documentModel, renderer }) {
-    if (!documentModel) {
-      throw new Error("NavigationEngine requires a documentModel");
-    }
-    if (!renderer) {
-      throw new Error("NavigationEngine requires a renderer");
-    }
-
-    this.documentModel = documentModel;
-    this.renderer = renderer;
-
-    this.currentScreen = documentModel.initialScreen;
+  constructor() {
+    this.current = {
+      screen: null,
+      params: {},
+    };
   }
 
   /**
-   * Navigate to a new screen.
+   * Navigate to a new screen
    */
-  navigate(screenId, params = {}) {
-    if (!screenId || typeof screenId !== "string") {
-      throw new Error("NavigationEngine.navigate requires a screenId string");
+  async navigate(screen, params = {}) {
+    if (!screen || typeof screen !== "string") {
+      console.warn("NavigationEngine.navigate: invalid screen:", screen);
+      return;
     }
 
-    const screen = this.documentModel.screens[screenId];
-    if (!screen) {
-      throw new Error(`NavigationEngine: unknown screen '${screenId}'`);
-    }
+    const previous = { ...this.current };
 
-    const previous = this.currentScreen;
-    this.currentScreen = screenId;
+    this.current = {
+      screen,
+      params: { ...params },
+    };
 
-    eventBus.emit("navigation:before", {
+    eventBus.emit("navigation:changed", {
       from: previous,
-      to: screenId,
-      params,
+      to: this.current,
     });
-
-    const rendered = this.renderer.renderScreen(screenId);
-
-    eventBus.emit("navigation:after", {
-      from: previous,
-      to: screenId,
-      params,
-    });
-
-    return rendered;
   }
 
   /**
-   * Get the current screen ID.
+   * Get current screen name
    */
-  getCurrentScreen() {
-    return this.currentScreen;
+  getScreen() {
+    return this.current.screen;
+  }
+
+  /**
+   * Get current params
+   */
+  getParams() {
+    return this.current.params;
+  }
+
+  /**
+   * Reset navigation state
+   */
+  reset() {
+    const previous = { ...this.current };
+
+    this.current = {
+      screen: null,
+      params: {},
+    };
+
+    eventBus.emit("navigation:changed", {
+      from: previous,
+      to: this.current,
+    });
   }
 }
