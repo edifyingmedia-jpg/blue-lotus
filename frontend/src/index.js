@@ -1,7 +1,9 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
 import "@/index.css";
-import App from "@/App";
+
+import RuntimeApp from "./RuntimeApp.jsx";
+import appDefinition from "./app.json";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
-root.render(<App />);
+root.render(<RuntimeApp appDefinition={appDefinition} />);
